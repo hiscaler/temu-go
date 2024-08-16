@@ -1,0 +1,8 @@
+{
+  "debug": true,
+  "app_key": "",
+  "app_secret": "",
+  "access_token": "",
+  "timeout": 10,
+  "verify_ssl": true
+}
