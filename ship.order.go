@@ -44,7 +44,7 @@ func (m ShipOrderQueryParams) Validate() error {
 	// )
 }
 
-// All 查询发货单v2
+// All 查询发货单 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#B7c51j
 func (s shipOrderService) All(params ShipOrderQueryParams) (items []entity.ShipOrder, total, totalPages int, isLastPage bool, err error) {
 	if params.Page <= 0 {
@@ -80,39 +80,43 @@ func (s shipOrderService) All(params ShipOrderQueryParams) (items []entity.ShipO
 	return
 }
 
-// 创建发货单接口V3（bg.shiporderv3.create）
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#HqGnA0
+// 创建发货单
+
+// ShipOrderCreateRequestReceiveAddress 收货地址
+type ShipOrderCreateRequestReceiveAddress struct {
+	ProvinceName  string `json:"provinceName,omitempty"`
+	ProvinceCode  int64  `json:"provinceCode,omitempty"`
+	CityName      string `json:"cityName,omitempty"`
+	CityCode      int64  `json:"cityCode,omitempty"`
+	DistrictName  string `json:"districtName,omitempty"`
+	DistrictCode  int64  `json:"districtCode,omitempty"`
+	ReceiverName  string `json:"receiverName,omitempty"`
+	DetailAddress string `json:"detailAddress,omitempty"`
+	Phone         string `json:"phone,omitempty"`
+}
+
+type ShipOrderCreateRequestOrderItem struct {
+	DeliveryOrderCreateInfos []struct {
+		DeliverOrderDetailInfos []struct {
+			DeliverSkuNum int   `json:"deliverSkuNum"`
+			ProductSkuId  int64 `json:"productSkuId"`
+		} `json:"deliverOrderDetailInfos"` // 采购单创建信息列表
+		SubPurchaseOrderSn string `json:"subPurchaseOrderSn"`
+		PackageInfos       []struct {
+			PackageDetailSaveInfos []struct {
+				SkuNum       int   `json:"skuNum"`
+				ProductSkuId int64 `json:"productSkuId"`
+			} `json:"packageDetailSaveInfos"`
+		} `json:"packageInfos"`
+		DeliveryAddressId int64 `json:"deliveryAddressId"`
+	} `json:"deliveryOrderCreateInfos"` // 发货单创建组列表
+	ReceiveAddressInfo ShipOrderCreateRequestReceiveAddress `json:"receiveAddressInfo"` // 收货地址
+	SubWarehouseId     int64                                `json:"subWarehouseId"`     // 子仓 ID
+}
 
 type ShipOrderCreateRequest struct {
 	normal.Parameter
-	DeliveryOrderCreateGroupList []struct {
-		DeliveryOrderCreateInfos []struct {
-			DeliverOrderDetailInfos []struct {
-				DeliverSkuNum int   `json:"deliverSkuNum"`
-				ProductSkuId  int64 `json:"productSkuId"`
-			} `json:"deliverOrderDetailInfos"`
-			SubPurchaseOrderSn string `json:"subPurchaseOrderSn"`
-			PackageInfos       []struct {
-				PackageDetailSaveInfos []struct {
-					SkuNum       int   `json:"skuNum"`
-					ProductSkuId int64 `json:"productSkuId"`
-				} `json:"packageDetailSaveInfos"`
-			} `json:"packageInfos"`
-			DeliveryAddressId int64 `json:"deliveryAddressId"`
-		} `json:"deliveryOrderCreateInfos"`
-		ReceiveAddressInfo struct {
-			ProvinceName  string `json:"provinceName"`
-			ProvinceCode  int64  `json:"provinceCode"`
-			CityName      string `json:"cityName"`
-			CityCode      int64  `json:"cityCode"`
-			DistrictName  string `json:"districtName"`
-			DistrictCode  int64  `json:"districtCode"`
-			ReceiverName  string `json:"receiverName"`
-			DetailAddress string `json:"detailAddress"`
-			Phone         string `json:"phone"`
-		} `json:"receiveAddressInfo"`
-		SubWarehouseId int64 `json:"subWarehouseId"`
-	} `json:"deliveryOrderCreateGroupList"`
+	DeliveryOrderCreateGroupList []ShipOrderCreateRequestOrderItem `json:"deliveryOrderCreateGroupList"`
 }
 
 func (m ShipOrderCreateRequest) Validate() error {
@@ -125,8 +129,8 @@ func (m ShipOrderCreateRequest) Validate() error {
 	// )
 }
 
-// Create 创建发货单接口V3
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#B7c51j
+// Create 创建发货单接口 V3
+// // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#HqGnA0
 func (s shipOrderService) Create(req ShipOrderCreateRequest) (ok bool, err error) {
 	if err = req.Validate(); err != nil {
 		return
@@ -140,11 +144,9 @@ func (s shipOrderService) Create(req ShipOrderCreateRequest) (ok bool, err error
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
-	if err != nil {
-		return
-	}
+	ok = err == nil
 
-	return true, nil
+	return
 }
 
 // Cancel 取消发货单（bg.shiporder.cancel）

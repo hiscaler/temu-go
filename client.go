@@ -53,6 +53,7 @@ type services struct {
 	GoodsSizeChartService        goodsSizeChartService
 	GoodsSizeChartClassService   goodsSizeChartClassService
 	GoodsSizeChartSettingService goodsSizeChartSettingService
+	MallAddressService           mallAddressService
 }
 
 type Client struct {
@@ -147,6 +148,7 @@ func NewClient(config config.Config) *Client {
 		GoodsSizeChartService:        (goodsSizeChartService)(xService),
 		GoodsSizeChartClassService:   (goodsSizeChartClassService)(xService),
 		GoodsSizeChartSettingService: (goodsSizeChartSettingService)(xService),
+		MallAddressService:           (mallAddressService)(xService),
 	}
 
 	return client

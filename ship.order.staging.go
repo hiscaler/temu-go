@@ -1,6 +1,7 @@
 package temu
 
 import (
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 )
@@ -73,27 +74,27 @@ func (s shipOrderStagingService) All(params StagingQueryParams) (items []entity.
 	return
 }
 
-type ShipOrderStagingCreateRequest struct {
+// 加入发货台
+
+type ShipOrderStagingAddInfo struct {
+	SubPurchaseOrderSn  string `json:"subPurchaseOrderSn"`  // 采购子单号（订单号）
+	DeliveryAddressType int    `json:"deliveryAddressType"` // 发货地址类型，1-内地，2-香港，内地主体（店铺货币选择CNY，默认入参1，其余主体选择2）
+}
+
+type ShipOrderStagingAddRequest struct {
 	normal.Parameter
-	JoinInfoList struct {
-		SubPurchaseOrderSn  string `json:"subPurchaseOrderSn"`  // 采购子单号（订单号）
-		DeliveryAddressType int    `json:"deliveryAddressType"` // 发货地址类型，1-内地，2-香港，内地主体（店铺货币选择CNY，默认入参1，其余主体选择2）
-	} `json:"joinInfoList"`
+	JoinInfoList []ShipOrderStagingAddInfo `json:"joinInfoList"`
 }
 
-func (m ShipOrderStagingCreateRequest) Validate() error {
-	return nil
-	// return validation.ValidateStruct(&m,
-	// 	validation.Field(&m.Request, validation.When(m.Request != nil, validation.By(func(value interface{}) error {
-	//
-	// 		return nil
-	// 	}))),
-	// )
+func (m ShipOrderStagingAddRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.JoinInfoList, validation.Required.Error("发货数据不能为空。")),
+	)
 }
 
-// Create 加入发货台接口
+// Add 加入发货台
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YSg2AE
-func (s shipOrderStagingService) Create(req ShipOrderStagingCreateRequest) (ok bool, err error) {
+func (s shipOrderStagingService) Add(req ShipOrderStagingAddRequest) (ok bool, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
@@ -106,9 +107,6 @@ func (s shipOrderStagingService) Create(req ShipOrderStagingCreateRequest) (ok b
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
-	if err != nil {
-		return
-	}
-
-	return ok, nil
+	ok = err == nil
+	return
 }
