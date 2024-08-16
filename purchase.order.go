@@ -1,6 +1,8 @@
 package temu
 
 import (
+	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -51,7 +53,30 @@ func (m PurchaseOrderQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Page, validation.Required.Error("页码不能为空。")),
 		validation.Field(&m.PageSize, validation.Required.Error("页面大小不能为空。")),
-		validation.Field(&m.SettlementType, validation.Required.Error("结算类型不能为空。")),
+		validation.Field(&m.SettlementType,
+			validation.Required.Error("结算类型不能为空。"),
+			validation.In(entity.SettlementTypeNotVMI, entity.SettlementTypeVMI).Error("无效的结算类型。"),
+		),
+		validation.Field(&m.SourceList,
+			validation.When(len(m.SourceList) > 0, validation.By(func(value interface{}) error {
+				sources, ok := value.([]int)
+				if !ok {
+					return errors.New("无效的下单来源")
+				}
+
+				validSources := map[int]any{
+					entity.PurchaseOrderSourceOperationalStaff: nil,
+					entity.PurchaseOrderSourceSeller:           nil,
+					entity.PurchaseOrderSourcePlatform:         nil,
+				}
+				for _, source := range sources {
+					if _, ok = validSources[source]; !ok {
+						return fmt.Errorf("无效的下单来源：%d", source)
+					}
+				}
+				return nil
+			})),
+		),
 	)
 }
 
