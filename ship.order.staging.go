@@ -17,7 +17,7 @@ type StagingQueryParams struct {
 	SettlementType         int      `json:"settlementType,omitempty"`         // 结算类型 0-非vmi 1-vmi
 	IsFirstOrder           bool     `json:"isFirstOrder,omitempty"`           // 是否首单
 	UrgencyType            bool     `json:"urgencyType,omitempty"`            // 是否是紧急发货单，0-普通 1-急采
-	IsJit                  bool     `json:"isJit"`                            // 是否是jit，true:jit
+	IsJit                  bool     `json:"isJit,omitempty"`                  // 是否是jit，true:jit
 	Page                   int      `json:"pageNo"`                           // 页号， 从1开始
 	PageSize               int      `json:"pageSize"`                         // 每页记录数不能为空
 	PurchaseStockType      int      `json:"purchaseStockType,omitempty"`      // 备货类型 0-普通备货 1-jit备货

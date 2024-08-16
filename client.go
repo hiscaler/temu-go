@@ -32,7 +32,7 @@ const (
 	MethodNotImplementedError = 501 // 方法未实现
 )
 
-var ErrNotFound = errors.New("WooCommerce: not found")
+var ErrNotFound = errors.New("not found")
 
 type service struct {
 	debug      bool          // Is debug mode

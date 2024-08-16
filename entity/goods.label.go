@@ -20,7 +20,7 @@ type GoodsLabel struct {
 		SubPurchaseOrderSn         string `json:"subPurchaseOrderSn"`
 		ProductSkcId               int    `json:"productSkcId"`
 		ProductSkuPurchaseQuantity int    `json:"productSkuPurchaseQuantity"` // sku下单件数 (仅旧版分页查询接口返回)
-		LabelCode                  int    `json:"商品条码"`                   // sku下单件数 (仅旧版分页查询接口返回)
+		LabelCode                  int    `json:"商品条码"`                       // sku下单件数 (仅旧版分页查询接口返回)
 	} `json:"ProductLabelCodeDTO"`
 	ProductSkcImageList struct {
 		ImageUrl  string `json:"imageUrl"`  // 图片URL
