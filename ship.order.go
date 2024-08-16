@@ -2,6 +2,7 @@ package temu
 
 import (
 	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 )
@@ -81,56 +82,61 @@ func (s shipOrderService) All(params ShipOrderQueryParams) (items []entity.ShipO
 }
 
 // 创建发货单
+// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#HqGnA0
+
+type ShipOrderCreateRequestOrderDetailInfo struct {
+	DeliverSkuNum int   `json:"deliverSkuNum"` // 发货sku数目
+	ProductSkuId  int64 `json:"productSkuId"`  // 定制品，传定制品id；非定制品，传货品 skuId
+}
+
+// ShipOrderCreateRequestOrderPackage 包裹信息
+type ShipOrderCreateRequestOrderPackage struct {
+	PackageDetailSaveInfos []ShipOrderCreateRequestPackageInfo `json:"packageDetailSaveInfos"` // 包裹明细
+}
+
+type ShipOrderCreateRequestPackageInfo struct {
+	SkuNum       int   `json:"skuNum"`       // 发货 sku 数目
+	ProductSkuId int64 `json:"productSkuId"` // skuId
+}
+
+type ShipOrderCreateRequestOrderInfo struct {
+	DeliverOrderDetailInfos []ShipOrderCreateRequestOrderDetailInfo `json:"deliverOrderDetailInfos"` // 采购单创建信息列表
+	SubPurchaseOrderSn      string                                  `json:"subPurchaseOrderSn"`      // 采购子单号
+	PackageInfos            []ShipOrderCreateRequestOrderPackage    `json:"packageInfos"`            //	包裹信息列表
+	DeliveryAddressId       int64                                   `json:"deliveryAddressId"`       // 发货地址 ID
+}
 
 // ShipOrderCreateRequestReceiveAddress 收货地址
 type ShipOrderCreateRequestReceiveAddress struct {
-	ProvinceName  string `json:"provinceName,omitempty"`
-	ProvinceCode  int64  `json:"provinceCode,omitempty"`
-	CityName      string `json:"cityName,omitempty"`
-	CityCode      int64  `json:"cityCode,omitempty"`
-	DistrictName  string `json:"districtName,omitempty"`
-	DistrictCode  int64  `json:"districtCode,omitempty"`
-	ReceiverName  string `json:"receiverName,omitempty"`
-	DetailAddress string `json:"detailAddress,omitempty"`
-	Phone         string `json:"phone,omitempty"`
+	ProvinceName  string `json:"provinceName,omitempty"`  // 省
+	ProvinceCode  int64  `json:"provinceCode,omitempty"`  // 省份编码
+	CityName      string `json:"cityName,omitempty"`      // 市
+	CityCode      int64  `json:"cityCode,omitempty"`      // 市编码
+	DistrictName  string `json:"districtName,omitempty"`  // 区
+	DistrictCode  int64  `json:"districtCode,omitempty"`  // 区编码
+	ReceiverName  string `json:"receiverName,omitempty"`  // 收货人
+	DetailAddress string `json:"detailAddress,omitempty"` // 详细地址
+	Phone         string `json:"phone,omitempty"`         // 联系电话
 }
 
-type ShipOrderCreateRequestOrderItem struct {
-	DeliveryOrderCreateInfos []struct {
-		DeliverOrderDetailInfos []struct {
-			DeliverSkuNum int   `json:"deliverSkuNum"`
-			ProductSkuId  int64 `json:"productSkuId"`
-		} `json:"deliverOrderDetailInfos"` // 采购单创建信息列表
-		SubPurchaseOrderSn string `json:"subPurchaseOrderSn"`
-		PackageInfos       []struct {
-			PackageDetailSaveInfos []struct {
-				SkuNum       int   `json:"skuNum"`
-				ProductSkuId int64 `json:"productSkuId"`
-			} `json:"packageDetailSaveInfos"`
-		} `json:"packageInfos"`
-		DeliveryAddressId int64 `json:"deliveryAddressId"`
-	} `json:"deliveryOrderCreateInfos"` // 发货单创建组列表
-	ReceiveAddressInfo ShipOrderCreateRequestReceiveAddress `json:"receiveAddressInfo"` // 收货地址
-	SubWarehouseId     int64                                `json:"subWarehouseId"`     // 子仓 ID
+type ShipOrderCreateRequestDeliveryOrder struct {
+	DeliveryOrderCreateInfos []ShipOrderCreateRequestOrderInfo    `json:"deliveryOrderCreateInfos"` // 发货单创建组列表
+	ReceiveAddressInfo       ShipOrderCreateRequestReceiveAddress `json:"receiveAddressInfo"`       // 收货地址
+	SubWarehouseId           int64                                `json:"subWarehouseId"`           // 子仓 ID
 }
 
 type ShipOrderCreateRequest struct {
 	normal.Parameter
-	DeliveryOrderCreateGroupList []ShipOrderCreateRequestOrderItem `json:"deliveryOrderCreateGroupList"`
+	DeliveryOrderCreateGroupList []ShipOrderCreateRequestDeliveryOrder `json:"deliveryOrderCreateGroupList"` // 发货单创建组列表
 }
 
 func (m ShipOrderCreateRequest) Validate() error {
-	return nil
-	// return validation.ValidateStruct(&m,
-	// 	validation.Field(&m.Request, validation.When(m.Request != nil, validation.By(func(value interface{}) error {
-	//
-	// 		return nil
-	// 	}))),
-	// )
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.DeliveryOrderCreateGroupList, validation.Required.Error("发货单创建组列表不能为空。")),
+	)
 }
 
 // Create 创建发货单接口 V3
-// // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#HqGnA0
 func (s shipOrderService) Create(req ShipOrderCreateRequest) (ok bool, err error) {
 	if err = req.Validate(); err != nil {
 		return
