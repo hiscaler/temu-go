@@ -22,7 +22,7 @@ type StagingQueryParams struct {
 	PageSize               int      `json:"pageSize"`                         // 每页记录数不能为空
 	PurchaseStockType      int      `json:"purchaseStockType,omitempty"`      // 备货类型 0-普通备货 1-jit备货
 	IsCustomProduct        int      `json:"isCustomProduct,omitempty"`        // 是否为定制品
-	SubWarehouseId         int64    `json:"subWarehouseId,omitempty"`         // 收货子仓
+	SubWarehouseId         int      `json:"subWarehouseId,omitempty"`         // 收货子仓
 	InventoryRegion        []int    `json:"inventoryRegion,omitempty"`        // DOMESTIC(1, "国内备货"), OVERSEAS(2, "海外备货"), BOUNDED_WAREHOUSE(3, "保税仓备货"),
 	// Request struct {
 	//
@@ -72,6 +72,25 @@ func (s shipOrderStagingService) All(params StagingQueryParams) (items []entity.
 	items = result.Result.List
 	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Total)
 	return
+}
+
+// One 搜索单个发货台数据
+func (s shipOrderStagingService) One(subPurchaseOrderSn string) (item entity.ShipOrderStaging, err error) {
+	params := StagingQueryParams{
+		Page:                   1,
+		PageSize:               10,
+		SubPurchaseOrderSnList: []string{subPurchaseOrderSn},
+	}
+
+	items, _, _, _, err := s.All(params)
+	if err != nil {
+		return
+	}
+	if len(items) == 0 {
+		return item, ErrNotFound
+	}
+
+	return items[0], nil
 }
 
 // 加入发货台

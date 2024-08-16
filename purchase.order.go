@@ -22,8 +22,8 @@ type PurchaseOrderQueryParams struct {
 	SubPurchaseOrderSnList          []string `json:"subPurchaseOrderSnList,omitempty"`          // 订单号（采购子单号）
 	ProductSnList                   []int    `json:"productSnList,omitempty"`                   // 货号列表
 	ProductSkcIdList                []int    `json:"productSkcIdList,omitempty"`                // skc列表
-	PurchaseTimeFrom                int64    `json:"purchaseTimeFrom,omitempty"`                // 下单时间-开始：毫秒
-	PurchaseTimeTo                  int64    `json:"purchaseTimeTo,omitempty"`                  // 下单时间-结束：毫秒
+	PurchaseTimeFrom                int      `json:"purchaseTimeFrom,omitempty"`                // 下单时间-开始：毫秒
+	PurchaseTimeTo                  int      `json:"purchaseTimeTo,omitempty"`                  // 下单时间-结束：毫秒
 	DeliverOrderSnList              []string `json:"deliverOrderSnList,omitempty"`              // 发货单号列表
 	IsDelayDeliver                  bool     `json:"isDelayDeliver,omitempty"`                  // 是否延迟发货
 	IsDelayArrival                  bool     `json:"isDelayArrival,omitempty"`                  // 是否延迟到货

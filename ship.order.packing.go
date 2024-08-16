@@ -9,8 +9,8 @@ type shipOrderPackingService service
 
 type ShipOrderPackingSendRequest struct {
 	normal.Parameter
-	DeliverMethod       int64    `json:"deliverMethod"`       // 发货方式
-	DeliveryAddressId   int64    `json:"deliveryAddressId"`   // 发货地址 ID
+	DeliverMethod       int      `json:"deliverMethod"`       // 发货方式
+	DeliveryAddressId   int      `json:"deliveryAddressId"`   // 发货地址 ID
 	DeliveryOrderSnList []string `json:"deliveryOrderSnList"` // 发货单号
 	SelfDeliveryInfo    struct {
 		DriverUid             int    `json:"driverUid"`             // 司机uid
@@ -21,20 +21,20 @@ type ShipOrderPackingSendRequest struct {
 		ExpressPackageNum     int    `json:"expressPackageNum"`     // 发货总箱数
 	} `json:"selfDeliveryInfo"` // 自送信息
 	ThirdPartyDeliveryInfo struct {
-		ExpressCompanyId          int64   `json:"expressCompanyId"`          // 快递公司Id
-		TmsChannelId              int64   `json:"tmsChannelId"`              // TMS快递产品类型ID
+		ExpressCompanyId          int     `json:"expressCompanyId"`          // 快递公司Id
+		TmsChannelId              int     `json:"tmsChannelId"`              // TMS快递产品类型ID
 		ExpressCompanyName        string  `json:"expressCompanyName"`        // 快递公司名称
 		StandbyExpress            bool    `json:"standbyExpress"`            // 是否是备用快递公司
 		ExpressDeliverySn         string  `json:"expressDeliverySn"`         // 快递单号
-		PredictTotalPackageWeight int64   `json:"predictTotalPackageWeight"` // 预估总包裹重量不能为空,单位克.总量必须大于等于1千克且为整千克值
-		ExpectPickUpGoodsTime     int64   `json:"expectPickUpGoodsTime"`     // 预约取货时间
+		PredictTotalPackageWeight int     `json:"predictTotalPackageWeight"` // 预估总包裹重量不能为空,单位克.总量必须大于等于1千克且为整千克值
+		ExpectPickUpGoodsTime     int     `json:"expectPickUpGoodsTime"`     // 预约取货时间
 		ExpressPackageNum         int     `json:"expressPackageNum"`         // 交接给快递公司的包裹数
 		MinChargeAmount           float64 `json:"minChargeAmount"`           // 最小预估运费（单位元）
 		MaxChargeAmount           float64 `json:"maxChargeAmount"`           // 最大预估运费（单位元）
-		PredictId                 int64   `json:"predictId"`                 // 预测ID
+		PredictId                 int     `json:"predictId"`                 // 预测ID
 	} `json:"thirdPartyDeliveryInfo"` // 公司指定物流
 	ThirdPartyExpressDeliveryInfoVO struct {
-		ExpressCompanyId   int64  `json:"expressCompanyId"`   // 快递公司Id
+		ExpressCompanyId   int    `json:"expressCompanyId"`   // 快递公司Id
 		ExpressCompanyName string `json:"expressCompanyName"` // 快递公司名称
 		ExpressDeliverySn  string `json:"expressDeliverySn"`  // 快递单号
 		ExpressPackageNum  int    `json:"expressPackageNum"`  // 发货总箱数

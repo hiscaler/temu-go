@@ -16,10 +16,10 @@ type ShipOrderQueryParams struct {
 	SubPurchaseOrderSnList []string `json:"subPurchaseOrderSnList,omitempty"` // 子采购单号列表
 	ExpressDeliverySnList  []string `json:"expressDeliverySnList,omitempty"`  // 快递单号列表
 	SkcExtCodeList         []string `json:"skcExtCodeList,omitempty"`         // 货号列表
-	ProductSkcIdList       []int64  `json:"productSkcIdList,omitempty"`       // skcId列表
-	SubWarehouseIdList     []int64  `json:"subWarehouseIdList,omitempty"`     // 收货子仓列表
-	DeliverTimeFrom        int64    `json:"deliverTimeFrom,omitempty"`        // 发货时间-开始时间
-	DeliverTimeTo          int64    `json:"deliverTimeTo,omitempty"`          // 发货时间-结束时间
+	ProductSkcIdList       []int    `json:"productSkcIdList,omitempty"`       // skcId列表
+	SubWarehouseIdList     []int    `json:"subWarehouseIdList,omitempty"`     // 收货子仓列表
+	DeliverTimeFrom        int      `json:"deliverTimeFrom,omitempty"`        // 发货时间-开始时间
+	DeliverTimeTo          int      `json:"deliverTimeTo,omitempty"`          // 发货时间-结束时间
 	SettlementType         int      `json:"settlementType,omitempty"`         // 结算类型 0-非vmi 1-vmi
 	IsFirstOrder           bool     `json:"isFirstOrder,omitempty"`           // 是否首单
 	UrgencyType            bool     `json:"urgencyType,omitempty"`            // 是否是紧急发货单，0-普通 1-急采
@@ -28,11 +28,8 @@ type ShipOrderQueryParams struct {
 	PageSize               int      `json:"pageSize"`                         // 每页记录数不能为空
 	PurchaseStockType      int      `json:"purchaseStockType,omitempty"`      // 备货类型 0-普通备货 1-jit备货
 	IsCustomProduct        int      `json:"isCustomProduct,omitempty"`        // 是否为定制品
-	SubWarehouseId         int64    `json:"subWarehouseId,omitempty"`         // 收货子仓
+	SubWarehouseId         int      `json:"subWarehouseId,omitempty"`         // 收货子仓
 	InventoryRegion        []int    `json:"inventoryRegion,omitempty"`        // DOMESTIC(1, "国内备货"), OVERSEAS(2, "海外备货"), BOUNDED_WAREHOUSE(3, "保税仓备货"),
-	// Request struct {
-	//
-	// } `json:"request"`
 }
 
 func (m ShipOrderQueryParams) Validate() error {
@@ -85,8 +82,8 @@ func (s shipOrderService) All(params ShipOrderQueryParams) (items []entity.ShipO
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#HqGnA0
 
 type ShipOrderCreateRequestOrderDetailInfo struct {
-	DeliverSkuNum int   `json:"deliverSkuNum"` // 发货sku数目
-	ProductSkuId  int64 `json:"productSkuId"`  // 定制品，传定制品id；非定制品，传货品 skuId
+	DeliverSkuNum int `json:"deliverSkuNum"` // 发货sku数目
+	ProductSkuId  int `json:"productSkuId"`  // 定制品，传定制品id；非定制品，传货品 skuId
 }
 
 // ShipOrderCreateRequestOrderPackage 包裹信息
@@ -95,25 +92,25 @@ type ShipOrderCreateRequestOrderPackage struct {
 }
 
 type ShipOrderCreateRequestPackageInfo struct {
-	SkuNum       int   `json:"skuNum"`       // 发货 sku 数目
-	ProductSkuId int64 `json:"productSkuId"` // skuId
+	SkuNum       int `json:"skuNum"`       // 发货 sku 数目
+	ProductSkuId int `json:"productSkuId"` // skuId
 }
 
 type ShipOrderCreateRequestOrderInfo struct {
 	DeliverOrderDetailInfos []ShipOrderCreateRequestOrderDetailInfo `json:"deliverOrderDetailInfos"` // 采购单创建信息列表
 	SubPurchaseOrderSn      string                                  `json:"subPurchaseOrderSn"`      // 采购子单号
 	PackageInfos            []ShipOrderCreateRequestOrderPackage    `json:"packageInfos"`            //	包裹信息列表
-	DeliveryAddressId       int64                                   `json:"deliveryAddressId"`       // 发货地址 ID
+	DeliveryAddressId       int                                     `json:"deliveryAddressId"`       // 发货地址 ID
 }
 
 // ShipOrderCreateRequestReceiveAddress 收货地址
 type ShipOrderCreateRequestReceiveAddress struct {
 	ProvinceName  string `json:"provinceName,omitempty"`  // 省
-	ProvinceCode  int64  `json:"provinceCode,omitempty"`  // 省份编码
+	ProvinceCode  int    `json:"provinceCode,omitempty"`  // 省份编码
 	CityName      string `json:"cityName,omitempty"`      // 市
-	CityCode      int64  `json:"cityCode,omitempty"`      // 市编码
+	CityCode      int    `json:"cityCode,omitempty"`      // 市编码
 	DistrictName  string `json:"districtName,omitempty"`  // 区
-	DistrictCode  int64  `json:"districtCode,omitempty"`  // 区编码
+	DistrictCode  int    `json:"districtCode,omitempty"`  // 区编码
 	ReceiverName  string `json:"receiverName,omitempty"`  // 收货人
 	DetailAddress string `json:"detailAddress,omitempty"` // 详细地址
 	Phone         string `json:"phone,omitempty"`         // 联系电话
@@ -122,7 +119,7 @@ type ShipOrderCreateRequestReceiveAddress struct {
 type ShipOrderCreateRequestDeliveryOrder struct {
 	DeliveryOrderCreateInfos []ShipOrderCreateRequestOrderInfo    `json:"deliveryOrderCreateInfos"` // 发货单创建组列表
 	ReceiveAddressInfo       ShipOrderCreateRequestReceiveAddress `json:"receiveAddressInfo"`       // 收货地址
-	SubWarehouseId           int64                                `json:"subWarehouseId"`           // 子仓 ID
+	SubWarehouseId           int                                  `json:"subWarehouseId"`           // 子仓 ID
 }
 
 type ShipOrderCreateRequest struct {

@@ -50,13 +50,13 @@ type ShipOrderPackageEditRequest struct {
 	normal.Parameter
 	DeliveryOrderSn         string `json:"deliveryOrderSn"` // 发货单号
 	DeliverOrderDetailInfos struct {
-		DeliverSkuNum int   `json:"deliverSkuNum"` // 发货sku数目
-		ProductSkuId  int64 `json:"productSkuId"`  // skuId
+		DeliverSkuNum int `json:"deliverSkuNum"` // 发货sku数目
+		ProductSkuId  int `json:"productSkuId"`  // skuId
 	} `json:"deliverOrderDetailInfos"` // 发货单详情列表
 	PackageInfos struct {
 		PackageDetailSaveInfos struct {
-			SkuNum       int   `json:"skuNum"`       // 发货sku数目
-			ProductSkuId int64 `json:"productSkuId"` // skuId
+			SkuNum       int `json:"skuNum"`       // 发货sku数目
+			ProductSkuId int `json:"productSkuId"` // skuId
 		} `json:"packageDetailSaveInfos"` // 包裹明细
 	} `json:"packageInfos"` // 包裹信息列表
 }

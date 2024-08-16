@@ -10,7 +10,7 @@ type GoodsSales struct {
 			ClassName                      string `json:"className"`
 			LackQuantity                   int    `json:"lackQuantity"`
 			LastSevenDaysSaleVolume        int    `json:"lastSevenDaysSaleVolume"`
-			ProductSkuID                   int64  `json:"productSkuId"`
+			ProductSkuID                   int  `json:"productSkuId"`
 			LastThirtyDaysSaleVolume       int    `json:"lastThirtyDaysSaleVolume"`
 			AvailableSaleDays              any    `json:"availableSaleDays"`
 			TodaySaleVolume                int    `json:"todaySaleVolume"`

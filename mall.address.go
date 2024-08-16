@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"errors"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 )
@@ -25,4 +26,19 @@ func (s mallAddressService) All() (items []entity.MallAddress, err error) {
 	}
 
 	return result.Result, nil
+}
+
+func (s mallAddressService) One(id int) (address entity.MallAddress, err error) {
+	items, err := s.All()
+	if err != nil {
+		return
+	}
+
+	for _, item := range items {
+		if item.ID == id {
+			return item, nil
+		}
+	}
+
+	return address, errors.New("not found")
 }

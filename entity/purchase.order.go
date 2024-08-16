@@ -18,9 +18,9 @@ type PurchaseOrder struct {
 			CurrencyType                 string      `json:"currencyType"`
 			ClassName                    string      `json:"className"`
 			RealReceiveAuthenticQuantity int         `json:"realReceiveAuthenticQuantity"`
-			FulfilmentProductSkuId       int64       `json:"fulfilmentProductSkuId"`
+			FulfilmentProductSkuId       int         `json:"fulfilmentProductSkuId"`
 			CustomizationType            int         `json:"customizationType"`
-			ProductSkuId                 int64       `json:"productSkuId"`
+			ProductSkuId                 int         `json:"productSkuId"`
 			DeliverQuantity              int         `json:"deliverQuantity"`
 			ThumbUrlList                 []string    `json:"thumbUrlList"`
 			QcResult                     interface{} `json:"qcResult"`
@@ -32,15 +32,15 @@ type PurchaseOrder struct {
 			DeliverTime                      null.Int    `json:"deliverTime"`
 			ReceiveWarehouseId               null.Int    `json:"receiveWarehouseId"`
 			ReceiveWarehouseName             null.String `json:"receiveWarehouseName"`
-			ExpectLatestDeliverTimeOrDefault int64       `json:"expectLatestDeliverTimeOrDefault"`
-			ExpectLatestArrivalTimeOrDefault int64       `json:"expectLatestArrivalTimeOrDefault"`
+			ExpectLatestDeliverTimeOrDefault int         `json:"expectLatestDeliverTimeOrDefault"`
+			ExpectLatestArrivalTimeOrDefault int         `json:"expectLatestArrivalTimeOrDefault"`
 			DeliveryOrderSn                  null.String `json:"deliveryOrderSn"`
 		} `json:"deliverInfo"`
-		ProductSkcId         int64 `json:"productSkcId"`
-		ProductId            int   `json:"productId"`
-		HasQcBill            int   `json:"hasQcBill"`
-		SupplyStatus         int   `json:"supplyStatus"`
-		ApplyDeleteStatus    int   `json:"applyDeleteStatus"`
+		ProductSkcId         int `json:"productSkcId"`
+		ProductId            int `json:"productId"`
+		HasQcBill            int `json:"hasQcBill"`
+		SupplyStatus         int `json:"supplyStatus"`
+		ApplyDeleteStatus    int `json:"applyDeleteStatus"`
 		SkuQuantityTotalInfo struct {
 			CurrencyType                 interface{} `json:"currencyType"`
 			ClassName                    interface{} `json:"className"`
@@ -75,7 +75,7 @@ type PurchaseOrder struct {
 		SkuQcRejectItemList     interface{} `json:"skuQcRejectItemList"`
 		DefectiveTime           interface{} `json:"defectiveTime"`
 		TodayCanDeliver         bool        `json:"todayCanDeliver"`
-		PurchaseTime            int64       `json:"purchaseTime"`
+		PurchaseTime            int         `json:"purchaseTime"`
 		ApplyChangeSupplyStatus int         `json:"applyChangeSupplyStatus"`
 		Category                string      `json:"category"`
 	} `json:"subOrderForSupplierList"`
