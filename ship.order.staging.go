@@ -9,7 +9,7 @@ import (
 // 发货台服务
 type shipOrderStagingService service
 
-type StagingQueryParams struct {
+type ShipOrderStagingQueryParams struct {
 	normal.Parameter
 	SubPurchaseOrderSnList []string `json:"subPurchaseOrderSnList,omitempty"` // 子采购单号列表
 	SkcExtCode             []string `json:"skcExtCode,omitempty"`             // 货号列表
@@ -24,12 +24,9 @@ type StagingQueryParams struct {
 	IsCustomProduct        int      `json:"isCustomProduct,omitempty"`        // 是否为定制品
 	SubWarehouseId         int      `json:"subWarehouseId,omitempty"`         // 收货子仓
 	InventoryRegion        []int    `json:"inventoryRegion,omitempty"`        // DOMESTIC(1, "国内备货"), OVERSEAS(2, "海外备货"), BOUNDED_WAREHOUSE(3, "保税仓备货"),
-	// Request struct {
-	//
-	// } `json:"request"`
 }
 
-func (m StagingQueryParams) Validate() error {
+func (m ShipOrderStagingQueryParams) Validate() error {
 	return nil
 	// return validation.ValidateStruct(&m,
 	// 	validation.Field(&m.Request, validation.When(m.Request != nil, validation.By(func(value interface{}) error {
@@ -41,7 +38,7 @@ func (m StagingQueryParams) Validate() error {
 
 // All List all staging orders
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#NOA03y
-func (s shipOrderStagingService) All(params StagingQueryParams) (items []entity.ShipOrderStaging, total, totalPages int, isLastPage bool, err error) {
+func (s shipOrderStagingService) All(params ShipOrderStagingQueryParams) (items []entity.ShipOrderStaging, total, totalPages int, isLastPage bool, err error) {
 	if params.Page <= 0 {
 		params.Page = 1
 	}
@@ -76,7 +73,7 @@ func (s shipOrderStagingService) All(params StagingQueryParams) (items []entity.
 
 // One 搜索单个发货台数据
 func (s shipOrderStagingService) One(subPurchaseOrderSn string) (item entity.ShipOrderStaging, err error) {
-	params := StagingQueryParams{
+	params := ShipOrderStagingQueryParams{
 		Page:                   1,
 		PageSize:               10,
 		SubPurchaseOrderSnList: []string{subPurchaseOrderSn},
@@ -100,9 +97,19 @@ type ShipOrderStagingAddInfo struct {
 	DeliveryAddressType int    `json:"deliveryAddressType"` // 发货地址类型，1-内地，2-香港，内地主体（店铺货币选择CNY，默认入参1，其余主体选择2）
 }
 
+func (m ShipOrderStagingAddInfo) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SubPurchaseOrderSn, validation.Required.Error("采购子单号不能为空。")),
+		validation.Field(&m.DeliveryAddressType,
+			validation.Required.Error("发货地址类型不能为空。"),
+			validation.In(entity.DeliveryAddressTypeChineseMainland, entity.DeliveryAddressTypeChineseHongKong).Error("无效的发货地址类型。"),
+		),
+	)
+}
+
 type ShipOrderStagingAddRequest struct {
 	normal.Parameter
-	JoinInfoList []ShipOrderStagingAddInfo `json:"joinInfoList"`
+	JoinInfoList []ShipOrderStagingAddInfo `json:"joinInfoList"` // 加入发货台的信息列表
 }
 
 func (m ShipOrderStagingAddRequest) Validate() error {

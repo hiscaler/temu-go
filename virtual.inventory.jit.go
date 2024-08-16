@@ -57,6 +57,7 @@ func (s virtualInventoryJitService) Edit(request VirtualInventoryJitEditRequest)
 	if err = request.Validate(); err != nil {
 		return
 	}
+
 	var result = struct {
 		normal.Response
 		Result any `json:"result"`
@@ -68,9 +69,7 @@ func (s virtualInventoryJitService) Edit(request VirtualInventoryJitEditRequest)
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
-	if err != nil {
-		return
-	}
 
-	return true, nil
+	ok = err == nil
+	return
 }

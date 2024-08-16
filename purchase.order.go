@@ -8,9 +8,9 @@ import (
 
 type purchaseOrderService service
 
-// 采购单服务
+// 采购单（备货单）服务
 
-// 查询采购单列表V2
+// 查询采购单列表 V2
 
 type PurchaseOrderQueryParams struct {
 	normal.Parameter
@@ -55,7 +55,7 @@ func (m PurchaseOrderQueryParams) Validate() error {
 	)
 }
 
-// All 查询采购单列表V2
+// All 查询采购单列表 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Ip0Gso
 func (s purchaseOrderService) All(params PurchaseOrderQueryParams) (items []entity.PurchaseOrder, err error) {
 	if params.Page <= 0 {
@@ -89,7 +89,20 @@ func (s purchaseOrderService) All(params PurchaseOrderQueryParams) (items []enti
 	return result.Result.labelCodePageResult.Data, nil
 }
 
-// 申请备货（bg.purchaseorder.apply）
+// One 单个采购单查询
+func (s purchaseOrderService) One(subPurchaseOrderSn string) (item entity.PurchaseOrder, err error) {
+	items, err := s.All(PurchaseOrderQueryParams{SubPurchaseOrderSnList: []string{subPurchaseOrderSn}})
+	if err != nil {
+		return
+	}
+	if len(items) == 0 {
+		return item, ErrNotFound
+	}
+
+	return items[0], nil
+}
+
+// 申请备货
 
 type PurchaseOrderApplyRequest struct {
 	normal.Parameter
@@ -109,6 +122,8 @@ func (m PurchaseOrderApplyRequest) Validate() error {
 	)
 }
 
+// Apply 申请备货
+// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#nsjLx8
 func (s purchaseOrderService) Apply(request PurchaseOrderApplyRequest) (ok bool, err error) {
 	if err = request.Validate(); err != nil {
 		return
