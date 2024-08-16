@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -138,6 +139,7 @@ func (s barcodeService) BoxMarkPrintUrl(deliveryOrderSnList ...string) (dataKey 
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	var result = struct {
 		normal.Response
 		Result string `json:"result"`
@@ -150,11 +152,11 @@ func (s barcodeService) BoxMarkPrintUrl(deliveryOrderSnList ...string) (dataKey 
 		return
 	}
 
-	return result.Result, nil
+	return fmt.Sprintf("https://openapi.kuajingmaihuo.com/tool/print?dataKey=%s", result.Result), nil
 }
 
 // BoxMark 箱唛信息
-func (s barcodeService) BoxMark(deliveryOrderSnList ...string) (data []entity.BoxMarkInfo, err error) {
+func (s barcodeService) BoxMark(deliveryOrderSnList ...string) (items []entity.BoxMarkInfo, err error) {
 	params := BoxMarkBarcodeQueryParams{
 		ReturnDataKey:       false,
 		DeliveryOrderSnList: deliveryOrderSnList,
@@ -162,6 +164,7 @@ func (s barcodeService) BoxMark(deliveryOrderSnList ...string) (data []entity.Bo
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	var result = struct {
 		normal.Response
 		Result []entity.BoxMarkInfo `json:"result"`
