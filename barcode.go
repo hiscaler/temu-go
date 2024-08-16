@@ -129,13 +129,42 @@ func (m BoxMarkBarcodeQueryParams) Validate() error {
 	)
 }
 
-func (s barcodeService) BoxMark(params BoxMarkBarcodeQueryParams) (dataKey string, err error) {
+// BoxMarkPrintUrl 箱唛打印地址
+func (s barcodeService) BoxMarkPrintUrl(deliveryOrderSnList ...string) (dataKey string, err error) {
+	params := BoxMarkBarcodeQueryParams{
+		ReturnDataKey:       true,
+		DeliveryOrderSnList: deliveryOrderSnList,
+	}
 	if err = params.Validate(); err != nil {
 		return
 	}
 	var result = struct {
 		normal.Response
 		Result string `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.logistics.boxmarkinfo.get")
+	if err == nil {
+		err = parseResponse(resp, result.Response)
+	}
+	if err != nil {
+		return
+	}
+
+	return result.Result, nil
+}
+
+// BoxMark 箱唛信息
+func (s barcodeService) BoxMark(deliveryOrderSnList ...string) (data []entity.BoxMarkInfo, err error) {
+	params := BoxMarkBarcodeQueryParams{
+		ReturnDataKey:       false,
+		DeliveryOrderSnList: deliveryOrderSnList,
+	}
+	if err = params.Validate(); err != nil {
+		return
+	}
+	var result = struct {
+		normal.Response
+		Result []entity.BoxMarkInfo `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.logistics.boxmarkinfo.get")
 	if err == nil {
