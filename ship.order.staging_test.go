@@ -24,7 +24,7 @@ func TestShipOrderStagingService_Add(t *testing.T) {
 	reqJson := jsonx.ToJson(req, "{}")
 	ok, results, err := temuClient.Services.ShipOrderStaging.Add(req)
 	assert.Equalf(t, len(req.JoinInfoList), len(results), "Services.ShipOrderStaging.Add(%s)", reqJson)
-	assert.Equalf(t, err != nil, ok, "Services.ShipOrderStaging.Add(%s) ok", reqJson)
+	assert.Equalf(t, err == nil, ok, "Services.ShipOrderStaging.Add(%s) ok", reqJson)
 }
 
 func TestShipOrderStagingService_One(t *testing.T) {

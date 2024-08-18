@@ -14,5 +14,5 @@ type ShipOrderReceiveAddress struct {
 		ReceiverName  string `json:"receiverName"`  // 收货人
 		DetailAddress string `json:"detailAddress"` // 详细地址
 	} `json:"receiveAddressInfo"` // 收货地址信息
-	SubPurchaseOrderBasicVOList []any `json:"subPurchaseOrderBasicVOList"` // 子采购单号列表
+	SubPurchaseOrderSnList []string `json:"subPurchaseOrderSnList"` // 子采购单号列表
 }

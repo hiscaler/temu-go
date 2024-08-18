@@ -6,23 +6,17 @@ import (
 	"testing"
 )
 
-func Test_barcodeService_BoxMark(t *testing.T) {
-	params := BoxMarkBarcodeQueryParams{
-		ReturnDataKey:       true,
-		DeliveryOrderSnList: []string{"FH2408151907154"},
-	}
-	s, err := temuClient.Services.BarcodeService.BoxMark(params)
-	fmt.Println(s)
-	assert.Equalf(t, nil, err, "test1")
+var deliveryOrderSnList = []string{"FH2408151907154", "FH2408161777912"}
+
+func Test_barcodeService_BoxMarkPrintUrl(t *testing.T) {
+	url, err := temuClient.Services.BarcodeService.BoxMarkPrintUrl(deliveryOrderSnList...)
+	assert.Equal(t, nil, err, "Services.BarcodeService.BoxMarkPrintUrl(%#v)", deliveryOrderSnList)
+	assert.Contains(t, url, "https://openapi.kuajingmaihuo.com/tool/print?dataKey=")
 }
 
-func Test_barcodeService_CustomGoods(t *testing.T) {
-	params := CustomGoodsBarcodeQueryParams{
-		PersonalProductSkuIdList: []int{27040554473264},
-	}
-	s, err := temuClient.Services.BarcodeService.CustomGoods(params)
-	fmt.Println(s)
-	assert.Equalf(t, nil, err, "test1")
+func Test_barcodeService_BoxMark(t *testing.T) {
+	_, err := temuClient.Services.BarcodeService.BoxMark(deliveryOrderSnList...)
+	assert.Equal(t, nil, err, "Services.BarcodeService.BoxMark(%#v)", deliveryOrderSnList)
 }
 
 func Test_barcodeService_NormalGoods(t *testing.T) {

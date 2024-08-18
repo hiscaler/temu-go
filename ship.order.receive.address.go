@@ -3,6 +3,7 @@ package temu
 import (
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"strings"
 )
 
 // 大仓收货地址
@@ -38,11 +39,18 @@ func (s shipOrderReceiveAddressService) All(subPurchaseOrderSnList ...string) (i
 }
 
 // One [WIP] 查询单个备货单收货地址
-func (s shipOrderReceiveAddressService) One(subPurchaseOrderSn string) (item any, err error) {
-	_, err = s.All(subPurchaseOrderSn)
+func (s shipOrderReceiveAddressService) One(subPurchaseOrderSn string) (item entity.ShipOrderReceiveAddress, err error) {
+	items, err := s.All(subPurchaseOrderSn)
 	if err != nil {
 		return
 	}
 
-	return
+	for _, d := range items {
+		for _, sn := range d.SubPurchaseOrderSnList {
+			if strings.EqualFold(sn, subPurchaseOrderSn) {
+				return d, nil
+			}
+		}
+	}
+	return item, ErrNotFound
 }
