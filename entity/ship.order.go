@@ -1,5 +1,6 @@
 package entity
 
+// ShipOrder 发货单
 type ShipOrder struct {
 	ReceiveSkcNum                int    `json:"receiveSkcNum"`
 	ExpressPackageNum            int    `json:"expressPackageNum"`
