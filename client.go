@@ -33,6 +33,7 @@ const (
 )
 
 var ErrNotFound = errors.New("not found")
+var ErrInvalidParameters = errors.New("invalid parameters")
 
 type service struct {
 	debug      bool          // Is debug mode
