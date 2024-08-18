@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/nullx"
 	"github.com/hiscaler/temu-go/entity"
@@ -166,6 +167,7 @@ func (s shipOrderStagingService) Add(req ShipOrderStagingAddRequest) (ok bool, r
 			return item.Success == false
 		})
 		ok = !exists
+		err = errors.New("加入发货台有误。")
 	} else {
 		ok = true
 		lo.ForEach(results, func(item entity.ShipOrderStagingAddResult, index int) {
