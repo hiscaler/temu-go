@@ -39,7 +39,10 @@ func (s *goodsSizeChartService) All(params GoodsSizeChartQueryParams) (items []e
 			}
 		} `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.goods.sizecharts.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.goods.sizecharts.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}

@@ -17,7 +17,9 @@ func (s mallAddressService) All() (items []entity.MallAddress, err error) {
 		normal.Response
 		Result []entity.MallAddress `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetResult(&result).Post("bg.mall.address.get")
+	resp, err := s.httpClient.R().
+		SetResult(&result).
+		Post("bg.mall.address.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}

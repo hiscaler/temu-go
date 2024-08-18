@@ -62,7 +62,10 @@ func (s shipOrderPackingService) Send(request ShipOrderPackingSendRequest) (numb
 			ExpressBatchSn string `json:"expressBatchSn"` // 创建生成的发货批次号
 		} `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(request).SetResult(&result).Post("bg.shiporder.packing.send")
+	resp, err := s.httpClient.R().
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.shiporder.packing.send")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
@@ -96,7 +99,10 @@ func (s shipOrderPackingService) Match(request ShipOrderPackingMatchRequest) (it
 		normal.Response
 		Result []any `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(request).SetResult(&result).Post("bg.shiporder.packing.match")
+	resp, err := s.httpClient.R().
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.shiporder.packing.match")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}

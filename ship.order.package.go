@@ -33,7 +33,10 @@ func (s shipOrderPackageService) One(deliveryOrderSn string) (data entity.ShipOr
 		normal.Response
 		Result entity.ShipOrderPackage `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.shiporder.package.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.shiporder.package.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
@@ -81,7 +84,10 @@ func (s shipOrderPackageService) Update(req ShipOrderPackageUpdateRequest) (ok b
 		normal.Response
 		Result any `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(req).SetResult(&result).Post("bg.shiporder.package.edit")
+	resp, err := s.httpClient.R().
+		SetBody(req).
+		SetResult(&result).
+		Post("bg.shiporder.package.edit")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}

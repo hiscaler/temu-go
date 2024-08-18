@@ -103,7 +103,10 @@ func (s purchaseOrderService) All(params PurchaseOrderQueryParams) (items []enti
 			}
 		} `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.purchaseorderv2.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.purchaseorderv2.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
@@ -157,7 +160,10 @@ func (s purchaseOrderService) Apply(request PurchaseOrderApplyRequest) (ok bool,
 		normal.Response
 		Result any `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(request).SetResult(&result).Post("bg.purchaseorder.apply")
+	resp, err := s.httpClient.R().
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.purchaseorder.apply")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}

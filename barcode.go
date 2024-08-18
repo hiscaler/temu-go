@@ -50,7 +50,10 @@ func (s barcodeService) NormalGoods(params NormalGoodsBarcodeQueryParams) (items
 			}
 		} `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.goods.labelv2.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.goods.labelv2.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
@@ -105,7 +108,10 @@ func (s barcodeService) CustomGoods(params CustomGoodsBarcodeQueryParams) (items
 			}
 		} `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.goods.custom.label.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.goods.custom.label.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
@@ -144,7 +150,10 @@ func (s barcodeService) BoxMarkPrintUrl(deliveryOrderSnList ...string) (dataKey 
 		normal.Response
 		Result string `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.logistics.boxmarkinfo.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.logistics.boxmarkinfo.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
@@ -169,7 +178,10 @@ func (s barcodeService) BoxMark(deliveryOrderSnList ...string) (items []entity.B
 		normal.Response
 		Result []entity.BoxMarkInfo `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.logistics.boxmarkinfo.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.logistics.boxmarkinfo.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}

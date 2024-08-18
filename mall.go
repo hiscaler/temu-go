@@ -16,7 +16,9 @@ func (s shipOrderStagingService) IsSemiManaged() (bool, error) {
 			SemiManagedMall bool `json:"semiManagedMall"`
 		} `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetResult(&result).Post("bg.mall.info.get")
+	resp, err := s.httpClient.R().
+		SetResult(&result).
+		Post("bg.mall.info.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
@@ -34,7 +36,9 @@ func (s shipOrderStagingService) Permission() (p entity.MallPermission, err erro
 		normal.Response
 		Result entity.MallPermission `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetResult(&result).Post("bg.open.accesstoken.info.get")
+	resp, err := s.httpClient.R().
+		SetResult(&result).
+		Post("bg.open.accesstoken.info.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}

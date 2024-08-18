@@ -64,7 +64,10 @@ func (s shipOrderService) All(params ShipOrderQueryParams) (items []entity.ShipO
 			List  []entity.ShipOrder `json:"list"`
 		} `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.shiporderv2.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.shiporderv2.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
@@ -143,7 +146,10 @@ func (s shipOrderService) Create(req ShipOrderCreateRequest) (ok bool, err error
 		normal.Response
 		Result any `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(req).SetResult(&result).Post("bg.shiporderv3.create")
+	resp, err := s.httpClient.R().
+		SetBody(req).
+		SetResult(&result).
+		Post("bg.shiporderv3.create")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
@@ -164,7 +170,10 @@ func (s shipOrderService) Cancel(deliveryOrderSn int) (ok bool, err error) {
 		Result any `json:"result"`
 	}{}
 	req := normal.Parameter{}
-	resp, err := s.httpClient.R().SetBody(req).SetResult(&result).Post("bg.shiporder.cancel")
+	resp, err := s.httpClient.R().
+		SetBody(req).
+		SetResult(&result).
+		Post("bg.shiporder.cancel")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}

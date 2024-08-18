@@ -30,7 +30,10 @@ func (s *goodsSizeChartClassService) All(params GoodsSizeChartClassQueryParams) 
 			SizeSpecClassCat []entity.GoodsSizeChartClass `json:"sizeSpecClassCat"` // 尺码分类对象
 		} `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.goods.sizecharts.class.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.goods.sizecharts.class.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}

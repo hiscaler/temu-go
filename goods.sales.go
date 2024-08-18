@@ -62,7 +62,10 @@ func (s goodsSalesService) All(params GoodsSalesQueryParams) (items []entity.Goo
 			SubOrderList []entity.GoodsSales `json:"subOrderList"` // 订单信息
 		} `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.goods.sales.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.goods.sales.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}

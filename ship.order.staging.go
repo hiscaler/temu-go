@@ -55,7 +55,10 @@ func (s shipOrderStagingService) All(params ShipOrderStagingQueryParams) (items 
 			List  []entity.ShipOrderStaging `json:"list"`
 		} `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(params).SetResult(&result).Post("bg.shiporder.staging.get")
+	resp, err := s.httpClient.R().
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.shiporder.staging.get")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
@@ -126,7 +129,10 @@ func (s shipOrderStagingService) Add(req ShipOrderStagingAddRequest) (ok bool, e
 		normal.Response
 		Result any `json:"result"`
 	}{}
-	resp, err := s.httpClient.R().SetBody(req).SetResult(&result).Post("bg.shiporder.staging.add")
+	resp, err := s.httpClient.R().
+		SetBody(req).
+		SetResult(&result).
+		Post("bg.shiporder.staging.add")
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
