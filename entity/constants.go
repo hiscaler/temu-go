@@ -12,6 +12,12 @@ const (
 	SettlementTypeVMI    = 1 // vmi(备货)
 )
 
+// 备货类型
+const (
+	PurchaseStockTypeNormal = 0 // 普通备货
+	PurchaseStockTypeJIT    = 1 // JIT 备货
+)
+
 // 备货单状态
 // 0-待接单；
 // 1-已接单，待发货；

@@ -27,13 +27,10 @@ type ShipOrderStagingQueryParams struct {
 }
 
 func (m ShipOrderStagingQueryParams) Validate() error {
-	return nil
-	// return validation.ValidateStruct(&m,
-	// 	validation.Field(&m.Request, validation.When(m.Request != nil, validation.By(func(value interface{}) error {
-	//
-	// 		return nil
-	// 	}))),
-	// )
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SettlementType, validation.When(validation.IsEmpty(m.SettlementType), validation.In(entity.SettlementTypeVMI, entity.SettlementTypeNotVMI).Error("无效的结算类型。"))),
+		validation.Field(&m.PurchaseStockType, validation.When(validation.IsEmpty(m.PurchaseStockType), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的结算类型。"))),
+	)
 }
 
 // All List all staging orders

@@ -45,7 +45,9 @@ func (s shipOrderPackageService) One(deliveryOrderSn string) (data entity.ShipOr
 	return
 }
 
-type ShipOrderPackageEditRequest struct {
+// 发货包裹编辑
+
+type ShipOrderPackageUpdateRequest struct {
 	normal.Parameter
 	DeliveryOrderSn         string `json:"deliveryOrderSn"` // 发货单号
 	DeliverOrderDetailInfos struct {
@@ -60,19 +62,17 @@ type ShipOrderPackageEditRequest struct {
 	} `json:"packageInfos"` // 包裹信息列表
 }
 
-func (m ShipOrderPackageEditRequest) Validate() error {
-	return nil
-	// return validation.ValidateStruct(&m,
-	// 	validation.Field(&m.Request, validation.When(m.Request != nil, validation.By(func(value interface{}) error {
-	//
-	// 		return nil
-	// 	}))),
-	// )
+func (m ShipOrderPackageUpdateRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.DeliveryOrderSn, validation.Required.Error("发货单号不能为空。")),
+		validation.Field(&m.DeliverOrderDetailInfos, validation.Required.Error("发货单详情列表不能为空。")),
+		validation.Field(&m.PackageInfos, validation.Required.Error("包裹信息列表不能为空。")),
+	)
 }
 
 // Update 发货包裹编辑
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#qSU56c
-func (s shipOrderPackageService) Update(req ShipOrderPackageEditRequest) (ok bool, err error) {
+func (s shipOrderPackageService) Update(req ShipOrderPackageUpdateRequest) (ok bool, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
