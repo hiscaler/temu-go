@@ -6,6 +6,7 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
+// 商品管理数据服务
 type goodsSalesService service
 
 type GoodsSalesQueryParams struct {
@@ -72,4 +73,20 @@ func (s goodsSalesService) All(params GoodsSalesQueryParams) (items []entity.Goo
 	}
 
 	return result.Result.SubOrderList, nil
+}
+
+// One 根据商品 SKC ID 查询
+func (s goodsSalesService) One(productSkcId int) (item entity.GoodsSales, err error) {
+	items, err := s.All(GoodsSalesQueryParams{ProductSkcIdList: []int{productSkcId}})
+	if err != nil {
+		return
+	}
+
+	for _, sales := range items {
+		if sales.ProductSkcID == productSkcId {
+			return sales, nil
+		}
+	}
+
+	return item, ErrNotFound
 }
