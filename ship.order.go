@@ -1,7 +1,6 @@
 package temu
 
 import (
-	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -11,7 +10,7 @@ import (
 type shipOrderService service
 
 type ShipOrderQueryParams struct {
-	normal.Parameter
+	normal.ParameterWithPager
 	DeliveryOrderSnList    []string `json:"deliveryOrderSnList,omitempty"`    // 发货单号列表
 	SubPurchaseOrderSnList []string `json:"subPurchaseOrderSnList,omitempty"` // 子采购单号列表
 	ExpressDeliverySnList  []string `json:"expressDeliverySnList,omitempty"`  // 快递单号列表
@@ -24,8 +23,6 @@ type ShipOrderQueryParams struct {
 	IsFirstOrder           bool     `json:"isFirstOrder,omitempty"`           // 是否首单
 	UrgencyType            bool     `json:"urgencyType,omitempty"`            // 是否是紧急发货单，0-普通 1-急采
 	IsJit                  bool     `json:"isJit,omitempty"`                  // 是否是jit，true:jit
-	Page                   int      `json:"pageNo"`                           // 页号， 从1开始
-	PageSize               int      `json:"pageSize"`                         // 每页记录数不能为空
 	PurchaseStockType      int      `json:"purchaseStockType,omitempty"`      // 备货类型 0-普通备货 1-jit备货
 	IsCustomProduct        int      `json:"isCustomProduct,omitempty"`        // 是否为定制品
 	SubWarehouseId         int      `json:"subWarehouseId,omitempty"`         // 收货子仓
@@ -33,26 +30,17 @@ type ShipOrderQueryParams struct {
 }
 
 func (m ShipOrderQueryParams) Validate() error {
-	return nil
-	// return validation.ValidateStruct(&m,
-	// 	validation.Field(&m.Request, validation.When(m.Request != nil, validation.By(func(value interface{}) error {
-	//
-	// 		return nil
-	// 	}))),
-	// )
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SettlementType, validation.When(!validation.IsEmpty(m.SettlementType), validation.In(entity.SettlementTypeVMI, entity.SettlementTypeNotVMI).Error("无效的结算类型。"))),
+		validation.Field(&m.UrgencyType, validation.When(!validation.IsEmpty(m.UrgencyType), validation.In(entity.ShipOrderTypeNormal, entity.ShipOrderTypeUrgency).Error("无效的加急类型。"))),
+		validation.Field(&m.PurchaseStockType, validation.When(!validation.IsEmpty(m.PurchaseStockType), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的备货类型。"))),
+	)
 }
 
 // All 查询发货单 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#B7c51j
 func (s shipOrderService) All(params ShipOrderQueryParams) (items []entity.ShipOrder, total, totalPages int, isLastPage bool, err error) {
-	if params.Page <= 0 {
-		params.Page = 1
-	}
-	if params.PageSize <= 0 {
-		params.PageSize = 10
-	} else if params.PageSize > 500 {
-		params.PageSize = 500
-	}
+	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -158,10 +146,24 @@ func (s shipOrderService) Create(req ShipOrderCreateRequest) (ok bool, err error
 	return
 }
 
-// Cancel 取消发货单（bg.shiporder.cancel）
+// 取消发货单
+
+type ShipOrderCancelRequest struct {
+	normal.Parameter
+	DeliveryOrderSn int `json:"deliveryOrderSn"` // 发货单 ID
+}
+
+func (m ShipOrderCancelRequest) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.DeliveryOrderSn, validation.Required.Error("发货单 ID 不能为空。")),
+	)
+}
+
+// Cancel 取消发货单
+// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#UywT8E
 func (s shipOrderService) Cancel(deliveryOrderSn int) (ok bool, err error) {
-	if deliveryOrderSn == 0 {
-		err = errors.New("发货单 ID")
+	req := ShipOrderCancelRequest{DeliveryOrderSn: deliveryOrderSn}
+	if err = req.Validate(); err != nil {
 		return
 	}
 
@@ -169,7 +171,6 @@ func (s shipOrderService) Cancel(deliveryOrderSn int) (ok bool, err error) {
 		normal.Response
 		Result any `json:"result"`
 	}{}
-	req := normal.Parameter{}
 	resp, err := s.httpClient.R().
 		SetBody(req).
 		SetResult(&result).

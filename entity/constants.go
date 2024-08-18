@@ -18,6 +18,12 @@ const (
 	PurchaseStockTypeJIT    = 1 // JIT 备货
 )
 
+// 发货单紧急发货类型
+const (
+	ShipOrderTypeNormal  = 0 // 普通
+	ShipOrderTypeUrgency = 1 // 加急
+)
+
 // 备货单状态
 // 0-待接单；
 // 1-已接单，待发货；
