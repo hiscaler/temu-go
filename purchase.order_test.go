@@ -1,19 +1,31 @@
 package temu
 
 import (
-	"fmt"
+	"github.com/hiscaler/temu-go/entity"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func Test_purchaseOrderService_All(t *testing.T) {
 	params := PurchaseOrderQueryParams{
-		Page:                   1,
-		PageSize:               10,
-		SettlementType:         1,
-		SubPurchaseOrderSnList: []string{"WB2408152983266"},
+		SubPurchaseOrderSnList:      []string{},
+		OriginalPurchaseOrderSnList: []string{},
 	}
-	s, err := temuClient.Services.PurchaseOrderService.All(params)
-	fmt.Println(s)
-	fmt.Println(err)
-	// assert.Equalf(t, nil, err, "test1")
+	items, _, err := temuClient.Services.PurchaseOrderService.All(params)
+	assert.Equalf(t, nil, err, "Services.PurchaseOrderService.All(%#v) err", params)
+
+	if len(items) != 0 {
+		item := items[0]
+		var order entity.PurchaseOrder
+
+		// 根据母订单号查询
+		order, err = temuClient.Services.PurchaseOrderService.One(item.OriginalPurchaseOrderSn)
+		assert.Equalf(t, nil, err, "Services.PurchaseOrderService.One(%s)", item.OriginalPurchaseOrderSn)
+		assert.Equalf(t, item, order, "Services.PurchaseOrderService.One(%s)", item.OriginalPurchaseOrderSn)
+
+		// 根据子订单号查询
+		order, err = temuClient.Services.PurchaseOrderService.One(item.SubPurchaseOrderSn)
+		assert.Equalf(t, nil, err, "Services.PurchaseOrderService.One(%s)", item.SubPurchaseOrderSn)
+		assert.Equalf(t, item, order, "Services.PurchaseOrderService.One(%s)", item.SubPurchaseOrderSn)
+	}
 }

@@ -6,6 +6,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"strings"
 )
 
 type purchaseOrderService service
@@ -16,7 +17,7 @@ type purchaseOrderService service
 
 type PurchaseOrderQueryParams struct {
 	normal.ParameterWithPager
-	SettlementType                  int      `json:"settlementType"`                            // 结算类型 0-非vmi(采购) 1-vmi(备货)
+	SettlementType                  int      `json:"settlementType,omitempty"`                  // 结算类型 0-非vmi(采购) 1-vmi(备货)
 	UrgencyType                     int      `json:"urgencyType,omitempty"`                     // 是否紧急 0-否 1-是
 	StatusList                      []int    `json:"statusList,omitempty"`                      // 订单状态 0-待接单；1-已接单，待发货；2-已送货；3-已收货；4-已拒收；5-已验收，全部退回；6-已验收；7-已入库；8-作废；9-已超时；10-已取消
 	SubPurchaseOrderSnList          []string `json:"subPurchaseOrderSnList,omitempty"`          // 订单号（采购子单号）
@@ -49,12 +50,10 @@ type PurchaseOrderQueryParams struct {
 
 func (m PurchaseOrderQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.Page, validation.Required.Error("页码不能为空。")),
-		validation.Field(&m.PageSize, validation.Required.Error("页面大小不能为空。")),
 		validation.Field(&m.SettlementType,
-			validation.Required.Error("结算类型不能为空。"),
-			validation.In(entity.SettlementTypeNotVMI, entity.SettlementTypeVMI).Error("无效的结算类型。"),
-		),
+			validation.When(!validation.IsEmpty(m.SettlementType),
+				validation.In(entity.SettlementTypeNotVMI, entity.SettlementTypeVMI).Error("无效的结算类型。"),
+			)),
 		validation.Field(&m.SourceList,
 			validation.When(len(m.SourceList) > 0, validation.By(func(value interface{}) error {
 				sources, ok := value.([]int)
@@ -80,7 +79,7 @@ func (m PurchaseOrderQueryParams) Validate() error {
 
 // All 查询采购单列表 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Ip0Gso
-func (s purchaseOrderService) All(params PurchaseOrderQueryParams) (items []entity.PurchaseOrder, err error) {
+func (s purchaseOrderService) All(params PurchaseOrderQueryParams) (items []entity.PurchaseOrder, stat entity.PurchaseOrderStatistic, err error) {
 	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
@@ -88,10 +87,8 @@ func (s purchaseOrderService) All(params PurchaseOrderQueryParams) (items []enti
 	var result = struct {
 		normal.Response
 		Result struct {
-			labelCodePageResult struct {
-				TotalCount int                    `json:"totalCount"` // 总数
-				Data       []entity.PurchaseOrder `json:"data"`       // 结果列表
-			}
+			entity.PurchaseOrderStatistic
+			SubOrderForSupplierList []entity.PurchaseOrder `json:"subOrderForSupplierList"` // 订单信息
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
@@ -105,20 +102,42 @@ func (s purchaseOrderService) All(params PurchaseOrderQueryParams) (items []enti
 		return
 	}
 
-	return result.Result.labelCodePageResult.Data, nil
+	return result.Result.SubOrderForSupplierList, result.Result.PurchaseOrderStatistic, nil
 }
 
-// One 单个采购单查询
-func (s purchaseOrderService) One(subPurchaseOrderSn string) (item entity.PurchaseOrder, err error) {
-	items, err := s.All(PurchaseOrderQueryParams{SubPurchaseOrderSnList: []string{subPurchaseOrderSn}})
+// One 根据子采购单或者母采购单号查询采购单数据
+func (s purchaseOrderService) One(purchaseOrderSn string) (item entity.PurchaseOrder, err error) {
+	if len(purchaseOrderSn) <= 2 {
+		err = ErrInvalidParameters
+		return
+	}
+
+	prefix := strings.ToLower(purchaseOrderSn[0:2])
+	if prefix != "wp" && prefix != "wb" {
+		err = ErrInvalidParameters
+		return
+	}
+
+	isSub := prefix == "wb"
+	params := PurchaseOrderQueryParams{}
+	if isSub {
+		params.SubPurchaseOrderSnList = []string{purchaseOrderSn}
+	} else {
+		params.OriginalPurchaseOrderSnList = []string{purchaseOrderSn}
+	}
+	items, _, err := s.All(params)
 	if err != nil {
 		return
 	}
-	if len(items) == 0 {
-		return item, ErrNotFound
+
+	for _, order := range items {
+		if (isSub && strings.EqualFold(order.SubPurchaseOrderSn, purchaseOrderSn)) ||
+			(!isSub && strings.EqualFold(order.OriginalPurchaseOrderSn, purchaseOrderSn)) {
+			return order, nil
+		}
 	}
 
-	return items[0], nil
+	return item, ErrNotFound
 }
 
 // 申请备货
