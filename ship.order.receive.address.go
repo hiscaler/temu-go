@@ -8,9 +8,9 @@ import (
 // 大仓收货地址
 type shipOrderReceiveAddressService service
 
-// All [WIP] 查询大仓收货地址 V2
+// All 查询大仓收货地址 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#chUUk1
-func (s shipOrderReceiveAddressService) All(subPurchaseOrderSnList ...string) (items any, err error) {
+func (s shipOrderReceiveAddressService) All(subPurchaseOrderSnList ...string) (items []entity.ShipOrderReceiveAddress, err error) {
 	if len(subPurchaseOrderSnList) == 0 {
 		return
 	}
@@ -18,11 +18,7 @@ func (s shipOrderReceiveAddressService) All(subPurchaseOrderSnList ...string) (i
 	var result = struct {
 		normal.Response
 		Result struct {
-			SubPurchaseReceiveAddressGroups []struct {
-				SubWarehouseId     int                              `json:"subWarehouseId"`     // 子仓 ID
-				ReceiveAddressInfo []entity.ShipOrderReceiveAddress `json:"receiveAddressInfo"` // 收货地址信息
-			} `json:"subPurchaseReceiveAddressGroups"` // 子采购单收货地址分组信息列表
-			SubPurchaseOrderBasicVOList []string `json:"subPurchaseOrderBasicVOList"` // 子采购单号列表
+			SubPurchaseReceiveAddressGroups []entity.ShipOrderReceiveAddress `json:"subPurchaseReceiveAddressGroups"` // 子采购单收货地址分组信息列表
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
@@ -38,7 +34,7 @@ func (s shipOrderReceiveAddressService) All(subPurchaseOrderSnList ...string) (i
 	if len(result.Result.SubPurchaseReceiveAddressGroups) == 0 {
 		return
 	}
-	return result.Result.SubPurchaseReceiveAddressGroups[0], nil
+	return result.Result.SubPurchaseReceiveAddressGroups, nil
 }
 
 // One [WIP] 查询单个备货单收货地址
