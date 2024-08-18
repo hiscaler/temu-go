@@ -26,6 +26,11 @@ func (s *goodsSizeChartService) All(params GoodsSizeChartQueryParams) (items []e
 	if params.Page < 0 {
 		params.Page = 0
 	}
+	if params.PageSize <= 0 {
+		params.PageSize = 10
+	} else if params.PageSize > 500 {
+		params.PageSize = 500
+	}
 	if err = params.Validate(); err != nil {
 		return
 	}

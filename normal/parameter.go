@@ -9,20 +9,34 @@ type Parameter struct {
 	Version     string `json:"version,omitempty"`
 }
 
-type ParameterWithPager struct {
-	Parameter
+type Pager struct {
 	Page     int `json:"pageNo"`
 	PageSize int `json:"pageSize"`
 }
 
-func (pp *ParameterWithPager) TidyPager() *ParameterWithPager {
+type ParameterWithPager struct {
+	Parameter
+	Pager
+}
+
+// TidyPager 设置翻页数据
+func (pp *Pager) TidyPager(values ...int) *Pager {
+	page := 1
+	maxPageSize := 500
+	n := len(values)
+	if n != 0 {
+		page = values[0]
+		if n >= 2 {
+			maxPageSize = values[1]
+		}
+	}
 	if pp.Page <= 0 {
-		pp.Page = 1
+		pp.Page = page
 	}
 	if pp.PageSize <= 0 {
 		pp.PageSize = 10
-	} else if pp.PageSize > 500 {
-		pp.PageSize = 500
+	} else if pp.PageSize > maxPageSize {
+		pp.PageSize = maxPageSize
 	}
 	return pp
 }

@@ -10,9 +10,7 @@ import (
 type barcodeService service
 
 type NormalGoodsBarcodeQueryParams struct {
-	normal.Parameter
-	Page             int    `json:"pageNo"`                     // 页码
-	PageSize         int    `json:"pageSize"`                   // 页面大小
+	normal.ParameterWithPager
 	ProductSkuIdList []int  `json:"productSkuIdList,omitempty"` // 货品sku id列表
 	SkcExtCode       string `json:"skcExtCode,omitempty"`       // skc货号
 	ProductSkcIdList []int  `json:"productSkcIdList,omitempty"` // 货品skc id列表
@@ -30,14 +28,7 @@ func (m NormalGoodsBarcodeQueryParams) Validate() error {
 // NormalGoods 商品条码查询v2（bg.goods.labelv2.get）
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#5LRokG
 func (s barcodeService) NormalGoods(params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
-	if params.Page <= 0 {
-		params.Page = 1
-	}
-	if params.PageSize <= 0 {
-		params.PageSize = 10
-	} else if params.PageSize > 500 {
-		params.PageSize = 500
-	}
+	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -67,9 +58,7 @@ func (s barcodeService) NormalGoods(params NormalGoodsBarcodeQueryParams) (items
 // 定制商品条码查询（bg.goods.custom.label.get）
 
 type CustomGoodsBarcodeQueryParams struct {
-	normal.Parameter
-	Page                     int    `json:"pageNo"`                             // 页码
-	PageSize                 int    `json:"pageSize"`                           // 页面大小
+	normal.ParameterWithPager
 	ProductSkuIdList         []int  `json:"productSkuIdList,omitempty"`         // 货品sku id列表
 	SkcExtCode               string `json:"skcExtCode,omitempty"`               // skc货号
 	ProductSkcIdList         []int  `json:"productSkcIdList,omitempty"`         // 货品skc id列表
@@ -88,14 +77,7 @@ func (m CustomGoodsBarcodeQueryParams) Validate() error {
 // CustomGoods 定制商品条码查询（bg.goods.custom.label.get）
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Hc5wmR
 func (s barcodeService) CustomGoods(params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
-	if params.Page <= 0 {
-		params.Page = 1
-	}
-	if params.PageSize <= 0 {
-		params.PageSize = 10
-	} else if params.PageSize > 500 {
-		params.PageSize = 500
-	}
+	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
 	}
