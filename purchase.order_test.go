@@ -8,6 +8,7 @@ import (
 
 func Test_purchaseOrderService_All(t *testing.T) {
 	params := PurchaseOrderQueryParams{
+		StatusList:                  []int{entity.PurchaseOrderStatusWaitingMerchantReceive, entity.PurchaseOrderStatusMerchantReceived},
 		SubPurchaseOrderSnList:      []string{},
 		OriginalPurchaseOrderSnList: []string{},
 	}

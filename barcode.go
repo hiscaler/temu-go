@@ -11,18 +11,15 @@ type barcodeService service
 
 type NormalGoodsBarcodeQueryParams struct {
 	normal.ParameterWithPager
-	ProductSkuIdList []int  `json:"productSkuIdList,omitempty"` // 货品sku id列表
+	ProductSkuIdList []int  `json:"productSkuIdList,omitempty"` // 货品 sku id 列表
 	SkcExtCode       string `json:"skcExtCode,omitempty"`       // skc货号
-	ProductSkcIdList []int  `json:"productSkcIdList,omitempty"` // 货品skc id列表
-	SkuExtCode       string `json:"skuExtCode,omitempty"`       // sku货号
+	ProductSkcIdList []int  `json:"productSkcIdList,omitempty"` // 货品 skc id 列表
+	SkuExtCode       string `json:"skuExtCode,omitempty"`       // sku 货号
 	LabelCode        int    `json:"labelCode,omitempty"`        // 标签条码
 }
 
 func (m NormalGoodsBarcodeQueryParams) Validate() error {
-	return validation.ValidateStruct(&m,
-		validation.Field(&m.Page, validation.Required.Error("页码不能为空。")),
-		validation.Field(&m.PageSize, validation.Required.Error("页面大小不能为空。")),
-	)
+	return nil
 }
 
 // NormalGoods 商品条码查询v2（bg.goods.labelv2.get）
@@ -58,20 +55,12 @@ func (s barcodeService) NormalGoods(params NormalGoodsBarcodeQueryParams) (items
 // 定制商品条码查询（bg.goods.custom.label.get）
 
 type CustomGoodsBarcodeQueryParams struct {
-	normal.ParameterWithPager
-	ProductSkuIdList         []int  `json:"productSkuIdList,omitempty"`         // 货品sku id列表
-	SkcExtCode               string `json:"skcExtCode,omitempty"`               // skc货号
-	ProductSkcIdList         []int  `json:"productSkcIdList,omitempty"`         // 货品skc id列表
-	SkuExtCode               string `json:"skuExtCode,omitempty"`               // sku货号
-	LabelCode                int    `json:"labelCode,omitempty"`                // 标签条码
-	PersonalProductSkuIdList []int  `json:"personalProductSkuIdList,omitempty"` // 定制品sku id
+	NormalGoodsBarcodeQueryParams
+	PersonalProductSkuIdList []int `json:"personalProductSkuIdList,omitempty"` // 定制品 sku id
 }
 
 func (m CustomGoodsBarcodeQueryParams) Validate() error {
-	return validation.ValidateStruct(&m,
-		validation.Field(&m.Page, validation.Required.Error("页码不能为空。")),
-		validation.Field(&m.PageSize, validation.Required.Error("页面大小不能为空。")),
-	)
+	return nil
 }
 
 // CustomGoods 定制商品条码查询（bg.goods.custom.label.get）

@@ -12,7 +12,7 @@ func Test_logisticsCompanyService_Companies(t *testing.T) {
 	for _, company := range companies {
 		var com entity.LogisticsCompany
 		com, err = temuClient.Services.LogisticsService.Company(company.ShipId)
-		assert.Equal(t, nil, err, "Services.LogisticsService.Company(%d)", company.ShipId)
-		assert.Equal(t, company, com, "Services.LogisticsService.Company(%d)", company.ShipId)
+		assert.Equalf(t, nil, err, "Services.LogisticsService.Company(%d)", company.ShipId)
+		assert.Equalf(t, company, com, "Services.LogisticsService.Company(%d)", company.ShipId)
 	}
 }

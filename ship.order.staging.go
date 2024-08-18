@@ -2,15 +2,19 @@ package temu
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/nullx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/samber/lo"
+	"gopkg.in/guregu/null.v4"
+	"strings"
 )
 
 // 发货台服务
 type shipOrderStagingService service
 
 type ShipOrderStagingQueryParams struct {
-	normal.Parameter
+	normal.ParameterWithPager
 	SubPurchaseOrderSnList []string `json:"subPurchaseOrderSnList,omitempty"` // 子采购单号列表
 	SkcExtCode             []string `json:"skcExtCode,omitempty"`             // 货号列表
 	ProductSkcIdList       []string `json:"productSkcIdList,omitempty"`       // skcId列表
@@ -18,8 +22,6 @@ type ShipOrderStagingQueryParams struct {
 	IsFirstOrder           bool     `json:"isFirstOrder,omitempty"`           // 是否首单
 	UrgencyType            bool     `json:"urgencyType,omitempty"`            // 是否是紧急发货单，0-普通 1-急采
 	IsJit                  bool     `json:"isJit,omitempty"`                  // 是否是jit，true:jit
-	Page                   int      `json:"pageNo"`                           // 页号， 从1开始
-	PageSize               int      `json:"pageSize"`                         // 每页记录数不能为空
 	PurchaseStockType      int      `json:"purchaseStockType,omitempty"`      // 备货类型 0-普通备货 1-jit备货
 	IsCustomProduct        int      `json:"isCustomProduct,omitempty"`        // 是否为定制品
 	SubWarehouseId         int      `json:"subWarehouseId,omitempty"`         // 收货子仓
@@ -28,22 +30,15 @@ type ShipOrderStagingQueryParams struct {
 
 func (m ShipOrderStagingQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.SettlementType, validation.When(validation.IsEmpty(m.SettlementType), validation.In(entity.SettlementTypeVMI, entity.SettlementTypeNotVMI).Error("无效的结算类型。"))),
-		validation.Field(&m.PurchaseStockType, validation.When(validation.IsEmpty(m.PurchaseStockType), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的结算类型。"))),
+		validation.Field(&m.SettlementType, validation.When(!validation.IsEmpty(m.SettlementType), validation.In(entity.SettlementTypeVMI, entity.SettlementTypeNotVMI).Error("无效的结算类型。"))),
+		validation.Field(&m.PurchaseStockType, validation.When(!validation.IsEmpty(m.PurchaseStockType), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的结算类型。"))),
 	)
 }
 
 // All List all staging orders
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#NOA03y
 func (s shipOrderStagingService) All(params ShipOrderStagingQueryParams) (items []entity.ShipOrderStaging, total, totalPages int, isLastPage bool, err error) {
-	if params.Page <= 0 {
-		params.Page = 1
-	}
-	if params.PageSize <= 0 {
-		params.PageSize = 10
-	} else if params.PageSize > 500 {
-		params.PageSize = 500
-	}
+	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -73,13 +68,9 @@ func (s shipOrderStagingService) All(params ShipOrderStagingQueryParams) (items 
 
 // One 搜索单个发货台数据
 func (s shipOrderStagingService) One(subPurchaseOrderSn string) (item entity.ShipOrderStaging, err error) {
-	params := ShipOrderStagingQueryParams{
-		Page:                   1,
-		PageSize:               10,
+	items, _, _, _, err := s.All(ShipOrderStagingQueryParams{
 		SubPurchaseOrderSnList: []string{subPurchaseOrderSn},
-	}
-
-	items, _, _, _, err := s.All(params)
+	})
 	if err != nil {
 		return
 	}
@@ -120,14 +111,31 @@ func (m ShipOrderStagingAddRequest) Validate() error {
 
 // Add 加入发货台
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YSg2AE
-func (s shipOrderStagingService) Add(req ShipOrderStagingAddRequest) (ok bool, err error) {
+func (s shipOrderStagingService) Add(req ShipOrderStagingAddRequest) (ok bool, results []entity.ShipOrderStagingAddResult, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
 
+	for _, info := range req.JoinInfoList {
+		results = append(results, entity.ShipOrderStagingAddResult{
+			SubPurchaseOrderSn: info.SubPurchaseOrderSn,
+			Success:            false,
+			ErrorMessage:       nullx.StringFrom("Unknown"),
+		})
+	}
+
+	type joinError struct {
+		ExtraInfoMap                any    `json:"extraInfoMap"`
+		JoinErrorSubPurchaseOrderSn string `json:"joinErrorSubPurchaseOrderSn"`
+		ErrorCode                   int    `json:"errorCode"`
+		ErrorMsg                    string `json:"errorMsg"`
+	}
 	var result = struct {
 		normal.Response
-		Result any `json:"result"`
+		Result struct {
+			JoinErrorList             []joinError `json:"joinErrorList"`
+			ExistJoinErrorSubPurchase bool        `json:"existJoinErrorSubPurchase"`
+		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetBody(req).
@@ -136,6 +144,35 @@ func (s shipOrderStagingService) Add(req ShipOrderStagingAddRequest) (ok bool, e
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
-	ok = err == nil
+	if err != nil {
+		return
+	}
+
+	if result.Result.ExistJoinErrorSubPurchase {
+		lo.ForEach(results, func(r entity.ShipOrderStagingAddResult, index int) {
+			value, exists := lo.Find(result.Result.JoinErrorList, func(rr joinError) bool {
+				return strings.EqualFold(rr.JoinErrorSubPurchaseOrderSn, r.SubPurchaseOrderSn)
+			})
+			if exists {
+				r.ErrorCode = null.IntFrom(int64(value.ErrorCode))
+				r.ErrorMessage = nullx.StringFrom(value.ErrorMsg)
+			} else {
+				r.Success = true
+				r.ErrorMessage = nullx.NullString()
+			}
+			results[index] = r
+		})
+		_, exists := lo.Find(results, func(item entity.ShipOrderStagingAddResult) bool {
+			return item.Success == false
+		})
+		ok = !exists
+	} else {
+		ok = true
+		lo.ForEach(results, func(item entity.ShipOrderStagingAddResult, index int) {
+			item.Success = true
+			item.ErrorMessage = nullx.NullString()
+			results[index] = item
+		})
+	}
 	return
 }

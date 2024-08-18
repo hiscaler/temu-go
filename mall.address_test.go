@@ -13,7 +13,7 @@ func Test_mallAddressService_All(t *testing.T) {
 	for _, address := range addresses {
 		var addr entity.MallAddress
 		addr, err = temuClient.Services.MallAddressService.One(address.ID)
-		assert.Equal(t, nil, err, "Services.MallAddressService.One(%d)", address.ID)
-		assert.Equal(t, addr, address, "Services.MallAddressService.One(%d)", address.ID)
+		assert.Equalf(t, nil, err, "Services.MallAddressService.One(%d)", address.ID)
+		assert.Equalf(t, addr, address, "Services.MallAddressService.One(%d)", address.ID)
 	}
 }
