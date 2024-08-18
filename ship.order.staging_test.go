@@ -10,7 +10,7 @@ import (
 func TestShipOrderStagingService_All(t *testing.T) {
 	params := ShipOrderStagingQueryParams{}
 	_, _, _, _, err := temuClient.Services.ShipOrderStaging.All(params)
-	assert.Nilf(t, err, "Services.ShipOrderStaging.All(%#v)", params)
+	assert.Nilf(t, err, "Services.ShipOrderStaging.All(%s)", jsonx.ToJson(params, "{}"))
 }
 
 func TestShipOrderStagingService_Add(t *testing.T) {

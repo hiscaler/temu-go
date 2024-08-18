@@ -30,3 +30,10 @@ func Test_purchaseOrderService_All(t *testing.T) {
 		assert.Equalf(t, item, order, "Services.PurchaseOrderService.One(%s)", item.SubPurchaseOrderSn)
 	}
 }
+
+func Test_purchaseOrderService_One(t *testing.T) {
+	purchaseOrderSn := "WB2408173170013"
+	d, err := temuClient.Services.PurchaseOrderService.One(purchaseOrderSn)
+	assert.Equalf(t, nil, err, "Services.PurchaseOrderService.One(%s) err", purchaseOrderSn)
+	assert.Equalf(t, purchaseOrderSn, d.SubPurchaseOrderSn, "Services.PurchaseOrderService.One(%s) value", purchaseOrderSn)
+}
