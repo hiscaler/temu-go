@@ -32,6 +32,21 @@ func (s logisticsService) Companies() (items []entity.LogisticsCompany, err erro
 	return result.Result.ShipList, nil
 }
 
+// Company 根据 ID 查询发货快递公司
+func (s logisticsService) Company(shipId int) (item entity.LogisticsCompany, err error) {
+	items, err := s.Companies()
+	if err != nil {
+		return
+	}
+
+	for _, company := range items {
+		if company.ShipId == shipId {
+			return company, nil
+		}
+	}
+	return item, ErrNotFound
+}
+
 // 平台推荐物流商匹配接口
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#16WiXI
 
