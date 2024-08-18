@@ -12,24 +12,24 @@ type PurchaseOrderStatistic struct {
 
 // PurchaseOrder 采购单
 type PurchaseOrder struct {
-	OriginalPurchaseOrderSn string      `json:"originalPurchaseOrderSn"` // 母订单号（原始采购母单号）
-	SubPurchaseOrderSn      string      `json:"subPurchaseOrderSn"`      // 采购子单号
-	Source                  int         `json:"source"`
-	ProductName             string      `json:"productName"`
-	FulfilmentFormStatus    interface{} `json:"fulfilmentFormStatus"`
-	IsFirst                 bool        `json:"isFirst"`
+	OriginalPurchaseOrderSn string `json:"originalPurchaseOrderSn"` // 母订单号（原始采购母单号）
+	SubPurchaseOrderSn      string `json:"subPurchaseOrderSn"`      // 采购子单号
+	Source                  int    `json:"source"`
+	ProductName             string `json:"productName"`
+	FulfilmentFormStatus    any    `json:"fulfilmentFormStatus"`
+	IsFirst                 bool   `json:"isFirst"`
 	SkuQuantityDetailList   []struct {
-		CurrencyType                 string      `json:"currencyType"`
-		ClassName                    string      `json:"className"`
-		RealReceiveAuthenticQuantity int         `json:"realReceiveAuthenticQuantity"`
-		FulfilmentProductSkuId       int         `json:"fulfilmentProductSkuId"`
-		CustomizationType            int         `json:"customizationType"`
-		ProductSkuId                 int         `json:"productSkuId"`
-		DeliverQuantity              int         `json:"deliverQuantity"`
-		ThumbUrlList                 []string    `json:"thumbUrlList"`
-		QcResult                     interface{} `json:"qcResult"`
-		ExtCode                      string      `json:"extCode"`
-		PurchaseQuantity             int         `json:"purchaseQuantity"`
+		CurrencyType                 string   `json:"currencyType"`
+		ClassName                    string   `json:"className"`
+		RealReceiveAuthenticQuantity int      `json:"realReceiveAuthenticQuantity"`
+		FulfilmentProductSkuId       int      `json:"fulfilmentProductSkuId"`
+		CustomizationType            int      `json:"customizationType"`
+		ProductSkuId                 int      `json:"productSkuId"`
+		DeliverQuantity              int      `json:"deliverQuantity"`
+		ThumbUrlList                 []string `json:"thumbUrlList"`
+		QcResult                     any      `json:"qcResult"`
+		ExtCode                      string   `json:"extCode"`
+		PurchaseQuantity             int      `json:"purchaseQuantity"`
 	} `json:"skuQuantityDetailList"`
 	DeliverInfo struct {
 		ReceiveTime                      null.Int    `json:"receiveTime"`
@@ -46,39 +46,39 @@ type PurchaseOrder struct {
 	SupplyStatus         int `json:"supplyStatus"`
 	ApplyDeleteStatus    int `json:"applyDeleteStatus"`
 	SkuQuantityTotalInfo struct {
-		CurrencyType                 interface{} `json:"currencyType"`
-		ClassName                    interface{} `json:"className"`
-		RealReceiveAuthenticQuantity int         `json:"realReceiveAuthenticQuantity"`
-		CustomizationType            interface{} `json:"customizationType"`
-		ProductSkuId                 interface{} `json:"productSkuId"`
-		DeliverQuantity              int         `json:"deliverQuantity"`
-		ExtCode                      interface{} `json:"extCode"`
-		PurchaseQuantity             int         `json:"purchaseQuantity"`
+		CurrencyType                 any `json:"currencyType"`
+		ClassName                    any `json:"className"`
+		RealReceiveAuthenticQuantity int `json:"realReceiveAuthenticQuantity"`
+		CustomizationType            any `json:"customizationType"`
+		ProductSkuId                 any `json:"productSkuId"`
+		DeliverQuantity              int `json:"deliverQuantity"`
+		ExtCode                      any `json:"extCode"`
+		PurchaseQuantity             int `json:"purchaseQuantity"`
 	} `json:"skuQuantityTotalInfo"`
-	IsCanJoinDeliverPlatform bool        `json:"isCanJoinDeliverPlatform"`
-	CategoryType             int         `json:"categoryType"`
-	Status                   int         `json:"status"`
-	FulfilmentFormId         interface{} `json:"fulfilmentFormId"` // 关联履约函 ID
-	ProductSkcPicture        string      `json:"productSkcPicture"`
+	IsCanJoinDeliverPlatform bool   `json:"isCanJoinDeliverPlatform"`
+	CategoryType             int    `json:"categoryType"`
+	Status                   int    `json:"status"`
+	FulfilmentFormId         any    `json:"fulfilmentFormId"` // 关联履约函 ID
+	ProductSkcPicture        string `json:"productSkcPicture"`
 	LackOrSoldOutTagList     []struct {
-		IsLack     bool        `json:"isLack"`
-		SkuDisplay string      `json:"skuDisplay"`
-		SoldOut    interface{} `json:"soldOut"`
+		IsLack     bool   `json:"isLack"`
+		SkuDisplay string `json:"skuDisplay"`
+		SoldOut    any    `json:"soldOut"`
 	} `json:"lackOrSoldOutTagList"`
 	QcReject          int `json:"qcReject"`
 	PurchaseStockType int `json:"purchaseStockType"`
 	SkuLackItemList   []struct {
 		SkuDisplay string `json:"skuDisplay"`
 	} `json:"skuLackItemList"`
-	SkuLackSnapshot         int         `json:"skuLackSnapshot"`
-	DeliveryOrderSn         *string     `json:"deliveryOrderSn"`
-	SettlementType          int         `json:"settlementType"`
-	UrgencyType             int         `json:"urgencyType"`
-	ProductSn               *string     `json:"productSn"`
-	SkuQcRejectItemList     interface{} `json:"skuQcRejectItemList"`
-	DefectiveTime           interface{} `json:"defectiveTime"`
-	TodayCanDeliver         bool        `json:"todayCanDeliver"`
-	PurchaseTime            int         `json:"purchaseTime"`
-	ApplyChangeSupplyStatus int         `json:"applyChangeSupplyStatus"`
-	Category                string      `json:"category"`
+	SkuLackSnapshot         int     `json:"skuLackSnapshot"`
+	DeliveryOrderSn         *string `json:"deliveryOrderSn"`
+	SettlementType          int     `json:"settlementType"`
+	UrgencyType             int     `json:"urgencyType"`
+	ProductSn               *string `json:"productSn"`
+	SkuQcRejectItemList     any     `json:"skuQcRejectItemList"`
+	DefectiveTime           any     `json:"defectiveTime"`
+	TodayCanDeliver         bool    `json:"todayCanDeliver"`
+	PurchaseTime            int     `json:"purchaseTime"`
+	ApplyChangeSupplyStatus int     `json:"applyChangeSupplyStatus"`
+	Category                string  `json:"category"`
 }

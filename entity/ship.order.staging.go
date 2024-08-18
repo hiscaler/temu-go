@@ -1,5 +1,6 @@
 package entity
 
+// ShipOrderStaging 发货台
 type ShipOrderStaging struct {
 	OrderDetailVOList []struct {
 		ProductSkuID                int      `json:"productSkuId"`

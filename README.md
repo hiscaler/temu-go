@@ -1,5 +1,5 @@
-Temu SDK
-========
+Temu SDK for Golang
+===================
 
 ## 服务说明
 

@@ -43,7 +43,7 @@ type BoxMarkInfo struct {
 		KeyBG31572    bool `json:"key_BG_31572"`
 		KeyCnBG226344 bool `json:"key_cn_BG_226344"`
 	} `json:"greyKeyHitMap"`
-	StorageAttrName interface{} `json:"storageAttrName"`
-	DeliverSkcNum   int         `json:"deliverSkcNum"`
-	DeliveryStatus  int         `json:"deliveryStatus"`
+	StorageAttrName any `json:"storageAttrName"`
+	DeliverSkcNum   int `json:"deliverSkcNum"`
+	DeliveryStatus  int `json:"deliveryStatus"`
 }
