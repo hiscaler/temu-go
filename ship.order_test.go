@@ -15,25 +15,29 @@ func TestShipOrderService_All(t *testing.T) {
 }
 
 func TestShipOrderService_Create(t *testing.T) {
-	address, err := temuClient.Services.MallAddressService.One(5441063557369)
-	assert.Nil(t, err, "Query mall address")
+	deliveryAddress, err := temuClient.Services.MallAddressService.One(5441063557369)
+	assert.Nil(t, err, "Query mall deliveryAddress")
 
 	subPurchaseOrderSn := "WB2408182975602"
+	addr, err := temuClient.Services.ShipOrderReceiveAddressService.One(subPurchaseOrderSn)
+	assert.Nilf(t, err, "Services.ShipOrderReceiveAddressService.One(%s)", subPurchaseOrderSn)
+	receiveAddress := addr.ReceiveAddressInfo
+
 	shipOrderStaging, err := temuClient.Services.ShipOrderStaging.One(subPurchaseOrderSn)
 	assert.Nil(t, err, "Query shop order staging")
 
 	shipOrderCreateRequestDeliveryOrder := ShipOrderCreateRequestDeliveryOrder{
 		DeliveryOrderCreateInfos: make([]ShipOrderCreateRequestOrderInfo, 0),
 		ReceiveAddressInfo: ShipOrderCreateRequestReceiveAddress{
-			ProvinceName: address.ProvinceName,
-			ProvinceCode: address.ProvinceCode,
-			CityName:     address.CityName,
-			CityCode:     address.CityCode,
-			DistrictName: address.DistrictName,
-			DistrictCode: address.DistrictCode,
-			// ReceiverName:  "",
-			DetailAddress: address.Address,
-			// Phone:         "",
+			ProvinceName:  receiveAddress.ProvinceName,
+			ProvinceCode:  receiveAddress.ProvinceCode,
+			CityName:      receiveAddress.CityName,
+			CityCode:      receiveAddress.CityCode,
+			DistrictName:  receiveAddress.DistrictName,
+			DistrictCode:  receiveAddress.DistrictCode,
+			ReceiverName:  receiveAddress.ReceiverName,
+			DetailAddress: receiveAddress.DetailAddress,
+			Phone:         receiveAddress.Phone,
 		},
 		SubWarehouseId: shipOrderStaging.SubPurchaseOrderBasicVO.SubWarehouseID,
 	}
@@ -42,7 +46,7 @@ func TestShipOrderService_Create(t *testing.T) {
 		DeliverOrderDetailInfos: make([]ShipOrderCreateRequestOrderDetailInfo, 0),
 		SubPurchaseOrderSn:      subPurchaseOrderSn,
 		PackageInfos:            make([]ShipOrderCreateRequestOrderPackage, 0),
-		DeliveryAddressId:       address.ID,
+		DeliveryAddressId:       deliveryAddress.ID,
 	}
 	for _, v := range shipOrderStaging.OrderDetailVOList {
 		deliveryOrderCreateInfo.DeliverOrderDetailInfos = append(deliveryOrderCreateInfo.DeliverOrderDetailInfos, ShipOrderCreateRequestOrderDetailInfo{
