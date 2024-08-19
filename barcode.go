@@ -29,6 +29,7 @@ func (s barcodeService) NormalGoods(params NormalGoodsBarcodeQueryParams) (items
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	var result = struct {
 		normal.Response
 		Result struct {
@@ -70,6 +71,7 @@ func (s barcodeService) CustomGoods(params CustomGoodsBarcodeQueryParams) (items
 	if err = params.Validate(); err != nil {
 		return
 	}
+
 	var result = struct {
 		normal.Response
 		Result struct {
