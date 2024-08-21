@@ -50,19 +50,28 @@ func (s shipOrderPackageService) One(deliveryOrderSn string) (data entity.ShipOr
 
 // 发货包裹编辑
 
+// ShipOrderPackageUpdateRequestDeliverOrderDetail  发货单详情
+type ShipOrderPackageUpdateRequestDeliverOrderDetail struct {
+	DeliverSkuNum int `json:"deliverSkuNum"` // 发货 sku 数目
+	ProductSkuId  int `json:"productSkuId"`  // skuId
+}
+
+// ShipOrderPackageUpdateRequestPackageDetail 包裹明细
+type ShipOrderPackageUpdateRequestPackageDetail struct {
+	SkuNum       int `json:"skuNum"`       // 发货 sku 数目
+	ProductSkuId int `json:"productSkuId"` // skuId
+}
+
+// ShipOrderPackageUpdateRequestPackage 包裹信息
+type ShipOrderPackageUpdateRequestPackage struct {
+	PackageDetailSaveInfos []ShipOrderPackageUpdateRequestPackageDetail `json:"packageDetailSaveInfos"` // 包裹明细
+}
+
 type ShipOrderPackageUpdateRequest struct {
 	normal.Parameter
-	DeliveryOrderSn         string `json:"deliveryOrderSn"` // 发货单号
-	DeliverOrderDetailInfos struct {
-		DeliverSkuNum int `json:"deliverSkuNum"` // 发货 sku 数目
-		ProductSkuId  int `json:"productSkuId"`  // skuId
-	} `json:"deliverOrderDetailInfos"` // 发货单详情列表
-	PackageInfos struct {
-		PackageDetailSaveInfos struct {
-			SkuNum       int `json:"skuNum"`       // 发货 sku 数目
-			ProductSkuId int `json:"productSkuId"` // skuId
-		} `json:"packageDetailSaveInfos"` // 包裹明细
-	} `json:"packageInfos"` // 包裹信息列表
+	DeliveryOrderSn         string                                            `json:"deliveryOrderSn"`         // 发货单号
+	DeliverOrderDetailInfos []ShipOrderPackageUpdateRequestDeliverOrderDetail `json:"deliverOrderDetailInfos"` // 发货单详情列表
+	PackageInfos            []ShipOrderPackageUpdateRequestPackage            `json:"packageInfos"`            // 包裹信息列表
 }
 
 func (m ShipOrderPackageUpdateRequest) Validate() error {

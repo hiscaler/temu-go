@@ -8,8 +8,8 @@ const (
 
 // 结算类型
 const (
-	SettlementTypeNotVMI = 0 // 非vmi(采购)
-	SettlementTypeVMI    = 1 // vmi(备货)
+	SettlementTypeNotVMI = 0 // 非 VMI(采购)
+	SettlementTypeVMI    = 1 // VMI(备货)
 )
 
 // 备货类型
