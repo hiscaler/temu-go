@@ -36,7 +36,6 @@ func TestShipOrderStagingService_One(t *testing.T) {
 		d, err = temuClient.Services.ShipOrderStaging.One(subPurchaseOrderSn)
 		assert.Nilf(t, err, "temuClient.Services.ShipOrderStaging.One(%s)", subPurchaseOrderSn)
 		assert.Equalf(t, item, d, "temuClient.Services.ShipOrderStaging.One(%s)", subPurchaseOrderSn)
-
 	}
 
 }
