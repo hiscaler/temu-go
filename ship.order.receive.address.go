@@ -32,9 +32,7 @@ func (s shipOrderReceiveAddressService) All(subPurchaseOrderSnList ...string) (i
 	if err != nil {
 		return
 	}
-	if len(result.Result.SubPurchaseReceiveAddressGroups) == 0 {
-		return
-	}
+	
 	return result.Result.SubPurchaseReceiveAddressGroups, nil
 }
 
