@@ -45,7 +45,7 @@ type PurchaseOrderQueryParams struct {
 	IsSystemAutoPurchaseSource      bool     `json:"isSystemAutoPurchaseSource,omitempty"`      // 是否系统下单 是-系统自动下单 否-其他
 	LackOrSoldOutTagList            []int    `json:"lackOrSoldOutTagList,omitempty"`            // 标签：1-含缺货SKU；2-含售罄SKU
 	IsTodayPlatformPurchase         bool     `json:"isTodayPlatformPurchase,omitempty"`         // 是否今日平台下单
-	JoinDeliveryPlatform            bool     `json:"joinDeliveryPlatform,omitempty"`            // 是否加入发货台
+	JoinDeliveryPlatform            bool     `json:"joinDeliveryPlatform,omitempty"`            // 是否加入了发货台
 }
 
 func (m PurchaseOrderQueryParams) Validate() error {
