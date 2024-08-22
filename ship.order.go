@@ -11,29 +11,30 @@ type shipOrderService service
 
 type ShipOrderQueryParams struct {
 	normal.ParameterWithPager
-	DeliveryOrderSnList    []string `json:"deliveryOrderSnList,omitempty"`    // 发货单号列表
-	SubPurchaseOrderSnList []string `json:"subPurchaseOrderSnList,omitempty"` // 子采购单号列表
-	ExpressDeliverySnList  []string `json:"expressDeliverySnList,omitempty"`  // 快递单号列表
-	SkcExtCodeList         []string `json:"skcExtCodeList,omitempty"`         // 货号列表
-	ProductSkcIdList       []int    `json:"productSkcIdList,omitempty"`       // skcId列表
-	SubWarehouseIdList     []int    `json:"subWarehouseIdList,omitempty"`     // 收货子仓列表
-	DeliverTimeFrom        int      `json:"deliverTimeFrom,omitempty"`        // 发货时间-开始时间
-	DeliverTimeTo          int      `json:"deliverTimeTo,omitempty"`          // 发货时间-结束时间
-	SettlementType         int      `json:"settlementType,omitempty"`         // 结算类型 0-非vmi 1-vmi
-	IsFirstOrder           bool     `json:"isFirstOrder,omitempty"`           // 是否首单
-	UrgencyType            bool     `json:"urgencyType,omitempty"`            // 是否是紧急发货单，0-普通 1-急采
-	IsJit                  bool     `json:"isJit,omitempty"`                  // 是否是jit，true:jit
-	PurchaseStockType      int      `json:"purchaseStockType,omitempty"`      // 备货类型 0-普通备货 1-jit备货
-	IsCustomProduct        int      `json:"isCustomProduct,omitempty"`        // 是否为定制品
-	SubWarehouseId         int      `json:"subWarehouseId,omitempty"`         // 收货子仓
-	InventoryRegion        []int    `json:"inventoryRegion,omitempty"`        // DOMESTIC(1, "国内备货"), OVERSEAS(2, "海外备货"), BOUNDED_WAREHOUSE(3, "保税仓备货"),
+	DeliveryOrderSnList      []string `json:"deliveryOrderSnList,omitempty"`      // 发货单号列表
+	SubPurchaseOrderSnList   []string `json:"subPurchaseOrderSnList,omitempty"`   // 子采购单号列表
+	ExpressDeliverySnList    []string `json:"expressDeliverySnList,omitempty"`    // 快递单号列表
+	SkcExtCodeList           []string `json:"skcExtCodeList,omitempty"`           // 货号列表
+	ProductSkcIdList         []int    `json:"productSkcIdList,omitempty"`         // skcId 列表
+	SubWarehouseIdList       []int    `json:"subWarehouseIdList,omitempty"`       // 收货子仓列表
+	DeliverTimeFrom          int      `json:"deliverTimeFrom,omitempty"`          // 发货时间-开始时间
+	DeliverTimeTo            int      `json:"deliverTimeTo,omitempty"`            // 发货时间-结束时间
+	Status                   int      `json:"status,omitempty"`                   // 发货单状态，0：待装箱发货，1：待仓库收货，2：已收货，3：已入库，4：已退货，5：已取消，6：部分收货，查询发货批次时仅支持查询发货单状态=1
+	UrgencyType              bool     `json:"urgencyType,omitempty"`              // 是否是紧急发货单，0-普通，1-急采
+	IsCustomProduct          bool     `json:"isCustomProduct,omitempty"`          // 是否为定制品
+	IsVim                    int      `json:"isVmi,omitempty"`                    // 是否是vmi，0-非VMI，1-VMI
+	IsJit                    bool     `json:"isJit,omitempty"`                    // 是否是jit，true:jit
+	LatestFeedbackStatusList []int    `json:"latestFeedbackStatusList,omitempty"` // 最新反馈状态列表，0-当前无异常，1-已提交，2-物流商处理中，3-已撤销，4-已反馈
+	SortType                 int      `json:"sortType,omitempty"`                 // 排序类型，0-创建时间最新在上，1-要求发货时间较早在上，2-按照仓库名称排序
+	InventoryRegion          []int    `json:"inventoryRegion,omitempty"`          // 发货区域，1-国内备货，2-海外备货，3-保税仓备货
+	IsPrintBoxMark           int      `json:"isPrintBoxMark,omitempty"`           // 是否已打印商品打包标签，0-未打印，1-已打印
+	TargetReceiveAddress     string   `json:"targetReceiveAddress,omitempty"`     // 筛选项-收货地址（精准匹配）
+	TargetDeliveryAddress    string   `json:"targetDeliveryAddress,omitempty"`    // 筛选项-发货地址（精准匹配）
 }
 
 func (m ShipOrderQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.SettlementType, validation.When(!validation.IsEmpty(m.SettlementType), validation.In(entity.SettlementTypeVMI, entity.SettlementTypeNotVMI).Error("无效的结算类型。"))),
 		validation.Field(&m.UrgencyType, validation.When(!validation.IsEmpty(m.UrgencyType), validation.In(entity.ShipOrderTypeNormal, entity.ShipOrderTypeUrgency).Error("无效的加急类型。"))),
-		validation.Field(&m.PurchaseStockType, validation.When(!validation.IsEmpty(m.PurchaseStockType), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的备货类型。"))),
 	)
 }
 
