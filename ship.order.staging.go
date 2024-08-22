@@ -2,6 +2,7 @@ package temu
 
 import (
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/nullx"
 	"github.com/hiscaler/temu-go/entity"
@@ -21,10 +22,10 @@ type ShipOrderStagingQueryParams struct {
 	ProductSkcIdList       []string `json:"productSkcIdList,omitempty"`       // skcId列表
 	SettlementType         int      `json:"settlementType,omitempty"`         // 结算类型 0-非vmi 1-vmi
 	IsFirstOrder           bool     `json:"isFirstOrder,omitempty"`           // 是否首单
-	UrgencyType            bool     `json:"urgencyType,omitempty"`            // 是否是紧急发货单，0-普通 1-急采
+	UrgencyType            int      `json:"urgencyType,omitempty"`            // 是否是紧急发货单，0-普通 1-急采
 	IsJit                  bool     `json:"isJit,omitempty"`                  // 是否是jit，true:jit
 	PurchaseStockType      int      `json:"purchaseStockType,omitempty"`      // 备货类型 0-普通备货 1-jit备货
-	IsCustomProduct        int      `json:"isCustomProduct,omitempty"`        // 是否为定制品
+	IsCustomProduct        bool     `json:"isCustomProduct,omitempty"`        // 是否为定制品
 	SubWarehouseId         int      `json:"subWarehouseId,omitempty"`         // 收货子仓
 	InventoryRegion        []int    `json:"inventoryRegion,omitempty"`        // DOMESTIC(1, "国内备货"), OVERSEAS(2, "海外备货"), BOUNDED_WAREHOUSE(3, "保税仓备货"),
 }
@@ -163,11 +164,19 @@ func (s shipOrderStagingService) Add(req ShipOrderStagingAddRequest) (ok bool, r
 			}
 			results[index] = r
 		})
-		_, exists := lo.Find(results, func(item entity.ShipOrderStagingAddResult) bool {
+		_, foundFailed := lo.Find(results, func(item entity.ShipOrderStagingAddResult) bool {
 			return item.Success == false
 		})
-		ok = !exists
-		err = errors.New("加入发货台有误。")
+		ok = !foundFailed
+		if foundFailed {
+			errMessages := make([]string, 0)
+			for _, addResult := range results {
+				if !addResult.Success {
+					errMessages = append(errMessages, fmt.Sprintf("%s: %s", addResult.SubPurchaseOrderSn, addResult.ErrorMessage.ValueOrZero()))
+				}
+			}
+			err = errors.New(strings.Join(errMessages, "; "))
+		}
 	} else {
 		ok = true
 		lo.ForEach(results, func(item entity.ShipOrderStagingAddResult, index int) {
