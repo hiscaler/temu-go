@@ -5,7 +5,6 @@ import (
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
-	"math/rand"
 	"testing"
 	"time"
 )
@@ -32,14 +31,31 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 	company := companies[0]
 
 	params := ShipOrderQueryParams{
-		Status:         entity.ShipOrderStatusWaitingPacking,
+		Status:         entity.ShipOrderStatusWaitingPacking, // 这条件没用？
 		IsPrintBoxMark: 1,
 	}
+	params.PageSize = 100
 	items, _, _, _, err := temuClient.Services.ShipOrder.All(params)
 	assert.Nilf(t, err, "temuClient.Services.ShipOrder.All(%s)", jsonx.ToJson(params, "{}"))
-	n := len(items)
-	if n != 0 {
-		shipOrder := items[rand.Intn(n)]
+	exists := false
+	var shipOrder entity.ShipOrder
+	for _, v := range items {
+		// 发货单状态异常，存在非待发货状态的发货单，请刷新页面重试
+		if v.Status == entity.ShipOrderStatusWaitingPacking {
+			exists = true
+			shipOrder = v
+			break
+		}
+	}
+	assert.Equalf(t, exists, true, "temuClient.Services.ShipOrder.All(%s)", jsonx.ToJson(params, "{}"))
+	if exists {
+
+		// 必须打印箱唛
+		if !shipOrder.IsPrintBoxMark {
+			_, err = temuClient.Services.Barcode.BoxMark(shipOrder.DeliveryOrderSn)
+			assert.Nilf(t, err, "temuClient.Services.Barcode.BoxMark(%s)", shipOrder.DeliveryOrderSn)
+		}
+
 		req := ShipOrderPackingSendRequest{
 			DeliveryAddressId:   address.ID,
 			DeliveryOrderSnList: []string{shipOrder.DeliveryOrderSn},
@@ -51,12 +67,15 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 				StandbyExpress:            false,
 				ExpressDeliverySn:         shipOrder.ExpressDeliverySn,
 				PredictTotalPackageWeight: shipOrder.PredictTotalPackageWeight,
-				ExpectPickUpGoodsTime:     int(time.Now().Unix()),
+				ExpectPickUpGoodsTime:     int(time.Now().Unix()) + 100,
 				ExpressPackageNum:         len(shipOrder.PackageList),
 				MinChargeAmount:           0.01,
 				MaxChargeAmount:           0.02,
 				PredictId:                 123, // ?
 			},
+		}
+		if req.ThirdPartyDeliveryInfo.PredictTotalPackageWeight < 1000 {
+			req.ThirdPartyDeliveryInfo.PredictTotalPackageWeight = 1000
 		}
 		_, err = temuClient.Services.ShipOrderPacking.Send(req)
 		fmt.Println(fmt.Errorf("sssssssssss %#v", err))
