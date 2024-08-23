@@ -2,6 +2,7 @@ package temu
 
 import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 )
 
@@ -90,14 +91,14 @@ func (m ShipOrderPackingMatchRequest) Validate() error {
 	)
 }
 
-func (s shipOrderPackingService) Match(request ShipOrderPackingMatchRequest) (items []any, err error) {
+func (s shipOrderPackingService) Match(request ShipOrderPackingMatchRequest) (items []entity.ShipOrderPackingMatchResult, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
 	var result = struct {
 		normal.Response
-		Result []any `json:"result"`
+		Result []entity.ShipOrderPackingMatchResult `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetBody(request).

@@ -75,7 +75,7 @@ func (s barcodeService) CustomGoods(params CustomGoodsBarcodeQueryParams) (items
 	var result = struct {
 		normal.Response
 		Result struct {
-			labelCodePageResult struct {
+			PersonalLabelCodePageResult struct {
 				TotalCount int                       `json:"totalCount"` // 总数
 				Data       []entity.CustomGoodsLabel `json:"data"`       // 结果列表
 			}
@@ -92,7 +92,7 @@ func (s barcodeService) CustomGoods(params CustomGoodsBarcodeQueryParams) (items
 		return
 	}
 
-	return result.Result.labelCodePageResult.Data, nil
+	return result.Result.PersonalLabelCodePageResult.Data, nil
 }
 
 // 查询箱唛（bg.logistics.boxmarkinfo.get）
