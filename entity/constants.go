@@ -56,3 +56,10 @@ const (
 	PurchaseOrderSourceSeller           = 1    // 卖家下单
 	PurchaseOrderSourcePlatform         = 9999 // 平台下单
 )
+
+// 发货方式
+const (
+	DeliveryMethodSelf                   = 1 // 自行配送
+	DeliveryMethodPlatformRecommendation = 2 // 平台推荐服务商
+	DeliveryMethodThirdParty             = 3 // 自行委托第三方物流
+)
