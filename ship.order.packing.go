@@ -73,7 +73,8 @@ func (s shipOrderPackingService) Send(request ShipOrderPackingSendRequest) (numb
 	var result = struct {
 		normal.Response
 		Result struct {
-			ExpressBatchSn string `json:"expressBatchSn"` // 创建生成的发货批次号
+			CreateExpressErrorRequestList []any  `json:"createExpressErrorRequestList"` // 创建快递运单失败的请求列表
+			ExpressBatchSn                string `json:"expressBatchSn"`                // 创建生成的发货批次号
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
