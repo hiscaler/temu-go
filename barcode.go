@@ -78,7 +78,7 @@ func (s barcodeService) CustomGoods(params CustomGoodsBarcodeQueryParams) (items
 			PersonalLabelCodePageResult struct {
 				TotalCount int                       `json:"totalCount"` // 总数
 				Data       []entity.CustomGoodsLabel `json:"data"`       // 结果列表
-			}
+			} `json:"personalLabelCodePageResult"`
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().

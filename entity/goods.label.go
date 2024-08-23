@@ -65,5 +65,64 @@ type GoodsLabel struct {
 
 // CustomGoodsLabel 定制商品条码
 type CustomGoodsLabel struct {
-	GoodsLabel
+	ProductSkuSpecI18NMap map[string][]struct {
+		SpecID         int    `json:"specId"`
+		ParentSpecName string `json:"parentSpecName"`
+		SpecName       string `json:"specName"`
+		ParentSpecID   int    `json:"parentSpecId"`
+	} `json:"productSkuSpecI18nMap"`
+	ProductSkuDTO struct {
+		NumberOfPieces any   `json:"numberOfPieces"`
+		ProductSkuID   int64 `json:"productSkuId"`
+		ProductID      int   `json:"productId"`
+		ProductSkuSpec struct {
+			ProductSkuID int64 `json:"productSkuId"`
+			ProductID    int   `json:"productId"`
+			SpecList     []struct {
+				SpecID         int    `json:"specId"`
+				ParentSpecName string `json:"parentSpecName"`
+				SpecName       string `json:"specName"`
+				ParentSpecID   int    `json:"parentSpecId"`
+			} `json:"specList"`
+			ProductSkcID int64 `json:"productSkcId"`
+		} `json:"productSkuSpec"`
+		PieceUnitCode     any    `json:"pieceUnitCode"`
+		ExtCode           string `json:"extCode"`
+		ProductSkcID      int64  `json:"productSkcId"`
+		ThumbURL          string `json:"thumbUrl"`
+		SkuClassification any    `json:"skuClassification"`
+	} `json:"productSkuDTO"`
+	ProductSkcImageList []struct {
+		ImageURL  string `json:"imageUrl"`
+		Language  string `json:"language"`
+		ImageType int    `json:"imageType"`
+	} `json:"productSkcImageList"`
+	ProductSkcDTO struct {
+		SpecIDList     []int  `json:"specIdList"`
+		ExtCode        string `json:"extCode"`
+		ProductSkcSpec struct {
+			ProductID int `json:"productId"`
+			SpecList  []struct {
+				SpecID         int    `json:"specId"`
+				ParentSpecName string `json:"parentSpecName"`
+				SpecName       string `json:"specName"`
+				ParentSpecID   int    `json:"parentSpecId"`
+			} `json:"specList"`
+			ProductSkcID int64 `json:"productSkcId"`
+		} `json:"productSkcSpec"`
+		ProductID    int   `json:"productId"`
+		ProductSkcID int64 `json:"productSkcId"`
+	} `json:"productSkcDTO"`
+	ProductOrigin struct {
+		Region1ShortName string `json:"region1ShortName"`
+		Region1Name      string `json:"region1Name"`
+	} `json:"productOrigin"`
+	ProductSkuLabelCodeDTO struct {
+		ProductSkuID int64 `json:"productSkuId"`
+		ProductID    int   `json:"productId"`
+		CreateTimeTs int64 `json:"createTimeTs"`
+		ProductSkcID int64 `json:"productSkcId"`
+		LabelCode    int64 `json:"labelCode"`
+	} `json:"productSkuLabelCodeDTO"`
+	ProductSkcSpecI18NMap map[string]any `json:"productSkcSpecI18nMap"`
 }
