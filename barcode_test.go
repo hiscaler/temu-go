@@ -1,7 +1,6 @@
 package temu
 
 import (
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -23,7 +22,15 @@ func Test_barcodeService_NormalGoods(t *testing.T) {
 	params := NormalGoodsBarcodeQueryParams{
 		ProductSkcIdList: []int{8972250969},
 	}
-	s, err := temuClient.Services.BarcodeService.NormalGoods(params)
-	fmt.Println(s)
-	assert.Equalf(t, nil, err, "test1")
+	_, err := temuClient.Services.BarcodeService.NormalGoods(params)
+	assert.Equalf(t, nil, err, "Services.BarcodeService.NormalGoods(%#v)", params)
+}
+
+func Test_barcodeService_CustomGoods(t *testing.T) {
+	params := CustomGoodsBarcodeQueryParams{
+		PersonalProductSkuIdList: []int{60294097402138},
+	}
+	items, err := temuClient.Services.BarcodeService.CustomGoods(params)
+	assert.Equalf(t, nil, err, "Services.BarcodeService.CustomGoods(%#v)", params)
+	assert.Equal(t, true, len(items) != 0, "Services.BarcodeService.CustomGoods(%#v)", params)
 }

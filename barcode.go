@@ -12,7 +12,7 @@ type barcodeService service
 type NormalGoodsBarcodeQueryParams struct {
 	normal.ParameterWithPager
 	ProductSkuIdList []int  `json:"productSkuIdList,omitempty"` // 货品 sku id 列表
-	SkcExtCode       string `json:"skcExtCode,omitempty"`       // skc货号
+	SkcExtCode       string `json:"skcExtCode,omitempty"`       // skc 货号
 	ProductSkcIdList []int  `json:"productSkcIdList,omitempty"` // 货品 skc id 列表
 	SkuExtCode       string `json:"skuExtCode,omitempty"`       // sku 货号
 	LabelCode        int    `json:"labelCode,omitempty"`        // 标签条码
