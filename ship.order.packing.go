@@ -36,7 +36,7 @@ type ShipOrderPackingSendRequest struct {
 		PredictId                 int     `json:"predictId,omitempty"`                 // 预测ID
 	} `json:"thirdPartyDeliveryInfo,omitempty"` // 公司指定物流
 	ThirdPartyExpressDeliveryInfoVO struct {
-		ExpressCompanyId   int    `json:"expressCompanyId"`            // 快递公司Id
+		ExpressCompanyId   int    `json:"expressCompanyId"`            // 快递公司 Id
 		ExpressCompanyName string `json:"expressCompanyName"`          // 快递公司名称
 		ExpressDeliverySn  string `json:"expressDeliverySn"`           // 快递单号
 		ExpressPackageNum  int    `json:"expressPackageNum,omitempty"` // 发货总箱数
@@ -47,6 +47,7 @@ func (m ShipOrderPackingSendRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliverMethod, validation.Required.Error("发货方式不能为空。")),
 		validation.Field(&m.DeliveryAddressId, validation.Required.Error("发货地址 ID 不能为空。")),
+		validation.Field(&m.DeliveryOrderSnList, validation.Required.Error("发货单号不能为空。")),
 	)
 }
 
@@ -78,7 +79,7 @@ func (s shipOrderPackingService) Send(request ShipOrderPackingSendRequest) (numb
 	return
 }
 
-// 装箱发货校验（bg.shiporder.packing.match）
+// 装箱发货校验
 
 type ShipOrderPackingMatchRequest struct {
 	normal.Parameter

@@ -1,14 +1,12 @@
 package temu
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestShipOrderPackageService_One(t *testing.T) {
-	data, err := temuClient.Services.ShipOrderPackageService.One("FH2408131785686")
-	if err != nil {
-		t.Errorf("temuClient.Services.ShipOrderStaging.Companies: %s", err.Error())
-	} else {
-		t.Logf("items: %#v", data)
-	}
+	deliveryOrderSn := "FH2408221920008"
+	_, err := temuClient.Services.ShipOrderPackageService.One(deliveryOrderSn)
+	assert.Nilf(t, err, "temuClient.Services.ShipOrderPackageService.One(%s)", deliveryOrderSn)
 }
