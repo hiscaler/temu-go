@@ -59,7 +59,19 @@ const (
 
 // 发货方式
 const (
+	DeliveryMethodNone                   = 0 // 无
 	DeliveryMethodSelf                   = 1 // 自行配送
 	DeliveryMethodPlatformRecommendation = 2 // 平台推荐服务商
 	DeliveryMethodThirdParty             = 3 // 自行委托第三方物流
+)
+
+// 发货单状态
+const (
+	ShipOrderStatusWaitingPacking          = 0 // 待装箱发货
+	ShipOrderStatusWaitingWarehouseReceive = 1 // 待仓库收货
+	ShipOrderStatusReceived                = 2 // 已收货
+	ShipOrderStatusInStorage               = 3 // 已入库
+	ShipOrderStatusReturned                = 4 // 已退货
+	ShipOrderStatusCanceled                = 5 // 已取消
+	ShipOrderStatusPartialReceive          = 6 // 部分收货
 )
