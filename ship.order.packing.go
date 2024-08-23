@@ -91,14 +91,16 @@ func (m ShipOrderPackingMatchRequest) Validate() error {
 	)
 }
 
-func (s shipOrderPackingService) Match(request ShipOrderPackingMatchRequest) (items []entity.ShipOrderPackingMatchResult, err error) {
+// Match 装箱发货校验
+// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#TDP3qU
+func (s shipOrderPackingService) Match(request ShipOrderPackingMatchRequest) (item entity.ShipOrderPackingMatchResult, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
 
 	var result = struct {
 		normal.Response
-		Result []entity.ShipOrderPackingMatchResult `json:"result"`
+		Result entity.ShipOrderPackingMatchResult `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetBody(request).
@@ -111,6 +113,6 @@ func (s shipOrderPackingService) Match(request ShipOrderPackingMatchRequest) (it
 		return
 	}
 
-	items = result.Result
+	item = result.Result
 	return
 }
