@@ -8,7 +8,7 @@ import (
 )
 
 func TestShipOrderStagingService_All(t *testing.T) {
-	params := ShipOrderStagingQueryParams{}
+	params := ShipOrderStagingQueryParams{SubPurchaseOrderSnList: []string{"WB2408163594797"}}
 	_, _, _, _, err := temuClient.Services.ShipOrderStaging.All(params)
 	assert.Nilf(t, err, "Services.ShipOrderStaging.All(%s)", jsonx.ToJson(params, "{}"))
 }
@@ -17,7 +17,7 @@ func TestShipOrderStagingService_Add(t *testing.T) {
 	req := ShipOrderStagingAddRequest{}
 	req.JoinInfoList = []ShipOrderStagingAddInfo{
 		{
-			SubPurchaseOrderSn:  "WB2408173170013",
+			SubPurchaseOrderSn:  "WB2408182975602",
 			DeliveryAddressType: entity.DeliveryAddressTypeChineseMainland,
 		},
 	}

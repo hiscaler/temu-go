@@ -15,12 +15,12 @@ func TestShipOrderService_All(t *testing.T) {
 }
 
 func TestShipOrderService_Create(t *testing.T) {
-	deliveryAddress, err := temuClient.Services.MallAddressService.One(5441063557369)
+	deliveryAddress, err := temuClient.Services.MallAddress.One(5441063557369)
 	assert.Nil(t, err, "Query mall deliveryAddress")
 
 	subPurchaseOrderSn := "WB2408182975602"
-	addr, err := temuClient.Services.ShipOrderReceiveAddressService.One(subPurchaseOrderSn)
-	assert.Nilf(t, err, "Services.ShipOrderReceiveAddressService.One(%s)", subPurchaseOrderSn)
+	addr, err := temuClient.Services.ShipOrderReceiveAddress.One(subPurchaseOrderSn)
+	assert.Nilf(t, err, "Services.ShipOrderReceiveAddress.One(%s)", subPurchaseOrderSn)
 	receiveAddress := addr.ReceiveAddressInfo
 
 	shipOrderStaging, err := temuClient.Services.ShipOrderStaging.One(subPurchaseOrderSn)

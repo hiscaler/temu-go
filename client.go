@@ -42,20 +42,20 @@ type service struct {
 }
 
 type services struct {
-	ShipOrder                      shipOrderService
-	ShipOrderStaging               shipOrderStagingService
-	ShipOrderPackingService        shipOrderPackingService
-	ShipOrderPackageService        shipOrderPackageService
-	BarcodeService                 barcodeService
-	PurchaseOrderService           purchaseOrderService
-	GoodsSalesService              goodsSalesService
-	LogisticsService               logisticsService
-	VirtualInventoryJitService     virtualInventoryJitService
-	GoodsSizeChartService          goodsSizeChartService
-	GoodsSizeChartClassService     goodsSizeChartClassService
-	GoodsSizeChartSettingService   goodsSizeChartSettingService
-	MallAddressService             mallAddressService
-	ShipOrderReceiveAddressService shipOrderReceiveAddressService
+	ShipOrder               shipOrderService
+	ShipOrderStaging        shipOrderStagingService
+	ShipOrderPacking        shipOrderPackingService
+	ShipOrderPackage        shipOrderPackageService
+	Barcode                 barcodeService
+	PurchaseOrder           purchaseOrderService
+	GoodsSales              goodsSalesService
+	Logistics               logisticsService
+	VirtualInventoryJit     virtualInventoryJitService
+	GoodsSizeChart          goodsSizeChartService
+	GoodsSizeChartClass     goodsSizeChartClassService
+	GoodsSizeChartSetting   goodsSizeChartSettingService
+	MallAddress             mallAddressService
+	ShipOrderReceiveAddress shipOrderReceiveAddressService
 }
 
 type Client struct {
@@ -138,20 +138,20 @@ func NewClient(config config.Config) *Client {
 		httpClient: httpClient,
 	}
 	client.Services = services{
-		ShipOrder:                      (shipOrderService)(xService),
-		ShipOrderStaging:               (shipOrderStagingService)(xService),
-		ShipOrderPackingService:        (shipOrderPackingService)(xService),
-		ShipOrderPackageService:        (shipOrderPackageService)(xService),
-		BarcodeService:                 (barcodeService)(xService),
-		PurchaseOrderService:           (purchaseOrderService)(xService),
-		GoodsSalesService:              (goodsSalesService)(xService),
-		LogisticsService:               (logisticsService)(xService),
-		VirtualInventoryJitService:     (virtualInventoryJitService)(xService),
-		GoodsSizeChartService:          (goodsSizeChartService)(xService),
-		GoodsSizeChartClassService:     (goodsSizeChartClassService)(xService),
-		GoodsSizeChartSettingService:   (goodsSizeChartSettingService)(xService),
-		MallAddressService:             (mallAddressService)(xService),
-		ShipOrderReceiveAddressService: (shipOrderReceiveAddressService)(xService),
+		ShipOrder:               (shipOrderService)(xService),
+		ShipOrderStaging:        (shipOrderStagingService)(xService),
+		ShipOrderPacking:        (shipOrderPackingService)(xService),
+		ShipOrderPackage:        (shipOrderPackageService)(xService),
+		Barcode:                 (barcodeService)(xService),
+		PurchaseOrder:           (purchaseOrderService)(xService),
+		GoodsSales:              (goodsSalesService)(xService),
+		Logistics:               (logisticsService)(xService),
+		VirtualInventoryJit:     (virtualInventoryJitService)(xService),
+		GoodsSizeChart:          (goodsSizeChartService)(xService),
+		GoodsSizeChartClass:     (goodsSizeChartClassService)(xService),
+		GoodsSizeChartSetting:   (goodsSizeChartSettingService)(xService),
+		MallAddress:             (mallAddressService)(xService),
+		ShipOrderReceiveAddress: (shipOrderReceiveAddressService)(xService),
 	}
 
 	return client
