@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -65,7 +66,7 @@ func (m ShipOrderPackingSendRequest) Validate() error {
 
 // Send 装箱发货接口
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#ezXrHy
-func (s shipOrderPackingService) Send(request ShipOrderPackingSendRequest) (number string, err error) {
+func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPackingSendRequest) (number string, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -78,6 +79,7 @@ func (s shipOrderPackingService) Send(request ShipOrderPackingSendRequest) (numb
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.shiporder.packing.send")
@@ -107,7 +109,7 @@ func (m ShipOrderPackingMatchRequest) Validate() error {
 
 // Match 装箱发货校验
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#TDP3qU
-func (s shipOrderPackingService) Match(request ShipOrderPackingMatchRequest) (item entity.ShipOrderPackingMatchResult, err error) {
+func (s shipOrderPackingService) Match(ctx context.Context, request ShipOrderPackingMatchRequest) (item entity.ShipOrderPackingMatchResult, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -117,6 +119,7 @@ func (s shipOrderPackingService) Match(request ShipOrderPackingMatchRequest) (it
 		Result entity.ShipOrderPackingMatchResult `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.shiporder.packing.match")

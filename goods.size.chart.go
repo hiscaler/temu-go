@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -22,7 +23,7 @@ func (m GoodsSizeChartQueryParams) Validate() error {
 }
 
 // All 查询尺码表模板
-func (s *goodsSizeChartService) All(params GoodsSizeChartQueryParams) (items []entity.GoodsSizeChart, err error) {
+func (s *goodsSizeChartService) All(ctx context.Context, params GoodsSizeChartQueryParams) (items []entity.GoodsSizeChart, err error) {
 	if params.Page < 0 {
 		params.Page = 0
 	}
@@ -45,6 +46,7 @@ func (s *goodsSizeChartService) All(params GoodsSizeChartQueryParams) (items []e
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.sizecharts.get")
@@ -60,7 +62,7 @@ func (s *goodsSizeChartService) All(params GoodsSizeChartQueryParams) (items []e
 
 // Create 生成尺码表模板
 // https://seller.kuajingmaihuo.com/sop/view/415794628056821162#n0Wlda
-func (s *goodsSizeChartService) Create(businessId int) (tempBusinessId int, err error) {
+func (s *goodsSizeChartService) Create(ctx context.Context, businessId int) (tempBusinessId int, err error) {
 	var result = struct {
 		normal.Response
 		Result struct {
@@ -68,6 +70,7 @@ func (s *goodsSizeChartService) Create(businessId int) (tempBusinessId int, err 
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(map[string]int{"tempBusinessId": businessId}).
 		SetResult(&result).
 		Post("bg.goods.sizecharts.template.create")

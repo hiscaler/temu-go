@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -19,7 +20,7 @@ func (m GoodsSizeChartClassQueryParams) Validate() error {
 }
 
 // All 查询尺码表模板
-func (s *goodsSizeChartClassService) All(params GoodsSizeChartClassQueryParams) (items []entity.GoodsSizeChartClass, err error) {
+func (s *goodsSizeChartClassService) All(ctx context.Context, params GoodsSizeChartClassQueryParams) (items []entity.GoodsSizeChartClass, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -31,6 +32,7 @@ func (s *goodsSizeChartClassService) All(params GoodsSizeChartClassQueryParams) 
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.sizecharts.class.get")

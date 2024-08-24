@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"strings"
@@ -11,7 +12,7 @@ type shipOrderReceiveAddressService service
 
 // All 查询大仓收货地址 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#chUUk1
-func (s shipOrderReceiveAddressService) All(subPurchaseOrderSnList ...string) (items []entity.ShipOrderReceiveAddress, err error) {
+func (s shipOrderReceiveAddressService) All(ctx context.Context, subPurchaseOrderSnList ...string) (items []entity.ShipOrderReceiveAddress, err error) {
 	if len(subPurchaseOrderSnList) == 0 {
 		return
 	}
@@ -23,6 +24,7 @@ func (s shipOrderReceiveAddressService) All(subPurchaseOrderSnList ...string) (i
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(map[string][]string{"subPurchaseOrderSnList": subPurchaseOrderSnList}).
 		SetResult(&result).
 		Post("bg.shiporder.receiveaddressv2.get")
@@ -37,8 +39,8 @@ func (s shipOrderReceiveAddressService) All(subPurchaseOrderSnList ...string) (i
 }
 
 // One [WIP] 查询单个备货单收货地址
-func (s shipOrderReceiveAddressService) One(subPurchaseOrderSn string) (item entity.ShipOrderReceiveAddress, err error) {
-	items, err := s.All(subPurchaseOrderSn)
+func (s shipOrderReceiveAddressService) One(ctx context.Context, subPurchaseOrderSn string) (item entity.ShipOrderReceiveAddress, err error) {
+	items, err := s.All(ctx, subPurchaseOrderSn)
 	if err != nil {
 		return
 	}

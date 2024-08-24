@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -40,7 +41,7 @@ func (m ShipOrderQueryParams) Validate() error {
 
 // All 查询发货单 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#B7c51j
-func (s shipOrderService) All(params ShipOrderQueryParams) (items []entity.ShipOrder, total, totalPages int, isLastPage bool, err error) {
+func (s shipOrderService) All(ctx context.Context, params ShipOrderQueryParams) (items []entity.ShipOrder, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
@@ -54,6 +55,7 @@ func (s shipOrderService) All(params ShipOrderQueryParams) (items []entity.ShipO
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.shiporderv2.get")
@@ -126,7 +128,7 @@ func (m ShipOrderCreateRequest) Validate() error {
 }
 
 // Create 创建发货单接口 V3
-func (s shipOrderService) Create(req ShipOrderCreateRequest) (ok bool, err error) {
+func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest) (ok bool, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
@@ -136,6 +138,7 @@ func (s shipOrderService) Create(req ShipOrderCreateRequest) (ok bool, err error
 		Result any `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(req).
 		SetResult(&result).
 		Post("bg.shiporderv3.create")
@@ -162,7 +165,7 @@ func (m ShipOrderCancelRequest) Validate() error {
 
 // Cancel 取消发货单
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#UywT8E
-func (s shipOrderService) Cancel(deliveryOrderSn int) (ok bool, err error) {
+func (s shipOrderService) Cancel(ctx context.Context, deliveryOrderSn int) (ok bool, err error) {
 	req := ShipOrderCancelRequest{DeliveryOrderSn: deliveryOrderSn}
 	if err = req.Validate(); err != nil {
 		return
@@ -173,6 +176,7 @@ func (s shipOrderService) Cancel(deliveryOrderSn int) (ok bool, err error) {
 		Result any `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(req).
 		SetResult(&result).
 		Post("bg.shiporder.cancel")

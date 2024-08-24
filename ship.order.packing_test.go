@@ -13,21 +13,21 @@ func TestShipOrderPackingService_Match(t *testing.T) {
 	req := ShipOrderPackingMatchRequest{
 		DeliveryOrderSnList: []string{"FH2408231977953"},
 	}
-	_, err := temuClient.Services.ShipOrderPacking.Match(req)
-	assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Match(%s)", jsonx.ToJson(req, "{}"))
+	_, err := temuClient.Services.ShipOrderPacking.Match(ctx, req)
+	assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Match(ctx, %s)", jsonx.ToJson(req, "{}"))
 }
 
 func TestShipOrderPackingService_Send(t *testing.T) {
 	// 发货地址
-	addresses, err := temuClient.Services.MallAddress.All()
-	assert.Nilf(t, err, "temuClient.Services.MallAddress.All(): error")
-	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.MallAddress.All(): results")
+	addresses, err := temuClient.Services.MallAddress.All(ctx)
+	assert.Nilf(t, err, "temuClient.Services.MallAddress.All(ctx): error")
+	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.MallAddress.All(ctx): results")
 	address := addresses[0]
 
 	// 快递公司
-	companies, err := temuClient.Services.Logistics.Companies()
-	assert.Nilf(t, err, "temuClient.Services.Logistics.Companies(): error")
-	assert.Equal(t, true, len(companies) > 0, "temuClient.Services.Logistics.Companies(): results")
+	companies, err := temuClient.Services.Logistics.Companies(ctx)
+	assert.Nilf(t, err, "temuClient.Services.Logistics.Companies(ctx): error")
+	assert.Equal(t, true, len(companies) > 0, "temuClient.Services.Logistics.Companies(ctx): results")
 	company := companies[0]
 
 	params := ShipOrderQueryParams{
@@ -35,8 +35,8 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 		IsPrintBoxMark: 1,
 	}
 	params.PageSize = 100
-	items, _, _, _, err := temuClient.Services.ShipOrder.All(params)
-	assert.Nilf(t, err, "temuClient.Services.ShipOrder.All(%s)", jsonx.ToJson(params, "{}"))
+	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
+	assert.Nilf(t, err, "temuClient.Services.ShipOrder.All(ctx, %s)", jsonx.ToJson(params, "{}"))
 	exists := false
 	var shipOrder entity.ShipOrder
 	for _, v := range items {
@@ -47,13 +47,13 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 			break
 		}
 	}
-	assert.Equalf(t, exists, true, "temuClient.Services.ShipOrder.All(%s)", jsonx.ToJson(params, "{}"))
+	assert.Equalf(t, exists, true, "temuClient.Services.ShipOrder.All(ctx, %s)", jsonx.ToJson(params, "{}"))
 	if exists {
 
 		// 必须打印箱唛
 		if !shipOrder.IsPrintBoxMark {
-			_, err = temuClient.Services.Barcode.BoxMark(shipOrder.DeliveryOrderSn)
-			assert.Nilf(t, err, "temuClient.Services.Barcode.BoxMark(%s)", shipOrder.DeliveryOrderSn)
+			_, err = temuClient.Services.Barcode.BoxMark(ctx, shipOrder.DeliveryOrderSn)
+			assert.Nilf(t, err, "temuClient.Services.Barcode.BoxMark(ctx, %s)", shipOrder.DeliveryOrderSn)
 		}
 
 		req := ShipOrderPackingSendRequest{
@@ -77,8 +77,8 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 		if req.ThirdPartyDeliveryInfo.PredictTotalPackageWeight < 1000 {
 			req.ThirdPartyDeliveryInfo.PredictTotalPackageWeight = 1000
 		}
-		_, err = temuClient.Services.ShipOrderPacking.Send(req)
+		_, err = temuClient.Services.ShipOrderPacking.Send(ctx, req)
 		fmt.Println(fmt.Errorf("sssssssssss %#v", err))
-		assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Match(%s)", jsonx.ToJson(req, "{}"))
+		assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Match(ctx, %s)", jsonx.ToJson(req, "{}"))
 	}
 }

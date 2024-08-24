@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/hiscaler/temu-go/config"
@@ -9,6 +10,7 @@ import (
 )
 
 var temuClient *Client
+var ctx context.Context
 
 func TestMain(m *testing.M) {
 	b, err := os.ReadFile("./config/config_test.json")
@@ -22,5 +24,6 @@ func TestMain(m *testing.M) {
 	}
 
 	temuClient = NewClient(c)
+	ctx = context.Background()
 	m.Run()
 }

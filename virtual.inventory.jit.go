@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -11,7 +12,7 @@ type virtualInventoryJitService service
 
 // View 虚拟库存查询接口
 // https://seller.kuajingmaihuo.com/sop/view/706628248275137588#ag3EtD
-func (s virtualInventoryJitService) View(productSkcId int) (items []entity.VirtualInventoryJit, err error) {
+func (s virtualInventoryJitService) View(ctx context.Context, productSkcId int) (items []entity.VirtualInventoryJit, err error) {
 	var result = struct {
 		normal.Response
 		Result struct {
@@ -20,6 +21,7 @@ func (s virtualInventoryJitService) View(productSkcId int) (items []entity.Virtu
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(map[string]int{"productSkcId": productSkcId}).
 		SetResult(&result).
 		Post("bg.virtualinventoryjit.get")
@@ -53,7 +55,7 @@ func (m VirtualInventoryJitEditRequest) Validate() error {
 
 // Edit 虚拟库存编辑接口
 // https://seller.kuajingmaihuo.com/sop/view/706628248275137588#hALnFd
-func (s virtualInventoryJitService) Edit(request VirtualInventoryJitEditRequest) (ok bool, err error) {
+func (s virtualInventoryJitService) Edit(ctx context.Context, request VirtualInventoryJitEditRequest) (ok bool, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -63,6 +65,7 @@ func (s virtualInventoryJitService) Edit(request VirtualInventoryJitEditRequest)
 		Result any `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.virtualinventoryjit.edit")

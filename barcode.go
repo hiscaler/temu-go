@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
@@ -24,7 +25,7 @@ func (m NormalGoodsBarcodeQueryParams) Validate() error {
 
 // NormalGoods 商品条码查询v2（bg.goods.labelv2.get）
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#5LRokG
-func (s barcodeService) NormalGoods(params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
+func (s barcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
 	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
@@ -40,6 +41,7 @@ func (s barcodeService) NormalGoods(params NormalGoodsBarcodeQueryParams) (items
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.labelv2.get")
@@ -66,7 +68,7 @@ func (m CustomGoodsBarcodeQueryParams) Validate() error {
 
 // CustomGoods 定制商品条码查询（bg.goods.custom.label.get）
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Hc5wmR
-func (s barcodeService) CustomGoods(params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
+func (s barcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
 	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
@@ -82,6 +84,7 @@ func (s barcodeService) CustomGoods(params CustomGoodsBarcodeQueryParams) (items
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.custom.label.get")
@@ -110,7 +113,7 @@ func (m BoxMarkBarcodeQueryParams) Validate() error {
 }
 
 // BoxMarkPrintUrl 箱唛打印地址
-func (s barcodeService) BoxMarkPrintUrl(deliveryOrderSnList ...string) (dataKey string, err error) {
+func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, deliveryOrderSnList ...string) (dataKey string, err error) {
 	params := BoxMarkBarcodeQueryParams{
 		ReturnDataKey:       true,
 		DeliveryOrderSnList: deliveryOrderSnList,
@@ -124,6 +127,7 @@ func (s barcodeService) BoxMarkPrintUrl(deliveryOrderSnList ...string) (dataKey 
 		Result string `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.logistics.boxmarkinfo.get")
@@ -138,7 +142,7 @@ func (s barcodeService) BoxMarkPrintUrl(deliveryOrderSnList ...string) (dataKey 
 }
 
 // BoxMark 箱唛信息
-func (s barcodeService) BoxMark(deliveryOrderSnList ...string) (items []entity.BoxMarkInfo, err error) {
+func (s barcodeService) BoxMark(ctx context.Context, deliveryOrderSnList ...string) (items []entity.BoxMarkInfo, err error) {
 	params := BoxMarkBarcodeQueryParams{
 		ReturnDataKey:       false,
 		DeliveryOrderSnList: deliveryOrderSnList,
@@ -152,6 +156,7 @@ func (s barcodeService) BoxMark(deliveryOrderSnList ...string) (items []entity.B
 		Result []entity.BoxMarkInfo `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.logistics.boxmarkinfo.get")

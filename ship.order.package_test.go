@@ -7,6 +7,6 @@ import (
 
 func TestShipOrderPackageService_One(t *testing.T) {
 	deliveryOrderSn := "FH2408221920008"
-	_, err := temuClient.Services.ShipOrderPackage.One(deliveryOrderSn)
-	assert.Nilf(t, err, "temuClient.Services.ShipOrderPackage.One(%s)", deliveryOrderSn)
+	_, err := temuClient.Services.ShipOrderPackage.One(ctx, deliveryOrderSn)
+	assert.Nilf(t, err, "temuClient.Services.ShipOrderPackage.One(ctx, %s)", deliveryOrderSn)
 }

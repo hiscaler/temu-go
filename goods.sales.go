@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -49,7 +50,7 @@ func (m GoodsSalesQueryParams) Validate() error {
 
 // All 销售管理数据查询接口
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#8sCZQ8
-func (s goodsSalesService) All(params GoodsSalesQueryParams) (items []entity.GoodsSales, err error) {
+func (s goodsSalesService) All(ctx context.Context, params GoodsSalesQueryParams) (items []entity.GoodsSales, err error) {
 	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
@@ -62,6 +63,7 @@ func (s goodsSalesService) All(params GoodsSalesQueryParams) (items []entity.Goo
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.sales.get")
@@ -76,8 +78,8 @@ func (s goodsSalesService) All(params GoodsSalesQueryParams) (items []entity.Goo
 }
 
 // One 根据商品 SKC ID 查询
-func (s goodsSalesService) One(productSkcId int) (item entity.GoodsSales, err error) {
-	items, err := s.All(GoodsSalesQueryParams{ProductSkcIdList: []int{productSkcId}})
+func (s goodsSalesService) One(ctx context.Context, productSkcId int) (item entity.GoodsSales, err error) {
+	items, err := s.All(ctx, GoodsSalesQueryParams{ProductSkcIdList: []int{productSkcId}})
 	if err != nil {
 		return
 	}

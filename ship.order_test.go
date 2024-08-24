@@ -7,23 +7,26 @@ import (
 )
 
 func TestShipOrderService_All(t *testing.T) {
-	params := ShipOrderQueryParams{}
+	params := ShipOrderQueryParams{
+		// SubPurchaseOrderSnList: []string{"WB2408163501017"},
+		IsCustomProduct: true,
+	}
 	params.Page = 1
 	params.PageSize = 10
-	_, _, _, _, err := temuClient.Services.ShipOrder.All(params)
+	_, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
 	assert.Nilf(t, err, "Services.ShipOrder.All: %s", jsonx.ToJson(params, "{}"))
 }
 
 func TestShipOrderService_Create(t *testing.T) {
-	deliveryAddress, err := temuClient.Services.MallAddress.One(5441063557369)
+	deliveryAddress, err := temuClient.Services.MallAddress.One(ctx, 5441063557369)
 	assert.Nil(t, err, "Query mall deliveryAddress")
 
 	subPurchaseOrderSn := "WB2408182975602"
-	addr, err := temuClient.Services.ShipOrderReceiveAddress.One(subPurchaseOrderSn)
-	assert.Nilf(t, err, "Services.ShipOrderReceiveAddress.One(%s)", subPurchaseOrderSn)
+	addr, err := temuClient.Services.ShipOrderReceiveAddress.One(ctx, subPurchaseOrderSn)
+	assert.Nilf(t, err, "Services.ShipOrderReceiveAddress.One(ctx, %s)", subPurchaseOrderSn)
 	receiveAddress := addr.ReceiveAddressInfo
 
-	shipOrderStaging, err := temuClient.Services.ShipOrderStaging.One(subPurchaseOrderSn)
+	shipOrderStaging, err := temuClient.Services.ShipOrderStaging.One(ctx, subPurchaseOrderSn)
 	assert.Nil(t, err, "Query shop order staging")
 
 	shipOrderCreateRequestDeliveryOrder := ShipOrderCreateRequestDeliveryOrder{
@@ -69,8 +72,8 @@ func TestShipOrderService_Create(t *testing.T) {
 			shipOrderCreateRequestDeliveryOrder,
 		},
 	}
-	_, err = temuClient.Services.ShipOrder.Create(req)
-	assert.Nilf(t, err, "temuClient.Services.ShipOrder.Create(%s)", jsonx.ToJson(req, "{}"))
+	_, err = temuClient.Services.ShipOrder.Create(ctx, req)
+	assert.Nilf(t, err, "temuClient.Services.ShipOrder.Create(ctx, %s)", jsonx.ToJson(req, "{}"))
 	if err != nil {
 		t.Logf("error: %s", err.Error())
 	}

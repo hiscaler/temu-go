@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -39,7 +40,7 @@ func (m ShipOrderStagingQueryParams) Validate() error {
 
 // All List all staging orders
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#NOA03y
-func (s shipOrderStagingService) All(params ShipOrderStagingQueryParams) (items []entity.ShipOrderStaging, total, totalPages int, isLastPage bool, err error) {
+func (s shipOrderStagingService) All(ctx context.Context, params ShipOrderStagingQueryParams) (items []entity.ShipOrderStaging, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
@@ -53,6 +54,7 @@ func (s shipOrderStagingService) All(params ShipOrderStagingQueryParams) (items 
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.shiporder.staging.get")
@@ -69,8 +71,8 @@ func (s shipOrderStagingService) All(params ShipOrderStagingQueryParams) (items 
 }
 
 // One 搜索单个发货台数据
-func (s shipOrderStagingService) One(subPurchaseOrderSn string) (item entity.ShipOrderStaging, err error) {
-	items, _, _, _, err := s.All(ShipOrderStagingQueryParams{
+func (s shipOrderStagingService) One(ctx context.Context, subPurchaseOrderSn string) (item entity.ShipOrderStaging, err error) {
+	items, _, _, _, err := s.All(ctx, ShipOrderStagingQueryParams{
 		SubPurchaseOrderSnList: []string{subPurchaseOrderSn},
 	})
 	if err != nil {
@@ -113,7 +115,7 @@ func (m ShipOrderStagingAddRequest) Validate() error {
 
 // Add 加入发货台
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YSg2AE
-func (s shipOrderStagingService) Add(req ShipOrderStagingAddRequest) (ok bool, results []entity.ShipOrderStagingAddResult, err error) {
+func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAddRequest) (ok bool, results []entity.ShipOrderStagingAddResult, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
@@ -140,6 +142,7 @@ func (s shipOrderStagingService) Add(req ShipOrderStagingAddRequest) (ok bool, r
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(req).
 		SetResult(&result).
 		Post("bg.shiporder.staging.add")

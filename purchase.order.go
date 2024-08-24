@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -79,7 +80,7 @@ func (m PurchaseOrderQueryParams) Validate() error {
 
 // All 查询采购单列表 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Ip0Gso
-func (s purchaseOrderService) All(params PurchaseOrderQueryParams) (items []entity.PurchaseOrder, stat entity.PurchaseOrderStatistic, err error) {
+func (s purchaseOrderService) All(ctx context.Context, params PurchaseOrderQueryParams) (items []entity.PurchaseOrder, stat entity.PurchaseOrderStatistic, err error) {
 	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
@@ -92,6 +93,7 @@ func (s purchaseOrderService) All(params PurchaseOrderQueryParams) (items []enti
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.purchaseorderv2.get")
@@ -106,7 +108,7 @@ func (s purchaseOrderService) All(params PurchaseOrderQueryParams) (items []enti
 }
 
 // One 根据子采购单或者母采购单号查询采购单数据
-func (s purchaseOrderService) One(purchaseOrderSn string) (item entity.PurchaseOrder, err error) {
+func (s purchaseOrderService) One(ctx context.Context, purchaseOrderSn string) (item entity.PurchaseOrder, err error) {
 	if len(purchaseOrderSn) <= 2 {
 		err = ErrInvalidParameters
 		return
@@ -125,7 +127,7 @@ func (s purchaseOrderService) One(purchaseOrderSn string) (item entity.PurchaseO
 	} else {
 		params.OriginalPurchaseOrderSnList = []string{purchaseOrderSn}
 	}
-	items, _, err := s.All(params)
+	items, _, err := s.All(ctx, params)
 	if err != nil {
 		return
 	}
@@ -162,7 +164,7 @@ func (m PurchaseOrderApplyRequest) Validate() error {
 
 // Apply 申请备货
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#nsjLx8
-func (s purchaseOrderService) Apply(request PurchaseOrderApplyRequest) (ok bool, err error) {
+func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderApplyRequest) (ok bool, err error) {
 	if err = request.Validate(); err != nil {
 		return
 	}
@@ -171,6 +173,7 @@ func (s purchaseOrderService) Apply(request PurchaseOrderApplyRequest) (ok bool,
 		Result any `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
+		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.purchaseorder.apply")

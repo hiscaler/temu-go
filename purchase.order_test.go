@@ -27,28 +27,28 @@ func Test_purchaseOrderService_All(t *testing.T) {
 		// JoinDeliveryPlatform:        true,
 	}
 	params.PageSize = 1000
-	items, _, err := temuClient.Services.PurchaseOrder.All(params)
-	assert.Equalf(t, nil, err, "Services.PurchaseOrder.All(%#v) err", params)
+	items, _, err := temuClient.Services.PurchaseOrder.All(ctx, params)
+	assert.Equalf(t, nil, err, "Services.PurchaseOrder.All(ctx, %#v) err", params)
 
 	if len(items) != 0 {
 		item := items[0]
 		var order entity.PurchaseOrder
 
 		// 根据母订单号查询
-		order, err = temuClient.Services.PurchaseOrder.One(item.OriginalPurchaseOrderSn)
-		assert.Equalf(t, nil, err, "Services.PurchaseOrder.One(%s)", item.OriginalPurchaseOrderSn)
-		assert.Equalf(t, item, order, "Services.PurchaseOrder.One(%s)", item.OriginalPurchaseOrderSn)
+		order, err = temuClient.Services.PurchaseOrder.One(ctx, item.OriginalPurchaseOrderSn)
+		assert.Equalf(t, nil, err, "Services.PurchaseOrder.One(ctx, %s)", item.OriginalPurchaseOrderSn)
+		assert.Equalf(t, item, order, "Services.PurchaseOrder.One(ctx, %s)", item.OriginalPurchaseOrderSn)
 
 		// 根据子订单号查询
-		order, err = temuClient.Services.PurchaseOrder.One(item.SubPurchaseOrderSn)
-		assert.Equalf(t, nil, err, "Services.PurchaseOrder.One(%s)", item.SubPurchaseOrderSn)
-		assert.Equalf(t, item, order, "Services.PurchaseOrder.One(%s)", item.SubPurchaseOrderSn)
+		order, err = temuClient.Services.PurchaseOrder.One(ctx, item.SubPurchaseOrderSn)
+		assert.Equalf(t, nil, err, "Services.PurchaseOrder.One(ctx, %s)", item.SubPurchaseOrderSn)
+		assert.Equalf(t, item, order, "Services.PurchaseOrder.One(ctx, %s)", item.SubPurchaseOrderSn)
 	}
 }
 
 func Test_purchaseOrderService_One(t *testing.T) {
 	purchaseOrderSn := "WB2408173170013"
-	d, err := temuClient.Services.PurchaseOrder.One(purchaseOrderSn)
-	assert.Equalf(t, nil, err, "Services.PurchaseOrder.One(%s) err", purchaseOrderSn)
-	assert.Equalf(t, purchaseOrderSn, d.SubPurchaseOrderSn, "Services.PurchaseOrder.One(%s) value", purchaseOrderSn)
+	d, err := temuClient.Services.PurchaseOrder.One(ctx, purchaseOrderSn)
+	assert.Equalf(t, nil, err, "Services.PurchaseOrder.One(ctx, %s) err", purchaseOrderSn)
+	assert.Equalf(t, purchaseOrderSn, d.SubPurchaseOrderSn, "Services.PurchaseOrder.One(ctx, %s) value", purchaseOrderSn)
 }
