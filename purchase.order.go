@@ -59,7 +59,7 @@ func (m PurchaseOrderQueryParams) Validate() error {
 			validation.When(len(m.SourceList) > 0, validation.By(func(value interface{}) error {
 				sources, ok := value.([]int)
 				if !ok {
-					return errors.New("无效的下单来源")
+					return errors.New("无效的下单来源。")
 				}
 
 				validSources := map[int]any{
