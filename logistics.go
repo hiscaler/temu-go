@@ -53,24 +53,14 @@ func (s logisticsService) Company(ctx context.Context, shipId int) (item entity.
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#16WiXI
 
 type LogisticsMatchRequest struct {
-	DeliveryAddressId         int  `json:"deliveryAddressId"`         // 发货地址
-	PredictTotalPackageWeight int  `json:"predictTotalPackageWeight"` // 预估总包裹重量，单位g
-	UrgencyType               int  `json:"urgencyType"`               // 是否是紧急发货单，0-普通 1-急采
-	SubWarehouseId            int  `json:"subWarehouseId"`            // 收货子仓id
-	QueryStandbyExpress       bool `json:"queryStandbyExpress"`       // 是否查询备用快递服务商, false-不查询 true-查询
-	TotalPackageNum           int  `json:"totalPackageNum"`           // 包裹件数
-	ReceiveAddressInfo        struct {
-		DistrictCode  int    `json:"districtCode"`
-		CityName      string `json:"cityName"`
-		DistrictName  string `json:"districtName"`
-		Phone         string `json:"phone"`
-		ProvinceCode  int    `json:"provinceCode"`
-		CityCode      int    `json:"cityCode"`
-		ReceiverName  string `json:"receiverName"`
-		DetailAddress string `json:"detailAddress"`
-		ProvinceName  string `json:"provinceName"`
-	} `json:"receiveAddressInfo"` // 收货地址
-	DeliveryOrderSns []string `json:"deliveryOrderSns"`
+	DeliveryAddressId         int                   `json:"deliveryAddressId"`         // 发货地址
+	PredictTotalPackageWeight int                   `json:"predictTotalPackageWeight"` // 预估总包裹重量，单位g
+	UrgencyType               int                   `json:"urgencyType"`               // 是否是紧急发货单，0-普通 1-急采
+	SubWarehouseId            int                   `json:"subWarehouseId"`            // 收货子仓id
+	QueryStandbyExpress       bool                  `json:"queryStandbyExpress"`       // 是否查询备用快递服务商, false-不查询 true-查询
+	TotalPackageNum           int                   `json:"totalPackageNum"`           // 包裹件数
+	ReceiveAddressInfo        entity.ReceiveAddress `json:"receiveAddressInfo"`        // 收货地址
+	DeliveryOrderSns          []string              `json:"deliveryOrderSns"`
 }
 
 func (m LogisticsMatchRequest) Validate() error {

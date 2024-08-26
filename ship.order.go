@@ -97,23 +97,10 @@ type ShipOrderCreateRequestOrderInfo struct {
 	DeliveryAddressId       int                                     `json:"deliveryAddressId"`       // 发货地址 ID
 }
 
-// ShipOrderCreateRequestReceiveAddress 收货地址
-type ShipOrderCreateRequestReceiveAddress struct {
-	ProvinceName  string `json:"provinceName,omitempty"`  // 省
-	ProvinceCode  int    `json:"provinceCode,omitempty"`  // 省份编码
-	CityName      string `json:"cityName,omitempty"`      // 市
-	CityCode      int    `json:"cityCode,omitempty"`      // 市编码
-	DistrictName  string `json:"districtName,omitempty"`  // 区
-	DistrictCode  int    `json:"districtCode,omitempty"`  // 区编码
-	ReceiverName  string `json:"receiverName,omitempty"`  // 收货人
-	DetailAddress string `json:"detailAddress,omitempty"` // 详细地址
-	Phone         string `json:"phone,omitempty"`         // 联系电话
-}
-
 type ShipOrderCreateRequestDeliveryOrder struct {
-	DeliveryOrderCreateInfos []ShipOrderCreateRequestOrderInfo    `json:"deliveryOrderCreateInfos"` // 发货单创建组列表
-	ReceiveAddressInfo       ShipOrderCreateRequestReceiveAddress `json:"receiveAddressInfo"`       // 收货地址
-	SubWarehouseId           int                                  `json:"subWarehouseId"`           // 子仓 ID
+	DeliveryOrderCreateInfos []ShipOrderCreateRequestOrderInfo `json:"deliveryOrderCreateInfos"` // 发货单创建组列表
+	ReceiveAddressInfo       entity.ReceiveAddress             `json:"receiveAddressInfo"`       // 收货地址
+	SubWarehouseId           int                               `json:"subWarehouseId"`           // 子仓 ID
 }
 
 type ShipOrderCreateRequest struct {

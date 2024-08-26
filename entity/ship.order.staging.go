@@ -15,39 +15,31 @@ type ShipOrderStaging struct {
 		PersonalText                null.String `json:"personalText"`                // 定制化内容
 	} `json:"orderDetailVOList"` // 子订单详情信息
 	SubPurchaseOrderBasicVO struct {
-		SupplierID                       int    `json:"supplierId"`
-		IsCustomProduct                  bool   `json:"isCustomProduct"`
-		ExpectLatestArrivalTimeOrDefault int    `json:"expectLatestArrivalTimeOrDefault"` // 要求最晚到达时间带默认值（时间戳 单位：毫秒）
-		ProductSkcPicture                string `json:"productSkcPicture"`
-		ProductName                      any    `json:"productName"`
-		IsFirst                          bool   `json:"isFirst"`
-		PurchaseStockType                int    `json:"purchaseStockType"`
-		DeliverUpcomingDelayTimeMillis   int    `json:"deliverUpcomingDelayTimeMillis"`
-		IsClothCategory                  bool   `json:"isClothCategory"`
-		ProductSkcID                     int    `json:"productSkcId"`
-		SettlementType                   int    `json:"settlementType"`
-		SkcExtCode                       string `json:"skcExtCode"`
-		DeliverDisplayCountdownMillis    int    `json:"deliverDisplayCountdownMillis"`
-		UrgencyType                      int    `json:"urgencyType"`
-		SubWarehouseID                   int    `json:"subWarehouseId"`
-		ProductInventoryRegion           int    `json:"productInventoryRegion"`
-		ExpectLatestDeliverTimeOrDefault int    `json:"expectLatestDeliverTimeOrDefault"` // 要求最晚发货时间带默认值（时间戳 单位：毫秒）
-		ArrivalUpcomingDelayTimeMillis   int    `json:"arrivalUpcomingDelayTimeMillis"`
-		ReceiveAddressInfo               struct {
-			DistrictCode  int    `json:"districtCode"`
-			CityName      string `json:"cityName"`
-			DistrictName  string `json:"districtName"`
-			ProvinceCode  int    `json:"provinceCode"`
-			CityCode      int    `json:"cityCode"`
-			DetailAddress string `json:"detailAddress"`
-			ProvinceName  string `json:"provinceName"`
-		} `json:"receiveAddressInfo"`
-		AutoRemoveFromDeliveryPlatformTime int    `json:"autoRemoveFromDeliveryPlatformTime"`
-		ArrivalDisplayCountdownMillis      int    `json:"arrivalDisplayCountdownMillis"`
-		FragileTag                         bool   `json:"fragileTag"`
-		PurchaseQuantity                   int    `json:"purchaseQuantity"`
-		SubWarehouseName                   string `json:"subWarehouseName"`
-		PurchaseTime                       int    `json:"purchaseTime"`
-		SubPurchaseOrderSn                 string `json:"subPurchaseOrderSn"`
+		SupplierID                         int            `json:"supplierId"`
+		IsCustomProduct                    bool           `json:"isCustomProduct"`
+		ExpectLatestArrivalTimeOrDefault   int            `json:"expectLatestArrivalTimeOrDefault"` // 要求最晚到达时间带默认值（时间戳 单位：毫秒）
+		ProductSkcPicture                  string         `json:"productSkcPicture"`
+		ProductName                        any            `json:"productName"`
+		IsFirst                            bool           `json:"isFirst"`
+		PurchaseStockType                  int            `json:"purchaseStockType"`
+		DeliverUpcomingDelayTimeMillis     int            `json:"deliverUpcomingDelayTimeMillis"`
+		IsClothCategory                    bool           `json:"isClothCategory"`
+		ProductSkcID                       int            `json:"productSkcId"`
+		SettlementType                     int            `json:"settlementType"`
+		SkcExtCode                         string         `json:"skcExtCode"`
+		DeliverDisplayCountdownMillis      int            `json:"deliverDisplayCountdownMillis"`
+		UrgencyType                        int            `json:"urgencyType"`
+		SubWarehouseID                     int            `json:"subWarehouseId"`
+		ProductInventoryRegion             int            `json:"productInventoryRegion"`
+		ExpectLatestDeliverTimeOrDefault   int            `json:"expectLatestDeliverTimeOrDefault"` // 要求最晚发货时间带默认值（时间戳 单位：毫秒）
+		ArrivalUpcomingDelayTimeMillis     int            `json:"arrivalUpcomingDelayTimeMillis"`
+		ReceiveAddressInfo                 ReceiveAddress `json:"receiveAddressInfo"`
+		AutoRemoveFromDeliveryPlatformTime int            `json:"autoRemoveFromDeliveryPlatformTime"`
+		ArrivalDisplayCountdownMillis      int            `json:"arrivalDisplayCountdownMillis"`
+		FragileTag                         bool           `json:"fragileTag"`
+		PurchaseQuantity                   int            `json:"purchaseQuantity"`
+		SubWarehouseName                   string         `json:"subWarehouseName"`
+		PurchaseTime                       int            `json:"purchaseTime"`
+		SubPurchaseOrderSn                 string         `json:"subPurchaseOrderSn"`
 	} `json:"subPurchaseOrderBasicVO"` // 子订单基本信息
 }

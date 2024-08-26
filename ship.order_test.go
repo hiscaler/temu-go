@@ -2,6 +2,7 @@ package temu
 
 import (
 	"github.com/hiscaler/gox/jsonx"
+	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -31,7 +32,7 @@ func TestShipOrderService_Create(t *testing.T) {
 
 	shipOrderCreateRequestDeliveryOrder := ShipOrderCreateRequestDeliveryOrder{
 		DeliveryOrderCreateInfos: make([]ShipOrderCreateRequestOrderInfo, 0),
-		ReceiveAddressInfo: ShipOrderCreateRequestReceiveAddress{
+		ReceiveAddressInfo: entity.ReceiveAddress{
 			ProvinceName:  receiveAddress.ProvinceName,
 			ProvinceCode:  receiveAddress.ProvinceCode,
 			CityName:      receiveAddress.CityName,

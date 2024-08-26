@@ -21,46 +21,36 @@ type ShipOrder struct {
 		SkcNum    int    `json:"skcNum"`
 		PackageSn string `json:"packageSn"`
 	} `json:"packageList"`
-	InventoryRegion             int    `json:"inventoryRegion"`
-	DeliverPackageNum           int    `json:"deliverPackageNum"`
-	DriverName                  string `json:"driverName"`
-	SubPurchaseOrderSn          string `json:"subPurchaseOrderSn"`
-	ExpressCompanyID            int    `json:"expressCompanyId"`
-	DefectiveSkcNum             int    `json:"defectiveSkcNum"`
-	Status                      int    `json:"status"`
-	ExpectPickUpGoodsTime       int    `json:"expectPickUpGoodsTime"`
-	PredictTotalPackageWeight   int    `json:"predictTotalPackageWeight"`
-	SupplierID                  int    `json:"supplierId"`
-	IsDisplayCourier            bool   `json:"isDisplayCourier"`
-	IsCustomProduct             bool   `json:"isCustomProduct"`
-	DeliveryMethod              int    `json:"deliveryMethod"`
-	ExpressWeightFeedbackTip    any    `json:"expressWeightFeedbackTip"`
-	ExceptionFeedBackTotalCount any    `json:"exceptionFeedBackTotalCount"`
-	OtherDeliveryPackageNum     int    `json:"otherDeliveryPackageNum"`
-	PurchaseStockType           int    `json:"purchaseStockType"`
-	IfCanOperateDeliver         bool   `json:"ifCanOperateDeliver"`
-	ReceivePackageNum           int    `json:"receivePackageNum"`
-	IsPrintBoxMark              bool   `json:"isPrintBoxMark"`
-	ExpressCompany              string `json:"expressCompany"`
-	IsClothCategory             bool   `json:"isClothCategory"`
-	DeliveryOrderSn             string `json:"deliveryOrderSn"`
-	DeliverTime                 any    `json:"deliverTime"`
-	UrgencyType                 int    `json:"urgencyType"`
-	ExpressBatchSn              string `json:"expressBatchSn"`
-	ReceiveAddressInfo          struct {
-		DistrictCode  int    `json:"districtCode"`
-		CityName      string `json:"cityName"`
-		DistrictName  string `json:"districtName"`
-		Phone         string `json:"phone"`
-		ProvinceCode  int    `json:"provinceCode"`
-		CityCode      int    `json:"cityCode"`
-		ReceiverName  string `json:"receiverName"`
-		DetailAddress string `json:"detailAddress"`
-		ProvinceName  string `json:"provinceName"`
-	} `json:"receiveAddressInfo"`
-	PlateNumber       string `json:"plateNumber"`
-	ReceiveTime       any    `json:"receiveTime"`
-	PackageDetailList []struct {
+	InventoryRegion             int            `json:"inventoryRegion"`
+	DeliverPackageNum           int            `json:"deliverPackageNum"`
+	DriverName                  string         `json:"driverName"`
+	SubPurchaseOrderSn          string         `json:"subPurchaseOrderSn"`
+	ExpressCompanyID            int            `json:"expressCompanyId"`
+	DefectiveSkcNum             int            `json:"defectiveSkcNum"`
+	Status                      int            `json:"status"`
+	ExpectPickUpGoodsTime       int            `json:"expectPickUpGoodsTime"`
+	PredictTotalPackageWeight   int            `json:"predictTotalPackageWeight"`
+	SupplierID                  int            `json:"supplierId"`
+	IsDisplayCourier            bool           `json:"isDisplayCourier"`
+	IsCustomProduct             bool           `json:"isCustomProduct"`
+	DeliveryMethod              int            `json:"deliveryMethod"`
+	ExpressWeightFeedbackTip    any            `json:"expressWeightFeedbackTip"`
+	ExceptionFeedBackTotalCount any            `json:"exceptionFeedBackTotalCount"`
+	OtherDeliveryPackageNum     int            `json:"otherDeliveryPackageNum"`
+	PurchaseStockType           int            `json:"purchaseStockType"`
+	IfCanOperateDeliver         bool           `json:"ifCanOperateDeliver"`
+	ReceivePackageNum           int            `json:"receivePackageNum"`
+	IsPrintBoxMark              bool           `json:"isPrintBoxMark"`
+	ExpressCompany              string         `json:"expressCompany"`
+	IsClothCategory             bool           `json:"isClothCategory"`
+	DeliveryOrderSn             string         `json:"deliveryOrderSn"`
+	DeliverTime                 any            `json:"deliverTime"`
+	UrgencyType                 int            `json:"urgencyType"`
+	ExpressBatchSn              string         `json:"expressBatchSn"`
+	ReceiveAddressInfo          ReceiveAddress `json:"receiveAddressInfo"`
+	PlateNumber                 string         `json:"plateNumber"`
+	ReceiveTime                 any            `json:"receiveTime"`
+	PackageDetailList           []struct {
 		ProductSkuID         int `json:"productSkuId"`
 		ProductOriginalSkuID any `json:"productOriginalSkuId"`
 		PersonalText         any `json:"personalText"`
