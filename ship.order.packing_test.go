@@ -30,8 +30,9 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 	assert.Equal(t, true, len(companies) > 0, "temuClient.Services.Logistics.Companies(ctx): results")
 	company := companies[0]
 
+	status := entity.ShipOrderStatusWaitingPacking
 	params := ShipOrderQueryParams{
-		Status:         entity.ShipOrderStatusWaitingPacking, // 这条件没用？
+		Status:         &status,
 		IsPrintBoxMark: 1,
 	}
 	params.PageSize = 100

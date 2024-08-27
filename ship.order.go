@@ -20,7 +20,7 @@ type ShipOrderQueryParams struct {
 	SubWarehouseIdList       []int    `json:"subWarehouseIdList,omitempty"`       // 收货子仓列表
 	DeliverTimeFrom          int      `json:"deliverTimeFrom,omitempty"`          // 发货时间-开始时间
 	DeliverTimeTo            int      `json:"deliverTimeTo,omitempty"`            // 发货时间-结束时间
-	Status                   int      `json:"status,omitempty"`                   // 发货单状态，0：待装箱发货，1：待仓库收货，2：已收货，3：已入库，4：已退货，5：已取消，6：部分收货，查询发货批次时仅支持查询发货单状态=1
+	Status                   *int     `json:"status,omitempty"`                   // 发货单状态，0：待装箱发货，1：待仓库收货，2：已收货，3：已入库，4：已退货，5：已取消，6：部分收货，查询发货批次时仅支持查询发货单状态=1
 	UrgencyType              bool     `json:"urgencyType,omitempty"`              // 是否是紧急发货单，0-普通，1-急采
 	IsCustomProduct          bool     `json:"isCustomProduct,omitempty"`          // 是否为定制品
 	IsVim                    int      `json:"isVmi,omitempty"`                    // 是否是vmi，0-非VMI，1-VMI
@@ -141,7 +141,7 @@ func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest
 
 type ShipOrderCancelRequest struct {
 	normal.Parameter
-	DeliveryOrderSn int `json:"deliveryOrderSn"` // 发货单 ID
+	DeliveryOrderSn string `json:"deliveryOrderSn"` // 发货单 ID
 }
 
 func (m ShipOrderCancelRequest) Validate() error {
@@ -152,7 +152,7 @@ func (m ShipOrderCancelRequest) Validate() error {
 
 // Cancel 取消发货单
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#UywT8E
-func (s shipOrderService) Cancel(ctx context.Context, deliveryOrderSn int) (ok bool, err error) {
+func (s shipOrderService) Cancel(ctx context.Context, deliveryOrderSn string) (ok bool, err error) {
 	req := ShipOrderCancelRequest{DeliveryOrderSn: deliveryOrderSn}
 	if err = req.Validate(); err != nil {
 		return

@@ -4,16 +4,20 @@ import (
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
+	"math/rand"
 	"testing"
 )
 
 func TestShipOrderService_All(t *testing.T) {
+	status := entity.PurchaseOrderStatusWaitingMerchantReceive
 	params := ShipOrderQueryParams{
-		// SubPurchaseOrderSnList: []string{"WB2408163501017"},
-		IsCustomProduct: true,
+		SubPurchaseOrderSnList: []string{"WB2408232992138"},
+		// IsCustomProduct: true,
+		IsPrintBoxMark: 0,
+		Status:         &status,
 	}
 	params.Page = 1
-	params.PageSize = 10
+	params.PageSize = 22
 	_, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
 	assert.Nilf(t, err, "Services.ShipOrder.All: %s", jsonx.ToJson(params, "{}"))
 }
@@ -78,4 +82,21 @@ func TestShipOrderService_Create(t *testing.T) {
 	if err != nil {
 		t.Logf("error: %s", err.Error())
 	}
+}
+
+func TestShipOrderService_Cancel(t *testing.T) {
+	status := entity.ShipOrderStatusWaitingPacking
+	shipOrders, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, ShipOrderQueryParams{Status: &status})
+	assert.Nil(t, err, "temuClient.Services.ShipOrder.All(ctx, {})")
+
+	n := len(shipOrders)
+	if n != 0 {
+		shipOrder := shipOrders[rand.Intn(n)]
+		deliveryOrderSn := shipOrder.DeliveryOrderSn
+		var ok bool
+		ok, err = temuClient.Services.ShipOrder.Cancel(ctx, deliveryOrderSn)
+		assert.Nilf(t, err, "temuClient.Services.ShipOrder.Cancel(ctx, %s", deliveryOrderSn)
+		assert.Truef(t, ok, "temuClient.Services.ShipOrder.Cancel(ctx, %s) ok value", deliveryOrderSn)
+	}
+
 }
