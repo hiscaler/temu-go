@@ -146,7 +146,7 @@ type ShipOrderCancelRequest struct {
 
 func (m ShipOrderCancelRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.DeliveryOrderSn, validation.Required.Error("发货单 ID 不能为空。")),
+		validation.Field(&m.DeliveryOrderSn, validation.Required.Error("发货单号不能为空。")),
 	)
 }
 
@@ -170,9 +170,7 @@ func (s shipOrderService) Cancel(ctx context.Context, deliveryOrderSn string) (o
 	if err == nil {
 		err = parseResponse(resp, result.Response)
 	}
-	if err != nil {
-		return
-	}
 
-	return true, nil
+	ok = err == nil
+	return
 }
