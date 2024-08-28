@@ -25,15 +25,20 @@ const (
 )
 
 const (
-	BadRequestError           = 400 // 错误的请求
-	UnauthorizedError         = 401 // 身份验证或权限错误
-	NotFoundError             = 404 // 访问资源不存在
-	InternalServerError       = 500 // 服务器内部错误
-	MethodNotImplementedError = 501 // 方法未实现
+	BadRequestError           = 400    // 错误的请求
+	UnauthorizedError         = 401    // 身份验证或权限错误
+	NotFoundError             = 404    // 访问资源不存在
+	InternalServerError       = 500    // 服务器内部错误
+	MethodNotImplementedError = 501    // 方法未实现
+	SystemExceptionError      = 200000 // 系统异常
 )
 
 var ErrNotFound = errors.New("not found")
 var ErrInvalidParameters = errors.New("invalid parameters")
+
+func IntPtr(value int) *int {
+	return &value
+}
 
 type service struct {
 	debug      bool          // Is debug mode
@@ -195,15 +200,17 @@ func errorWrap(code int, message string) error {
 	if message == "" {
 		switch code {
 		case BadRequestError:
-			message = "Bad request"
+			message = "请求错误"
 		case UnauthorizedError:
-			message = "Unauthorized operation, please confirm whether you have permission"
+			message = "认证失败，请确认您是否有相应的权限"
 		case InternalServerError:
-			message = "Server internal error"
+			message = "服务器内容错误"
 		case MethodNotImplementedError:
-			message = "method not implemented"
+			message = "方法未实现"
+		case SystemExceptionError:
+			message = "系统异常"
 		default:
-			message = "Unknown error"
+			message = "未知错误"
 		}
 	}
 	return fmt.Errorf("%d: %s", code, message)

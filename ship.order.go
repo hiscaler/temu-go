@@ -26,7 +26,7 @@ type ShipOrderQueryParams struct {
 	IsVim                    int      `json:"isVmi,omitempty"`                    // 是否是vmi，0-非VMI，1-VMI
 	IsJit                    bool     `json:"isJit,omitempty"`                    // 是否是jit，true:jit
 	LatestFeedbackStatusList []int    `json:"latestFeedbackStatusList,omitempty"` // 最新反馈状态列表，0-当前无异常，1-已提交，2-物流商处理中，3-已撤销，4-已反馈
-	SortType                 int      `json:"sortType,omitempty"`                 // 排序类型，0-创建时间最新在上，1-要求发货时间较早在上，2-按照仓库名称排序
+	SortType                 *int     `json:"sortType,omitempty"`                 // 排序类型，0-创建时间最新在上，1-要求发货时间较早在上，2-按照仓库名称排序
 	InventoryRegion          []int    `json:"inventoryRegion,omitempty"`          // 发货区域，1-国内备货，2-海外备货，3-保税仓备货
 	IsPrintBoxMark           int      `json:"isPrintBoxMark,omitempty"`           // 是否已打印商品打包标签，0-未打印，1-已打印
 	TargetReceiveAddress     string   `json:"targetReceiveAddress,omitempty"`     // 筛选项-收货地址（精准匹配）

@@ -32,7 +32,7 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 
 	status := entity.ShipOrderStatusWaitingPacking
 	params := ShipOrderQueryParams{
-		Status:         &status,
+		Status:         IntPtr(status),
 		IsPrintBoxMark: 1,
 	}
 	params.PageSize = 100

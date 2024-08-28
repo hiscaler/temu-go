@@ -14,7 +14,7 @@ func TestShipOrderService_All(t *testing.T) {
 		SubPurchaseOrderSnList: []string{"WB2408232992138"},
 		// IsCustomProduct: true,
 		IsPrintBoxMark: 0,
-		Status:         &status,
+		Status:         IntPtr(status),
 	}
 	params.Page = 1
 	params.PageSize = 22
@@ -86,9 +86,11 @@ func TestShipOrderService_Create(t *testing.T) {
 
 func TestShipOrderService_Cancel(t *testing.T) {
 	status := entity.ShipOrderStatusWaitingPacking
-	shipOrders, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, ShipOrderQueryParams{Status: &status})
+	shipOrders, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, ShipOrderQueryParams{
+		Status:   IntPtr(status),
+		SortType: IntPtr(0),
+	})
 	assert.Nil(t, err, "temuClient.Services.ShipOrder.All(ctx, {})")
-
 	n := len(shipOrders)
 	if n != 0 {
 		shipOrder := shipOrders[rand.Intn(n)]
