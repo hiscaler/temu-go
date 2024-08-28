@@ -45,7 +45,7 @@ type ShipOrderPackingSendRequestThirdPartyDeliveryInformation struct {
 
 type ShipOrderPackingSendRequest struct {
 	normal.Parameter
-	DeliverMethod                   int                                                                   `json:"deliverMethod"`                             // 发货方式
+	DeliverMethod                   *int                                                                  `json:"deliverMethod"`                             // 发货方式
 	DeliveryAddressId               int                                                                   `json:"deliveryAddressId"`                         // 发货地址 ID
 	DeliveryOrderSnList             []string                                                              `json:"deliveryOrderSnList"`                       // 发货单号
 	SelfDeliveryInfo                *ShipOrderPackingSendRequestSelfDeliveryInformation                   `json:"selfDeliveryInfo,omitempty"`                // 自送信息

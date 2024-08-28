@@ -12,7 +12,7 @@ type goodsSalesService service
 
 type GoodsSalesQueryParams struct {
 	normal.ParameterWithPager
-	IsLack                    int      `json:"isLack,omitempty"`                    // 是否缺货 0-不缺货 1-缺货
+	IsLack                    *int     `json:"isLack,omitempty"`                    // 是否缺货 0-不缺货 1-缺货
 	ProductSkcIdList          []int    `json:"productSkcIdList,omitempty"`          // skc列表
 	MaxRemanentInventoryNum   int      `json:"maxRemanentInventoryNum,omitempty"`   // sku最大剩余库存
 	OnSalesDurationOfflineLte int      `json:"onSalesDurationOfflineLte,omitempty"` // 加入站点时长小于等于
@@ -28,7 +28,7 @@ type GoodsSalesQueryParams struct {
 	CategoryList              []int    `json:"categoryList,omitempty"`              // 类目列表
 	IsTrustManagementMall     bool     `json:"isTrustManagementMall,omitempty"`     // 是否托管店铺
 	SevenDaysSaleVolumMax     int      `json:"sevenDaysSaleVolumMax,omitempty"`     // SKC近7天销量最大值
-	SettlementType            int      `json:"settlementType,omitempty"`            // 结算类型 0-非vmi 1-vmi
+	SettlementType            *int     `json:"settlementType,omitempty"`            // 结算类型 0-非vmi 1-vmi
 	StockStatusList           []int    `json:"stockStatusList,omitempty"`           // 售罄状态 (0-库存充足 1-即将售罄 2-已经售罄)
 	SkcExtCodeList            []int    `json:"skcExtCodeList,omitempty"`            // skc货号列表
 	TodaySaleVolumMin         int      `json:"todaySaleVolumMin,omitempty"`         // SKC今日销量最小值

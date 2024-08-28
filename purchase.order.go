@@ -18,8 +18,8 @@ type purchaseOrderService service
 
 type PurchaseOrderQueryParams struct {
 	normal.ParameterWithPager
-	SettlementType                  int      `json:"settlementType,omitempty"`                  // 结算类型 0-非vmi(采购) 1-vmi(备货)
-	UrgencyType                     int      `json:"urgencyType,omitempty"`                     // 是否紧急 0-否 1-是
+	SettlementType                  *int     `json:"settlementType,omitempty"`                  // 结算类型 0-非vmi(采购) 1-vmi(备货)
+	UrgencyType                     *int     `json:"urgencyType,omitempty"`                     // 是否紧急 0-否 1-是
 	StatusList                      []int    `json:"statusList,omitempty"`                      // 订单状态 0-待接单；1-已接单，待发货；2-已送货；3-已收货；4-已拒收；5-已验收，全部退回；6-已验收；7-已入库；8-作废；9-已超时；10-已取消
 	SubPurchaseOrderSnList          []string `json:"subPurchaseOrderSnList,omitempty"`          // 订单号（采购子单号）
 	ProductSnList                   []int    `json:"productSnList,omitempty"`                   // 货号列表
@@ -33,7 +33,7 @@ type PurchaseOrderQueryParams struct {
 	ExpectLatestDeliverTimeTo       int      `json:"expectLatestDeliverTimeTo,omitempty"`       // 要求最晚发货时间-结束（时间戳 单位：毫秒）
 	ExpectLatestArrivalTimeFrom     int      `json:"expectLatestArrivalTimeFrom,omitempty"`     // 要求最晚到达时间-开始（时间戳 单位：毫秒）
 	ExpectLatestArrivalTimeTo       int      `json:"expectLatestArrivalTimeTo,omitempty"`       // 要求最晚到达时间-结束（时间戳 单位：毫秒）
-	PurchaseStockType               int      `json:"purchaseStockType,omitempty"`               // 是否是JIT备货， 0-普通，1-JIT备货
+	PurchaseStockType               *int     `json:"purchaseStockType,omitempty"`               // 是否是JIT备货， 0-普通，1-JIT备货
 	IsFirst                         bool     `json:"isFirst,omitempty"`                         // 是否首单 0-否 1-是
 	IsCustomGoods                   bool     `json:"isCustomGoods,omitempty"`                   // 是否为定制品
 	OriginalPurchaseOrderSnList     []string `json:"originalPurchaseOrderSnList,omitempty"`     // 母订单号列表

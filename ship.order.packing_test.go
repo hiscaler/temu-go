@@ -33,7 +33,7 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 	status := entity.ShipOrderStatusWaitingPacking
 	params := ShipOrderQueryParams{
 		Status:         IntPtr(status),
-		IsPrintBoxMark: 1,
+		IsPrintBoxMark: IntPtr(1),
 	}
 	params.PageSize = 100
 	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
@@ -57,10 +57,11 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 			assert.Nilf(t, err, "temuClient.Services.Barcode.BoxMark(ctx, %s)", shipOrder.DeliveryOrderSn)
 		}
 
+		d, _ := time.Parse(time.DateTime, "2024-09-01 18:00:00")
 		req := ShipOrderPackingSendRequest{
 			DeliveryAddressId:   address.ID,
 			DeliveryOrderSnList: []string{shipOrder.DeliveryOrderSn},
-			DeliverMethod:       entity.DeliveryMethodPlatformRecommendation,
+			DeliverMethod:       IntPtr(entity.DeliveryMethodPlatformRecommendation),
 			ThirdPartyDeliveryInfo: &ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation{
 				ExpressCompanyId:          company.ShipId,
 				TmsChannelId:              0,
@@ -68,7 +69,7 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 				StandbyExpress:            false,
 				ExpressDeliverySn:         shipOrder.ExpressDeliverySn,
 				PredictTotalPackageWeight: shipOrder.PredictTotalPackageWeight,
-				ExpectPickUpGoodsTime:     int(time.Now().Unix()) + 100,
+				ExpectPickUpGoodsTime:     int(d.Unix()),
 				ExpressPackageNum:         len(shipOrder.PackageList),
 				MinChargeAmount:           0.01,
 				MaxChargeAmount:           0.02,

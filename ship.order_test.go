@@ -13,7 +13,7 @@ func TestShipOrderService_All(t *testing.T) {
 	params := ShipOrderQueryParams{
 		SubPurchaseOrderSnList: []string{"WB2408232992138"},
 		// IsCustomProduct: true,
-		IsPrintBoxMark: 0,
+		IsPrintBoxMark: IntPtr(0),
 		Status:         IntPtr(status),
 	}
 	params.Page = 1
@@ -95,6 +95,7 @@ func TestShipOrderService_Cancel(t *testing.T) {
 	if n != 0 {
 		shipOrder := shipOrders[rand.Intn(n)]
 		deliveryOrderSn := shipOrder.DeliveryOrderSn
+		deliveryOrderSn = "FH2408271533488"
 		var ok bool
 		ok, err = temuClient.Services.ShipOrder.Cancel(ctx, deliveryOrderSn)
 		assert.Nilf(t, err, "temuClient.Services.ShipOrder.Cancel(ctx, %s", deliveryOrderSn)
