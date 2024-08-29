@@ -8,8 +8,8 @@ github.com/go-ozzo/ozzo-validation/v4 v4.3.0/go.mod h1:2NKgrcHl3z6cJs+3Oo940FPRi
 github.com/go-resty/resty/v2 v2.14.0 h1:/rhkzsAqGQkozwfKS5aFAbb6TyKd3zyFRWcdRXLPCAU=
 github.com/go-resty/resty/v2 v2.14.0/go.mod h1:IW6mekUOsElt9C7oWr0XRt9BNSD6D5rr9mhk6NjmNHg=
 github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
-github.com/hiscaler/gox v0.0.0-20231116102512-02246d9c2ba7 h1:vqeYluqlySToYBBEa55gyKGHfH+Bjp/zRWnadnDuJxQ=
-github.com/hiscaler/gox v0.0.0-20231116102512-02246d9c2ba7/go.mod h1:sAVb9YHa+WeOtPRvVeugAhvTlDXNwIwgsGqv9Q2vZWI=
+github.com/hiscaler/gox v0.0.0-20240824093629-11ab6f7acd0b h1:0SPT4chgh2oEMwfZTEo7QMuZYKD8mRlYn+xc7A7vpE8=
+github.com/hiscaler/gox v0.0.0-20240824093629-11ab6f7acd0b/go.mod h1:sAVb9YHa+WeOtPRvVeugAhvTlDXNwIwgsGqv9Q2vZWI=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/samber/lo v1.47.0 h1:z7RynLwP5nbyRscyvcD043DWYoOcYRv3mV8lBeqOCLc=
