@@ -174,3 +174,23 @@ func (s shipOrderService) Cancel(ctx context.Context, deliveryOrderSn string) (o
 	ok = err == nil
 	return
 }
+
+// ThirdPartyLogisticsCompanies 自行委托三方物流公司查询接口
+func (s shipOrderService) ThirdPartyLogisticsCompanies(ctx context.Context) (companies []entity.LogisticsExpressCompany, err error) {
+	var result = struct {
+		normal.Response
+		Result []entity.LogisticsExpressCompany `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetResult(&result).
+		Post("bg.shiporder.logistics.get")
+	if err == nil {
+		err = parseResponse(resp, result.Response)
+	}
+	if err != nil {
+		return
+	}
+
+	return result.Result, nil
+}
