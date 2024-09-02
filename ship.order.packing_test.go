@@ -24,15 +24,8 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.MallAddress.All(ctx): results")
 	address := addresses[0]
 
-	// 快递公司
-	// companies, err := temuClient.Services.Logistics.Companies(ctx)
-	// assert.Nilf(t, err, "temuClient.Services.Logistics.Companies(ctx): error")
-	// assert.Equal(t, true, len(companies) > 0, "temuClient.Services.Logistics.Companies(ctx): results")
-	// company := companies[0]
-
-	status := entity.ShipOrderStatusWaitingPacking
 	params := ShipOrderQueryParams{
-		Status: IntPtr(status),
+		Status: IntPtr(entity.ShipOrderStatusWaitingPacking),
 	}
 	params.PageSize = 1
 	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
@@ -83,9 +76,8 @@ func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 	assert.Equal(t, true, len(companies) > 0, "temuClient.Services.Logistics.Companies(ctx): results")
 	company := companies[0]
 
-	status := entity.ShipOrderStatusWaitingPacking
 	params := ShipOrderQueryParams{
-		Status: IntPtr(status),
+		Status: IntPtr(entity.ShipOrderStatusWaitingPacking),
 	}
 	params.PageSize = 1
 	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
