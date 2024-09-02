@@ -28,7 +28,7 @@ type ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation struct
 	StandbyExpress            bool    `json:"standbyExpress"`                      // 是否是备用快递公司
 	ExpressDeliverySn         string  `json:"expressDeliverySn,omitempty"`         // 快递单号
 	PredictTotalPackageWeight int     `json:"predictTotalPackageWeight,omitempty"` // 预估总包裹重量不能为空,单位克.总量必须大于等于1千克且为整千克值
-	ExpectPickUpGoodsTime     int     `json:"expectPickUpGoodsTime,omitempty"`     // 预约取货时间
+	ExpectPickUpGoodsTime     int64   `json:"expectPickUpGoodsTime,omitempty"`     // 预约取货时间
 	ExpressPackageNum         int     `json:"expressPackageNum,omitempty"`         // 交接给快递公司的包裹数
 	MinChargeAmount           float64 `json:"minChargeAmount,omitempty"`           // 最小预估运费（单位元）
 	MaxChargeAmount           float64 `json:"maxChargeAmount,omitempty"`           // 最大预估运费（单位元）

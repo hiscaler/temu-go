@@ -64,9 +64,10 @@ type services struct {
 }
 
 type Client struct {
-	Debug    bool        // Is debug mode
-	Logger   *log.Logger // Log
-	Services services    // API services
+	Debug        bool           // Is debug mode
+	Logger       *log.Logger    // Log
+	Services     services       // API services
+	TimeLocation *time.Location // 时区
 }
 
 func NewClient(config config.Config) *Client {
@@ -75,6 +76,11 @@ func NewClient(config config.Config) *Client {
 		Debug:  config.Debug,
 		Logger: logger,
 	}
+	loc, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		loc = time.FixedZone("CST", 8*3600)
+	}
+	client.TimeLocation = loc
 
 	httpClient := resty.New().
 		SetDebug(config.Debug).

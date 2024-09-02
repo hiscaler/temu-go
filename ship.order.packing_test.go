@@ -1,7 +1,6 @@
 package temu
 
 import (
-	"fmt"
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
@@ -57,7 +56,7 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 			assert.Nilf(t, err, "temuClient.Services.Barcode.BoxMark(ctx, %s)", shipOrder.DeliveryOrderSn)
 		}
 
-		d, _ := time.Parse(time.DateTime, "2024-09-01 18:00:00")
+		d, _ := time.ParseInLocation(time.DateTime, time.Now().Format(time.DateOnly)+" 18:00:00", temuClient.TimeLocation)
 		req := ShipOrderPackingSendRequest{
 			DeliveryAddressId:   address.ID,
 			DeliveryOrderSnList: []string{shipOrder.DeliveryOrderSn},
@@ -69,7 +68,7 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 				StandbyExpress:            false,
 				ExpressDeliverySn:         shipOrder.ExpressDeliverySn,
 				PredictTotalPackageWeight: shipOrder.PredictTotalPackageWeight,
-				ExpectPickUpGoodsTime:     int(d.Unix()),
+				ExpectPickUpGoodsTime:     d.UnixMilli(),
 				ExpressPackageNum:         len(shipOrder.PackageList),
 				MinChargeAmount:           0.01,
 				MaxChargeAmount:           0.02,
@@ -80,7 +79,6 @@ func TestShipOrderPackingService_Send(t *testing.T) {
 			req.ThirdPartyDeliveryInfo.PredictTotalPackageWeight = 1000
 		}
 		_, err = temuClient.Services.ShipOrderPacking.Send(ctx, req)
-		fmt.Println(fmt.Errorf("sssssssssss %#v", err))
-		assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Match(ctx, %s)", jsonx.ToJson(req, "{}"))
+		assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Send(ctx, %s)", jsonx.ToJson(req, "{}"))
 	}
 }
