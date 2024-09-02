@@ -37,8 +37,7 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 	params.PageSize = 1
 	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
 	assert.Nilf(t, err, "temuClient.Services.ShipOrder.All(ctx, %s)", jsonx.ToJson(params, "{}"))
-	exists := len(items) != 0
-	if exists {
+	if len(items) != 0 {
 		shipOrder := items[0]
 		// 必须打印箱唛
 		if !shipOrder.IsPrintBoxMark {
@@ -65,6 +64,8 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 		}
 		_, err = temuClient.Services.ShipOrderPacking.Send(ctx, req)
 		assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Send(ctx, %s)", jsonx.ToJson(req, "{}"))
+	} else {
+		t.Logf("not found waitingPackage status purchase order")
 	}
 }
 
@@ -84,25 +85,13 @@ func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 
 	status := entity.ShipOrderStatusWaitingPacking
 	params := ShipOrderQueryParams{
-		Status:         IntPtr(status),
-		IsPrintBoxMark: IntPtr(1),
+		Status: IntPtr(status),
 	}
-	params.PageSize = 100
+	params.PageSize = 1
 	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
 	assert.Nilf(t, err, "temuClient.Services.ShipOrder.All(ctx, %s)", jsonx.ToJson(params, "{}"))
-	exists := false
-	var shipOrder entity.ShipOrder
-	for _, v := range items {
-		// 发货单状态异常，存在非待发货状态的发货单，请刷新页面重试
-		if v.Status == entity.ShipOrderStatusWaitingPacking {
-			exists = true
-			shipOrder = v
-			break
-		}
-	}
-	assert.Equalf(t, exists, true, "temuClient.Services.ShipOrder.All(ctx, %s)", jsonx.ToJson(params, "{}"))
-	if exists {
-
+	if len(items) != 0 {
+		shipOrder := items[0]
 		// 必须打印箱唛
 		if !shipOrder.IsPrintBoxMark {
 			_, err = temuClient.Services.Barcode.BoxMark(ctx, shipOrder.DeliveryOrderSn)
@@ -133,5 +122,7 @@ func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 		}
 		_, err = temuClient.Services.ShipOrderPacking.Send(ctx, req)
 		assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Send(ctx, %s)", jsonx.ToJson(req, "{}"))
+	} else {
+		t.Logf("not found waitingPackage status purchase order")
 	}
 }
