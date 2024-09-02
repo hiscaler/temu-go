@@ -16,7 +16,60 @@ func TestShipOrderPackingService_Match(t *testing.T) {
 	assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Match(ctx, %s)", jsonx.ToJson(req, "{}"))
 }
 
-func TestShipOrderPackingService_Send(t *testing.T) {
+// TestShipOrderPackingService_SendForSelf 自送发货
+func TestShipOrderPackingService_SendForSelf(t *testing.T) {
+	// 发货地址
+	addresses, err := temuClient.Services.MallAddress.All(ctx)
+	assert.Nilf(t, err, "temuClient.Services.MallAddress.All(ctx): error")
+	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.MallAddress.All(ctx): results")
+	address := addresses[0]
+
+	// 快递公司
+	// companies, err := temuClient.Services.Logistics.Companies(ctx)
+	// assert.Nilf(t, err, "temuClient.Services.Logistics.Companies(ctx): error")
+	// assert.Equal(t, true, len(companies) > 0, "temuClient.Services.Logistics.Companies(ctx): results")
+	// company := companies[0]
+
+	status := entity.ShipOrderStatusWaitingPacking
+	params := ShipOrderQueryParams{
+		Status: IntPtr(status),
+	}
+	params.PageSize = 1
+	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
+	assert.Nilf(t, err, "temuClient.Services.ShipOrder.All(ctx, %s)", jsonx.ToJson(params, "{}"))
+	exists := len(items) != 0
+	if exists {
+		shipOrder := items[0]
+		// 必须打印箱唛
+		if !shipOrder.IsPrintBoxMark {
+			_, err = temuClient.Services.Barcode.BoxMark(ctx, shipOrder.DeliveryOrderSn)
+			assert.Nilf(t, err, "temuClient.Services.Barcode.BoxMark(ctx, %s)", shipOrder.DeliveryOrderSn)
+		}
+
+		driverName := shipOrder.DriverName
+		if driverName == "" {
+			driverName = "Zhang San"
+		}
+		req := ShipOrderPackingSendRequest{
+			DeliveryAddressId:   address.ID,
+			DeliveryOrderSnList: []string{shipOrder.DeliveryOrderSn},
+			DeliverMethod:       IntPtr(entity.DeliveryMethodSelf),
+			SelfDeliveryInfo: &ShipOrderPackingSendRequestSelfDeliveryInformation{
+				// DriverUid:             0,
+				DriverName: driverName,
+				// PlateNumber:           "",
+				// DeliveryContactNumber: "",
+				// DeliveryContactAreaNo: "",
+				ExpressPackageNum: len(shipOrder.PackageList),
+			},
+		}
+		_, err = temuClient.Services.ShipOrderPacking.Send(ctx, req)
+		assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Send(ctx, %s)", jsonx.ToJson(req, "{}"))
+	}
+}
+
+// TestShipOrderPackingService_SendForPlatformRecommendation 平台推荐物流发货
+func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 	// 发货地址
 	addresses, err := temuClient.Services.MallAddress.All(ctx)
 	assert.Nilf(t, err, "temuClient.Services.MallAddress.All(ctx): error")
