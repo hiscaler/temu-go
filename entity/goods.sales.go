@@ -1,5 +1,7 @@
 package entity
 
+import "gopkg.in/guregu/null.v4"
+
 type GoodsSales struct {
 	ProductName           string `json:"productName"`
 	SkuQuantityDetailList []struct {
@@ -28,7 +30,7 @@ type GoodsSales struct {
 	ProductID            int    `json:"productId"`
 	InBlackList          bool   `json:"inBlackList"`
 	SkuQuantityTotalInfo struct {
-		ProductSkuID     any `json:"productSkuId"`
+		ProductSkuID     null.Int `json:"productSkuId"`
 		InventoryNumInfo struct {
 			WaitDeliveryInventoryNum         int `json:"waitDeliveryInventoryNum"`
 			WarehouseInventoryNum            int `json:"warehouseInventoryNum"`
