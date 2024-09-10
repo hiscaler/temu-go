@@ -24,7 +24,7 @@ func (m ShipOrderPackageQueryParams) Validate() error {
 
 // One 发货包裹查询
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#eprtWq
-func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderSn string) (data entity.ShipOrderPackage, err error) {
+func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderSn string) (items []entity.ShipOrderPackage, err error) {
 	params := ShipOrderPackageQueryParams{DeliveryOrderSn: deliveryOrderSn}
 	if err = params.Validate(); err != nil {
 		return
@@ -32,7 +32,9 @@ func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderSn string
 
 	var result = struct {
 		normal.Response
-		Result entity.ShipOrderPackage `json:"result"`
+		Result struct {
+			PackageInfo []entity.ShipOrderPackage `json:"packageInfo"`
+		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
@@ -46,7 +48,7 @@ func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderSn string
 		return
 	}
 
-	data = result.Result
+	items = result.Result.PackageInfo
 	return
 }
 
@@ -86,7 +88,7 @@ func (m ShipOrderPackageUpdateRequest) Validate() error {
 
 // Update 发货包裹编辑
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#qSU56c
-func (s shipOrderPackageService) Update(ctx context.Context,req ShipOrderPackageUpdateRequest) (ok bool, err error) {
+func (s shipOrderPackageService) Update(ctx context.Context, req ShipOrderPackageUpdateRequest) (ok bool, err error) {
 	if err = req.Validate(); err != nil {
 		return
 	}
