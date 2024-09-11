@@ -32,7 +32,7 @@ func (s mallService) IsSemiManaged(ctx context.Context) (bool, error) {
 }
 
 // Permission 查询店铺权限
-// https://seller.kuajingmaihuo.com/sop/view/634117628601810731#uJ0fSb
+// https://seller.kuajingmaihuo.com/sop/view/634117628601810731#3tCaqU
 func (s mallService) Permission(ctx context.Context) (p entity.MallPermission, err error) {
 	var result = struct {
 		normal.Response
