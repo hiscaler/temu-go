@@ -10,7 +10,7 @@ type mallService service
 
 // IsSemiManaged 是否为半托管店铺
 // https://seller.kuajingmaihuo.com/sop/view/634117628601810731#uJ0fSb
-func (s shipOrderStagingService) IsSemiManaged(ctx context.Context) (bool, error) {
+func (s mallService) IsSemiManaged(ctx context.Context) (bool, error) {
 	var result = struct {
 		normal.Response
 		Result struct {
@@ -33,7 +33,7 @@ func (s shipOrderStagingService) IsSemiManaged(ctx context.Context) (bool, error
 
 // Permission 查询店铺权限
 // https://seller.kuajingmaihuo.com/sop/view/634117628601810731#uJ0fSb
-func (s shipOrderStagingService) Permission(ctx context.Context) (p entity.MallPermission, err error) {
+func (s mallService) Permission(ctx context.Context) (p entity.MallPermission, err error) {
 	var result = struct {
 		normal.Response
 		Result entity.MallPermission `json:"result"`
