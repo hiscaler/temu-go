@@ -72,7 +72,30 @@ type Client struct {
 	TimeLocation *time.Location // 时区
 }
 
-func NewClient(config config.Config) *Client {
+// generate sign string
+func generateSign(values map[string]any, appSecret string) map[string]any {
+	values["timestamp"] = time.Now().Unix()
+	keys := make([]string, len(values))
+	i := 0
+	for k := range values {
+		keys[i] = k
+		i++
+	}
+	sort.Slice(keys, func(i, j int) bool {
+		return keys[i] < keys[j]
+	})
+	stringBuilder := strings.Builder{}
+	stringBuilder.WriteString(appSecret)
+	for _, key := range keys {
+		stringBuilder.WriteString(key)
+		stringBuilder.WriteString(stringx.String(values[key]))
+	}
+	stringBuilder.WriteString(appSecret)
+	values["sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(stringBuilder.String()))))
+	return values
+}
+
+func New(config config.Config) *Client {
 	logger := log.New(os.Stdout, "[ Temu ] ", log.LstdFlags|log.Llongfile)
 	client := &Client{
 		Debug:  config.Debug,
@@ -121,25 +144,8 @@ func NewClient(config config.Config) *Client {
 			values["version"] = "V1"
 			values["timestamp"] = time.Now().Unix()
 			values["type"] = request.URL
-			keys := make([]string, len(values))
-			i := 0
-			for k := range values {
-				keys[i] = k
-				i++
-			}
-			sort.Slice(keys, func(i, j int) bool {
-				return keys[i] < keys[j]
-			})
-			stringBuilder := strings.Builder{}
-			stringBuilder.WriteString(config.AppSecret)
-			for _, key := range keys {
-				stringBuilder.WriteString(key)
-				stringBuilder.WriteString(stringx.String(values[key]))
-			}
-			stringBuilder.WriteString(config.AppSecret)
-			values["sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(stringBuilder.String()))))
 			request.URL = ""
-			request.SetBody(values)
+			request.SetBody(generateSign(values, config.AppSecret))
 			return nil
 		}).
 		SetRetryCount(3).
@@ -163,11 +169,25 @@ func NewClient(config config.Config) *Client {
 					strings.EqualFold(r.ErrorMsg, "SYSTEM_EXCEPTION")
 			}
 			if retry {
-				text := response.Request.URL
-				if err != nil {
-					text += fmt.Sprintf(", error: %s", err.Error())
+				body := response.Request.Body
+				if body != nil {
+					var values map[string]any
+					var b []byte
+					var e error
+					if b, e = json.Marshal(body); e == nil {
+						if e = json.Unmarshal(b, &values); e == nil {
+							response.Request.SetBody(generateSign(values, config.AppSecret))
+						}
+					}
+					retry = e == nil
 				}
-				logger.Printf("Retry request: %s", text)
+				if retry {
+					text := response.Request.URL
+					if err != nil {
+						text += fmt.Sprintf(", error: %s", err.Error())
+					}
+					logger.Printf("Retry request: %s", text)
+				}
 			}
 			return retry
 		})

@@ -17,13 +17,13 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic(fmt.Sprintf("Read config error: %s", err.Error()))
 	}
-	var c config.Config
-	err = json.Unmarshal(b, &c)
+	var cfg config.Config
+	err = json.Unmarshal(b, &cfg)
 	if err != nil {
 		panic(fmt.Sprintf("Parse config file error: %s", err.Error()))
 	}
 
-	temuClient = NewClient(c)
+	temuClient = New(cfg)
 	ctx = context.Background()
 	m.Run()
 }
