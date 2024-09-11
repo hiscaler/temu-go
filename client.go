@@ -74,6 +74,7 @@ type Client struct {
 
 // generate sign string
 func generateSign(values map[string]any, appSecret string) map[string]any {
+	delete(values, "sign")
 	values["timestamp"] = time.Now().Unix()
 	keys := make([]string, len(values))
 	i := 0
