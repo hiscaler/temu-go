@@ -2,7 +2,6 @@ package temu
 
 import (
 	"context"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 )
@@ -12,30 +11,18 @@ type goodsService service
 
 type GoodsQueryParams struct {
 	normal.ParameterWithPager
-	Page          int    `json:"page,omitempty"`          // 页码
-	PageSize      int    `json:"pageSize"`                // 页面大小
-	SkcExtCode    string `json:"skcExtCode,omitempty"`    // 货品skc外部编码
+	SkcExtCode    string `json:"skcExtCode,omitempty"`    // 货品 skc 外部编码
 	ProductSkcIds []int  `json:"productSkcIds,omitempty"` // SKC 列表
 }
 
 func (m GoodsQueryParams) Validate() error {
-	return validation.ValidateStruct(&m,
-		validation.Field(&m.Page, validation.Required.Error("页码不能为空。")),
-		validation.Field(&m.PageSize, validation.Required.Error("页数不能为空。")),
-	)
+	return nil
 }
 
 // All 货品列表查询
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#SjadVR
 func (s goodsService) All(ctx context.Context, params GoodsQueryParams) (items []entity.Goods, total, totalPages int, isLastPage bool, err error) {
-	if params.Page <= 0 {
-		params.Page = 1
-	}
-	if params.PageSize <= 0 {
-		params.PageSize = 10
-	} else if params.PageSize > 100 {
-		params.PageSize = 100
-	}
+	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
 	}

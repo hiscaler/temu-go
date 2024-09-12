@@ -22,7 +22,7 @@ type ParameterWithPager struct {
 // TidyPager 设置翻页数据
 func (pp *Pager) TidyPager(values ...int) *Pager {
 	page := 1
-	maxPageSize := 500
+	maxPageSize := 100
 	n := len(values)
 	if n != 0 {
 		page = values[0]
