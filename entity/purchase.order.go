@@ -10,28 +10,30 @@ type PurchaseOrderStatistic struct {
 	DelayNumMap        map[string]int `json:"delayNumMap"`        // key:逾期状态 101-发货即将逾期，102-发货已逾期，201-到货即将逾期，202-到货已逾期 value:备货单数
 }
 
+type PurchaseOrderSkuQuantityDetailList struct {
+	CurrencyType                 string   `json:"currencyType"`
+	ClassName                    string   `json:"className"`
+	RealReceiveAuthenticQuantity int      `json:"realReceiveAuthenticQuantity"`
+	FulfilmentProductSkuId       int      `json:"fulfilmentProductSkuId"`
+	CustomizationType            int      `json:"customizationType"`
+	ProductSkuId                 int      `json:"productSkuId"`
+	DeliverQuantity              int      `json:"deliverQuantity"`
+	ThumbUrlList                 []string `json:"thumbUrlList"`
+	QcResult                     any      `json:"qcResult"`
+	ExtCode                      string   `json:"extCode"`
+	PurchaseQuantity             int      `json:"purchaseQuantity"`
+}
+
 // PurchaseOrder 采购单
 type PurchaseOrder struct {
-	OriginalPurchaseOrderSn string `json:"originalPurchaseOrderSn"` // 母订单号（原始采购母单号）
-	SubPurchaseOrderSn      string `json:"subPurchaseOrderSn"`      // 采购子单号
-	Source                  int    `json:"source"`
-	ProductName             string `json:"productName"`
-	FulfilmentFormStatus    any    `json:"fulfilmentFormStatus"`
-	IsFirst                 bool   `json:"isFirst"`
-	SkuQuantityDetailList   []struct {
-		CurrencyType                 string   `json:"currencyType"`
-		ClassName                    string   `json:"className"`
-		RealReceiveAuthenticQuantity int      `json:"realReceiveAuthenticQuantity"`
-		FulfilmentProductSkuId       int      `json:"fulfilmentProductSkuId"`
-		CustomizationType            int      `json:"customizationType"`
-		ProductSkuId                 int      `json:"productSkuId"`
-		DeliverQuantity              int      `json:"deliverQuantity"`
-		ThumbUrlList                 []string `json:"thumbUrlList"`
-		QcResult                     any      `json:"qcResult"`
-		ExtCode                      string   `json:"extCode"`
-		PurchaseQuantity             int      `json:"purchaseQuantity"`
-	} `json:"skuQuantityDetailList"`
-	DeliverInfo struct {
+	OriginalPurchaseOrderSn string                               `json:"originalPurchaseOrderSn"` // 母订单号（原始采购母单号）
+	SubPurchaseOrderSn      string                               `json:"subPurchaseOrderSn"`      // 采购子单号
+	Source                  int                                  `json:"source"`
+	ProductName             string                               `json:"productName"`
+	FulfilmentFormStatus    any                                  `json:"fulfilmentFormStatus"`
+	IsFirst                 bool                                 `json:"isFirst"`
+	SkuQuantityDetailList   []PurchaseOrderSkuQuantityDetailList `json:"skuQuantityDetailList"`
+	DeliverInfo             struct {
 		ReceiveTime                      null.Int    `json:"receiveTime"`
 		DeliverTime                      null.Int    `json:"deliverTime"`
 		ReceiveWarehouseId               null.Int    `json:"receiveWarehouseId"`
