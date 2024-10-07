@@ -229,7 +229,8 @@ func parseResponseTotal(currentPage, pageSize, total int) (n, totalPages int, is
 		currentPage = 1
 	}
 
-	return total, (total / pageSize) + 1, currentPage >= totalPages
+	totalPages = (total / pageSize) + 1
+	return total, totalPages, currentPage >= totalPages
 }
 
 func parseResponse(resp *resty.Response, result normal.Response) (err error) {
