@@ -38,9 +38,9 @@ type GoodsSkuSummary struct {
 		ProductSkuVolumeLabel interface{} `json:"productSkuVolumeLabel"`
 		ProductSkuWmsWeight   interface{} `json:"productSkuWmsWeight"`
 		ProductSkuVolume      struct {
-			Len    int `json:"len"`
-			Width  int `json:"width"`
-			Height int `json:"height"`
+			Len    int `json:"len"`    // 长
+			Width  int `json:"width"`  // 宽
+			Height int `json:"height"` // 高
 		} `json:"productSkuVolume"`
 		ProductSkuSensitiveLimit interface{} `json:"productSkuSensitiveLimit"`
 		ProductSkuWmsVolumeLabel interface{} `json:"productSkuWmsVolumeLabel"`

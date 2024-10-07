@@ -25,16 +25,18 @@ const (
 )
 
 const (
-	BadRequestError           = 400    // 错误的请求
-	UnauthorizedError         = 401    // 身份验证或权限错误
-	NotFoundError             = 404    // 访问资源不存在
-	InternalServerError       = 500    // 服务器内部错误
-	MethodNotImplementedError = 501    // 方法未实现
-	SystemExceptionError      = 200000 // 系统异常
+	BadRequestError           = 400     // 错误的请求
+	UnauthorizedError         = 401     // 身份验证或权限错误
+	NotFoundError             = 404     // 访问资源不存在
+	InternalServerError       = 500     // 服务器内部错误
+	MethodNotImplementedError = 501     // 方法未实现
+	SystemExceptionError      = 200000  // 系统异常
+	InvalidSignError          = 7000015 // 签名无效
 )
 
-var ErrNotFound = errors.New("not found")
-var ErrInvalidParameters = errors.New("invalid parameters")
+var ErrNotFound = errors.New("数据不存在")
+var ErrInvalidSign = errors.New("无效的签名")
+var ErrInvalidParameters = errors.New("无效的参数")
 
 func IntPtr(value int) *int {
 	return &value
@@ -241,7 +243,7 @@ func parseResponse(resp *resty.Response, result normal.Response) (err error) {
 	}
 
 	if !result.Success {
-		return errors.New(result.ErrorMessage)
+		return errorWrap(result.ErrorCode, result.ErrorMessage)
 	}
 	return nil
 }
@@ -257,21 +259,22 @@ func errorWrap(code int, message string) error {
 	}
 
 	message = strings.TrimSpace(message)
-	if message == "" {
-		switch code {
-		case BadRequestError:
-			message = "请求错误"
-		case UnauthorizedError:
-			message = "认证失败，请确认您是否有相应的权限"
-		case InternalServerError:
-			message = "服务器内容错误"
-		case MethodNotImplementedError:
-			message = "方法未实现"
-		case SystemExceptionError:
-			message = "系统异常"
-		default:
-			message = "未知错误"
-		}
+	switch code {
+	case BadRequestError:
+		message = "请求错误"
+	case UnauthorizedError:
+		message = "认证失败，请确认您是否有相应的权限"
+	case InternalServerError:
+		message = "服务器内容错误"
+	case MethodNotImplementedError:
+		message = "方法未实现"
+	case SystemExceptionError:
+		message = "系统异常"
+	case InvalidSignError:
+		return ErrInvalidSign
+	default:
+		message = fmt.Sprintf("%d: %s", code, message)
 	}
-	return fmt.Errorf("%d: %s", code, message)
+
+	return errors.New(message)
 }

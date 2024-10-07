@@ -53,20 +53,23 @@ func (s logisticsService) Company(ctx context.Context, shipId int) (item entity.
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#16WiXI
 
 type LogisticsMatchRequest struct {
-	DeliveryAddressId         int                   `json:"deliveryAddressId"`         // 发货地址
-	PredictTotalPackageWeight int                   `json:"predictTotalPackageWeight"` // 预估总包裹重量，单位g
-	UrgencyType               *int                  `json:"urgencyType"`               // 是否是紧急发货单，0-普通 1-急采
-	SubWarehouseId            int                   `json:"subWarehouseId"`            // 收货子仓id
-	QueryStandbyExpress       bool                  `json:"queryStandbyExpress"`       // 是否查询备用快递服务商, false-不查询 true-查询
-	TotalPackageNum           int                   `json:"totalPackageNum"`           // 包裹件数
-	ReceiveAddressInfo        entity.ReceiveAddress `json:"receiveAddressInfo"`        // 收货地址
-	DeliveryOrderSns          []string              `json:"deliveryOrderSns"`
+	DeliveryAddressId         int                   `json:"deliveryAddressId,omitempty"`   // 发货地址
+	PredictTotalPackageWeight int                   `json:"predictTotalPackageWeight"`     // 预估总包裹重量，单位g
+	UrgencyType               *int                  `json:"urgencyType,omitempty"`         // 是否是紧急发货单，0-普通 1-急采
+	SubWarehouseId            int                   `json:"subWarehouseId"`                // 收货子仓 ID
+	QueryStandbyExpress       bool                  `json:"queryStandbyExpress,omitempty"` // 是否查询备用快递服务商, false-不查询 true-查询
+	TotalPackageNum           int                   `json:"totalPackageNum"`               // 包裹件数
+	ReceiveAddressInfo        entity.ReceiveAddress `json:"receiveAddressInfo,omitempty"`  // 收货地址
+	DeliveryOrderSns          []string              `json:"deliveryOrderSns,omitempty"`    // 发货单列表
 }
 
 func (m LogisticsMatchRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.PredictTotalPackageWeight, validation.Required.Error("预估总包裹重量不能为空。")),
 		validation.Field(&m.TotalPackageNum, validation.Required.Error("包裹件数不能为空。")),
+		validation.Field(&m.SubWarehouseId, validation.Required.Error("收货子仓不能为空。")),
+		validation.Field(&m.DeliveryOrderSns, validation.Required.Error("发货单列表不能为空。")),
+		validation.Field(&m.ReceiveAddressInfo, validation.Required.Error("收货地址不能为空。")),
 	)
 }
 
@@ -88,6 +91,7 @@ func (s logisticsService) Match(ctx context.Context, request LogisticsMatchReque
 		err = parseResponse(resp, result.Response)
 	}
 	if err != nil {
+		resp.StatusCode()
 		return
 	}
 
