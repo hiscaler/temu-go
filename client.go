@@ -130,14 +130,14 @@ func New(config config.Config) *Client {
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
 			values := make(map[string]any)
 			if request.Body != nil {
-				b, err := json.Marshal(request.Body)
-				if err != nil {
-					return err
+				b, e := json.Marshal(request.Body)
+				if e != nil {
+					return e
 				}
 
-				err = json.Unmarshal(b, &values)
-				if err != nil {
-					return err
+				e = json.Unmarshal(b, &values)
+				if e != nil {
+					return e
 				}
 			}
 			values["app_key"] = config.AppKey
