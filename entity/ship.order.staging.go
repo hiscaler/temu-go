@@ -16,10 +16,10 @@ type ShipOrderStaging struct {
 	} `json:"orderDetailVOList"` // 子订单详情信息
 	SubPurchaseOrderBasicVO struct {
 		SupplierID                         int            `json:"supplierId"`
-		IsCustomProduct                    bool           `json:"isCustomProduct"`
+		IsCustomProduct                    bool           `json:"isCustomProduct"`                  // 是否为定制商品
 		ExpectLatestArrivalTimeOrDefault   int            `json:"expectLatestArrivalTimeOrDefault"` // 要求最晚到达时间带默认值（时间戳 单位：毫秒）
 		ProductSkcPicture                  string         `json:"productSkcPicture"`
-		ProductName                        any            `json:"productName"`
+		ProductName                        string         `json:"productName"`
 		IsFirst                            bool           `json:"isFirst"`
 		PurchaseStockType                  int            `json:"purchaseStockType"`
 		DeliverUpcomingDelayTimeMillis     int            `json:"deliverUpcomingDelayTimeMillis"`
