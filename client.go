@@ -33,6 +33,8 @@ const (
 	SystemExceptionError      = 200000  // 系统异常
 	InvalidSignError          = 7000015 // 签名无效
 	NoAppKeyError             = 7000002 // 未设置 App Key
+	NoAccessTokenError        = 7000003 // 未设置 Access Token
+	InvalidAccessTokenError   = 7000018 // 无效的 Access Token
 )
 
 var ErrNotFound = errors.New("数据不存在")
@@ -276,6 +278,10 @@ func errorWrap(code int, message string) error {
 		return ErrInvalidSign
 	case NoAppKeyError:
 		message = "未设置 App Key"
+	case NoAccessTokenError:
+		message = "未设置 Access Token"
+	case InvalidAccessTokenError:
+		message = "无效的 Access Token"
 	default:
 		message = fmt.Sprintf("%d: %s", code, message)
 	}
