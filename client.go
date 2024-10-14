@@ -32,6 +32,7 @@ const (
 	MethodNotImplementedError = 501     // 方法未实现
 	SystemExceptionError      = 200000  // 系统异常
 	InvalidSignError          = 7000015 // 签名无效
+	NoAppKeyError             = 7000002 // 未设置 App Key
 )
 
 var ErrNotFound = errors.New("数据不存在")
@@ -273,6 +274,8 @@ func errorWrap(code int, message string) error {
 		message = "系统异常"
 	case InvalidSignError:
 		return ErrInvalidSign
+	case NoAppKeyError:
+		message = "未设置 App Key"
 	default:
 		message = fmt.Sprintf("%d: %s", code, message)
 	}
