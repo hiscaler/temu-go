@@ -42,11 +42,13 @@ type PurchaseOrder struct {
 		ExpectLatestArrivalTimeOrDefault int         `json:"expectLatestArrivalTimeOrDefault"`
 		DeliveryOrderSn                  null.String `json:"deliveryOrderSn"`
 	} `json:"deliverInfo"`
-	ProductSkcId         int `json:"productSkcId"`
-	ProductId            int `json:"productId"`
-	HasQcBill            int `json:"hasQcBill"`
-	SupplyStatus         int `json:"supplyStatus"`
-	ApplyDeleteStatus    int `json:"applyDeleteStatus"`
+	ProductSkcId         int  `json:"productSkcId"`
+	IsCloseJit           bool `json:"isCloseJit"`
+	WarehouseGroupId     int  `json:"warehouseGroupId"`
+	ProductId            int  `json:"productId"`
+	HasQcBill            int  `json:"hasQcBill"`
+	SupplyStatus         int  `json:"supplyStatus"`
+	ApplyDeleteStatus    int  `json:"applyDeleteStatus"`
 	SkuQuantityTotalInfo struct {
 		CurrencyType                 any `json:"currencyType"`
 		ClassName                    any `json:"className"`
@@ -60,8 +62,12 @@ type PurchaseOrder struct {
 	IsCanJoinDeliverPlatform bool     `json:"isCanJoinDeliverPlatform"`
 	CategoryType             int      `json:"categoryType"`
 	Status                   int      `json:"status"`
+	SupplierId               int      `json:"supplierId"`
+	AppealStatus             int      `json:"appealStatus"`
+	IsCustomProduct          bool     `json:"isCustomProduct"`
 	FulfilmentFormId         null.Int `json:"fulfilmentFormId"` // 关联履约函 ID
 	ProductSkcPicture        string   `json:"productSkcPicture"`
+	SupportIncreaseNum       bool     `json:"supportIncreaseNum"`
 	LackOrSoldOutTagList     []struct {
 		IsLack     bool   `json:"isLack"`
 		SkuDisplay string `json:"skuDisplay"`
@@ -72,15 +78,17 @@ type PurchaseOrder struct {
 	SkuLackItemList   []struct {
 		SkuDisplay string `json:"skuDisplay"`
 	} `json:"skuLackItemList"`
-	SkuLackSnapshot         int      `json:"skuLackSnapshot"`
-	DeliveryOrderSn         *string  `json:"deliveryOrderSn"`
-	SettlementType          int      `json:"settlementType"`
-	UrgencyType             int      `json:"urgencyType"`
-	ProductSn               *string  `json:"productSn"`
-	SkuQcRejectItemList     any      `json:"skuQcRejectItemList"`
-	DefectiveTime           null.Int `json:"defectiveTime"`
-	TodayCanDeliver         bool     `json:"todayCanDeliver"`
-	PurchaseTime            int      `json:"purchaseTime"`
-	ApplyChangeSupplyStatus int      `json:"applyChangeSupplyStatus"`
-	Category                string   `json:"category"`
+	DeliveryOrderSn                 *string     `json:"deliveryOrderSn"`
+	SkuLackSnapshot                 int         `json:"skuLackSnapshot"`
+	SettlementType                  int         `json:"settlementType"`
+	SupplierName                    string      `json:"supplierName"`
+	UrgencyType                     int         `json:"urgencyType"`
+	ProductSn                       null.String `json:"productSn"`
+	SkuQcRejectItemList             any         `json:"skuQcRejectItemList"`
+	ExpectLatestArrivalIntervalDays int         `json:"expectLatestArrivalIntervalDays"`
+	DefectiveTime                   null.Int    `json:"defectiveTime"`
+	TodayCanDeliver                 bool        `json:"todayCanDeliver"`
+	PurchaseTime                    int         `json:"purchaseTime"`
+	ApplyChangeSupplyStatus         int         `json:"applyChangeSupplyStatus"`
+	Category                        string      `json:"category"`
 }
