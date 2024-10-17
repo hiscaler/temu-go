@@ -42,13 +42,13 @@ type PurchaseOrder struct {
 		ExpectLatestArrivalTimeOrDefault int         `json:"expectLatestArrivalTimeOrDefault"`
 		DeliveryOrderSn                  null.String `json:"deliveryOrderSn"`
 	} `json:"deliverInfo"`
-	ProductSkcId         int  `json:"productSkcId"`
-	IsCloseJit           bool `json:"isCloseJit"`
-	WarehouseGroupId     int  `json:"warehouseGroupId"`
-	ProductId            int  `json:"productId"`
-	HasQcBill            int  `json:"hasQcBill"`
-	SupplyStatus         int  `json:"supplyStatus"`
-	ApplyDeleteStatus    int  `json:"applyDeleteStatus"`
+	ProductSkcId         int64 `json:"productSkcId"`
+	IsCloseJit           bool  `json:"isCloseJit"`
+	WarehouseGroupId     int   `json:"warehouseGroupId"`
+	ProductId            int   `json:"productId"`
+	HasQcBill            int   `json:"hasQcBill"`
+	SupplyStatus         int   `json:"supplyStatus"`
+	ApplyDeleteStatus    int   `json:"applyDeleteStatus"`
 	SkuQuantityTotalInfo struct {
 		CurrencyType                 any `json:"currencyType"`
 		ClassName                    any `json:"className"`
@@ -62,7 +62,7 @@ type PurchaseOrder struct {
 	IsCanJoinDeliverPlatform bool     `json:"isCanJoinDeliverPlatform"`
 	CategoryType             int      `json:"categoryType"`
 	Status                   int      `json:"status"`
-	SupplierId               int      `json:"supplierId"`
+	SupplierId               int64    `json:"supplierId"`
 	AppealStatus             int      `json:"appealStatus"`
 	IsCustomProduct          bool     `json:"isCustomProduct"`
 	FulfilmentFormId         null.Int `json:"fulfilmentFormId"` // 关联履约函 ID
