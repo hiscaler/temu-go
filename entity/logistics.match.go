@@ -9,7 +9,7 @@ type LogisticsMatchChannelScheduleTime struct {
 // LogisticsMatch 推荐物流商匹配
 type LogisticsMatch struct {
 	MaxChargeAmount         float64                             `json:"maxChargeAmount"`
-	PredictId               int                                 `json:"predictId"`
+	PredictId               int64                               `json:"predictId"`
 	MaxSupplierChargeAmount float64                             `json:"maxSupplierChargeAmount"`
 	StandbyExpress          bool                                `json:"standbyExpress"`
 	MinSupplierChargeAmount float64                             `json:"minSupplierChargeAmount"`
