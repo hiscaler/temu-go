@@ -25,9 +25,9 @@ type GoodsSales struct {
 		} `json:"inventoryNumInfo"`
 		WarehouseAvailableSaleDays any `json:"warehouseAvailableSaleDays"`
 	} `json:"skuQuantityDetailList"`
-	ProductSkcID         int    `json:"productSkcId"`
+	ProductSkcID         int64  `json:"productSkcId"`
 	SkcExtCode           string `json:"skcExtCode"`
-	ProductID            int    `json:"productId"`
+	ProductID            int64  `json:"productId"`
 	InBlackList          bool   `json:"inBlackList"`
 	SkuQuantityTotalInfo struct {
 		ProductSkuID     null.Int `json:"productSkuId"`

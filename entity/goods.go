@@ -114,7 +114,7 @@ type Goods struct {
 		} `json:"cat1"`
 		LeafCat interface{} `json:"leafCat"`
 	} `json:"categories"`
-	ProductSkcId    int    `json:"productSkcId"`
+	ProductSkcId    int64  `json:"productSkcId"`
 	MatchSkcJitMode bool   `json:"matchSkcJitMode"`
 	MainImageUrl    string `json:"mainImageUrl"`
 }

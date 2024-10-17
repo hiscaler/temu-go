@@ -18,7 +18,7 @@ type BoxMarkInfo struct {
 	PurchaseStockType           int             `json:"purchaseStockType"`
 	TotalPackageNum             int             `json:"totalPackageNum"`
 	ExpressCompany              string          `json:"expressCompany"`
-	ProductSkcId                int             `json:"productSkcId"`
+	ProductSkcId                int64           `json:"productSkcId"`
 	NonClothSkuExtCode          string          `json:"nonClothSkuExtCode"`
 	DeliveryOrderSn             string          `json:"deliveryOrderSn"`
 	SettlementType              int             `json:"settlementType"`

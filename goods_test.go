@@ -8,7 +8,9 @@ import (
 )
 
 func Test_goodsService_All(t *testing.T) {
-	params := GoodsQueryParams{}
+	params := GoodsQueryParams{
+		ProductSkcIds: []int64{6119773827},
+	}
 	params.PageSize = 2
 	items, _, _, _, err := temuClient.Services.Goods.All(ctx, params)
 	assert.Equalf(t, nil, err, "Services.Goods.All(ctx, %s)", jsonx.ToPrettyJson(params))

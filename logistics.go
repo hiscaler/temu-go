@@ -56,7 +56,7 @@ type LogisticsMatchRequest struct {
 	DeliveryAddressId         int                   `json:"deliveryAddressId,omitempty"`   // 发货地址
 	PredictTotalPackageWeight int                   `json:"predictTotalPackageWeight"`     // 预估总包裹重量，单位g
 	UrgencyType               *int                  `json:"urgencyType,omitempty"`         // 是否是紧急发货单，0-普通 1-急采
-	SubWarehouseId            int                   `json:"subWarehouseId"`                // 收货子仓 ID
+	SubWarehouseId            int64                 `json:"subWarehouseId"`                // 收货子仓 ID
 	QueryStandbyExpress       bool                  `json:"queryStandbyExpress,omitempty"` // 是否查询备用快递服务商, false-不查询 true-查询
 	TotalPackageNum           int                   `json:"totalPackageNum"`               // 包裹件数
 	ReceiveAddressInfo        entity.ReceiveAddress `json:"receiveAddressInfo,omitempty"`  // 收货地址

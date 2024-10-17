@@ -12,11 +12,11 @@ type barcodeService service
 
 type NormalGoodsBarcodeQueryParams struct {
 	normal.ParameterWithPager
-	ProductSkuIdList []int  `json:"productSkuIdList,omitempty"` // 货品 sku id 列表
-	SkcExtCode       string `json:"skcExtCode,omitempty"`       // skc 货号
-	ProductSkcIdList []int  `json:"productSkcIdList,omitempty"` // 货品 skc id 列表
-	SkuExtCode       string `json:"skuExtCode,omitempty"`       // sku 货号
-	LabelCode        int    `json:"labelCode,omitempty"`        // 标签条码
+	ProductSkuIdList []int64 `json:"productSkuIdList,omitempty"` // 货品 sku id 列表
+	SkcExtCode       string  `json:"skcExtCode,omitempty"`       // skc 货号
+	ProductSkcIdList []int64 `json:"productSkcIdList,omitempty"` // 货品 skc id 列表
+	SkuExtCode       string  `json:"skuExtCode,omitempty"`       // sku 货号
+	LabelCode        int     `json:"labelCode,omitempty"`        // 标签条码
 }
 
 func (m NormalGoodsBarcodeQueryParams) Validate() error {
@@ -59,7 +59,7 @@ func (s barcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarco
 
 type CustomGoodsBarcodeQueryParams struct {
 	NormalGoodsBarcodeQueryParams
-	PersonalProductSkuIdList []int `json:"personalProductSkuIdList,omitempty"` // 定制品 sku id
+	PersonalProductSkuIdList []int64 `json:"personalProductSkuIdList,omitempty"` // 定制品 sku id
 }
 
 func (m CustomGoodsBarcodeQueryParams) Validate() error {

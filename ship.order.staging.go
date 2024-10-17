@@ -20,7 +20,7 @@ type ShipOrderStagingQueryParams struct {
 	normal.ParameterWithPager
 	SubPurchaseOrderSnList []string `json:"subPurchaseOrderSnList,omitempty"` // 子采购单号列表
 	SkcExtCode             []string `json:"skcExtCode,omitempty"`             // 货号列表
-	ProductSkcIdList       []string `json:"productSkcIdList,omitempty"`       // skcId列表
+	ProductSkcIdList       []int64  `json:"productSkcIdList,omitempty"`       // skcId列表
 	SettlementType         *int     `json:"settlementType,omitempty"`         // 结算类型 0-非vmi 1-vmi
 	IsFirstOrder           bool     `json:"isFirstOrder,omitempty"`           // 是否首单
 	UrgencyType            *int     `json:"urgencyType,omitempty"`            // 是否是紧急发货单，0-普通 1-急采

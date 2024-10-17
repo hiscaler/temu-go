@@ -76,8 +76,8 @@ func (s shipOrderService) All(ctx context.Context, params ShipOrderQueryParams) 
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#HqGnA0
 
 type ShipOrderCreateRequestOrderDetailInfo struct {
-	DeliverSkuNum int `json:"deliverSkuNum"` // 发货sku数目
-	ProductSkuId  int `json:"productSkuId"`  // 定制品，传定制品id；非定制品，传货品 skuId
+	DeliverSkuNum int   `json:"deliverSkuNum"` // 发货sku数目
+	ProductSkuId  int64 `json:"productSkuId"`  // 定制品，传定制品id；非定制品，传货品 skuId
 }
 
 // ShipOrderCreateRequestOrderPackage 包裹信息
@@ -86,8 +86,8 @@ type ShipOrderCreateRequestOrderPackage struct {
 }
 
 type ShipOrderCreateRequestPackageInfo struct {
-	SkuNum       int `json:"skuNum"`       // 发货 sku 数目
-	ProductSkuId int `json:"productSkuId"` // skuId
+	SkuNum       int   `json:"skuNum"`       // 发货 sku 数目
+	ProductSkuId int64 `json:"productSkuId"` // skuId
 }
 
 type ShipOrderCreateRequestOrderInfo struct {

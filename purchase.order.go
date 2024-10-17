@@ -23,16 +23,16 @@ type PurchaseOrderQueryParams struct {
 	StatusList                      []int    `json:"statusList,omitempty"`                      // 订单状态 0-待接单；1-已接单，待发货；2-已送货；3-已收货；4-已拒收；5-已验收，全部退回；6-已验收；7-已入库；8-作废；9-已超时；10-已取消
 	SubPurchaseOrderSnList          []string `json:"subPurchaseOrderSnList,omitempty"`          // 订单号（采购子单号）
 	ProductSnList                   []int    `json:"productSnList,omitempty"`                   // 货号列表
-	ProductSkcIdList                []int    `json:"productSkcIdList,omitempty"`                // skc列表
-	PurchaseTimeFrom                int      `json:"purchaseTimeFrom,omitempty"`                // 下单时间-开始：毫秒
-	PurchaseTimeTo                  int      `json:"purchaseTimeTo,omitempty"`                  // 下单时间-结束：毫秒
+	ProductSkcIdList                []int64  `json:"productSkcIdList,omitempty"`                // skc 列表
+	PurchaseTimeFrom                int64    `json:"purchaseTimeFrom,omitempty"`                // 下单时间-开始：毫秒
+	PurchaseTimeTo                  int64    `json:"purchaseTimeTo,omitempty"`                  // 下单时间-结束：毫秒
 	DeliverOrderSnList              []string `json:"deliverOrderSnList,omitempty"`              // 发货单号列表
 	IsDelayDeliver                  bool     `json:"isDelayDeliver,omitempty"`                  // 是否延迟发货
 	IsDelayArrival                  bool     `json:"isDelayArrival,omitempty"`                  // 是否延迟到货
-	ExpectLatestDeliverTimeFrom     int      `json:"expectLatestDeliverTimeFrom,omitempty"`     // 要求最晚发货时间-开始（时间戳 单位：毫秒）
-	ExpectLatestDeliverTimeTo       int      `json:"expectLatestDeliverTimeTo,omitempty"`       // 要求最晚发货时间-结束（时间戳 单位：毫秒）
-	ExpectLatestArrivalTimeFrom     int      `json:"expectLatestArrivalTimeFrom,omitempty"`     // 要求最晚到达时间-开始（时间戳 单位：毫秒）
-	ExpectLatestArrivalTimeTo       int      `json:"expectLatestArrivalTimeTo,omitempty"`       // 要求最晚到达时间-结束（时间戳 单位：毫秒）
+	ExpectLatestDeliverTimeFrom     int64    `json:"expectLatestDeliverTimeFrom,omitempty"`     // 要求最晚发货时间-开始（时间戳 单位：毫秒）
+	ExpectLatestDeliverTimeTo       int64    `json:"expectLatestDeliverTimeTo,omitempty"`       // 要求最晚发货时间-结束（时间戳 单位：毫秒）
+	ExpectLatestArrivalTimeFrom     int64    `json:"expectLatestArrivalTimeFrom,omitempty"`     // 要求最晚到达时间-开始（时间戳 单位：毫秒）
+	ExpectLatestArrivalTimeTo       int64    `json:"expectLatestArrivalTimeTo,omitempty"`       // 要求最晚到达时间-结束（时间戳 单位：毫秒）
 	PurchaseStockType               *int     `json:"purchaseStockType,omitempty"`               // 是否是JIT备货， 0-普通，1-JIT备货
 	IsFirst                         bool     `json:"isFirst,omitempty"`                         // 是否首单 0-否 1-是
 	IsCustomGoods                   bool     `json:"isCustomGoods,omitempty"`                   // 是否为定制品
@@ -146,12 +146,12 @@ func (s purchaseOrderService) One(ctx context.Context, purchaseOrderSn string) (
 
 type PurchaseOrderApplyRequest struct {
 	normal.Parameter
-	ProductSkcId            int `json:"productSkcId"`            // skcId
-	ExpectLatestDeliverTime int `json:"expectLatestDeliverTime"` // 最晚发货时间
-	ExpectLatestArrivalTime int `json:"expectLatestArrivalTime"` // 最晚送达时间
+	ProductSkcId            int64 `json:"productSkcId"`            // skcId
+	ExpectLatestDeliverTime int64 `json:"expectLatestDeliverTime"` // 最晚发货时间
+	ExpectLatestArrivalTime int64 `json:"expectLatestArrivalTime"` // 最晚送达时间
 	PurchaseDetailList      struct {
-		ProductSkuId               int `json:"productSkuId"`               // skuId
-		ProductSkuPurchaseQuantity int `json:"productSkuPurchaseQuantity"` // 申请备货数量
+		ProductSkuId               int64 `json:"productSkuId"`               // skuId
+		ProductSkuPurchaseQuantity int   `json:"productSkuPurchaseQuantity"` // 申请备货数量
 	} `json:"purchaseDetailList"` // 详情
 }
 

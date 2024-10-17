@@ -13,7 +13,7 @@ type goodsSalesService service
 type GoodsSalesQueryParams struct {
 	normal.ParameterWithPager
 	IsLack                    *int     `json:"isLack,omitempty"`                    // 是否缺货 0-不缺货 1-缺货
-	ProductSkcIdList          []int    `json:"productSkcIdList,omitempty"`          // skc列表
+	ProductSkcIdList          []int64  `json:"productSkcIdList,omitempty"`          // skc列表
 	MaxRemanentInventoryNum   int      `json:"maxRemanentInventoryNum,omitempty"`   // sku最大剩余库存
 	OnSalesDurationOfflineLte int      `json:"onSalesDurationOfflineLte,omitempty"` // 加入站点时长小于等于
 	MinRemanentInventoryNum   int      `json:"minRemanentInventoryNum,omitempty"`   // sku最小剩余库存
@@ -78,8 +78,8 @@ func (s goodsSalesService) All(ctx context.Context, params GoodsSalesQueryParams
 }
 
 // One 根据商品 SKC ID 查询
-func (s goodsSalesService) One(ctx context.Context, productSkcId int) (item entity.GoodsSales, err error) {
-	items, err := s.All(ctx, GoodsSalesQueryParams{ProductSkcIdList: []int{productSkcId}})
+func (s goodsSalesService) One(ctx context.Context, productSkcId int64) (item entity.GoodsSales, err error) {
+	items, err := s.All(ctx, GoodsSalesQueryParams{ProductSkcIdList: []int64{productSkcId}})
 	if err != nil {
 		return
 	}

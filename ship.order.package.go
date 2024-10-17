@@ -62,8 +62,8 @@ type ShipOrderPackageUpdateRequestDeliverOrderDetail struct {
 
 // ShipOrderPackageUpdateRequestPackageDetail 包裹明细
 type ShipOrderPackageUpdateRequestPackageDetail struct {
-	SkuNum       int `json:"skuNum"`       // 发货 sku 数目
-	ProductSkuId int `json:"productSkuId"` // skuId
+	SkuNum       int   `json:"skuNum"`       // 发货 sku 数目
+	ProductSkuId int64 `json:"productSkuId"` // skuId
 }
 
 // ShipOrderPackageUpdateRequestPackage 包裹信息

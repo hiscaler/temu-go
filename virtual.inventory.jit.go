@@ -12,7 +12,7 @@ type virtualInventoryJitService service
 
 // View 虚拟库存查询接口
 // https://seller.kuajingmaihuo.com/sop/view/706628248275137588#ag3EtD
-func (s virtualInventoryJitService) View(ctx context.Context, productSkcId int) (items []entity.VirtualInventoryJit, err error) {
+func (s virtualInventoryJitService) View(ctx context.Context, productSkcId int64) (items []entity.VirtualInventoryJit, err error) {
 	var result = struct {
 		normal.Response
 		Result struct {
@@ -22,7 +22,7 @@ func (s virtualInventoryJitService) View(ctx context.Context, productSkcId int) 
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
-		SetBody(map[string]int{"productSkcId": productSkcId}).
+		SetBody(map[string]int64{"productSkcId": productSkcId}).
 		SetResult(&result).
 		Post("bg.virtualinventoryjit.get")
 	if err == nil {
@@ -39,10 +39,10 @@ func (s virtualInventoryJitService) View(ctx context.Context, productSkcId int) 
 // 全托管JIT库存限制：调整后虚拟库存数量必须 ≥ skuId在Temu仓库中的实物库存数量
 
 type VirtualInventoryJitEditRequest struct {
-	ProductSkcId              int `json:"productSkcId"` // 货品SKC ID
+	ProductSkcId              int64 `json:"productSkcId"` // 货品SKC ID
 	SkuVirtualStockChangeList struct {
-		VirtualStockDiff int `json:"virtualStockDiff"` // 虚拟库存(含商家自管库存)变更，大于0代表增加，小于0代表减少
-		ProductSkuId     int `json:"productSkuId"`     // 货品 SKU ID.
+		VirtualStockDiff int   `json:"virtualStockDiff"` // 虚拟库存(含商家自管库存)变更，大于0代表增加，小于0代表减少
+		ProductSkuId     int64 `json:"productSkuId"`     // 货品 SKU ID.
 	} `json:"skuVirtualStockChangeList"` // 虚拟库存模式下使用，虚拟库存调整信息.
 }
 

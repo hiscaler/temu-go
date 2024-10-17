@@ -20,7 +20,7 @@ func Test_barcodeService_BoxMark(t *testing.T) {
 
 func Test_barcodeService_NormalGoods(t *testing.T) {
 	params := NormalGoodsBarcodeQueryParams{
-		ProductSkcIdList: []int{8972250969},
+		ProductSkcIdList: []int64{8972250969},
 	}
 	_, err := temuClient.Services.Barcode.NormalGoods(ctx, params)
 	assert.Equalf(t, nil, err, "Services.Barcode.NormalGoods(ctx, %#v)", params)
@@ -28,7 +28,7 @@ func Test_barcodeService_NormalGoods(t *testing.T) {
 
 func Test_barcodeService_CustomGoods(t *testing.T) {
 	params := CustomGoodsBarcodeQueryParams{
-		PersonalProductSkuIdList: []int{60294097402138},
+		PersonalProductSkuIdList: []int64{60294097402138},
 	}
 	items, err := temuClient.Services.Barcode.CustomGoods(ctx, params)
 	assert.Equalf(t, nil, err, "Services.Barcode.CustomGoods(ctx, %#v)", params)

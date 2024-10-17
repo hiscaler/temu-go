@@ -80,5 +80,5 @@ type ShipOrder struct {
 	PurchaseTime            int64  `json:"purchaseTime"`
 	SkcPurchaseNum          int    `json:"skcPurchaseNum"`
 	DeliverSkcNum           int    `json:"deliverSkcNum"`
-	DeliveryOrderCreateTime int    `json:"deliveryOrderCreateTime"`
+	DeliveryOrderCreateTime int64  `json:"deliveryOrderCreateTime"`
 }
