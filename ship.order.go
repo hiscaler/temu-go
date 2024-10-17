@@ -16,10 +16,10 @@ type ShipOrderQueryParams struct {
 	SubPurchaseOrderSnList   []string `json:"subPurchaseOrderSnList,omitempty"`   // 子采购单号列表
 	ExpressDeliverySnList    []string `json:"expressDeliverySnList,omitempty"`    // 快递单号列表
 	SkcExtCodeList           []string `json:"skcExtCodeList,omitempty"`           // 货号列表
-	ProductSkcIdList         []int    `json:"productSkcIdList,omitempty"`         // skcId 列表
-	SubWarehouseIdList       []int    `json:"subWarehouseIdList,omitempty"`       // 收货子仓列表
-	DeliverTimeFrom          int      `json:"deliverTimeFrom,omitempty"`          // 发货时间-开始时间
-	DeliverTimeTo            int      `json:"deliverTimeTo,omitempty"`            // 发货时间-结束时间
+	ProductSkcIdList         []int64  `json:"productSkcIdList,omitempty"`         // skcId 列表
+	SubWarehouseIdList       []int64  `json:"subWarehouseIdList,omitempty"`       // 收货子仓列表
+	DeliverTimeFrom          int64    `json:"deliverTimeFrom,omitempty"`          // 发货时间-开始时间
+	DeliverTimeTo            int64    `json:"deliverTimeTo,omitempty"`            // 发货时间-结束时间
 	Status                   *int     `json:"status,omitempty"`                   // 发货单状态，0：待装箱发货，1：待仓库收货，2：已收货，3：已入库，4：已退货，5：已取消，6：部分收货，查询发货批次时仅支持查询发货单状态=1
 	UrgencyType              bool     `json:"urgencyType,omitempty"`              // 是否是紧急发货单，0-普通，1-急采
 	IsCustomProduct          bool     `json:"isCustomProduct,omitempty"`          // 是否为定制品
