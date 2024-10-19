@@ -14,9 +14,9 @@ type PurchaseOrderSkuQuantityDetailList struct {
 	CurrencyType                 string   `json:"currencyType"`
 	ClassName                    string   `json:"className"`
 	RealReceiveAuthenticQuantity int      `json:"realReceiveAuthenticQuantity"`
-	FulfilmentProductSkuId       int      `json:"fulfilmentProductSkuId"`
+	FulfilmentProductSkuId       int64    `json:"fulfilmentProductSkuId"`
 	CustomizationType            int      `json:"customizationType"`
-	ProductSkuId                 int      `json:"productSkuId"`
+	ProductSkuId                 int64    `json:"productSkuId"`
 	DeliverQuantity              int      `json:"deliverQuantity"`
 	ThumbUrlList                 []string `json:"thumbUrlList"`
 	QcResult                     any      `json:"qcResult"`
