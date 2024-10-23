@@ -23,7 +23,7 @@ type BoxMarkInfo struct {
 	DeliveryOrderSn             string          `json:"deliveryOrderSn"`
 	SettlementType              int             `json:"settlementType"`
 	SupplierName                string          `json:"supplierName"`
-	ProductSkuIdList            []int           `json:"productSkuIdList"`
+	ProductSkuIdList            []int64         `json:"productSkuIdList"`
 	SkcExtCode                  string          `json:"skcExtCode"`
 	DeliverTime                 int             `json:"deliverTime"`
 	UrgencyType                 int             `json:"urgencyType"`
