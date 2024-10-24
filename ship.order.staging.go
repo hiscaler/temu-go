@@ -27,7 +27,7 @@ type ShipOrderStagingQueryParams struct {
 	IsJit                  bool     `json:"isJit,omitempty"`                  // 是否是jit，true:jit
 	PurchaseStockType      *int     `json:"purchaseStockType,omitempty"`      // 备货类型 0-普通备货 1-jit备货
 	IsCustomProduct        bool     `json:"isCustomProduct,omitempty"`        // 是否为定制品
-	SubWarehouseId         int      `json:"subWarehouseId,omitempty"`         // 收货子仓
+	SubWarehouseId         int64    `json:"subWarehouseId,omitempty"`         // 收货子仓
 	InventoryRegion        []int    `json:"inventoryRegion,omitempty"`        // DOMESTIC(1, "国内备货"), OVERSEAS(2, "海外备货"), BOUNDED_WAREHOUSE(3, "保税仓备货"),
 }
 

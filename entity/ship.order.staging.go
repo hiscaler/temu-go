@@ -29,7 +29,7 @@ type ShipOrderStaging struct {
 		SkcExtCode                         string         `json:"skcExtCode"`
 		DeliverDisplayCountdownMillis      int            `json:"deliverDisplayCountdownMillis"`
 		UrgencyType                        int            `json:"urgencyType"`
-		SubWarehouseID                     int            `json:"subWarehouseId"`
+		SubWarehouseID                     int64          `json:"subWarehouseId"`
 		ProductInventoryRegion             int            `json:"productInventoryRegion"`
 		ExpectLatestDeliverTimeOrDefault   int            `json:"expectLatestDeliverTimeOrDefault"` // 要求最晚发货时间带默认值（时间戳 单位：毫秒）
 		ArrivalUpcomingDelayTimeMillis     int            `json:"arrivalUpcomingDelayTimeMillis"`

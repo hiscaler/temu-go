@@ -29,15 +29,15 @@ type GoodsLabel struct {
 	ProductSkcDTO struct {
 		SpecIdList        []int          `json:"specIdList"`        // 主销售属性id列表
 		ExtCode           string         `json:"extCode"`           // skc货号
-		ProductId         int            `json:"productId"`         // 货品 Id
+		ProductId         int64          `json:"productId"`         // 货品 Id
 		ProductSkcSpec    any            `json:"productSkcSpec"`    // 主销售属性详情
 		ProductSkcSpecMap map[string]any `json:"productSkcSpecMap"` // skc主销售规格Map
-		ProductSkcId      string         `json:"productSkcId"`      // 货品 skcId
+		ProductSkcId      int64          `json:"productSkcId"`      // 货品 skcId
 	} `json:"productSkcDTO"` // skc 信息
 	ProductDTO struct {
 		SupplierName    string `json:"supplierName"`    // 供应商名称
 		LeafCatLabel    any    `json:"leafCatLabel"`    // 叶子类目标记 (使用前请与接口提供者确认是否会返回该字段)
-		ProductId       int    `json:"productId"`       // 货品 ID
+		ProductId       int64  `json:"productId"`       // 货品 ID
 		ProductI18nList any    `json:"productI18nList"` // 货品多语言信息
 		SourceType      int    `json:"sourceType"`      // 来源
 		Categories      any    `json:"categories"`      // 类目

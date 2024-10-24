@@ -27,7 +27,7 @@ type BoxMarkInfo struct {
 	SkcExtCode                  string          `json:"skcExtCode"`
 	DeliverTime                 int             `json:"deliverTime"`
 	UrgencyType                 int             `json:"urgencyType"`
-	SubWarehouseId              int             `json:"subWarehouseId"`
+	SubWarehouseId              int64           `json:"subWarehouseId"`
 	ProductSkcName              null.String     `json:"productSkcName"`
 	PackageSn                   string          `json:"packageSn"`
 	ExpressEnglishCompany       string          `json:"expressEnglishCompany"`

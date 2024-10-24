@@ -53,7 +53,7 @@ func (s logisticsService) Company(ctx context.Context, shipId int) (item entity.
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#16WiXI
 
 type LogisticsMatchRequest struct {
-	DeliveryAddressId         int                   `json:"deliveryAddressId,omitempty"`   // 发货地址
+	DeliveryAddressId         int64                 `json:"deliveryAddressId,omitempty"`   // 发货地址
 	PredictTotalPackageWeight int                   `json:"predictTotalPackageWeight"`     // 预估总包裹重量，单位g
 	UrgencyType               *int                  `json:"urgencyType,omitempty"`         // 是否是紧急发货单，0-普通 1-急采
 	SubWarehouseId            int64                 `json:"subWarehouseId"`                // 收货子仓 ID

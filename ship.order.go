@@ -94,13 +94,13 @@ type ShipOrderCreateRequestOrderInfo struct {
 	DeliverOrderDetailInfos []ShipOrderCreateRequestOrderDetailInfo `json:"deliverOrderDetailInfos"` // 采购单创建信息列表
 	SubPurchaseOrderSn      string                                  `json:"subPurchaseOrderSn"`      // 采购子单号
 	PackageInfos            []ShipOrderCreateRequestOrderPackage    `json:"packageInfos"`            //	包裹信息列表
-	DeliveryAddressId       int                                     `json:"deliveryAddressId"`       // 发货地址 ID
+	DeliveryAddressId       int64                                   `json:"deliveryAddressId"`       // 发货地址 ID
 }
 
 type ShipOrderCreateRequestDeliveryOrder struct {
 	DeliveryOrderCreateInfos []ShipOrderCreateRequestOrderInfo `json:"deliveryOrderCreateInfos"` // 发货单创建组列表
 	ReceiveAddressInfo       entity.ReceiveAddress             `json:"receiveAddressInfo"`       // 收货地址
-	SubWarehouseId           int                               `json:"subWarehouseId"`           // 子仓 ID
+	SubWarehouseId           int64                             `json:"subWarehouseId"`           // 子仓 ID
 }
 
 type ShipOrderCreateRequest struct {

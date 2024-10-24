@@ -45,7 +45,7 @@ type PurchaseOrder struct {
 	ProductSkcId         int64 `json:"productSkcId"`
 	IsCloseJit           bool  `json:"isCloseJit"`
 	WarehouseGroupId     int   `json:"warehouseGroupId"`
-	ProductId            int   `json:"productId"`
+	ProductId            int64 `json:"productId"`
 	HasQcBill            int   `json:"hasQcBill"`
 	SupplyStatus         int   `json:"supplyStatus"`
 	ApplyDeleteStatus    int   `json:"applyDeleteStatus"`

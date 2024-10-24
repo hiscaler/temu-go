@@ -32,7 +32,7 @@ func (s mallAddressService) All(ctx context.Context) (items []entity.MallAddress
 }
 
 // One 根据 ID 查询单个卖家发货地址
-func (s mallAddressService) One(ctx context.Context, id int) (address entity.MallAddress, err error) {
+func (s mallAddressService) One(ctx context.Context, id int64) (address entity.MallAddress, err error) {
 	items, err := s.All(ctx)
 	if err != nil {
 		return

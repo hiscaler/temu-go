@@ -56,7 +56,7 @@ type GoodsSkuSummary struct {
 
 type Goods struct {
 	ProductProperties []GoodsProperty `json:"productProperties"` // 货品普通属性
-	ProductId         int             `json:"productId"`         // 货品 ID
+	ProductId         int64           `json:"productId"`         // 货品 ID
 	ProductJitMode    struct {
 		QuickSellAgtSignStatus interface{} `json:"quickSellAgtSignStatus"` // 快速售卖协议签署状态 0-未签署 1-已签署
 		MatchJitMode           bool        `json:"matchJitMode"`           // 是否 JIT 模式
