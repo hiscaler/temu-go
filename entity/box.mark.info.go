@@ -37,7 +37,7 @@ type BoxMarkInfo struct {
 	DriverName                  string          `json:"driverName"`
 	SubPurchaseOrderSn          string          `json:"subPurchaseOrderSn"`
 	DriverPhone                 null.String     `json:"driverPhone"`
-	PurchaseTime                int             `json:"purchaseTime"`
+	PurchaseTime                int64           `json:"purchaseTime"`
 	GreyKeyHitMap               struct {
 		KeyCnBG215946 bool `json:"key_cn_BG_215946"`
 		KeyBG31572    bool `json:"key_BG_31572"`

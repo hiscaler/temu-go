@@ -22,24 +22,24 @@ type ShipOrderStaging struct {
 		ProductName                        string         `json:"productName"`
 		IsFirst                            bool           `json:"isFirst"`
 		PurchaseStockType                  int            `json:"purchaseStockType"`
-		DeliverUpcomingDelayTimeMillis     int            `json:"deliverUpcomingDelayTimeMillis"`
+		DeliverUpcomingDelayTimeMillis     int64          `json:"deliverUpcomingDelayTimeMillis"`
 		IsClothCategory                    bool           `json:"isClothCategory"`
 		ProductSkcID                       int64          `json:"productSkcId"`
 		SettlementType                     int            `json:"settlementType"`
 		SkcExtCode                         string         `json:"skcExtCode"`
-		DeliverDisplayCountdownMillis      int            `json:"deliverDisplayCountdownMillis"`
+		DeliverDisplayCountdownMillis      int64          `json:"deliverDisplayCountdownMillis"`
 		UrgencyType                        int            `json:"urgencyType"`
 		SubWarehouseID                     int64          `json:"subWarehouseId"`
 		ProductInventoryRegion             int            `json:"productInventoryRegion"`
 		ExpectLatestDeliverTimeOrDefault   int            `json:"expectLatestDeliverTimeOrDefault"` // 要求最晚发货时间带默认值（时间戳 单位：毫秒）
-		ArrivalUpcomingDelayTimeMillis     int            `json:"arrivalUpcomingDelayTimeMillis"`
+		ArrivalUpcomingDelayTimeMillis     int64          `json:"arrivalUpcomingDelayTimeMillis"`
 		ReceiveAddressInfo                 ReceiveAddress `json:"receiveAddressInfo"`
 		AutoRemoveFromDeliveryPlatformTime int64          `json:"autoRemoveFromDeliveryPlatformTime"`
 		ArrivalDisplayCountdownMillis      int64          `json:"arrivalDisplayCountdownMillis"`
 		FragileTag                         bool           `json:"fragileTag"`
 		PurchaseQuantity                   int            `json:"purchaseQuantity"`
 		SubWarehouseName                   string         `json:"subWarehouseName"`
-		PurchaseTime                       int            `json:"purchaseTime"`
+		PurchaseTime                       int64          `json:"purchaseTime"`
 		SubPurchaseOrderSn                 string         `json:"subPurchaseOrderSn"`
 	} `json:"subPurchaseOrderBasicVO"` // 子订单基本信息
 }

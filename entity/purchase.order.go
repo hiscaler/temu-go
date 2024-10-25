@@ -88,7 +88,7 @@ type PurchaseOrder struct {
 	ExpectLatestArrivalIntervalDays int         `json:"expectLatestArrivalIntervalDays"`
 	DefectiveTime                   null.Int    `json:"defectiveTime"`
 	TodayCanDeliver                 bool        `json:"todayCanDeliver"`
-	PurchaseTime                    int         `json:"purchaseTime"`
+	PurchaseTime                    int64       `json:"purchaseTime"`
 	ApplyChangeSupplyStatus         int         `json:"applyChangeSupplyStatus"`
 	Category                        string      `json:"category"`
 }
