@@ -50,14 +50,14 @@ type PurchaseOrder struct {
 	SupplyStatus         int   `json:"supplyStatus"`
 	ApplyDeleteStatus    int   `json:"applyDeleteStatus"`
 	SkuQuantityTotalInfo struct {
-		CurrencyType                 any `json:"currencyType"`
-		ClassName                    any `json:"className"`
-		RealReceiveAuthenticQuantity int `json:"realReceiveAuthenticQuantity"`
-		CustomizationType            any `json:"customizationType"`
-		ProductSkuId                 any `json:"productSkuId"`
-		DeliverQuantity              int `json:"deliverQuantity"`
-		ExtCode                      any `json:"extCode"`
-		PurchaseQuantity             int `json:"purchaseQuantity"`
+		CurrencyType                 any   `json:"currencyType"`
+		ClassName                    any   `json:"className"`
+		RealReceiveAuthenticQuantity int   `json:"realReceiveAuthenticQuantity"`
+		CustomizationType            any   `json:"customizationType"`
+		ProductSkuId                 int64 `json:"productSkuId"`
+		DeliverQuantity              int   `json:"deliverQuantity"`
+		ExtCode                      any   `json:"extCode"`
+		PurchaseQuantity             int   `json:"purchaseQuantity"`
 	} `json:"skuQuantityTotalInfo"`
 	IsCanJoinDeliverPlatform bool     `json:"isCanJoinDeliverPlatform"`
 	CategoryType             int      `json:"categoryType"`
