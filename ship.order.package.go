@@ -56,8 +56,8 @@ func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderSn string
 
 // ShipOrderPackageUpdateRequestDeliverOrderDetail  发货单详情
 type ShipOrderPackageUpdateRequestDeliverOrderDetail struct {
-	DeliverSkuNum int `json:"deliverSkuNum"` // 发货 sku 数目
-	ProductSkuId  int `json:"productSkuId"`  // skuId
+	DeliverSkuNum int   `json:"deliverSkuNum"` // 发货 sku 数目
+	ProductSkuId  int64 `json:"productSkuId"`  // skuId
 }
 
 // ShipOrderPackageUpdateRequestPackageDetail 包裹明细
