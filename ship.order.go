@@ -35,7 +35,7 @@ type ShipOrderQueryParams struct {
 
 func (m ShipOrderQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.UrgencyType, validation.When(!validation.IsEmpty(m.UrgencyType), validation.In(entity.ShipOrderTypeNormal, entity.ShipOrderTypeUrgency).Error("无效的加急类型。"))),
+		validation.Field(&m.UrgencyType, validation.When(!validation.IsEmpty(m.UrgencyType), validation.In(entity.UrgencyTypeNormal, entity.UrgencyTypeUrgency).Error("无效的加急类型。"))),
 	)
 }
 
