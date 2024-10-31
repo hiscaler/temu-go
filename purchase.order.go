@@ -56,7 +56,7 @@ func (m PurchaseOrderQueryParams) Validate() error {
 				validation.In(entity.SettlementTypeNotVMI, entity.SettlementTypeVMI).Error("无效的结算类型。"),
 			)),
 		validation.Field(&m.SourceList,
-			validation.When(len(m.SourceList) > 0, validation.By(func(value interface{}) error {
+			validation.When(len(m.SourceList) > 0, validation.By(func(value any) error {
 				sources, ok := value.([]int)
 				if !ok {
 					return errors.New("无效的下单来源。")
