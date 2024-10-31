@@ -1,5 +1,12 @@
 package entity
 
+// ProductSkcImage 商品 SKC 图片
+type ProductSkcImage struct {
+	ImageUrl  string `json:"imageUrl"`  // 图片 URL
+	Language  string `json:"language"`  // 语言
+	ImageType int    `json:"imageType"` // 图片类型
+}
+
 // GoodsLabel 商品条码
 type GoodsLabel struct {
 	ProductSkuSpecI18nMap Specification `json:"productSkuSpecI18nMap"` // sku规格多语言信息
@@ -17,12 +24,8 @@ type GoodsLabel struct {
 		ProductSkuPurchaseQuantity int    `json:"productSkuPurchaseQuantity"` // sku 下单件数 (仅旧版分页查询接口返回)
 		LabelCode                  int    `json:"商品条码"`                       // sku 下单件数 (仅旧版分页查询接口返回)
 	} `json:"ProductLabelCodeDTO"`
-	ProductSkcImageList struct {
-		ImageUrl  string `json:"imageUrl"`  // 图片 URL
-		Language  string `json:"language"`  // 语言
-		ImageType int    `json:"imageType"` // 图片类型
-	} `json:"productSkcImageList"` // skc图片信息
-	ProductOrigin struct {
+	ProductSkcImageList ProductSkcImage `json:"productSkcImageList"` // skc图片信息
+	ProductOrigin       struct {
 		CountryShortName string `json:"countryShortName"` // 国家简称 (二字简码)
 		CountryName      string `json:"countryName"`      // 国家名称 (英文)
 	} `json:"productOrigin"` // 货品产地信息
@@ -72,12 +75,8 @@ type CustomGoodsLabel struct {
 		ThumbURL          string `json:"thumbUrl"`
 		SkuClassification any    `json:"skuClassification"`
 	} `json:"productSkuDTO"`
-	ProductSkcImageList []struct {
-		ImageURL  string `json:"imageUrl"`
-		Language  string `json:"language"`
-		ImageType int    `json:"imageType"`
-	} `json:"productSkcImageList"`
-	ProductSkcDTO struct {
+	ProductSkcImageList []ProductSkcImage `json:"productSkcImageList"`
+	ProductSkcDTO       struct {
 		SpecIDList     []int  `json:"specIdList"`
 		ExtCode        string `json:"extCode"`
 		ProductSkcSpec struct {

@@ -9,5 +9,5 @@ type LogisticsCompany struct {
 // LogisticsExpressCompany 物流快递公司
 type LogisticsExpressCompany struct {
 	ExpressCompanyId   int    `json:"expressCompanyId"`   // 快递公司 Id
-	ExpressCompanyName string `json:"expressCompanyName"` //  快递公司名称
+	ExpressCompanyName string `json:"expressCompanyName"` // 快递公司名称
 }
