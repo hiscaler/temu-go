@@ -2,9 +2,11 @@ package temu
 
 import (
 	"context"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"strings"
 )
 
 // 发货包裹
@@ -18,7 +20,16 @@ type ShipOrderPackageQueryParams struct {
 
 func (m ShipOrderPackageQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.DeliveryOrderSn, validation.Required.Error("发货单号不能为空。")),
+		validation.Field(&m.DeliveryOrderSn,
+			validation.Required.Error("发货单号不能为空。"),
+			validation.By(func(value interface{}) error {
+				number, ok := value.(string)
+				if !ok || strings.HasPrefix(strings.ToLower(number), "fh") {
+					return fmt.Errorf("无效的发货单号：%v", value)
+				}
+				return nil
+			}),
+		),
 	)
 }
 
@@ -56,14 +67,14 @@ func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderSn string
 
 // ShipOrderPackageUpdateRequestDeliverOrderDetail  发货单详情
 type ShipOrderPackageUpdateRequestDeliverOrderDetail struct {
-	DeliverSkuNum int   `json:"deliverSkuNum"` // 发货 sku 数目
 	ProductSkuId  int64 `json:"productSkuId"`  // skuId
+	DeliverSkuNum int   `json:"deliverSkuNum"` // 发货 sku 数目
 }
 
 // ShipOrderPackageUpdateRequestPackageDetail 包裹明细
 type ShipOrderPackageUpdateRequestPackageDetail struct {
-	SkuNum       int   `json:"skuNum"`       // 发货 sku 数目
 	ProductSkuId int64 `json:"productSkuId"` // skuId
+	SkuNum       int   `json:"skuNum"`       // 发货 sku 数目
 }
 
 // ShipOrderPackageUpdateRequestPackage 包裹信息
@@ -80,7 +91,16 @@ type ShipOrderPackageUpdateRequest struct {
 
 func (m ShipOrderPackageUpdateRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.DeliveryOrderSn, validation.Required.Error("发货单号不能为空。")),
+		validation.Field(&m.DeliveryOrderSn,
+			validation.Required.Error("发货单号不能为空。"),
+			validation.By(func(value interface{}) error {
+				number, ok := value.(string)
+				if !ok || strings.HasPrefix(strings.ToLower(number), "fh") {
+					return fmt.Errorf("无效的发货单号：%v", value)
+				}
+				return nil
+			}),
+		),
 		validation.Field(&m.DeliverOrderDetailInfos, validation.Required.Error("发货单详情列表不能为空。")),
 		validation.Field(&m.PackageInfos, validation.Required.Error("包裹信息列表不能为空。")),
 	)

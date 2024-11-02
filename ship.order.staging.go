@@ -94,9 +94,17 @@ type ShipOrderStagingAddInfo struct {
 
 func (m ShipOrderStagingAddInfo) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.SubPurchaseOrderSn, validation.Required.Error("采购子单号不能为空。")),
+		validation.Field(&m.SubPurchaseOrderSn,
+			validation.Required.Error("备货单号不能为空。"),
+			validation.By(func(value interface{}) error {
+				number, ok := value.(string)
+				if !ok || strings.HasPrefix(strings.ToLower(number), "wb") {
+					return fmt.Errorf("无效的备货单号：%v", value)
+				}
+				return nil
+			}),
+		),
 		validation.Field(&m.DeliveryAddressType,
-			validation.Required.Error("发货地址类型不能为空。"),
 			validation.In(entity.DeliveryAddressTypeChineseMainland, entity.DeliveryAddressTypeChineseHongKong).Error("无效的发货地址类型。"),
 		),
 	)
