@@ -12,10 +12,15 @@ type MallPermission struct {
 	APIScopeList []string `json:"apiScopeList"`
 }
 
-// HasAPI 是否有指定 API 权限
-func (m MallPermission) HasAPI(method string) bool {
+// Accessible 是否有指定 API 权限
+func (m MallPermission) Accessible(api string) bool {
+	api = strings.TrimSpace(api)
+	if api == "" {
+		return false
+	}
+
 	for _, v := range m.APIScopeList {
-		if strings.EqualFold(v, method) {
+		if strings.EqualFold(v, api) {
 			return true
 		}
 	}

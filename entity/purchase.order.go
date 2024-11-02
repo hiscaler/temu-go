@@ -50,16 +50,16 @@ type PurchaseOrder struct {
 	SupplyStatus         int   `json:"supplyStatus"`
 	ApplyDeleteStatus    int   `json:"applyDeleteStatus"`
 	SkuQuantityTotalInfo struct {
-		CurrencyType                 any   `json:"currencyType"`
-		ClassName                    any   `json:"className"`
-		RealReceiveAuthenticQuantity int   `json:"realReceiveAuthenticQuantity"`
-		CustomizationType            any   `json:"customizationType"`
-		ProductSkuId                 int64 `json:"productSkuId"`
-		DeliverQuantity              int   `json:"deliverQuantity"`
-		ExtCode                      any   `json:"extCode"`
-		PurchaseQuantity             int   `json:"purchaseQuantity"`
+		CurrencyType                 any         `json:"currencyType"`
+		ClassName                    any         `json:"className"`
+		CustomizationType            any         `json:"customizationType"`            // 定制类型
+		ProductSkuId                 int64       `json:"productSkuId"`                 // SKU
+		ExtCode                      null.String `json:"extCode"`                      // SKU 编码
+		PurchaseQuantity             int         `json:"purchaseQuantity"`             // 采购数量
+		DeliverQuantity              int         `json:"deliverQuantity"`              // 发货数量
+		RealReceiveAuthenticQuantity int         `json:"realReceiveAuthenticQuantity"` // 实际收货数量
 	} `json:"skuQuantityTotalInfo"`
-	IsCanJoinDeliverPlatform bool     `json:"isCanJoinDeliverPlatform"`
+	IsCanJoinDeliverPlatform bool     `json:"isCanJoinDeliverPlatform"` // 是否可以加入发货台
 	CategoryType             int      `json:"categoryType"`
 	Status                   int      `json:"status"`
 	SupplierId               int64    `json:"supplierId"`
@@ -78,7 +78,7 @@ type PurchaseOrder struct {
 	SkuLackItemList   []struct {
 		SkuDisplay string `json:"skuDisplay"`
 	} `json:"skuLackItemList"`
-	DeliveryOrderSn                 *string     `json:"deliveryOrderSn"`
+	DeliveryOrderSn                 null.String `json:"deliveryOrderSn"`
 	SkuLackSnapshot                 int         `json:"skuLackSnapshot"`
 	SettlementType                  int         `json:"settlementType"`
 	SupplierName                    string      `json:"supplierName"`
