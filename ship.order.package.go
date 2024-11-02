@@ -24,7 +24,7 @@ func (m ShipOrderPackageQueryParams) Validate() error {
 			validation.Required.Error("发货单号不能为空。"),
 			validation.By(func(value interface{}) error {
 				number, ok := value.(string)
-				if !ok || strings.HasPrefix(strings.ToLower(number), "fh") {
+				if !ok || !strings.HasPrefix(strings.ToLower(number), "fh") {
 					return fmt.Errorf("无效的发货单号：%v", value)
 				}
 				return nil
@@ -95,7 +95,7 @@ func (m ShipOrderPackageUpdateRequest) Validate() error {
 			validation.Required.Error("发货单号不能为空。"),
 			validation.By(func(value interface{}) error {
 				number, ok := value.(string)
-				if !ok || strings.HasPrefix(strings.ToLower(number), "fh") {
+				if !ok || !strings.HasPrefix(strings.ToLower(number), "fh") {
 					return fmt.Errorf("无效的发货单号：%v", value)
 				}
 				return nil

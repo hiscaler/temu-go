@@ -98,7 +98,7 @@ func (m ShipOrderStagingAddInfo) Validate() error {
 			validation.Required.Error("备货单号不能为空。"),
 			validation.By(func(value interface{}) error {
 				number, ok := value.(string)
-				if !ok || strings.HasPrefix(strings.ToLower(number), "wb") {
+				if !ok || !strings.HasPrefix(strings.ToLower(number), "wb") {
 					return fmt.Errorf("无效的备货单号：%v", value)
 				}
 				return nil
