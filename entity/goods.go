@@ -36,7 +36,7 @@ type GoodsSkuSummary struct {
 			IsForce2Normal    bool  `json:"isForce2Normal"`
 		} `json:"productSkuNewSensitiveAttr"`
 		ProductSkuVolumeLabel any `json:"productSkuVolumeLabel"`
-		ProductSkuWmsWeight   any `json:"productSkuWmsWeight"`
+		ProductSkuWmsWeight   int `json:"productSkuWmsWeight"`
 		ProductSkuVolume      struct {
 			Len    int `json:"len"`    // 长
 			Width  int `json:"width"`  // 宽
