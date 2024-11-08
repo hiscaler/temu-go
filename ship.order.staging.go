@@ -7,7 +7,6 @@ import (
 	"github.com/hiscaler/gox/nullx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
-	"github.com/samber/lo"
 	"gopkg.in/guregu/null.v4"
 	"strings"
 )
@@ -164,17 +163,21 @@ func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAd
 
 	ok = !result.Result.ExistJoinErrorSubPurchase
 	if !ok {
-		lo.ForEach(results, func(r entity.ShipOrderStagingAddResult, index int) {
-			v, exists := lo.Find(result.Result.JoinErrorList, func(v joinError) bool {
-				return strings.EqualFold(v.JoinErrorSubPurchaseOrderSn, r.SubPurchaseOrderSn)
-			})
-			if exists {
-				r.Success = false
-				r.ErrorCode = null.IntFrom(int64(v.ErrorCode))
-				r.ErrorMessage = nullx.StringFrom(v.ErrorMsg)
-				results[index] = r
+		kvJoinErrors := make(map[string]joinError, len(result.Result.JoinErrorList))
+		for _, v := range result.Result.JoinErrorList {
+			kvJoinErrors[strings.ToLower(v.JoinErrorSubPurchaseOrderSn)] = v
+		}
+		for i, r := range results {
+			joinErr, exists := kvJoinErrors[strings.ToLower(r.SubPurchaseOrderSn)]
+			if !exists {
+				continue
 			}
-		})
+
+			r.Success = false
+			r.ErrorCode = null.IntFrom(int64(joinErr.ErrorCode))
+			r.ErrorMessage = nullx.StringFrom(joinErr.ErrorMsg)
+			results[i] = r
+		}
 	}
 	return
 }
