@@ -2,7 +2,6 @@ package temu
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/nullx"
@@ -105,7 +104,9 @@ func (m ShipOrderStagingAddInfo) Validate() error {
 			}),
 		),
 		validation.Field(&m.DeliveryAddressType,
-			validation.In(entity.DeliveryAddressTypeChineseMainland, entity.DeliveryAddressTypeChineseHongKong).Error("无效的发货地址类型。"),
+			validation.
+				In(entity.DeliveryAddressTypeChineseMainland, entity.DeliveryAddressTypeChineseHongKong).
+				Error("无效的发货地址类型。"),
 		),
 	)
 }
@@ -128,12 +129,12 @@ func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAd
 		return
 	}
 
-	for _, info := range req.JoinInfoList {
-		results = append(results, entity.ShipOrderStagingAddResult{
+	results = make([]entity.ShipOrderStagingAddResult, len(req.JoinInfoList))
+	for i, info := range req.JoinInfoList {
+		results[i] = entity.ShipOrderStagingAddResult{
 			SubPurchaseOrderSn: info.SubPurchaseOrderSn,
-			Success:            false,
-			ErrorMessage:       nullx.StringFrom("Unknown"),
-		})
+			Success:            true,
+		}
 	}
 
 	type joinError struct {
@@ -161,39 +162,18 @@ func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAd
 		return
 	}
 
-	if result.Result.ExistJoinErrorSubPurchase {
+	ok = !result.Result.ExistJoinErrorSubPurchase
+	if !ok {
 		lo.ForEach(results, func(r entity.ShipOrderStagingAddResult, index int) {
-			value, exists := lo.Find(result.Result.JoinErrorList, func(rr joinError) bool {
-				return strings.EqualFold(rr.JoinErrorSubPurchaseOrderSn, r.SubPurchaseOrderSn)
+			v, exists := lo.Find(result.Result.JoinErrorList, func(v joinError) bool {
+				return strings.EqualFold(v.JoinErrorSubPurchaseOrderSn, r.SubPurchaseOrderSn)
 			})
 			if exists {
-				r.ErrorCode = null.IntFrom(int64(value.ErrorCode))
-				r.ErrorMessage = nullx.StringFrom(value.ErrorMsg)
-			} else {
-				r.Success = true
-				r.ErrorMessage = nullx.NullString()
+				r.Success = false
+				r.ErrorCode = null.IntFrom(int64(v.ErrorCode))
+				r.ErrorMessage = nullx.StringFrom(v.ErrorMsg)
+				results[index] = r
 			}
-			results[index] = r
-		})
-		_, foundFailed := lo.Find(results, func(item entity.ShipOrderStagingAddResult) bool {
-			return item.Success == false
-		})
-		ok = !foundFailed
-		if foundFailed {
-			errMessages := make([]string, 0)
-			for _, addResult := range results {
-				if !addResult.Success {
-					errMessages = append(errMessages, fmt.Sprintf("%s: %s", addResult.SubPurchaseOrderSn, addResult.ErrorMessage.ValueOrZero()))
-				}
-			}
-			err = errors.New(strings.Join(errMessages, "; "))
-		}
-	} else {
-		ok = true
-		lo.ForEach(results, func(item entity.ShipOrderStagingAddResult, index int) {
-			item.Success = true
-			item.ErrorMessage = nullx.NullString()
-			results[index] = item
 		})
 	}
 	return
