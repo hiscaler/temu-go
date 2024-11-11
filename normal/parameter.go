@@ -34,7 +34,7 @@ func (pp *Pager) TidyPager(values ...int) *Pager {
 		pp.Page = page
 	}
 	if pp.PageSize <= 0 {
-		pp.PageSize = 10
+		pp.PageSize = maxPageSize
 	} else if pp.PageSize > maxPageSize {
 		pp.PageSize = maxPageSize
 	}

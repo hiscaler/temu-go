@@ -144,20 +144,29 @@ func (s purchaseOrderService) One(ctx context.Context, purchaseOrderSn string) (
 
 // 申请备货
 
+type PurchaseOrderApplyDetail struct {
+	ProductSkuId               int64 `json:"productSkuId"`               // skuId
+	ProductSkuPurchaseQuantity int   `json:"productSkuPurchaseQuantity"` // 申请备货数量
+}
+
+func (m PurchaseOrderApplyDetail) Validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductSkuId, validation.Required.Error("SKU 不能为空。")),
+		validation.Field(&m.ProductSkuPurchaseQuantity, validation.Min(1).Error("备货数量不能小于 {.min}。")),
+	)
+}
+
 type PurchaseOrderApplyRequest struct {
 	normal.Parameter
-	ProductSkcId            int64 `json:"productSkcId"`            // skcId
-	ExpectLatestDeliverTime int64 `json:"expectLatestDeliverTime"` // 最晚发货时间
-	ExpectLatestArrivalTime int64 `json:"expectLatestArrivalTime"` // 最晚送达时间
-	PurchaseDetailList      struct {
-		ProductSkuId               int64 `json:"productSkuId"`               // skuId
-		ProductSkuPurchaseQuantity int   `json:"productSkuPurchaseQuantity"` // 申请备货数量
-	} `json:"purchaseDetailList"` // 详情
+	ProductSkcId            int64                    `json:"productSkcId"`            // skcId
+	ExpectLatestDeliverTime int64                    `json:"expectLatestDeliverTime"` // 最晚发货时间
+	ExpectLatestArrivalTime int64                    `json:"expectLatestArrivalTime"` // 最晚送达时间
+	PurchaseDetailList      PurchaseOrderApplyDetail `json:"purchaseDetailList"`      // 详情
 }
 
 func (m PurchaseOrderApplyRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ProductSkcId, validation.Required.Error("skcId不能为空。")),
+		validation.Field(&m.ProductSkcId, validation.Required.Error("SKC 不能为空。")),
 		validation.Field(&m.PurchaseDetailList, validation.Required.Error("详情不能为空。")),
 	)
 }
