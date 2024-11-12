@@ -22,7 +22,7 @@ type GoodsSales struct {
 			WaitApproveInventoryNum          int `json:"waitApproveInventoryNum"`  // 待审核备货库存
 			UnavailableWarehouseInventoryNum int `json:"unavailableWarehouseInventoryNum"`
 			WaitReceiveNum                   int `json:"waitReceiveNum"` //  待收货库存
-		} `json:"inventoryNumInfo"`                                           // 库存信息
+		} `json:"inventoryNumInfo"` // 库存信息
 		WarehouseAvailableSaleDays string `json:"warehouseAvailableSaleDays"` // 仓内库存可售天数:保留一位小数
 	} `json:"skuQuantityDetailList"` // sku维度数量信息
 	ProductSkcId         int64  `json:"productSkcId"`
