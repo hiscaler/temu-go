@@ -32,10 +32,10 @@ func Test_logisticsService_Match(t *testing.T) {
 
 	shipOrder := shipOrders[0]
 	req := LogisticsMatchRequest{
-		DeliveryAddressId:         shipOrder.DeliveryAddressID.Int64,
+		DeliveryAddressId:         shipOrder.DeliveryAddressId.Int64,
 		PredictTotalPackageWeight: 1000,
 		UrgencyType:               IntPtr(1),
-		SubWarehouseId:            shipOrder.SubWarehouseID,
+		SubWarehouseId:            shipOrder.SubWarehouseId,
 		QueryStandbyExpress:       false,
 		TotalPackageNum:           2,
 		ReceiveAddressInfo:        receiveAddress.ReceiveAddressInfo,

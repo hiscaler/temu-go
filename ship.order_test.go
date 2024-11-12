@@ -47,7 +47,7 @@ func TestShipOrderService_Create(t *testing.T) {
 			DetailAddress: receiveAddress.DetailAddress,
 			Phone:         receiveAddress.Phone,
 		},
-		SubWarehouseId: shipOrderStaging.SubPurchaseOrderBasicVO.SubWarehouseID,
+		SubWarehouseId: shipOrderStaging.SubPurchaseOrderBasicVO.SubWarehouseId,
 	}
 
 	deliveryOrderCreateInfo := ShipOrderCreateRequestOrderInfo{

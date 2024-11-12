@@ -16,8 +16,8 @@ func Test_goodsSalesService_All(t *testing.T) {
 		item := items[0]
 		var sales entity.GoodsSales
 		// 根据商品 SKC ID 查询
-		sales, err = temuClient.Services.GoodsSales.One(ctx, item.ProductSkcID)
-		assert.Equalf(t, nil, err, "Services.GoodsSales.One(ctx, %d)", item.ProductSkcID)
-		assert.Equalf(t, item, sales, "Services.GoodsSales.One(ctx, %d)", item.ProductSkcID)
+		sales, err = temuClient.Services.GoodsSales.One(ctx, item.ProductSkcId)
+		assert.Equalf(t, nil, err, "Services.GoodsSales.One(ctx, %d)", item.ProductSkcId)
+		assert.Equalf(t, item, sales, "Services.GoodsSales.One(ctx, %d)", item.ProductSkcId)
 	}
 }
