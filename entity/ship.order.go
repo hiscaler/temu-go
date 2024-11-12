@@ -10,15 +10,15 @@ type ShipOrder struct {
 	ExpectLatestPickTime         null.Int `json:"expectLatestPickTime"`
 	DeliveryOrderCancelLeftTime  null.Int `json:"deliveryOrderCancelLeftTime"`
 	ExpressDeliverySn            string   `json:"expressDeliverySn"`
-	DeliveryAddressID            null.Int `json:"deliveryAddressId"`
+	DeliveryAddressId            null.Int `json:"deliveryAddressId"`
 	ExpressWeightFeedbackStatus  int      `json:"expressWeightFeedbackStatus"`
 	ExpressRejectStatus          null.Int `json:"expressRejectStatus"`
 	PackageReceiveInfoVOList     any      `json:"packageReceiveInfoVOList"`
 	TaxWarehouseApplyOperateType int      `json:"taxWarehouseApplyOperateType"`
-	ProductSkcID                 int64    `json:"productSkcId"`
+	ProductSkcId                 int64    `json:"productSkcId"`
 	SkcExtCode                   string   `json:"skcExtCode"`
 	InboundTime                  null.Int `json:"inboundTime"`
-	SubWarehouseID               int64    `json:"subWarehouseId"`
+	SubWarehouseId               int64    `json:"subWarehouseId"`
 	PackageList                  []struct {
 		SkcNum    int    `json:"skcNum"`
 		PackageSn string `json:"packageSn"`
@@ -27,12 +27,12 @@ type ShipOrder struct {
 	DeliverPackageNum           int            `json:"deliverPackageNum"`
 	DriverName                  string         `json:"driverName"`
 	SubPurchaseOrderSn          string         `json:"subPurchaseOrderSn"`
-	ExpressCompanyID            int64          `json:"expressCompanyId"`
+	ExpressCompanyId            int64          `json:"expressCompanyId"`
 	DefectiveSkcNum             int            `json:"defectiveSkcNum"`
 	Status                      int            `json:"status"`
 	ExpectPickUpGoodsTime       int            `json:"expectPickUpGoodsTime"`
 	PredictTotalPackageWeight   int64          `json:"predictTotalPackageWeight"`
-	SupplierID                  int64          `json:"supplierId"`
+	SupplierId                  int64          `json:"supplierId"`
 	IsDisplayCourier            bool           `json:"isDisplayCourier"`
 	IsCustomProduct             bool           `json:"isCustomProduct"`
 	DeliveryMethod              int            `json:"deliveryMethod"`
@@ -53,8 +53,8 @@ type ShipOrder struct {
 	PlateNumber                 string         `json:"plateNumber"`
 	ReceiveTime                 null.Int       `json:"receiveTime"`
 	PackageDetailList           []struct {
-		ProductSkuID         int64       `json:"productSkuId"`
-		ProductOriginalSkuID null.Int    `json:"productOriginalSkuId"`
+		ProductSkuId         int64       `json:"productSkuId"`
+		ProductOriginalSkuId null.Int    `json:"productOriginalSkuId"`
 		PersonalText         null.String `json:"personalText"`
 		SkuNum               int         `json:"skuNum"`
 	} `json:"packageDetailList"`
@@ -65,10 +65,10 @@ type ShipOrder struct {
 		IsFirst            bool        `json:"isFirst"`
 		PurchaseStockType  int         `json:"purchaseStockType"`
 		IsClothCategory    bool        `json:"isClothCategory"`
-		ProductSkcID       int64       `json:"productSkcId"`
+		ProductSkcId       int64       `json:"productSkcId"`
 		SettlementType     int         `json:"settlementType"`
 		SkcExtCode         string      `json:"skcExtCode"`
-		SubWarehouseID     null.Int    `json:"subWarehouseId"`
+		SubWarehouseId     null.Int    `json:"subWarehouseId"`
 		UrgencyType        int         `json:"urgencyType"`
 		FragileTag         bool        `json:"fragileTag"`
 		PurchaseQuantity   int         `json:"purchaseQuantity"`

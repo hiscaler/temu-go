@@ -15,7 +15,7 @@ type ShipOrderStaging struct {
 		PersonalText                null.String `json:"personalText"`                // 定制化内容
 	} `json:"orderDetailVOList"` // 子订单详情信息
 	SubPurchaseOrderBasicVO struct {
-		SupplierID                         int64          `json:"supplierId"`
+		SupplierId                         int64          `json:"supplierId"`
 		IsCustomProduct                    bool           `json:"isCustomProduct"`                  // 是否为定制商品
 		ExpectLatestArrivalTimeOrDefault   int            `json:"expectLatestArrivalTimeOrDefault"` // 要求最晚到达时间带默认值（时间戳 单位：毫秒）
 		ProductSkcPicture                  string         `json:"productSkcPicture"`
@@ -24,12 +24,12 @@ type ShipOrderStaging struct {
 		PurchaseStockType                  int            `json:"purchaseStockType"`
 		DeliverUpcomingDelayTimeMillis     int64          `json:"deliverUpcomingDelayTimeMillis"`
 		IsClothCategory                    bool           `json:"isClothCategory"`
-		ProductSkcID                       int64          `json:"productSkcId"`
+		ProductSkcId                       int64          `json:"productSkcId"`
 		SettlementType                     int            `json:"settlementType"`
 		SkcExtCode                         string         `json:"skcExtCode"`
 		DeliverDisplayCountdownMillis      int64          `json:"deliverDisplayCountdownMillis"`
 		UrgencyType                        int            `json:"urgencyType"`
-		SubWarehouseID                     int64          `json:"subWarehouseId"`
+		SubWarehouseId                     int64          `json:"subWarehouseId"`
 		ProductInventoryRegion             int            `json:"productInventoryRegion"`
 		ExpectLatestDeliverTimeOrDefault   int            `json:"expectLatestDeliverTimeOrDefault"` // 要求最晚发货时间带默认值（时间戳 单位：毫秒）
 		ArrivalUpcomingDelayTimeMillis     int64          `json:"arrivalUpcomingDelayTimeMillis"`

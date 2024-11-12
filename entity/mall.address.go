@@ -8,7 +8,7 @@ type MallAddress struct {
 	AddressDetail string `json:"addressDetail"`
 	CityName      string `json:"cityName"`
 	DistrictName  string `json:"districtName"`
-	MallID        int64  `json:"mallId"`
+	MallId        int64  `json:"mallId"`
 	ProvinceCode  int    `json:"provinceCode"`
 	CityCode      int    `json:"cityCode"`
 	ProvinceName  string `json:"provinceName"`

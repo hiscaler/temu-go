@@ -85,7 +85,7 @@ func (s goodsSalesService) One(ctx context.Context, productSkcId int64) (item en
 	}
 
 	for _, sales := range items {
-		if sales.ProductSkcID == productSkcId {
+		if sales.ProductSkcId == productSkcId {
 			return sales, nil
 		}
 	}

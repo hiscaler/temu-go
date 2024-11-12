@@ -61,17 +61,17 @@ type CustomGoodsLabel struct {
 	ProductSkuSpecI18NMap map[string][]Specification `json:"productSkuSpecI18nMap"`
 	ProductSkuDTO         struct {
 		NumberOfPieces any   `json:"numberOfPieces"`
-		ProductSkuID   int64 `json:"productSkuId"`
-		ProductID      int64 `json:"productId"`
+		ProductSkuId   int64 `json:"productSkuId"`
+		ProductId      int64 `json:"productId"`
 		ProductSkuSpec struct {
-			ProductSkuID int64           `json:"productSkuId"`
-			ProductID    int64           `json:"productId"`
+			ProductSkuId int64           `json:"productSkuId"`
+			ProductId    int64           `json:"productId"`
 			SpecList     []Specification `json:"specList"`
-			ProductSkcID int64           `json:"productSkcId"`
+			ProductSkcId int64           `json:"productSkcId"`
 		} `json:"productSkuSpec"`
 		PieceUnitCode     any    `json:"pieceUnitCode"`
 		ExtCode           string `json:"extCode"`
-		ProductSkcID      int64  `json:"productSkcId"`
+		ProductSkcId      int64  `json:"productSkcId"`
 		ThumbURL          string `json:"thumbUrl"`
 		SkuClassification any    `json:"skuClassification"`
 	} `json:"productSkuDTO"`
@@ -80,22 +80,22 @@ type CustomGoodsLabel struct {
 		SpecIDList     []int  `json:"specIdList"`
 		ExtCode        string `json:"extCode"`
 		ProductSkcSpec struct {
-			ProductID    int64           `json:"productId"`
+			ProductId    int64           `json:"productId"`
 			SpecList     []Specification `json:"specList"`
-			ProductSkcID int64           `json:"productSkcId"`
+			ProductSkcId int64           `json:"productSkcId"`
 		} `json:"productSkcSpec"`
-		ProductID    int64 `json:"productId"`
-		ProductSkcID int64 `json:"productSkcId"`
+		ProductId    int64 `json:"productId"`
+		ProductSkcId int64 `json:"productSkcId"`
 	} `json:"productSkcDTO"`
 	ProductOrigin struct {
 		Region1ShortName string `json:"region1ShortName"`
 		Region1Name      string `json:"region1Name"`
 	} `json:"productOrigin"`
 	ProductSkuLabelCodeDTO struct {
-		ProductSkuID int64 `json:"productSkuId"`
-		ProductID    int64 `json:"productId"`
+		ProductSkuId int64 `json:"productSkuId"`
+		ProductId    int64 `json:"productId"`
 		CreateTimeTs int   `json:"createTimeTs"`
-		ProductSkcID int64 `json:"productSkcId"`
+		ProductSkcId int64 `json:"productSkcId"`
 		LabelCode    int   `json:"labelCode"`
 	} `json:"productSkuLabelCodeDTO"`
 	ProductSkcSpecI18NMap map[string][]Specification `json:"productSkcSpecI18nMap"`
