@@ -59,6 +59,7 @@ type services struct {
 	Barcode                 barcodeService
 	PurchaseOrder           purchaseOrderService
 	GoodsSales              goodsSalesService
+	GoodsCertification      goodsCertificationService
 	Logistics               logisticsService
 	VirtualInventoryJit     virtualInventoryJitService
 	GoodsSizeChart          goodsSizeChartService
@@ -213,6 +214,7 @@ func New(config config.Config) *Client {
 		Barcode:                 (barcodeService)(xService),
 		PurchaseOrder:           (purchaseOrderService)(xService),
 		GoodsSales:              (goodsSalesService)(xService),
+		GoodsCertification:      (goodsCertificationService)(xService),
 		Logistics:               (logisticsService)(xService),
 		VirtualInventoryJit:     (virtualInventoryJitService)(xService),
 		GoodsSizeChart:          (goodsSizeChartService)(xService),
