@@ -296,7 +296,7 @@ func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumber
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
-		SetBody(map[string][]string{" subPurchaseOrderSnList": numbers}).
+		SetBody(map[string][]string{"subPurchaseOrderSnList": numbers}).
 		SetResult(&result).
 		Post("bg.purchaseorder.cancel")
 	if err == nil {
