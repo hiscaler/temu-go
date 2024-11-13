@@ -7,6 +7,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"gopkg.in/guregu/null.v4"
 	"strings"
 )
 
@@ -264,4 +265,46 @@ func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEdi
 	ok = resp.IsSuccess()
 
 	return true, nil
+}
+
+type purchaseOrderCancelResponse struct {
+	Number string
+	Ok     bool
+	Error  null.String
+}
+
+func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumbers ...string) (results []purchaseOrderCancelResponse, err error) {
+	if len(rawPurchaseOrderNumbers) == 0 {
+		return results, errors.New("备货单号不能为空。")
+	}
+	numbers := make([]string, 0)
+	for _, number := range rawPurchaseOrderNumbers {
+		number = strings.TrimSpace(number)
+		if !strings.HasPrefix(strings.ToLower(number), "wb") {
+			return results, fmt.Errorf("无效的备货单号：%s。", number)
+		}
+		numbers = append(numbers, number)
+	}
+
+	var result = struct {
+		normal.Response
+		Result struct {
+			IsSuccess       bool  `json:"isSuccess"`
+			SuccessInfoList []any `json:"successInfoList"`
+			ErrorInfoList   []any `json:"errorInfoList"`
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(map[string][]string{" subPurchaseOrderSnList": numbers}).
+		SetResult(&result).
+		Post("bg.purchaseorder.cancel")
+	if err == nil {
+		err = parseResponse(resp, result.Response)
+	}
+	if err != nil {
+		return
+	}
+
+	return
 }
