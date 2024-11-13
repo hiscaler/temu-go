@@ -199,17 +199,17 @@ func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderAp
 // 修改备货单下单数量（bg.purchaseorder.edit）
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YT2bPD
 
-type PurchaseOrderChangeQuantityItem struct {
+type PurchaseOrderEditItem struct {
 	ProductSkuId               int64 `json:"productSkuId"`               // 货品skuId
 	ProductSkuPurchaseQuantity int   `json:"productSkuPurchaseQuantity"` // 货品sku下单数量
 }
 
-type PurchaseOrderChangeQuantityRequest struct {
-	SubPurchaseOrderSn string                            `json:"subPurchaseOrderSn"` // 采购子单号（订单号） 支持修改（待创建）普通备货单的备货数量 备货数量仅支持向下修改
-	PurchaseDetailList []PurchaseOrderChangeQuantityItem `json:"purchaseDetailList"` // 采购详情列表
+type PurchaseOrderEditRequest struct {
+	SubPurchaseOrderSn string                  `json:"subPurchaseOrderSn"` // 采购子单号（订单号） 支持修改（待创建）普通备货单的备货数量 备货数量仅支持向下修改
+	PurchaseDetailList []PurchaseOrderEditItem `json:"purchaseDetailList"` // 采购详情列表
 }
 
-func (m PurchaseOrderChangeQuantityRequest) validate() error {
+func (m PurchaseOrderEditRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SubPurchaseOrderSn,
 			validation.Required.Error("备货单号不能为空。"),
@@ -227,7 +227,7 @@ func (m PurchaseOrderChangeQuantityRequest) validate() error {
 		validation.Field(&m.PurchaseDetailList,
 			validation.Required.Error("待修改采购详情不能为空。"),
 			validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
-				item, ok := value.(PurchaseOrderChangeQuantityItem)
+				item, ok := value.(PurchaseOrderEditItem)
 				if !ok {
 					return errors.New("无效的动态系统分类规则")
 				}
@@ -242,7 +242,7 @@ func (m PurchaseOrderChangeQuantityRequest) validate() error {
 	)
 }
 
-func (s purchaseOrderService) ChangeQuantity(ctx context.Context, request PurchaseOrderChangeQuantityRequest) (ok bool, err error) {
+func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEditRequest) (ok bool, err error) {
 	if err = request.validate(); err != nil {
 		return
 	}
