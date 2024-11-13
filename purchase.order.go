@@ -164,7 +164,7 @@ type PurchaseOrderApplyRequest struct {
 	PurchaseDetailList      PurchaseOrderApplyDetail `json:"purchaseDetailList"`      // 详情
 }
 
-func (m PurchaseOrderApplyRequest) Validate() error {
+func (m PurchaseOrderApplyRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductSkcId, validation.Required.Error("SKC 不能为空。")),
 		validation.Field(&m.PurchaseDetailList, validation.Required.Error("详情不能为空。")),
@@ -174,7 +174,7 @@ func (m PurchaseOrderApplyRequest) Validate() error {
 // Apply 申请备货
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#nsjLx8
 func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderApplyRequest) (ok bool, err error) {
-	if err = request.Validate(); err != nil {
+	if err = request.validate(); err != nil {
 		return
 	}
 	var result = struct {
@@ -192,6 +192,76 @@ func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderAp
 	if err != nil {
 		return
 	}
+
+	return true, nil
+}
+
+// 修改备货单下单数量（bg.purchaseorder.edit）
+// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YT2bPD
+
+type PurchaseOrderChangeQuantityItem struct {
+	ProductSkuId               int64 `json:"productSkuId"`               // 货品skuId
+	ProductSkuPurchaseQuantity int   `json:"productSkuPurchaseQuantity"` // 货品sku下单数量
+}
+
+type PurchaseOrderChangeQuantityRequest struct {
+	SubPurchaseOrderSn string                            `json:"subPurchaseOrderSn"` // 采购子单号（订单号） 支持修改（待创建）普通备货单的备货数量 备货数量仅支持向下修改
+	PurchaseDetailList []PurchaseOrderChangeQuantityItem `json:"purchaseDetailList"` // 采购详情列表
+}
+
+func (m PurchaseOrderChangeQuantityRequest) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SubPurchaseOrderSn,
+			validation.Required.Error("备货单号不能为空。"),
+			validation.By(func(value interface{}) error {
+				number, ok := value.(string)
+				if !ok {
+					return errors.New("无效的备货单号。")
+				}
+				if !strings.HasPrefix(strings.ToLower(number), "wb") {
+					return fmt.Errorf("无效的备货单号：%s。", number)
+				}
+				return nil
+			}),
+		),
+		validation.Field(&m.PurchaseDetailList,
+			validation.Required.Error("待修改采购详情不能为空。"),
+			validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
+				item, ok := value.(PurchaseOrderChangeQuantityItem)
+				if !ok {
+					return errors.New("无效的动态系统分类规则")
+				}
+				return validation.ValidateStruct(&item,
+					validation.Field(&item.ProductSkuId, validation.Required.Error("SKU 不能为空。")),
+					validation.Field(&item.ProductSkuPurchaseQuantity,
+						validation.Min(1).Error("修改数量不能小于 {.min}。"),
+					),
+				)
+			})),
+		),
+	)
+}
+
+func (s purchaseOrderService) ChangeQuantity(ctx context.Context, request PurchaseOrderChangeQuantityRequest) (ok bool, err error) {
+	if err = request.validate(); err != nil {
+		return
+	}
+	var result = struct {
+		normal.Response
+		Result any `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.purchaseorder.edit")
+	if err == nil {
+		err = parseResponse(resp, result.Response)
+	}
+	if err != nil {
+		return
+	}
+	ok = resp.IsSuccess()
 
 	return true, nil
 }
