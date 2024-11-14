@@ -1,17 +1,19 @@
 package entity
 
+import "gopkg.in/guregu/null.v4"
+
 // GoodsProperty 商品属性
 type GoodsProperty struct {
-	Vid              int    `json:"vid"`              // 基础属性值 ID
-	ValueUnit        string `json:"valueUnit"`        // 属性值单位
-	Language         any    `json:"language"`         // 语种
-	Pid              int    `json:"pid"`              // 属性 ID
-	TemplatePid      int    `json:"templatePid"`      // 模板属性 ID
-	NumberInputValue string `json:"numberInputValue"` // 数值录入
-	PropValue        string `json:"propValue"`        // 基础属性值
-	ValueExtendInfo  string `json:"valueExtendInfo"`  // 属性值扩展信息
-	PropName         string `json:"propName"`         // 引用属性名
-	RefPid           int    `json:"refPid"`           // 引用属性 ID
+	Vid              int         `json:"vid"`              // 基础属性值 ID
+	ValueUnit        string      `json:"valueUnit"`        // 属性值单位
+	Language         null.String `json:"language"`         // 语种
+	Pid              int         `json:"pid"`              // 属性 ID
+	TemplatePid      int         `json:"templatePid"`      // 模板属性 ID
+	NumberInputValue string      `json:"numberInputValue"` // 数值录入
+	PropValue        string      `json:"propValue"`        // 基础属性值
+	ValueExtendInfo  string      `json:"valueExtendInfo"`  // 属性值扩展信息
+	PropName         string      `json:"propName"`         // 引用属性名
+	RefPid           int         `json:"refPid"`           // 引用属性 ID
 }
 
 // GoodsSkuSummary 商品 SKU 描叙
@@ -45,7 +47,7 @@ type GoodsSkuSummary struct {
 		ProductSkuSensitiveLimit any `json:"productSkuSensitiveLimit"`
 		ProductSkuWmsVolumeLabel any `json:"productSkuWmsVolumeLabel"`
 	} `json:"productSkuWhExtAttr"`
-	VirtualStock       any             `json:"virtualStock"`
+	VirtualStock       int             `json:"virtualStock"`
 	ProductSkuSpecList []Specification `json:"productSkuSpecList"`
 }
 
@@ -58,8 +60,8 @@ type Goods struct {
 	ProductProperties []GoodsProperty `json:"productProperties"` // 货品普通属性
 	ProductId         int64           `json:"productId"`         // 货品 ID
 	ProductJitMode    struct {
-		QuickSellAgtSignStatus any  `json:"quickSellAgtSignStatus"` // 快速售卖协议签署状态 0-未签署 1-已签署
-		MatchJitMode           bool `json:"matchJitMode"`           // 是否 JIT 模式
+		QuickSellAgtSignStatus null.Int `json:"quickSellAgtSignStatus"` // 快速售卖协议签署状态 0-未签署 1-已签署
+		MatchJitMode           bool     `json:"matchJitMode"`           // 是否 JIT 模式
 	} `json:"productJitMode"` // 货品 JIT 模式信息
 	ProductSkuSummaries      []GoodsSkuSummary `json:"productSkuSummaries"`
 	ProductName              string            `json:"productName"`
