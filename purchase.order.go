@@ -291,5 +291,7 @@ func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumber
 		Post("bg.purchaseorder.cancel")
 	err = recheckError(resp, result.Response, err)
 
+	// todo Must check results
+
 	return
 }
