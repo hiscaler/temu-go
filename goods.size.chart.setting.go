@@ -19,10 +19,7 @@ func (s *goodsSizeChartSettingService) View(ctx context.Context, catId int) (dat
 		SetBody(map[string]int{"catId": catId}).
 		SetResult(&result).
 		Post("bg.goods.sizecharts.settings.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

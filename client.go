@@ -238,8 +238,11 @@ func parseResponseTotal(currentPage, pageSize, total int) (n, totalPages int, is
 	return total, totalPages, currentPage >= totalPages
 }
 
-func parseResponse(resp *resty.Response, result normal.Response) (err error) {
-	resp.Result()
+func recheckError(resp *resty.Response, result normal.Response, e error) (err error) {
+	if e != nil {
+		return e
+	}
+
 	if resp.IsError() {
 		errorMessage := result.ErrorMessage
 		if errorMessage == "" {

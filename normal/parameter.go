@@ -1,5 +1,9 @@
 package normal
 
+import (
+	"github.com/hiscaler/temu-go/entity"
+)
+
 type Parameter struct {
 	AppKey      string `json:"app_key"`
 	Timestamp   string `json:"timestamp"`
@@ -20,9 +24,9 @@ type ParameterWithPager struct {
 }
 
 // TidyPager 设置翻页数据
-func (pp *Pager) TidyPager(values ...int) *Pager {
+func (p *Pager) TidyPager(values ...int) *Pager {
 	page := 1
-	maxPageSize := 100
+	maxPageSize := entity.MaxPageSize
 	n := len(values)
 	if n != 0 {
 		page = values[0]
@@ -30,13 +34,11 @@ func (pp *Pager) TidyPager(values ...int) *Pager {
 			maxPageSize = values[1]
 		}
 	}
-	if pp.Page <= 0 {
-		pp.Page = page
+	if p.Page <= 0 {
+		p.Page = page
 	}
-	if pp.PageSize <= 0 {
-		pp.PageSize = maxPageSize
-	} else if pp.PageSize > maxPageSize {
-		pp.PageSize = maxPageSize
+	if p.PageSize <= 0 || p.PageSize > maxPageSize {
+		p.PageSize = maxPageSize
 	}
-	return pp
+	return p
 }

@@ -53,12 +53,10 @@ func (s goodsCertificationService) Query(ctx context.Context, params GoodsCertif
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.arbok.open.product.cert.query")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
+
 	certifications = result.Result.ProductCertList
 	return
 }
@@ -87,10 +85,7 @@ func (s goodsCertificationService) QueryNeedUploadItems(ctx context.Context, req
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.arbok.open.cert.queryNeedUploadItems")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

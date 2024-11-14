@@ -56,10 +56,7 @@ func (s shipOrderStagingService) All(ctx context.Context, params ShipOrderStagin
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.shiporder.staging.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -154,10 +151,7 @@ func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAd
 		SetBody(req).
 		SetResult(&result).
 		Post("bg.shiporder.staging.add")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

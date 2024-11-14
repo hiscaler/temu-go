@@ -28,10 +28,7 @@ func (s shipOrderReceiveAddressService) All(ctx context.Context, subPurchaseOrde
 		SetBody(map[string][]string{"subPurchaseOrderSnList": subPurchaseOrderSnList}).
 		SetResult(&result).
 		Post("bg.shiporder.receiveaddressv2.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

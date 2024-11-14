@@ -22,10 +22,7 @@ func (s mallAddressService) All(ctx context.Context) (items []entity.MallAddress
 		SetContext(ctx).
 		SetResult(&result).
 		Post("bg.mall.address.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -100,10 +97,7 @@ func (s mallAddressService) Create(ctx context.Context, request CreateDeliveryAd
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.mall.address.add")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

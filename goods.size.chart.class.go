@@ -36,10 +36,7 @@ func (s *goodsSizeChartClassService) All(ctx context.Context, params GoodsSizeCh
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.sizecharts.class.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

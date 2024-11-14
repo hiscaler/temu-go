@@ -21,10 +21,7 @@ func (s mallService) IsSemiManaged(ctx context.Context) (bool, error) {
 		SetContext(ctx).
 		SetResult(&result).
 		Post("bg.mall.info.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}
 
@@ -42,10 +39,7 @@ func (s mallService) Permission(ctx context.Context) (p entity.MallPermission, e
 		SetContext(ctx).
 		SetResult(&result).
 		Post("bg.open.accesstoken.info.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

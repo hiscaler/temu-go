@@ -27,10 +27,7 @@ func (s logisticsService) Companies(ctx context.Context) (items []entity.Logisti
 		SetContext(ctx).
 		SetResult(&result).
 		Post("bg.logistics.company.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -110,11 +107,7 @@ func (s logisticsService) Match(ctx context.Context, request LogisticsMatchReque
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.shiporderv2.logisticsmatch.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
-		resp.StatusCode()
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

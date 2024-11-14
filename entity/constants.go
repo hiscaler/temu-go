@@ -1,5 +1,9 @@
 package entity
 
+const (
+	MaxPageSize = 100 // 每页最多数量
+)
+
 // 发货地址类型
 const (
 	DeliveryAddressTypeChineseMainland = 1 // 内地

@@ -98,10 +98,7 @@ func (s purchaseOrderService) All(ctx context.Context, params PurchaseOrderQuery
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.purchaseorderv2.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -187,10 +184,7 @@ func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderAp
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.purchaseorder.apply")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -256,13 +250,9 @@ func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEdi
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.purchaseorder.edit")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
-	ok = resp.IsSuccess()
 
 	return true, nil
 }
@@ -299,12 +289,7 @@ func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumber
 		SetBody(map[string][]string{"subPurchaseOrderSnList": numbers}).
 		SetResult(&result).
 		Post("bg.purchaseorder.cancel")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
-		return
-	}
+	err = recheckError(resp, result.Response, err)
 
 	return
 }

@@ -59,10 +59,7 @@ func (s shipOrderService) All(ctx context.Context, params ShipOrderQueryParams) 
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.shiporderv2.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -129,12 +126,11 @@ func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest
 		SetBody(req).
 		SetResult(&result).
 		Post("bg.shiporderv3.create")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
 	}
-	ok = err == nil
 
-	return
+	return true, nil
 }
 
 // 取消发货单
@@ -167,12 +163,11 @@ func (s shipOrderService) Cancel(ctx context.Context, deliveryOrderSn string) (o
 		SetBody(req).
 		SetResult(&result).
 		Post("bg.shiporder.cancel")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
 	}
 
-	ok = err == nil
-	return
+	return true, nil
 }
 
 // ThirdPartyLogisticsCompanies 自行委托三方物流公司查询接口
@@ -185,10 +180,7 @@ func (s shipOrderService) ThirdPartyLogisticsCompanies(ctx context.Context) (com
 		SetContext(ctx).
 		SetResult(&result).
 		Post("bg.shiporder.logistics.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

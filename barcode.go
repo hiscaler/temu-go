@@ -45,10 +45,7 @@ func (s barcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarco
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.labelv2.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -88,10 +85,7 @@ func (s barcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarco
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.custom.label.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -131,10 +125,7 @@ func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, deliveryOrderSnList
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.logistics.boxmarkinfo.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -160,10 +151,7 @@ func (s barcodeService) BoxMark(ctx context.Context, deliveryOrderSnList ...stri
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.logistics.boxmarkinfo.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

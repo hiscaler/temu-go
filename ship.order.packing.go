@@ -83,10 +83,7 @@ func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPack
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.shiporder.packing.send")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -123,10 +120,7 @@ func (s shipOrderPackingService) Match(ctx context.Context, request ShipOrderPac
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.shiporder.packing.match")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

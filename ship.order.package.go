@@ -52,10 +52,7 @@ func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderSn string
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.shiporder.package.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -122,10 +119,9 @@ func (s shipOrderPackageService) Update(ctx context.Context, req ShipOrderPackag
 		SetBody(req).
 		SetResult(&result).
 		Post("bg.shiporder.package.edit")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
 	}
 
-	ok = err == nil
-	return
+	return true, nil
 }

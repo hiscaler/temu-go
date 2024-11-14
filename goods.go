@@ -53,16 +53,12 @@ func (s goodsService) All(ctx context.Context, params GoodsQueryParams) (items [
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.list.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
 	items = result.Result.Data
 	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.TotalCount)
-
 	return
 }
 

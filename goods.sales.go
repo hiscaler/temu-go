@@ -67,10 +67,7 @@ func (s goodsSalesService) All(ctx context.Context, params GoodsSalesQueryParams
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.sales.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 

@@ -25,10 +25,7 @@ func (s virtualInventoryJitService) View(ctx context.Context, productSkcId int64
 		SetBody(map[string]int64{"productSkcId": productSkcId}).
 		SetResult(&result).
 		Post("bg.virtualinventoryjit.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -69,10 +66,9 @@ func (s virtualInventoryJitService) Edit(ctx context.Context, request VirtualInv
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.virtualinventoryjit.edit")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
 	}
 
-	ok = err == nil
-	return
+	return true, nil
 }

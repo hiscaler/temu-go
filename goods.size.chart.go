@@ -9,10 +9,11 @@ import (
 
 type goodsSizeChartService service
 
+// GoodsSizeChartQueryParams
+// Page 第一页从 0 开始
 type GoodsSizeChartQueryParams struct {
-	Page     int `json:"offset"`             // 锚点（第一页传0）
-	PageSize int `json:"pageSize,omitempty"` // 页面大小
-	CatId    int `json:"catId,omitempty"`    // 类目 ID
+	normal.ParameterWithPager
+	CatId int `json:"catId,omitempty"` // 类目 ID
 }
 
 func (m GoodsSizeChartQueryParams) Validate() error {
@@ -24,14 +25,7 @@ func (m GoodsSizeChartQueryParams) Validate() error {
 
 // All 查询尺码表模板
 func (s *goodsSizeChartService) All(ctx context.Context, params GoodsSizeChartQueryParams) (items []entity.GoodsSizeChart, err error) {
-	if params.Page < 0 {
-		params.Page = 0
-	}
-	if params.PageSize <= 0 {
-		params.PageSize = 10
-	} else if params.PageSize > 500 {
-		params.PageSize = 500
-	}
+	params.TidyPager(0)
 	if err = params.Validate(); err != nil {
 		return
 	}
@@ -50,10 +44,7 @@ func (s *goodsSizeChartService) All(ctx context.Context, params GoodsSizeChartQu
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.sizecharts.get")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
@@ -74,11 +65,9 @@ func (s *goodsSizeChartService) Create(ctx context.Context, businessId int) (tem
 		SetBody(map[string]int{"tempBusinessId": businessId}).
 		SetResult(&result).
 		Post("bg.goods.sizecharts.template.create")
-	if err == nil {
-		err = parseResponse(resp, result.Response)
-	}
-	if err != nil {
+	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
+
 	return result.Result.TempBusinessId, nil
 }
