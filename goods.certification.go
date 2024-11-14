@@ -2,6 +2,9 @@ package temu
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 )
@@ -9,13 +12,28 @@ import (
 type goodsCertificationService service
 
 type GoodsCertificationQueryRequest struct {
-	CertTypeList []int  `json:"certTypeList"` // 资质类型 id 列表
-	ProductId    int64  `json:"productId"`    // 货品 id
-	Language     string `json:"language"`     // 语言
+	CertTypeList []int  `json:"certTypeList,omitempty"` // 资质类型 ID 列表
+	ProductId    int64  `json:"productId"`              // 货品 ID
+	Language     string `json:"language,omitempty"`     // 语言
 }
 
 func (m GoodsCertificationQueryRequest) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.CertTypeList,
+			validation.When(len(m.CertTypeList) != 0, validation.By(func(value interface{}) error {
+				types, ok := value.([]int)
+				if !ok {
+					return errors.New("无效的资质类型 ID。")
+				}
+				for _, typ := range types {
+					if typ < 0 || typ > 303 {
+						return fmt.Errorf("无效的资质类型 ID: %d。", typ)
+					}
+				}
+				return nil
+			}))),
+		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空。")),
+	)
 }
 
 // Query 批量查询货品资质信息
