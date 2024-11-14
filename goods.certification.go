@@ -11,13 +11,13 @@ import (
 
 type goodsCertificationService service
 
-type GoodsCertificationQueryRequest struct {
+type GoodsCertificationQueryParams struct {
 	CertTypeList []int  `json:"certTypeList,omitempty"` // 资质类型 ID 列表
 	ProductId    int64  `json:"productId"`              // 货品 ID
 	Language     string `json:"language,omitempty"`     // 语言
 }
 
-func (m GoodsCertificationQueryRequest) validate() error {
+func (m GoodsCertificationQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.CertTypeList,
 			validation.When(len(m.CertTypeList) != 0, validation.By(func(value interface{}) error {
@@ -38,8 +38,8 @@ func (m GoodsCertificationQueryRequest) validate() error {
 
 // Query 批量查询货品资质信息
 // https://seller.kuajingmaihuo.com/sop/view/649320516224723675#Oq8dC9
-func (s goodsCertificationService) Query(ctx context.Context, request GoodsCertificationQueryRequest) (certifications []entity.GoodsCertification, err error) {
-	if err = request.validate(); err != nil {
+func (s goodsCertificationService) Query(ctx context.Context, params GoodsCertificationQueryParams) (certifications []entity.GoodsCertification, err error) {
+	if err = params.validate(); err != nil {
 		return
 	}
 	var result = struct {
@@ -50,7 +50,7 @@ func (s goodsCertificationService) Query(ctx context.Context, request GoodsCerti
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
-		SetBody(request).
+		SetBody(params).
 		SetResult(&result).
 		Post("bg.arbok.open.product.cert.query")
 	if err == nil {
