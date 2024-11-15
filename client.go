@@ -178,23 +178,28 @@ func New(config config.Config) *Client {
 			}
 			if retry {
 				body := response.Request.Body
+				endpoint := ""
 				if body != nil {
 					var values map[string]any
 					var b []byte
 					var e error
 					if b, e = json.Marshal(body); e == nil {
 						if e = json.Unmarshal(b, &values); e == nil {
+							if v, ok := values["type"]; ok {
+								endpoint = v.(string)
+							}
 							response.Request.SetBody(generateSign(values, config.AppSecret))
 						}
 					}
 					retry = e == nil
 				}
 				if retry {
-					text := response.Request.URL
-					if err != nil {
-						text += fmt.Sprintf(", error: %s", err.Error())
+					messages := make([]string, 0)
+					messages = append(messages, "URL: "+response.Request.URL)
+					if endpoint != "" {
+						messages = append(messages, "Type: "+endpoint)
 					}
-					logger.Printf("Retry request: %s", text)
+					logger.Print("Retry ", strings.Join(messages, " "))
 				}
 			}
 			return retry
