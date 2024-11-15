@@ -35,6 +35,7 @@ const (
 	NoAppKeyError             = 7000002 // 未设置 App Key
 	NoAccessTokenError        = 7000003 // 未设置 Access Token
 	InvalidAccessTokenError   = 7000018 // 无效的 Access Token
+	AccessTokenKeyUnmatched   = 7000006 // Access Token 和 Key 不匹配
 )
 
 var ErrNotFound = errors.New("数据不存在")
@@ -287,6 +288,8 @@ func errorWrap(code int, message string) error {
 		message = "未设置 Access Token"
 	case InvalidAccessTokenError:
 		message = "无效的 Access Token"
+	case AccessTokenKeyUnmatched:
+		message = "Access Token 和 Key 不匹配"
 	default:
 		message = fmt.Sprintf("%d: %s", code, message)
 	}
