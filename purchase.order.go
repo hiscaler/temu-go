@@ -7,6 +7,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
 	"strings"
 )
@@ -56,6 +57,7 @@ func (m PurchaseOrderQueryParams) Validate() error {
 			validation.When(!validation.IsEmpty(m.SettlementType),
 				validation.In(entity.SettlementTypeNotVMI, entity.SettlementTypeVMI).Error("无效的结算类型。"),
 			)),
+		validation.Field(&m.SubPurchaseOrderSnList, validation.Each(validation.By(is.PurchaseOrderNumber()))),
 		validation.Field(&m.SourceList,
 			validation.When(len(m.SourceList) > 0, validation.By(func(value any) error {
 				sources, ok := value.([]int)
@@ -208,16 +210,7 @@ func (m PurchaseOrderEditRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SubPurchaseOrderSn,
 			validation.Required.Error("备货单号不能为空。"),
-			validation.By(func(value interface{}) error {
-				number, ok := value.(string)
-				if !ok {
-					return errors.New("无效的备货单号。")
-				}
-				if !strings.HasPrefix(strings.ToLower(number), "wb") {
-					return fmt.Errorf("无效的备货单号：%s。", number)
-				}
-				return nil
-			}),
+			validation.By(is.PurchaseOrderNumber()),
 		),
 		validation.Field(&m.PurchaseDetailList,
 			validation.Required.Error("待修改采购详情不能为空。"),
@@ -270,8 +263,9 @@ func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumber
 	numbers := make([]string, 0)
 	for _, number := range rawPurchaseOrderNumbers {
 		number = strings.TrimSpace(number)
-		if !strings.HasPrefix(strings.ToLower(number), "wb") {
-			return results, fmt.Errorf("无效的备货单号：%s。", number)
+		err = validation.Validate(number, validation.By(is.PurchaseOrderNumber()))
+		if err != nil {
+			return
 		}
 		numbers = append(numbers, number)
 	}

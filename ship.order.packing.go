@@ -5,6 +5,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/hiscaler/temu-go/validators/is"
 )
 
 // 装箱发货
@@ -100,7 +101,10 @@ type ShipOrderPackingMatchRequest struct {
 
 func (m ShipOrderPackingMatchRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.DeliveryOrderSnList, validation.Required.Error("发货单号列表不能为空。")),
+		validation.Field(&m.DeliveryOrderSnList,
+			validation.Required.Error("发货单号列表不能为空。"),
+			validation.Each(validation.By(is.ShipOrderNumber())),
+		),
 	)
 }
 

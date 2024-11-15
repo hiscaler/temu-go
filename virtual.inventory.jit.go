@@ -45,7 +45,7 @@ type VirtualInventoryJitEditRequest struct {
 
 func (m VirtualInventoryJitEditRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ProductSkcId, validation.Required.Error("货品 SKC ID 不能为空。")),
+		validation.Field(&m.ProductSkcId, validation.Required.Error("货品 SKC 不能为空。")),
 		validation.Field(&m.SkuVirtualStockChangeList, validation.Required.Error("虚拟库存不能为空。")),
 	)
 }

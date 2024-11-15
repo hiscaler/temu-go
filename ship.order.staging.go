@@ -2,11 +2,11 @@ package temu
 
 import (
 	"context"
-	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/nullx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
 	"strings"
 )
@@ -91,13 +91,7 @@ func (m ShipOrderStagingAddInfo) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SubPurchaseOrderSn,
 			validation.Required.Error("备货单号不能为空。"),
-			validation.By(func(value interface{}) error {
-				number, ok := value.(string)
-				if !ok || !strings.HasPrefix(strings.ToLower(number), "wb") {
-					return fmt.Errorf("无效的备货单号：%v", value)
-				}
-				return nil
-			}),
+			validation.By(is.PurchaseOrderNumber()),
 		),
 		validation.Field(&m.DeliveryAddressType,
 			validation.

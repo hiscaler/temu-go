@@ -59,13 +59,13 @@ func TestShipOrderService_Create(t *testing.T) {
 	for _, v := range shipOrderStaging.OrderDetailVOList {
 		deliveryOrderCreateInfo.DeliverOrderDetailInfos = append(deliveryOrderCreateInfo.DeliverOrderDetailInfos, ShipOrderCreateRequestOrderDetailInfo{
 			DeliverSkuNum: v.ProductSkuPurchaseQuantity,
-			ProductSkuId:  v.ProductSkuID,
+			ProductSkuId:  v.ProductSkuId,
 		})
 		deliveryOrderCreateInfo.PackageInfos = append(deliveryOrderCreateInfo.PackageInfos, ShipOrderCreateRequestOrderPackage{
 			PackageDetailSaveInfos: []ShipOrderCreateRequestPackageInfo{
 				{
 					SkuNum:       v.ProductSkuPurchaseQuantity,
-					ProductSkuId: v.ProductSkuID,
+					ProductSkuId: v.ProductSkuId,
 				},
 			},
 		})

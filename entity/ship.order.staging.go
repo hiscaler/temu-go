@@ -5,12 +5,12 @@ import "gopkg.in/guregu/null.v4"
 // ShipOrderStaging 发货台
 type ShipOrderStaging struct {
 	OrderDetailVOList []struct {
-		ProductSkuID                int64       `json:"productSkuId"`                // 货品 skuId
-		ProductSkuImgURLList        []string    `json:"productSkuImgUrlList"`        // 货品 SKU 图片 URL 列表
+		ProductSkuId                int64       `json:"productSkuId"`                // 货品 skuId
+		ProductSkuImgUrlList        []string    `json:"productSkuImgUrlList"`        // 货品 SKU 图片 URL 列表
 		Color                       string      `json:"color"`                       // 颜色
 		Size                        string      `json:"size"`                        // 尺码
 		SkuDeliveryQuantityMaxLimit int         `json:"skuDeliveryQuantityMaxLimit"` // 发货数量限制最大值
-		ProductOriginalSkuID        int64       `json:"productOriginalSkuId"`        // 原始 skuId
+		ProductOriginalSkuId        int64       `json:"productOriginalSkuId"`        // 原始 skuId
 		ProductSkuPurchaseQuantity  int         `json:"productSkuPurchaseQuantity"`  // 货品 sku 下单数量
 		PersonalText                null.String `json:"personalText"`                // 定制化内容
 	} `json:"orderDetailVOList"` // 子订单详情信息

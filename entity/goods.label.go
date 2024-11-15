@@ -77,7 +77,7 @@ type CustomGoodsLabel struct {
 	} `json:"productSkuDTO"`
 	ProductSkcImageList []ProductSkcImage `json:"productSkcImageList"`
 	ProductSkcDTO       struct {
-		SpecIDList     []int  `json:"specIdList"`
+		SpecIdList     []int  `json:"specIdList"`
 		ExtCode        string `json:"extCode"`
 		ProductSkcSpec struct {
 			ProductId    int64           `json:"productId"`

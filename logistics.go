@@ -2,12 +2,10 @@ package temu
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
-	"strings"
+	"github.com/hiscaler/temu-go/validators/is"
 )
 
 // 物流服务
@@ -76,18 +74,7 @@ func (m LogisticsMatchRequest) Validate() error {
 		validation.Field(&m.SubWarehouseId, validation.Required.Error("收货子仓不能为空。")),
 		validation.Field(&m.DeliveryOrderSns,
 			validation.Required.Error("发货单列表不能为空。"),
-			validation.By(func(value interface{}) error {
-				numbers, ok := value.([]string)
-				if !ok {
-					return errors.New("无效的发货单列表。")
-				}
-				for _, number := range numbers {
-					if !strings.HasPrefix(strings.ToLower(number), "fh") {
-						return fmt.Errorf("无效的发货单：%s。", number)
-					}
-				}
-				return nil
-			}),
+			validation.Each(validation.By(is.ShipOrderNumber())),
 		),
 		validation.Field(&m.ReceiveAddressInfo, validation.Required.Error("收货地址不能为空。")),
 	)

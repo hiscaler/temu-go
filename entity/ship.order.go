@@ -59,7 +59,7 @@ type ShipOrder struct {
 		SkuNum               int         `json:"skuNum"`
 	} `json:"packageDetailList"`
 	SubPurchaseOrderBasicVO struct {
-		SupplierID         int64       `json:"supplierId"`
+		SupplierId         int64       `json:"supplierId"`
 		IsCustomProduct    bool        `json:"isCustomProduct"`
 		ProductSkcPicture  string      `json:"productSkcPicture"`
 		IsFirst            bool        `json:"isFirst"`
