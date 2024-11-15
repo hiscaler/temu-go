@@ -23,29 +23,30 @@ type LogisticsMatchChannelScheduleTime struct {
 
 // Range 时间范围
 func (st LogisticsMatchChannelScheduleTime) Range() (start, end time.Time, err error) {
-	start, err = time.ParseInLocation("2006-01-02 15:04", fmt.Sprintf("%s %s", st.BjDate, st.BjStartTime), loc)
+	layout := "2006-01-02 15:04"
+	start, err = time.ParseInLocation(layout, fmt.Sprintf("%s %s", st.BjDate, st.BjStartTime), loc)
 	if err != nil {
 		return
 	}
 
-	end, err = time.ParseInLocation("2006-01-02 15:04", fmt.Sprintf("%s %s", st.BjDate, st.BjEndTime), loc)
+	end, err = time.ParseInLocation(layout, fmt.Sprintf("%s %s", st.BjDate, st.BjEndTime), loc)
 
 	return
 }
 
 // LogisticsMatch 推荐物流商匹配
 type LogisticsMatch struct {
-	MaxChargeAmount         float64                             `json:"maxChargeAmount"`
-	PredictId               int64                               `json:"predictId"`
-	MaxSupplierChargeAmount float64                             `json:"maxSupplierChargeAmount"`
-	StandbyExpress          bool                                `json:"standbyExpress"`
-	MinSupplierChargeAmount float64                             `json:"minSupplierChargeAmount"`
-	TmsChannelId            int                                 `json:"tmsChannelId"`
-	LatestAppointmentTime   int                                 `json:"latestAppointmentTime"`
-	ExpressCompanyId        int                                 `json:"expressCompanyId"`
-	MinChargeAmount         float64                             `json:"minChargeAmount"`
-	ExpressCompanyName      string                              `json:"expressCompanyName"`
-	ChannelScheduleTimeList []LogisticsMatchChannelScheduleTime `json:"channelScheduleTimeList"`
+	ExpressCompanyId        int                                 `json:"expressCompanyId"`        // 快递公司 ID
+	ExpressCompanyName      string                              `json:"expressCompanyName"`      // 快递公司名称
+	StandbyExpress          bool                                `json:"standbyExpress"`          // 是否是备用快递公司
+	TmsChannelId            int                                 `json:"tmsChannelId"`            // TMS 快递产品类型 ID
+	MinSupplierChargeAmount float64                             `json:"minSupplierChargeAmount"` // 最小预估商家承担运费（单位元）
+	MaxSupplierChargeAmount float64                             `json:"maxSupplierChargeAmount"` // 最大预估商家承担运费（单位元）
+	MinChargeAmount         float64                             `json:"minChargeAmount"`         // 最小预估运费（单位元）
+	MaxChargeAmount         float64                             `json:"maxChargeAmount"`         // 最小预估运费（单位元）
+	ChannelScheduleTimeList []LogisticsMatchChannelScheduleTime `json:"channelScheduleTimeList"` // 可预约揽收时间
+	LatestAppointmentTime   int64                               `json:"latestAppointmentTime"`   // 最迟预约时间
+	PredictId               int64                               `json:"predictId"`               // 预测 ID
 }
 
 // LatestScheduleTime 获取最近可用的时间
