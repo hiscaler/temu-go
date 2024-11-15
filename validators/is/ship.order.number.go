@@ -17,7 +17,7 @@ func ShipOrderNumber() validation.RuleFunc {
 			return errors.New("发货单号不能为空。")
 		}
 		if matched, err := regexp.MatchString("^(?i)fh[0-9]{13}$", s); err != nil || !matched {
-			return fmt.Errorf("无效的备货单号：%s。", s)
+			return fmt.Errorf("无效的发货单号：%s。", s)
 		}
 		return nil
 	}
