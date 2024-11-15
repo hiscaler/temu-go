@@ -7,7 +7,7 @@ import (
 
 // MallPermission 店铺权限
 type MallPermission struct {
-	MallID       int      `json:"mallId"`
+	MallId       int      `json:"mallId"`
 	ExpiredTime  int64    `json:"expiredTime"`
 	APIScopeList []string `json:"apiScopeList"`
 }
