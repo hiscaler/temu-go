@@ -91,14 +91,14 @@ func generateSign(values map[string]any, appSecret string) map[string]any {
 	sort.Slice(keys, func(i, j int) bool {
 		return keys[i] < keys[j]
 	})
-	stringBuilder := strings.Builder{}
-	stringBuilder.WriteString(appSecret)
+	sb := strings.Builder{}
+	sb.WriteString(appSecret)
 	for _, key := range keys {
-		stringBuilder.WriteString(key)
-		stringBuilder.WriteString(stringx.String(values[key]))
+		sb.WriteString(key)
+		sb.WriteString(stringx.String(values[key]))
 	}
-	stringBuilder.WriteString(appSecret)
-	values["sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(stringBuilder.String()))))
+	sb.WriteString(appSecret)
+	values["sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
 	return values
 }
 
@@ -156,8 +156,8 @@ func New(config config.Config) *Client {
 			return nil
 		}).
 		SetRetryCount(3).
-		SetRetryWaitTime(time.Duration(2) * time.Second).
-		SetRetryMaxWaitTime(time.Duration(6) * time.Second).
+		SetRetryWaitTime(time.Duration(500) * time.Millisecond).
+		SetRetryMaxWaitTime(time.Duration(1) * time.Second).
 		AddRetryCondition(func(response *resty.Response, err error) bool {
 			if response == nil {
 				return false
