@@ -244,7 +244,7 @@ func recheckError(resp *resty.Response, result normal.Response, e error) (err er
 	}
 
 	if resp.IsError() {
-		errorMessage := result.ErrorMessage
+		errorMessage := strings.TrimSpace(result.ErrorMessage)
 		if errorMessage == "" {
 			return errorWrap(resp.StatusCode(), resp.Error().(string))
 		}
@@ -274,11 +274,11 @@ func errorWrap(code int, message string) error {
 	case UnauthorizedError:
 		message = "认证失败，请确认您是否有相应的权限"
 	case InternalServerError:
-		message = "服务器内容错误"
+		message = "服务器内部错误"
 	case MethodNotImplementedError:
-		message = "方法未实现"
+		message = "请求方法未实现"
 	case SystemExceptionError:
-		message = "系统异常"
+		message = "Temu 平台异常"
 	case InvalidSignError:
 		return ErrInvalidSign
 	case NoAppKeyError:
