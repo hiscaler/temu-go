@@ -20,35 +20,36 @@ type purchaseOrderService service
 
 type PurchaseOrderQueryParams struct {
 	normal.ParameterWithPager
-	SettlementType                  *int     `json:"settlementType,omitempty"`                  // 结算类型 0-非vmi(采购) 1-vmi(备货)
-	UrgencyType                     *int     `json:"urgencyType,omitempty"`                     // 是否紧急 0-否 1-是
-	StatusList                      []int    `json:"statusList,omitempty"`                      // 订单状态 0-待接单；1-已接单，待发货；2-已送货；3-已收货；4-已拒收；5-已验收，全部退回；6-已验收；7-已入库；8-作废；9-已超时；10-已取消
-	SubPurchaseOrderSnList          []string `json:"subPurchaseOrderSnList,omitempty"`          // 订单号（采购子单号）
-	ProductSnList                   []int    `json:"productSnList,omitempty"`                   // 货号列表
-	ProductSkcIdList                []int64  `json:"productSkcIdList,omitempty"`                // skc 列表
-	PurchaseTimeFrom                int64    `json:"purchaseTimeFrom,omitempty"`                // 下单时间-开始：毫秒
-	PurchaseTimeTo                  int64    `json:"purchaseTimeTo,omitempty"`                  // 下单时间-结束：毫秒
-	DeliverOrderSnList              []string `json:"deliverOrderSnList,omitempty"`              // 发货单号列表
-	IsDelayDeliver                  bool     `json:"isDelayDeliver,omitempty"`                  // 是否延迟发货
-	IsDelayArrival                  bool     `json:"isDelayArrival,omitempty"`                  // 是否延迟到货
-	ExpectLatestDeliverTimeFrom     int64    `json:"expectLatestDeliverTimeFrom,omitempty"`     // 要求最晚发货时间-开始（时间戳 单位：毫秒）
-	ExpectLatestDeliverTimeTo       int64    `json:"expectLatestDeliverTimeTo,omitempty"`       // 要求最晚发货时间-结束（时间戳 单位：毫秒）
-	ExpectLatestArrivalTimeFrom     int64    `json:"expectLatestArrivalTimeFrom,omitempty"`     // 要求最晚到达时间-开始（时间戳 单位：毫秒）
-	ExpectLatestArrivalTimeTo       int64    `json:"expectLatestArrivalTimeTo,omitempty"`       // 要求最晚到达时间-结束（时间戳 单位：毫秒）
-	PurchaseStockType               *int     `json:"purchaseStockType,omitempty"`               // 是否是JIT备货， 0-普通，1-JIT备货
-	IsFirst                         bool     `json:"isFirst,omitempty"`                         // 是否首单 0-否 1-是
-	IsCustomGoods                   bool     `json:"isCustomGoods,omitempty"`                   // 是否为定制品
-	OriginalPurchaseOrderSnList     []string `json:"originalPurchaseOrderSnList,omitempty"`     // 母订单号列表
-	DeliverOrArrivalDelayStatusList []int    `json:"deliverOrArrivalDelayStatusList,omitempty"` // 发货或者到货逾期状态 101-发货即将逾期，102-发货已逾期，201-到货即将逾期，202-到货已逾期
-	TodayCanDeliver                 bool     `json:"todayCanDeliver,omitempty"`                 // 是否今日可发货
-	SkuLackSnapshot                 int      `json:"skuLackSnapshot,omitempty"`                 // 创单时是否存在缺货sku，0-不存在 1-存在
-	QcReject                        int      `json:"qcReject,omitempty"`                        // 创单时是否存在质检不合格sku，0-不存在 1-存在
-	QcOption                        int      `json:"qcOption,omitempty"`                        // 是否存在质检不合格的sku，10-是，20-否
-	SourceList                      []int    `json:"sourceList,omitempty"`                      // 下单来源，0-运营下单，1-卖家下单，9999-平台下单
-	IsSystemAutoPurchaseSource      bool     `json:"isSystemAutoPurchaseSource,omitempty"`      // 是否系统下单 是-系统自动下单 否-其他
-	LackOrSoldOutTagList            []int    `json:"lackOrSoldOutTagList,omitempty"`            // 标签：1-含缺货SKU；2-含售罄SKU
-	IsTodayPlatformPurchase         bool     `json:"isTodayPlatformPurchase,omitempty"`         // 是否今日平台下单
-	JoinDeliveryPlatform            bool     `json:"joinDeliveryPlatform,omitempty"`            // 是否加入了发货台
+	SettlementType                  null.Int  `json:"settlementType,omitempty"`                  // 结算类型 0-非vmi(采购) 1-vmi(备货)
+	UrgencyType                     null.Int  `json:"urgencyType,omitempty"`                     // 是否紧急 0-否 1-是
+	StatusList                      []int     `json:"statusList,omitempty"`                      // 订单状态 0-待接单；1-已接单，待发货；2-已送货；3-已收货；4-已拒收；5-已验收，全部退回；6-已验收；7-已入库；8-作废；9-已超时；10-已取消
+	SubPurchaseOrderSnList          []string  `json:"subPurchaseOrderSnList,omitempty"`          // 订单号（采购子单号）
+	ProductSnList                   []int     `json:"productSnList,omitempty"`                   // 货号列表
+	ProductSkcIdList                []int64   `json:"productSkcIdList,omitempty"`                // skc 列表
+	PurchaseTimeFrom                int64     `json:"purchaseTimeFrom,omitempty"`                // 下单时间-开始：毫秒
+	PurchaseTimeTo                  int64     `json:"purchaseTimeTo,omitempty"`                  // 下单时间-结束：毫秒
+	DeliverOrderSnList              []string  `json:"deliverOrderSnList,omitempty"`              // 发货单号列表
+	IsDelayDeliver                  null.Bool `json:"isDelayDeliver,omitempty"`                  // 是否延迟发货
+	IsDelayArrival                  null.Bool `json:"isDelayArrival,omitempty"`                  // 是否延迟到货
+	ExpectLatestDeliverTimeFrom     int64     `json:"expectLatestDeliverTimeFrom,omitempty"`     // 要求最晚发货时间-开始（时间戳 单位：毫秒）
+	ExpectLatestDeliverTimeTo       int64     `json:"expectLatestDeliverTimeTo,omitempty"`       // 要求最晚发货时间-结束（时间戳 单位：毫秒）
+	ExpectLatestArrivalTimeFrom     int64     `json:"expectLatestArrivalTimeFrom,omitempty"`     // 要求最晚到达时间-开始（时间戳 单位：毫秒）
+	ExpectLatestArrivalTimeTo       int64     `json:"expectLatestArrivalTimeTo,omitempty"`       // 要求最晚到达时间-结束（时间戳 单位：毫秒）
+	PurchaseStockType               null.Int  `json:"purchaseStockType,omitempty"`               // 是否是JIT备货， 0-普通，1-JIT备货
+	IsFirst                         null.Bool `json:"isFirst,omitempty"`                         // 是否首单 0-否 1-是
+	IsCustomGoods                   null.Bool `json:"isCustomGoods,omitempty"`                   // 是否为定制品
+	OriginalPurchaseOrderSnList     []string  `json:"originalPurchaseOrderSnList,omitempty"`     // 母订单号列表
+	DeliverOrArrivalDelayStatusList []int     `json:"deliverOrArrivalDelayStatusList,omitempty"` // 发货或者到货逾期状态 101-发货即将逾期，102-发货已逾期，201-到货即将逾期，202-到货已逾期
+	TodayCanDeliver                 null.Bool `json:"todayCanDeliver,omitempty"`                 // 是否今日可发货
+	SkuLackSnapshot                 null.Int  `json:"skuLackSnapshot,omitempty"`                 // 创单时是否存在缺货sku，0-不存在 1-存在
+	QcReject                        null.Int  `json:"qcReject,omitempty"`                        // 创单时是否存在质检不合格sku，0-不存在 1-存在
+	QcOption                        null.Int  `json:"qcOption,omitempty"`                        // 是否存在质检不合格的sku，10-是，20-否
+	SourceList                      []int     `json:"sourceList,omitempty"`                      // 下单来源，0-运营下单，1-卖家下单，9999-平台下单
+	IsSystemAutoPurchaseSource      bool      `json:"isSystemAutoPurchaseSource,omitempty"`      // 是否系统下单 是-系统自动下单 否-其他
+	LackOrSoldOutTagList            []int     `json:"lackOrSoldOutTagList,omitempty"`            // 标签：1-含缺货SKU；2-含售罄SKU
+	IsTodayPlatformPurchase         null.Bool `json:"isTodayPlatformPurchase,omitempty"`         // 是否今日平台下单
+	JoinDeliveryPlatform            null.Bool `json:"joinDeliveryPlatform,omitempty"`            // 是否加入了发货台
+	StockType                       null.Int  `json:"stockType,omitempty"`                       // 备货类型（0：普通备货单、1：JIT 备货单、2：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
 }
 
 func (m PurchaseOrderQueryParams) Validate() error {
@@ -78,6 +79,9 @@ func (m PurchaseOrderQueryParams) Validate() error {
 				return nil
 			})),
 		),
+		validation.Field(&m.StockType,
+			validation.When(m.StockType.Valid, validation.In(entity.StockTypeNormal, entity.StockTypeJIT, entity.StockTypeCustomized).Error("无效的备货类型。")),
+		),
 	)
 }
 
@@ -85,6 +89,22 @@ func (m PurchaseOrderQueryParams) Validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Ip0Gso
 func (s purchaseOrderService) All(ctx context.Context, params PurchaseOrderQueryParams) (items []entity.PurchaseOrder, stat entity.PurchaseOrderStatistic, err error) {
 	params.TidyPager()
+	if params.StockType.Valid {
+		switch params.StockType.Int64 {
+		case entity.StockTypeNormal:
+			params.IsCustomGoods = null.BoolFrom(false)
+			params.PurchaseStockType = null.IntFrom(entity.PurchaseStockTypeNormal)
+
+		case entity.StockTypeJIT:
+			params.IsCustomGoods = null.BoolFrom(false)
+			params.PurchaseStockType = null.IntFrom(entity.PurchaseStockTypeJIT)
+
+		case entity.StockTypeCustomized:
+			params.IsCustomGoods = null.BoolFrom(true)
+			params.PurchaseStockType = null.NewInt(0, false)
+		}
+		params.StockType = null.NewInt(0, false)
+	}
 	if err = params.Validate(); err != nil {
 		return
 	}

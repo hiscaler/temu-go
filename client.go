@@ -3,13 +3,14 @@ package temu
 import (
 	"crypto/md5"
 	"crypto/tls"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
 	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/temu-go/config"
 	"github.com/hiscaler/temu-go/normal"
+	jsoniter "github.com/json-iterator/go"
+	"github.com/json-iterator/go/extra"
 	"log"
 	"net"
 	"net/http"
@@ -37,6 +38,12 @@ const (
 	InvalidAccessTokenError   = 7000018 // 无效的 Access Token
 	AccessTokenKeyUnmatched   = 7000006 // Access Token 和 Key 不匹配
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
+func init() {
+	extra.RegisterFuzzyDecoders()
+}
 
 var ErrNotFound = errors.New("数据不存在")
 var ErrInvalidSign = errors.New("无效的签名")
@@ -95,8 +102,13 @@ func generateSign(values map[string]any, appSecret string) map[string]any {
 	sb := strings.Builder{}
 	sb.WriteString(appSecret)
 	for _, key := range keys {
+		str := stringx.String(values[key])
+		if str == "" {
+			delete(values, key)
+			continue
+		}
 		sb.WriteString(key)
-		sb.WriteString(stringx.String(values[key]))
+		sb.WriteString(str)
 	}
 	sb.WriteString(appSecret)
 	values["sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
@@ -207,6 +219,8 @@ func New(config config.Config) *Client {
 	if config.Debug {
 		httpClient.SetBaseURL("https://openapi.kuajingmaihuo.com/openapi/router")
 	}
+	httpClient.JSONMarshal = json.Marshal
+	httpClient.JSONUnmarshal = json.Unmarshal
 	xService := service{
 		debug:      config.Debug,
 		logger:     logger,

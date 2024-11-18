@@ -3,6 +3,7 @@ package temu
 import (
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/guregu/null.v4"
 	"testing"
 )
 
@@ -21,12 +22,12 @@ func Test_purchaseOrderService_All(t *testing.T) {
 			// entity.PurchaseOrderStatusTimeout,                // 已超时
 			// entity.PurchaseOrderStatusCancel,                 // 已取消
 		},
-		// SubPurchaseOrderSnList: []string{"WB2408222923964"},
-		// OriginalPurchaseOrderSnList: []string{},
-		// IsCustomGoods:               true,
-		// JoinDeliveryPlatform:        true,
-		// IsFirst: false,
-		UrgencyType: IntPtr(1),
+		//SubPurchaseOrderSnList: []string{"WB2411153332690"},
+		StockType: null.IntFrom(entity.StockTypeJIT),
+		//IsCustomGoods:        null.NewBool(false, true),
+		//JoinDeliveryPlatform: null.NewBool(false, true),
+		//IsFirst:              null.NewBool(false, true),
+		//UrgencyType: IntPtr(1),
 	}
 	params.PageSize = 10
 	items, _, err := temuClient.Services.PurchaseOrder.All(ctx, params)
