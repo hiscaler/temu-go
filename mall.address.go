@@ -46,6 +46,7 @@ func (s mallAddressService) One(ctx context.Context, id int64) (address entity.M
 }
 
 // 卖家发货地址创建
+// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#gcyXKJ
 
 type CreateDeliveryAddressRequest struct {
 	WarehouseType            int64  `json:"warehouseType"`                      // 仓库类型
@@ -89,7 +90,7 @@ func (s mallAddressService) Create(ctx context.Context, request CreateDeliveryAd
 	var result = struct {
 		normal.Response
 		Result struct {
-			AddressId int64 `json:"addressId"`
+			AddressId int64 `json:"addressId"` // 创建的地址 ID
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
