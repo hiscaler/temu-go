@@ -55,10 +55,21 @@ type PurchaseOrderQueryParams struct {
 func (m PurchaseOrderQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SettlementType,
-			validation.When(!validation.IsEmpty(m.SettlementType),
+			validation.When(m.SettlementType.Valid,
 				validation.In(entity.SettlementTypeNotVMI, entity.SettlementTypeVMI).Error("无效的结算类型。"),
-			)),
+			),
+		),
+		validation.Field(&m.UrgencyType,
+			validation.When(m.UrgencyType.Valid,
+				validation.In(entity.FalseNumber, entity.TrueNumber).Error("无效的是否紧急值。"),
+			),
+		),
 		validation.Field(&m.SubPurchaseOrderSnList, validation.Each(validation.By(is.PurchaseOrderNumber()))),
+		validation.Field(&m.PurchaseStockType,
+			validation.When(m.PurchaseStockType.Valid,
+				validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的是否为 JIT 备货值。"),
+			),
+		),
 		validation.Field(&m.SourceList,
 			validation.When(len(m.SourceList) > 0, validation.By(func(value any) error {
 				sources, ok := value.([]int)

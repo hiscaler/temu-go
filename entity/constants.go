@@ -4,6 +4,12 @@ const (
 	MaxPageSize = 100 // 每页最多数量
 )
 
+// 布尔数据表示值
+const (
+	FalseNumber = 0
+	TrueNumber  = 1
+)
+
 // 发货地址类型
 const (
 	DeliveryAddressTypeChineseMainland = 1 // 内地
