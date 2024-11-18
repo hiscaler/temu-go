@@ -5,6 +5,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"gopkg.in/guregu/null.v4"
 )
 
 // 发货单服务
@@ -20,15 +21,15 @@ type ShipOrderQueryParams struct {
 	SubWarehouseIdList       []int64  `json:"subWarehouseIdList,omitempty"`       // 收货子仓列表
 	DeliverTimeFrom          int64    `json:"deliverTimeFrom,omitempty"`          // 发货时间-开始时间
 	DeliverTimeTo            int64    `json:"deliverTimeTo,omitempty"`            // 发货时间-结束时间
-	Status                   *int     `json:"status,omitempty"`                   // 发货单状态，0：待装箱发货，1：待仓库收货，2：已收货，3：已入库，4：已退货，5：已取消，6：部分收货，查询发货批次时仅支持查询发货单状态=1
+	Status                   null.Int `json:"status,omitempty"`                   // 发货单状态，0：待装箱发货，1：待仓库收货，2：已收货，3：已入库，4：已退货，5：已取消，6：部分收货，查询发货批次时仅支持查询发货单状态=1
 	UrgencyType              bool     `json:"urgencyType,omitempty"`              // 是否是紧急发货单，0-普通，1-急采
 	IsCustomProduct          bool     `json:"isCustomProduct,omitempty"`          // 是否为定制品
-	IsVim                    *int     `json:"isVmi,omitempty"`                    // 是否是vmi，0-非VMI，1-VMI
+	IsVim                    null.Int `json:"isVmi,omitempty"`                    // 是否是vmi，0-非VMI，1-VMI
 	IsJit                    bool     `json:"isJit,omitempty"`                    // 是否是jit，true:jit
 	LatestFeedbackStatusList []int    `json:"latestFeedbackStatusList,omitempty"` // 最新反馈状态列表，0-当前无异常，1-已提交，2-物流商处理中，3-已撤销，4-已反馈
-	SortType                 *int     `json:"sortType,omitempty"`                 // 排序类型，0-创建时间最新在上，1-要求发货时间较早在上，2-按照仓库名称排序
+	SortType                 null.Int `json:"sortType,omitempty"`                 // 排序类型，0-创建时间最新在上，1-要求发货时间较早在上，2-按照仓库名称排序
 	InventoryRegion          []int    `json:"inventoryRegion,omitempty"`          // 发货区域，1-国内备货，2-海外备货，3-保税仓备货
-	IsPrintBoxMark           *int     `json:"isPrintBoxMark,omitempty"`           // 是否已打印商品打包标签，0-未打印，1-已打印
+	IsPrintBoxMark           null.Int `json:"isPrintBoxMark,omitempty"`           // 是否已打印商品打包标签，0-未打印，1-已打印
 	TargetReceiveAddress     string   `json:"targetReceiveAddress,omitempty"`     // 筛选项-收货地址（精准匹配）
 	TargetDeliveryAddress    string   `json:"targetDeliveryAddress,omitempty"`    // 筛选项-发货地址（精准匹配）
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
+	"gopkg.in/guregu/null.v4"
 )
 
 // 装箱发货
@@ -46,7 +47,7 @@ type ShipOrderPackingSendRequestThirdPartyDeliveryInformation struct {
 
 type ShipOrderPackingSendRequest struct {
 	normal.Parameter
-	DeliverMethod                   *int                                                                  `json:"deliverMethod"`                             // 发货方式
+	DeliverMethod                   null.Int                                                              `json:"deliverMethod"`                             // 发货方式
 	DeliveryAddressId               int64                                                                 `json:"deliveryAddressId"`                         // 发货地址 ID
 	DeliveryOrderSnList             []string                                                              `json:"deliveryOrderSnList"`                       // 发货单号
 	SelfDeliveryInfo                *ShipOrderPackingSendRequestSelfDeliveryInformation                   `json:"selfDeliveryInfo,omitempty"`                // 自送信息

@@ -45,7 +45,7 @@ type PurchaseOrderQueryParams struct {
 	QcReject                        null.Int  `json:"qcReject,omitempty"`                        // 创单时是否存在质检不合格sku，0-不存在 1-存在
 	QcOption                        null.Int  `json:"qcOption,omitempty"`                        // 是否存在质检不合格的sku，10-是，20-否
 	SourceList                      []int     `json:"sourceList,omitempty"`                      // 下单来源，0-运营下单，1-卖家下单，9999-平台下单
-	IsSystemAutoPurchaseSource      bool      `json:"isSystemAutoPurchaseSource,omitempty"`      // 是否系统下单 是-系统自动下单 否-其他
+	IsSystemAutoPurchaseSource      null.Bool `json:"isSystemAutoPurchaseSource,omitempty"`      // 是否系统下单 是-系统自动下单 否-其他
 	LackOrSoldOutTagList            []int     `json:"lackOrSoldOutTagList,omitempty"`            // 标签：1-含缺货SKU；2-含售罄SKU
 	IsTodayPlatformPurchase         null.Bool `json:"isTodayPlatformPurchase,omitempty"`         // 是否今日平台下单
 	JoinDeliveryPlatform            null.Bool `json:"joinDeliveryPlatform,omitempty"`            // 是否加入了发货台

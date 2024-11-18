@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/guregu/null.v4"
 	"testing"
 )
 
@@ -34,9 +35,9 @@ func Test_logisticsService_Match(t *testing.T) {
 	req := LogisticsMatchRequest{
 		DeliveryAddressId:         shipOrder.DeliveryAddressId.Int64,
 		PredictTotalPackageWeight: 1000,
-		UrgencyType:               IntPtr(1),
+		UrgencyType:               null.IntFrom(1),
 		SubWarehouseId:            shipOrder.SubWarehouseId,
-		QueryStandbyExpress:       false,
+		QueryStandbyExpress:       null.BoolFrom(false),
 		TotalPackageNum:           2,
 		ReceiveAddressInfo:        receiveAddress.ReceiveAddressInfo,
 		DeliveryOrderSns:          []string{shipOrder.DeliveryOrderSn},

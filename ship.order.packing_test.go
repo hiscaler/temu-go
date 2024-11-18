@@ -4,6 +4,7 @@ import (
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
+	"gopkg.in/guregu/null.v4"
 	"testing"
 	"time"
 )
@@ -25,7 +26,7 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 	address := addresses[0]
 
 	params := ShipOrderQueryParams{
-		Status: IntPtr(entity.ShipOrderStatusWaitingPacking),
+		Status: null.IntFrom(entity.ShipOrderStatusWaitingPacking),
 	}
 	params.PageSize = 1
 	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
@@ -45,7 +46,7 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 		req := ShipOrderPackingSendRequest{
 			DeliveryAddressId:   address.ID,
 			DeliveryOrderSnList: []string{shipOrder.DeliveryOrderSn},
-			DeliverMethod:       IntPtr(entity.DeliveryMethodSelf),
+			DeliverMethod:       null.IntFrom(entity.DeliveryMethodSelf),
 			SelfDeliveryInfo: &ShipOrderPackingSendRequestSelfDeliveryInformation{
 				// DriverUid:             0,
 				DriverName: driverName,
@@ -77,7 +78,7 @@ func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 	company := companies[0]
 
 	params := ShipOrderQueryParams{
-		Status: IntPtr(entity.ShipOrderStatusWaitingPacking),
+		Status: null.IntFrom(entity.ShipOrderStatusWaitingPacking),
 	}
 	params.PageSize = 1
 	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
@@ -94,7 +95,7 @@ func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 		req := ShipOrderPackingSendRequest{
 			DeliveryAddressId:   address.ID,
 			DeliveryOrderSnList: []string{shipOrder.DeliveryOrderSn},
-			DeliverMethod:       IntPtr(entity.DeliveryMethodPlatformRecommendation),
+			DeliverMethod:       null.IntFrom(entity.DeliveryMethodPlatformRecommendation),
 			ThirdPartyDeliveryInfo: &ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation{
 				ExpressCompanyId:          company.ShipId,
 				TmsChannelId:              0,

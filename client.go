@@ -49,10 +49,6 @@ var ErrNotFound = errors.New("数据不存在")
 var ErrInvalidSign = errors.New("无效的签名")
 var ErrInvalidParameters = errors.New("无效的参数")
 
-func IntPtr(value int) *int {
-	return &value
-}
-
 type service struct {
 	debug      bool          // Is debug mode
 	logger     *log.Logger   // Log
