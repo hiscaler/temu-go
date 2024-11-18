@@ -24,7 +24,7 @@ type PurchaseOrderQueryParams struct {
 	UrgencyType                     null.Int  `json:"urgencyType,omitempty"`                     // 是否紧急 0-否 1-是
 	StatusList                      []int     `json:"statusList,omitempty"`                      // 订单状态 0-待接单；1-已接单，待发货；2-已送货；3-已收货；4-已拒收；5-已验收，全部退回；6-已验收；7-已入库；8-作废；9-已超时；10-已取消
 	SubPurchaseOrderSnList          []string  `json:"subPurchaseOrderSnList,omitempty"`          // 订单号（采购子单号）
-	ProductSnList                   []int     `json:"productSnList,omitempty"`                   // 货号列表
+	ProductSnList                   []string  `json:"productSnList,omitempty"`                   // 货号列表
 	ProductSkcIdList                []int64   `json:"productSkcIdList,omitempty"`                // skc 列表
 	PurchaseTimeFrom                int64     `json:"purchaseTimeFrom,omitempty"`                // 下单时间-开始：毫秒
 	PurchaseTimeTo                  int64     `json:"purchaseTimeTo,omitempty"`                  // 下单时间-结束：毫秒
