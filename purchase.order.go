@@ -84,7 +84,7 @@ func (m PurchaseOrderQueryParams) Validate() error {
 				}
 				for _, source := range sources {
 					if _, ok = validSources[source]; !ok {
-						return fmt.Errorf("无效的下单来源：%d", source)
+						return fmt.Errorf("无效的下单来源：%d。", source)
 					}
 				}
 				return nil
