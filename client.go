@@ -73,6 +73,7 @@ type services struct {
 	Goods                   goodsService
 	Mall                    mallService
 	JitVirtualInventory     jitVirtualInventoryService
+	JitMode                 jitModeService
 }
 
 type Client struct {
@@ -240,6 +241,7 @@ func New(config config.Config) *Client {
 		Goods:                   (goodsService)(xService),
 		Mall:                    (mallService)(xService),
 		JitVirtualInventory:     (jitVirtualInventoryService)(xService),
+		JitMode:                 (jitModeService)(xService),
 	}
 
 	return client
