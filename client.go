@@ -65,7 +65,6 @@ type services struct {
 	GoodsSales              goodsSalesService
 	GoodsCertification      goodsCertificationService
 	Logistics               logisticsService
-	VirtualInventoryJit     virtualInventoryJitService
 	GoodsSizeChart          goodsSizeChartService
 	GoodsSizeChartClass     goodsSizeChartClassService
 	GoodsSizeChartSetting   goodsSizeChartSettingService
@@ -73,6 +72,7 @@ type services struct {
 	ShipOrderReceiveAddress shipOrderReceiveAddressService
 	Goods                   goodsService
 	Mall                    mallService
+	JitVirtualInventory     jitVirtualInventoryService
 }
 
 type Client struct {
@@ -232,7 +232,6 @@ func New(config config.Config) *Client {
 		GoodsSales:              (goodsSalesService)(xService),
 		GoodsCertification:      (goodsCertificationService)(xService),
 		Logistics:               (logisticsService)(xService),
-		VirtualInventoryJit:     (virtualInventoryJitService)(xService),
 		GoodsSizeChart:          (goodsSizeChartService)(xService),
 		GoodsSizeChartClass:     (goodsSizeChartClassService)(xService),
 		GoodsSizeChartSetting:   (goodsSizeChartSettingService)(xService),
@@ -240,6 +239,7 @@ func New(config config.Config) *Client {
 		ShipOrderReceiveAddress: (shipOrderReceiveAddressService)(xService),
 		Goods:                   (goodsService)(xService),
 		Mall:                    (mallService)(xService),
+		JitVirtualInventory:     (jitVirtualInventoryService)(xService),
 	}
 
 	return client
