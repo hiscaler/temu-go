@@ -189,16 +189,28 @@ func (m PurchaseOrderApplyDetail) Validate() error {
 
 type PurchaseOrderApplyRequest struct {
 	normal.Parameter
-	ProductSkcId            int64                    `json:"productSkcId"`            // skcId
-	ExpectLatestDeliverTime int64                    `json:"expectLatestDeliverTime"` // 最晚发货时间
-	ExpectLatestArrivalTime int64                    `json:"expectLatestArrivalTime"` // 最晚送达时间
-	PurchaseDetailList      PurchaseOrderApplyDetail `json:"purchaseDetailList"`      // 详情
+	ProductSkcId            int64                    `json:"productSkcId"`                      // skcId
+	ExpectLatestDeliverTime null.Int                 `json:"expectLatestDeliverTime,omitempty"` // 最晚发货时间
+	ExpectLatestArrivalTime null.Int                 `json:"expectLatestArrivalTime,omitempty"` // 最晚送达时间
+	PurchaseDetailList      PurchaseOrderApplyDetail `json:"purchaseDetailList"`                // 详情
 }
 
 func (m PurchaseOrderApplyRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductSkcId, validation.Required.Error("SKC 不能为空。")),
-		validation.Field(&m.PurchaseDetailList, validation.Required.Error("详情不能为空。")),
+		validation.Field(&m.ExpectLatestDeliverTime, validation.When(m.ExpectLatestDeliverTime.Valid), validation.By(is.Millisecond())),
+		validation.Field(&m.ExpectLatestArrivalTime,
+			validation.When(m.ExpectLatestArrivalTime.Valid),
+			validation.By(is.Millisecond()),
+			validation.When(m.ExpectLatestDeliverTime.Valid, validation.By(func(value interface{}) error {
+				v, _ := value.(int64)
+				if v > m.ExpectLatestArrivalTime.Int64 {
+					return errors.New("最晚送达时间不能小于最晚发货时间。")
+				}
+				return nil
+			})),
+		),
+		validation.Field(&m.PurchaseDetailList, validation.Required.Error("备货详情不能为空。")),
 	)
 }
 
@@ -228,8 +240,8 @@ func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderAp
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YT2bPD
 
 type PurchaseOrderEditItem struct {
-	ProductSkuId               int64 `json:"productSkuId"`               // 货品skuId
-	ProductSkuPurchaseQuantity int   `json:"productSkuPurchaseQuantity"` // 货品sku下单数量
+	ProductSkuId               int64 `json:"productSkuId"`               // 货品 SKU ID
+	ProductSkuPurchaseQuantity int   `json:"productSkuPurchaseQuantity"` // 货品 SKU 下单数量
 }
 
 type PurchaseOrderEditRequest struct {
@@ -244,11 +256,11 @@ func (m PurchaseOrderEditRequest) validate() error {
 			validation.By(is.PurchaseOrderNumber()),
 		),
 		validation.Field(&m.PurchaseDetailList,
-			validation.Required.Error("待修改采购详情不能为空。"),
+			validation.Required.Error("待修改备货单详情不能为空。"),
 			validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
 				item, ok := value.(PurchaseOrderEditItem)
 				if !ok {
-					return errors.New("无效的动态系统分类规则")
+					return errors.New("无效的备货单详情。")
 				}
 				return validation.ValidateStruct(&item,
 					validation.Field(&item.ProductSkuId, validation.Required.Error("SKU 不能为空。")),
