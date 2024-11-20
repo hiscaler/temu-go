@@ -20,7 +20,7 @@ type ShipOrderStagingQueryParams struct {
 	SkcExtCode             []string  `json:"skcExtCode,omitempty"`             // 货号列表
 	ProductSkcIdList       []int64   `json:"productSkcIdList,omitempty"`       // skcId列表
 	SettlementType         null.Int  `json:"settlementType,omitempty"`         // 结算类型 0-非vmi 1-vmi
-	IsFirstOrder           bool      `json:"isFirstOrder,omitempty"`           // 是否首单
+	IsFirstOrder           null.Bool `json:"isFirstOrder,omitempty"`           // 是否首单
 	UrgencyType            null.Int  `json:"urgencyType,omitempty"`            // 是否是紧急发货单，0-普通 1-急采
 	IsJit                  null.Bool `json:"isJit,omitempty"`                  // 是否是jit，true:jit
 	PurchaseStockType      null.Int  `json:"purchaseStockType,omitempty"`      // 备货类型 0-普通备货 1-jit备货

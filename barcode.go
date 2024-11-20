@@ -7,6 +7,7 @@ import (
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
+	"gopkg.in/guregu/null.v4"
 )
 
 type barcodeService service
@@ -97,8 +98,8 @@ func (s barcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarco
 
 type BoxMarkBarcodeQueryParams struct {
 	normal.Parameter
-	ReturnDataKey       bool     `json:"return_data_key"`     // 是否以打印页面url返回，如果入参是，则不返回参数信息，返回dataKey，通过拼接https://openapi.kuajingmaihuo.com/tool/print?dataKey={返回的dataKey}，访问组装的url即可打印，打印的条码按照入参参数所得结果进行打印
-	DeliveryOrderSnList []string `json:"deliveryOrderSnList"` // 发货单对象列表
+	ReturnDataKey       null.Bool `json:"return_data_key"`     // 是否以打印页面url返回，如果入参是，则不返回参数信息，返回dataKey，通过拼接https://openapi.kuajingmaihuo.com/tool/print?dataKey={返回的dataKey}，访问组装的url即可打印，打印的条码按照入参参数所得结果进行打印
+	DeliveryOrderSnList []string  `json:"deliveryOrderSnList"` // 发货单对象列表
 }
 
 func (m BoxMarkBarcodeQueryParams) Validate() error {
@@ -113,7 +114,7 @@ func (m BoxMarkBarcodeQueryParams) Validate() error {
 // BoxMarkPrintUrl 箱唛打印地址
 func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, deliveryOrderSnList ...string) (dataKey string, err error) {
 	params := BoxMarkBarcodeQueryParams{
-		ReturnDataKey:       true,
+		ReturnDataKey:       null.BoolFrom(true),
 		DeliveryOrderSnList: deliveryOrderSnList,
 	}
 	if err = params.Validate(); err != nil {
@@ -139,7 +140,7 @@ func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, deliveryOrderSnList
 // BoxMark 箱唛信息
 func (s barcodeService) BoxMark(ctx context.Context, deliveryOrderSnList ...string) (items []entity.BoxMarkInfo, err error) {
 	params := BoxMarkBarcodeQueryParams{
-		ReturnDataKey:       false,
+		ReturnDataKey:       null.BoolFrom(true),
 		DeliveryOrderSnList: deliveryOrderSnList,
 	}
 	if err = params.Validate(); err != nil {

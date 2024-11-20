@@ -34,7 +34,7 @@ type GoodsSalesQueryParams struct {
 	SkcExtCodeList            []int     `json:"skcExtCodeList,omitempty"`            // skc货号列表
 	TodaySaleVolumMin         int       `json:"todaySaleVolumMin,omitempty"`         // SKC今日销量最小值
 	SevenDaysSaleVolumMin     int       `json:"sevenDaysSaleVolumMin,omitempty"`     // SKC近7天销量最小值
-	OrderByDesc               int       `json:"orderByDesc,omitempty"`               // 排序，0-升序，1-降序
+	OrderByDesc               null.Int  `json:"orderByDesc,omitempty"`               // 排序，0-升序，1-降序
 	IsAdviceStock             null.Bool `json:"isAdviceStock,omitempty"`             // 是否建议备货
 	PictureAuditStatusList    []int     `json:"pictureAuditStatusList,omitempty"`    // 图片审核状态 1-未完成；2-已完成
 	IsCustomGoods             null.Bool `json:"isCustomGoods,omitempty"`             // 是否为定制品
