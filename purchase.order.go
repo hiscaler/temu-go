@@ -12,9 +12,8 @@ import (
 	"strings"
 )
 
-type purchaseOrderService service
-
 // 采购单（备货单）服务
+type purchaseOrderService service
 
 // 查询采购单列表 V2
 
