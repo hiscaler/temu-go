@@ -13,12 +13,12 @@ type jitVirtualInventoryService service
 
 // Query 虚拟库存查询接口
 // https://seller.kuajingmaihuo.com/sop/view/706628248275137588#ag3EtD
-func (s jitVirtualInventoryService) Query(ctx context.Context, productSkcId int64) (items []entity.JitVirtualInventory, err error) {
+func (s jitVirtualInventoryService) Query(ctx context.Context, productSkcId int64) (items []entity.JitProductVirtualInventory, err error) {
 	var result = struct {
 		normal.Response
 		Result struct {
-			Total               int                          `json:"total"`               // 总数
-			ProductSkuStockList []entity.JitVirtualInventory `json:"productSkuStockList"` // 订单信息
+			Total               int                                 `json:"total"`               // 总数
+			ProductSkuStockList []entity.JitProductVirtualInventory `json:"productSkuStockList"` // 货品 SKU 库存列表
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
