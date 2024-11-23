@@ -30,9 +30,9 @@ const (
 
 // 扩展备货类型
 const (
-	StockTypeNormal     = 0 // 普通备货单
-	StockTypeJIT        = 1 // JIT 备货单
-	StockTypeCustomized = 2 // 定制备货单
+	StockTypeNormal     = 1 // 普通备货单
+	StockTypeJIT        = 2 // JIT 备货单
+	StockTypeCustomized = 3 // 定制备货单
 )
 
 // 紧急发货单类型
