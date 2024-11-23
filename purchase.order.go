@@ -60,7 +60,7 @@ func (m PurchaseOrderQueryParams) Validate() error {
 		),
 		validation.Field(&m.UrgencyType,
 			validation.When(m.UrgencyType.Valid,
-				validation.In(entity.FalseNumber, entity.TrueNumber).Error("无效的是否紧急值。"),
+				validation.In(null.IntFrom(entity.FalseNumber), null.IntFrom(entity.TrueNumber)).Error("无效的是否紧急值。"),
 			),
 		),
 		validation.Field(&m.SubPurchaseOrderSnList, validation.Each(validation.By(is.PurchaseOrderNumber()))),
