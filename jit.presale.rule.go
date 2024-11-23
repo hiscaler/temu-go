@@ -43,17 +43,17 @@ type JitPresaleRuleSignRequest struct {
 func (m JitPresaleRuleSignRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductId,
-			validation.Required.Error("无效的货品 ID。"),
+			validation.Required.Error("无效的货品 ID"),
 		),
 		validation.Field(&m.AgtVersion,
-			validation.Required.Error("无效的 JIT 预售协议版本号。"),
+			validation.Required.Error("无效的 JIT 预售协议版本号"),
 		),
 		validation.Field(&m.ProductAgtType,
-			validation.In(1).Error("无效的货品协议类型。"),
+			validation.In(1).Error("无效的货品协议类型"),
 		),
 		validation.Field(&m.Url,
-			validation.Required.Error("JIT 协议链接不能为空。"),
-			is.URL.Error("无效的 JIT 协议链接。"),
+			validation.Required.Error("JIT 协议链接不能为空"),
+			is.URL.Error("无效的 JIT 协议链接"),
 		),
 	)
 }

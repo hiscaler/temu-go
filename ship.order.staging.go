@@ -31,8 +31,8 @@ type ShipOrderStagingQueryParams struct {
 
 func (m ShipOrderStagingQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.SettlementType, validation.When(!validation.IsEmpty(m.SettlementType), validation.In(entity.SettlementTypeVMI, entity.SettlementTypeNotVMI).Error("无效的结算类型。"))),
-		validation.Field(&m.PurchaseStockType, validation.When(!validation.IsEmpty(m.PurchaseStockType), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的结算类型。"))),
+		validation.Field(&m.SettlementType, validation.When(!validation.IsEmpty(m.SettlementType), validation.In(entity.SettlementTypeVMI, entity.SettlementTypeNotVMI).Error("无效的结算类型"))),
+		validation.Field(&m.PurchaseStockType, validation.When(!validation.IsEmpty(m.PurchaseStockType), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的结算类型"))),
 	)
 }
 
@@ -90,13 +90,13 @@ type ShipOrderStagingAddInfo struct {
 func (m ShipOrderStagingAddInfo) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SubPurchaseOrderSn,
-			validation.Required.Error("备货单号不能为空。"),
+			validation.Required.Error("备货单号不能为空"),
 			validation.By(is.PurchaseOrderNumber()),
 		),
 		validation.Field(&m.DeliveryAddressType,
 			validation.
 				In(entity.DeliveryAddressTypeChineseMainland, entity.DeliveryAddressTypeChineseHongKong).
-				Error("无效的发货地址类型。"),
+				Error("无效的发货地址类型"),
 		),
 	)
 }
@@ -108,7 +108,7 @@ type ShipOrderStagingAddRequest struct {
 
 func (m ShipOrderStagingAddRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.JoinInfoList, validation.Required.Error("发货数据不能为空。")),
+		validation.Field(&m.JoinInfoList, validation.Required.Error("发货数据不能为空")),
 	)
 }
 

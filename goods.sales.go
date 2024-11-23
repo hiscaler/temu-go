@@ -44,8 +44,8 @@ type GoodsSalesQueryParams struct {
 
 func (m GoodsSalesQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.Page, validation.Required.Error("页码不能为空。")),
-		validation.Field(&m.PageSize, validation.Required.Error("页数不能为空。")),
+		validation.Field(&m.Page, validation.Required.Error("页码不能为空")),
+		validation.Field(&m.PageSize, validation.Required.Error("页数不能为空")),
 	)
 }
 

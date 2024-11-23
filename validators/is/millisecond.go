@@ -12,11 +12,11 @@ func Millisecond() validation.RuleFunc {
 	return func(value interface{}) error {
 		s, ok := value.(int64)
 		if !ok || s <= 0 {
-			return errors.New("无效的毫秒值。")
+			return errors.New("无效的毫秒值")
 		}
 
 		if !(time.UnixMilli(s).UnixMilli() == s) {
-			return fmt.Errorf("无效的毫秒值：%d。", s)
+			return fmt.Errorf("无效的毫秒值：%d", s)
 		}
 
 		return nil

@@ -43,13 +43,13 @@ type SkuVirtualStockChangeRequest struct {
 
 func (m SkuVirtualStockChangeRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ProductSkuId, validation.Required.Error("货品 SKU 不能为空。")),
+		validation.Field(&m.ProductSkuId, validation.Required.Error("货品 SKU 不能为空")),
 		validation.Field(&m.VirtualStockDiff,
-			validation.Required.Error("库存变更数量不能为空。"),
+			validation.Required.Error("库存变更数量不能为空"),
 			validation.By(func(value interface{}) error {
 				qty, ok := value.(int)
 				if !ok || qty == 0 {
-					return errors.New("无效的库存变更数量。")
+					return errors.New("无效的库存变更数量")
 				}
 				return nil
 			}),
@@ -64,8 +64,8 @@ type VirtualInventoryJitEditRequest struct {
 
 func (m VirtualInventoryJitEditRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ProductSkcId, validation.Required.Error("货品 SKC 不能为空。")),
-		validation.Field(&m.SkuVirtualStockChangeList, validation.Required.Error("虚拟库存不能为空。")),
+		validation.Field(&m.ProductSkcId, validation.Required.Error("货品 SKC 不能为空")),
+		validation.Field(&m.SkuVirtualStockChangeList, validation.Required.Error("虚拟库存不能为空")),
 	)
 }
 

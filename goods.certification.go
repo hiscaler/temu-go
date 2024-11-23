@@ -23,16 +23,16 @@ func (m GoodsCertificationQueryParams) validate() error {
 			validation.When(len(m.CertTypeList) != 0, validation.By(func(value interface{}) error {
 				types, ok := value.([]int)
 				if !ok {
-					return errors.New("无效的资质类型 ID。")
+					return errors.New("无效的资质类型 ID")
 				}
 				for _, typ := range types {
 					if typ < 0 || typ > 303 {
-						return fmt.Errorf("无效的资质类型 ID: %d。", typ)
+						return fmt.Errorf("无效的资质类型 ID: %d", typ)
 					}
 				}
 				return nil
 			}))),
-		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空。")),
+		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空")),
 	)
 }
 

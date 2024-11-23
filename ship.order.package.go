@@ -20,7 +20,7 @@ type ShipOrderPackageQueryParams struct {
 func (m ShipOrderPackageQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderSn,
-			validation.Required.Error("发货单号不能为空。"),
+			validation.Required.Error("发货单号不能为空"),
 			validation.By(is.ShipOrderNumber()),
 		),
 	)
@@ -82,11 +82,11 @@ type ShipOrderPackageUpdateRequest struct {
 func (m ShipOrderPackageUpdateRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderSn,
-			validation.Required.Error("发货单号不能为空。"),
+			validation.Required.Error("发货单号不能为空"),
 			validation.By(is.ShipOrderNumber()),
 		),
-		validation.Field(&m.DeliverOrderDetailInfos, validation.Required.Error("发货单详情列表不能为空。")),
-		validation.Field(&m.PackageInfos, validation.Required.Error("包裹信息列表不能为空。")),
+		validation.Field(&m.DeliverOrderDetailInfos, validation.Required.Error("发货单详情列表不能为空")),
+		validation.Field(&m.PackageInfos, validation.Required.Error("包裹信息列表不能为空")),
 	)
 }
 

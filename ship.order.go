@@ -36,7 +36,7 @@ type ShipOrderQueryParams struct {
 
 func (m ShipOrderQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.UrgencyType, validation.When(!validation.IsEmpty(m.UrgencyType), validation.In(entity.UrgencyTypeNormal, entity.UrgencyTypeUrgency).Error("无效的加急类型。"))),
+		validation.Field(&m.UrgencyType, validation.When(!validation.IsEmpty(m.UrgencyType), validation.In(entity.UrgencyTypeNormal, entity.UrgencyTypeUrgency).Error("无效的加急类型"))),
 	)
 }
 
@@ -108,7 +108,7 @@ type ShipOrderCreateRequest struct {
 
 func (m ShipOrderCreateRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.DeliveryOrderCreateGroupList, validation.Required.Error("发货单创建组列表不能为空。")),
+		validation.Field(&m.DeliveryOrderCreateGroupList, validation.Required.Error("发货单创建组列表不能为空")),
 	)
 }
 
@@ -143,7 +143,7 @@ type ShipOrderCancelRequest struct {
 
 func (m ShipOrderCancelRequest) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.DeliveryOrderSn, validation.Required.Error("发货单号不能为空。")),
+		validation.Field(&m.DeliveryOrderSn, validation.Required.Error("发货单号不能为空")),
 	)
 }
 

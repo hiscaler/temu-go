@@ -68,18 +68,18 @@ type CreateDeliveryAddressRequest struct {
 
 func (m CreateDeliveryAddressRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.WarehouseType, validation.Required.Error("仓库类型不能为空。")),
-		validation.Field(&m.WarehouseAreaType, validation.Required.Error("仓库面积类型不能为空。")),
-		validation.Field(&m.ProvinceCode, validation.Required.Error("省份编码不能为空。")),
-		validation.Field(&m.ProvinceName, validation.Required.Error("省名不能为空。")),
-		validation.Field(&m.CityCode, validation.Required.Error("市编码不能为空。")),
-		validation.Field(&m.CityName, validation.Required.Error("市名不能为空。")),
-		validation.Field(&m.DistrictCode, validation.Required.Error("区编码不能为空。")),
-		validation.Field(&m.DistrictName, validation.Required.Error("区名不能为空。")),
-		validation.Field(&m.ContactPersonName, validation.Required.Error("联系人不能为空。")),
-		validation.Field(&m.ContactPersonPhone, validation.Required.Error("联系人电话不能为空。")),
-		validation.Field(&m.AddressLabel, validation.Required.Error("地址标签不能为空。")),
-		validation.Field(&m.AddressDetail, validation.Required.Error("详细地址不能为空。")),
+		validation.Field(&m.WarehouseType, validation.Required.Error("仓库类型不能为空")),
+		validation.Field(&m.WarehouseAreaType, validation.Required.Error("仓库面积类型不能为空")),
+		validation.Field(&m.ProvinceCode, validation.Required.Error("省份编码不能为空")),
+		validation.Field(&m.ProvinceName, validation.Required.Error("省名不能为空")),
+		validation.Field(&m.CityCode, validation.Required.Error("市编码不能为空")),
+		validation.Field(&m.CityName, validation.Required.Error("市名不能为空")),
+		validation.Field(&m.DistrictCode, validation.Required.Error("区编码不能为空")),
+		validation.Field(&m.DistrictName, validation.Required.Error("区名不能为空")),
+		validation.Field(&m.ContactPersonName, validation.Required.Error("联系人不能为空")),
+		validation.Field(&m.ContactPersonPhone, validation.Required.Error("联系人电话不能为空")),
+		validation.Field(&m.AddressLabel, validation.Required.Error("地址标签不能为空")),
+		validation.Field(&m.AddressDetail, validation.Required.Error("详细地址不能为空")),
 	)
 }
 

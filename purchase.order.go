@@ -55,25 +55,25 @@ func (m PurchaseOrderQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SettlementType,
 			validation.When(m.SettlementType.Valid,
-				validation.In(null.IntFrom(entity.SettlementTypeNotVMI), null.IntFrom(entity.SettlementTypeVMI)).Error("无效的结算类型。"),
+				validation.In(null.IntFrom(entity.SettlementTypeNotVMI), null.IntFrom(entity.SettlementTypeVMI)).Error("无效的结算类型"),
 			),
 		),
 		validation.Field(&m.UrgencyType,
 			validation.When(m.UrgencyType.Valid,
-				validation.In(null.IntFrom(entity.FalseNumber), null.IntFrom(entity.TrueNumber)).Error("无效的是否紧急值。"),
+				validation.In(null.IntFrom(entity.FalseNumber), null.IntFrom(entity.TrueNumber)).Error("无效的是否紧急值"),
 			),
 		),
 		validation.Field(&m.SubPurchaseOrderSnList, validation.Each(validation.By(is.PurchaseOrderNumber()))),
 		validation.Field(&m.PurchaseStockType,
 			validation.When(m.PurchaseStockType.Valid,
-				validation.In(null.IntFrom(entity.PurchaseStockTypeNormal), null.IntFrom(entity.PurchaseStockTypeJIT)).Error("无效的是否为 JIT 备货值。"),
+				validation.In(null.IntFrom(entity.PurchaseStockTypeNormal), null.IntFrom(entity.PurchaseStockTypeJIT)).Error("无效的是否为 JIT 备货值"),
 			),
 		),
 		validation.Field(&m.SourceList,
 			validation.When(len(m.SourceList) > 0, validation.By(func(value any) error {
 				sources, ok := value.([]int)
 				if !ok {
-					return errors.New("无效的下单来源。")
+					return errors.New("无效的下单来源")
 				}
 
 				validSources := map[int]any{
@@ -83,14 +83,14 @@ func (m PurchaseOrderQueryParams) Validate() error {
 				}
 				for _, source := range sources {
 					if _, ok = validSources[source]; !ok {
-						return fmt.Errorf("无效的下单来源：%d。", source)
+						return fmt.Errorf("无效的下单来源：%d", source)
 					}
 				}
 				return nil
 			})),
 		),
 		validation.Field(&m.StockType,
-			validation.When(m.StockType.Valid, validation.In(null.IntFrom(entity.StockTypeNormal), null.IntFrom(entity.StockTypeJIT), null.IntFrom(entity.StockTypeCustomized)).Error("无效的备货类型。")),
+			validation.When(m.StockType.Valid, validation.In(null.IntFrom(entity.StockTypeNormal), null.IntFrom(entity.StockTypeJIT), null.IntFrom(entity.StockTypeCustomized)).Error("无效的备货类型")),
 		),
 	)
 }
@@ -181,8 +181,8 @@ type PurchaseOrderApplyDetail struct {
 
 func (m PurchaseOrderApplyDetail) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ProductSkuId, validation.Required.Error("SKU 不能为空。")),
-		validation.Field(&m.ProductSkuPurchaseQuantity, validation.Min(1).Error("备货数量不能小于 {.min}。")),
+		validation.Field(&m.ProductSkuId, validation.Required.Error("SKU 不能为空")),
+		validation.Field(&m.ProductSkuPurchaseQuantity, validation.Min(1).Error("备货数量不能小于 {.min}")),
 	)
 }
 
@@ -196,7 +196,7 @@ type PurchaseOrderApplyRequest struct {
 
 func (m PurchaseOrderApplyRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ProductSkcId, validation.Required.Error("SKC 不能为空。")),
+		validation.Field(&m.ProductSkcId, validation.Required.Error("SKC 不能为空")),
 		validation.Field(&m.ExpectLatestDeliverTime, validation.When(m.ExpectLatestDeliverTime.Valid), validation.By(is.Millisecond())),
 		validation.Field(&m.ExpectLatestArrivalTime,
 			validation.When(m.ExpectLatestArrivalTime.Valid),
@@ -204,12 +204,12 @@ func (m PurchaseOrderApplyRequest) validate() error {
 			validation.When(m.ExpectLatestDeliverTime.Valid, validation.By(func(value interface{}) error {
 				v, _ := value.(int64)
 				if v > m.ExpectLatestArrivalTime.Int64 {
-					return errors.New("最晚送达时间不能小于最晚发货时间。")
+					return errors.New("最晚送达时间不能小于最晚发货时间")
 				}
 				return nil
 			})),
 		),
-		validation.Field(&m.PurchaseDetailList, validation.Required.Error("备货详情不能为空。")),
+		validation.Field(&m.PurchaseDetailList, validation.Required.Error("备货详情不能为空")),
 	)
 }
 
@@ -251,20 +251,20 @@ type PurchaseOrderEditRequest struct {
 func (m PurchaseOrderEditRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SubPurchaseOrderSn,
-			validation.Required.Error("备货单号不能为空。"),
+			validation.Required.Error("备货单号不能为空"),
 			validation.By(is.PurchaseOrderNumber()),
 		),
 		validation.Field(&m.PurchaseDetailList,
-			validation.Required.Error("待修改备货单详情不能为空。"),
+			validation.Required.Error("待修改备货单详情不能为空"),
 			validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
 				item, ok := value.(PurchaseOrderEditItem)
 				if !ok {
-					return errors.New("无效的备货单详情。")
+					return errors.New("无效的备货单详情")
 				}
 				return validation.ValidateStruct(&item,
-					validation.Field(&item.ProductSkuId, validation.Required.Error("SKU 不能为空。")),
+					validation.Field(&item.ProductSkuId, validation.Required.Error("SKU 不能为空")),
 					validation.Field(&item.ProductSkuPurchaseQuantity,
-						validation.Min(1).Error("修改数量不能小于 {.min}。"),
+						validation.Min(1).Error("修改数量不能小于 {.min}"),
 					),
 				)
 			})),
@@ -302,7 +302,7 @@ type purchaseOrderCancelResult struct {
 
 func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumbers ...string) (results []purchaseOrderCancelResult, err error) {
 	if len(rawPurchaseOrderNumbers) == 0 {
-		return results, errors.New("备货单号不能为空。")
+		return results, errors.New("备货单号不能为空")
 	}
 
 	results = make([]purchaseOrderCancelResult, len(rawPurchaseOrderNumbers))

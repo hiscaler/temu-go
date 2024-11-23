@@ -15,7 +15,7 @@ type GoodsSizeChartClassQueryParams struct {
 
 func (m GoodsSizeChartClassQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.CatId, validation.Required.Error("类目 ID 不能为空。")),
+		validation.Field(&m.CatId, validation.Required.Error("类目 ID 不能为空")),
 	)
 }
 

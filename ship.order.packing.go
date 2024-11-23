@@ -58,11 +58,11 @@ type ShipOrderPackingSendRequest struct {
 func (m ShipOrderPackingSendRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliverMethod,
-			validation.Required.Error("发货方式不能为空。"),
-			validation.In(entity.DeliveryMethodSelf, entity.DeliveryMethodPlatformRecommendation, entity.DeliveryMethodThirdParty).Error("无效的发货方式。"),
+			validation.Required.Error("发货方式不能为空"),
+			validation.In(entity.DeliveryMethodSelf, entity.DeliveryMethodPlatformRecommendation, entity.DeliveryMethodThirdParty).Error("无效的发货方式"),
 		),
-		validation.Field(&m.DeliveryAddressId, validation.Required.Error("发货地址 ID 不能为空。")),
-		validation.Field(&m.DeliveryOrderSnList, validation.Required.Error("发货单号不能为空。")),
+		validation.Field(&m.DeliveryAddressId, validation.Required.Error("发货地址 ID 不能为空")),
+		validation.Field(&m.DeliveryOrderSnList, validation.Required.Error("发货单号不能为空")),
 	)
 }
 
@@ -103,7 +103,7 @@ type ShipOrderPackingMatchRequest struct {
 func (m ShipOrderPackingMatchRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderSnList,
-			validation.Required.Error("发货单号列表不能为空。"),
+			validation.Required.Error("发货单号列表不能为空"),
 			validation.Each(validation.By(is.ShipOrderNumber())),
 		),
 	)

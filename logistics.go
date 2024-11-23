@@ -65,19 +65,19 @@ type LogisticsMatchRequest struct {
 func (m LogisticsMatchRequest) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.PredictTotalPackageWeight,
-			validation.Required.Error("预估总包裹重量不能为空。"),
-			validation.Min(1).Error("预估总包裹重量不能小于 {.min}。"),
+			validation.Required.Error("预估总包裹重量不能为空"),
+			validation.Min(1).Error("预估总包裹重量不能小于 {.min}"),
 		),
 		validation.Field(&m.TotalPackageNum,
-			validation.Required.Error("包裹件数不能为空。"),
-			validation.Min(1).Error("包裹件数不能小于 {.min}。"),
+			validation.Required.Error("包裹件数不能为空"),
+			validation.Min(1).Error("包裹件数不能小于 {.min}"),
 		),
-		validation.Field(&m.SubWarehouseId, validation.Required.Error("收货子仓不能为空。")),
+		validation.Field(&m.SubWarehouseId, validation.Required.Error("收货子仓不能为空")),
 		validation.Field(&m.DeliveryOrderSns,
-			validation.Required.Error("发货单列表不能为空。"),
+			validation.Required.Error("发货单列表不能为空"),
 			validation.Each(validation.By(is.ShipOrderNumber())),
 		),
-		validation.Field(&m.ReceiveAddressInfo, validation.Required.Error("收货地址不能为空。")),
+		validation.Field(&m.ReceiveAddressInfo, validation.Required.Error("收货地址不能为空")),
 	)
 }
 

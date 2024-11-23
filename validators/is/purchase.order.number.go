@@ -11,13 +11,13 @@ func PurchaseOrderNumber() validation.RuleFunc {
 	return func(value interface{}) error {
 		s, ok := value.(string)
 		if !ok {
-			return errors.New("无效的备货单号。")
+			return errors.New("无效的备货单号")
 		}
 		if s == "" {
-			return errors.New("备货单号不能为空。")
+			return errors.New("备货单号不能为空")
 		}
 		if matched, err := regexp.MatchString("^(?i)wb[0-9]{13}$", s); err != nil || !matched {
-			return fmt.Errorf("无效的备货单号：%s。", s)
+			return fmt.Errorf("无效的备货单号：%s", s)
 		}
 		return nil
 	}

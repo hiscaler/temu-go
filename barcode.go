@@ -105,7 +105,7 @@ type BoxMarkBarcodeQueryParams struct {
 func (m BoxMarkBarcodeQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderSnList,
-			validation.Required.Error("发货单对象列表不能为空。"),
+			validation.Required.Error("发货单对象列表不能为空"),
 			validation.Each(validation.By(is.ShipOrderNumber())),
 		),
 	)
