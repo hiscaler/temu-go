@@ -19,8 +19,8 @@ func (m GoodsSizeChartClassQueryParams) Validate() error {
 	)
 }
 
-// All 查询尺码表模板
-func (s *goodsSizeChartClassService) All(ctx context.Context, params GoodsSizeChartClassQueryParams) (items []entity.GoodsSizeChartClass, err error) {
+// Query 查询尺码表模板
+func (s *goodsSizeChartClassService) Query(ctx context.Context, params GoodsSizeChartClassQueryParams) (items []entity.GoodsSizeChartClass, err error) {
 	if err = params.Validate(); err != nil {
 		return
 	}

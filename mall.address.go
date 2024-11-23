@@ -11,9 +11,9 @@ import (
 
 type mallAddressService service
 
-// All 卖家发货地址查询
+// Query 卖家发货地址查询
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#1qow2K
-func (s mallAddressService) All(ctx context.Context) (items []entity.MallAddress, err error) {
+func (s mallAddressService) Query(ctx context.Context) (items []entity.MallAddress, err error) {
 	var result = struct {
 		normal.Response
 		Result []entity.MallAddress `json:"result"`
@@ -31,7 +31,7 @@ func (s mallAddressService) All(ctx context.Context) (items []entity.MallAddress
 
 // One 根据 ID 查询单个卖家发货地址
 func (s mallAddressService) One(ctx context.Context, id int64) (address entity.MallAddress, err error) {
-	items, err := s.All(ctx)
+	items, err := s.Query(ctx)
 	if err != nil {
 		return
 	}

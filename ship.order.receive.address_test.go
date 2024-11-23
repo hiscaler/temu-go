@@ -7,10 +7,10 @@ import (
 	"testing"
 )
 
-func TestShipOrderReceiveAddressService_All(t *testing.T) {
-	subPurchaseOrderSnList := []string{"WB2408182975602", "WB240817842833"}
-	items, err := temuClient.Services.ShipOrderReceiveAddress.All(ctx, subPurchaseOrderSnList...)
-	assert.Nilf(t, err, "Services.ShipOrderReceiveAddress.All(ctx, %s)", strings.Join(subPurchaseOrderSnList, ", "))
+func TestShipOrderReceiveAddressService_Query(t *testing.T) {
+	subPurchaseOrderSnList := []string{"WB2411181848215"}
+	items, err := temuClient.Services.ShipOrderReceiveAddress.Query(ctx, subPurchaseOrderSnList...)
+	assert.Nilf(t, err, "Services.ShipOrderReceiveAddress.Query(ctx, %s)", strings.Join(subPurchaseOrderSnList, ", "))
 	if len(items) != 0 {
 		item := items[0]
 		subPurchaseOrderSn := item.SubPurchaseOrderSnList[0]

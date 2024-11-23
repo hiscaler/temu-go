@@ -7,10 +7,10 @@ import (
 	"testing"
 )
 
-func Test_goodsSalesService_All(t *testing.T) {
+func Test_goodsSalesService_Query(t *testing.T) {
 	params := GoodsSalesQueryParams{}
-	items, err := temuClient.Services.GoodsSales.All(ctx, params)
-	assert.Equalf(t, nil, err, "Services.GoodsSales.All(ctx, %s)", jsonx.ToPrettyJson(params))
+	items, err := temuClient.Services.GoodsSales.Query(ctx, params)
+	assert.Equalf(t, nil, err, "Services.GoodsSales.Query(ctx, %s)", jsonx.ToPrettyJson(params))
 
 	if len(items) != 0 {
 		item := items[0]

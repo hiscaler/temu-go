@@ -9,19 +9,21 @@ import (
 	"testing"
 )
 
-func TestShipOrderService_All(t *testing.T) {
+func TestShipOrderService_Query(t *testing.T) {
 	// status := entity.PurchaseOrderStatusMerchantReceived
 	params := ShipOrderQueryParams{
+		DeliveryOrderSnList: []string{"FH2411182674018"},
+		Status:              null.IntFrom(1),
 		// SubPurchaseOrderSnList: []string{"WB2409161373926"},
 		// IsCustomProduct: true,
 		// IsPrintBoxMark: IntPtr(1),
 		// Status:             IntPtr(0),
-		SubWarehouseIdList: []int64{438429773460},
+		// SubWarehouseIdList: []int64{438429773460},
 	}
 	params.Page = 1
 	params.PageSize = 1
-	_, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
-	assert.Nilf(t, err, "Services.ShipOrder.All: %s", jsonx.ToJson(params, "{}"))
+	_, _, _, _, err := temuClient.Services.ShipOrder.Query(ctx, params)
+	assert.Nilf(t, err, "Services.ShipOrder.Query: %s", jsonx.ToJson(params, "{}"))
 }
 
 func TestShipOrderService_Create(t *testing.T) {
@@ -88,11 +90,11 @@ func TestShipOrderService_Create(t *testing.T) {
 
 func TestShipOrderService_Cancel(t *testing.T) {
 	status := entity.ShipOrderStatusWaitingPacking
-	shipOrders, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, ShipOrderQueryParams{
+	shipOrders, _, _, _, err := temuClient.Services.ShipOrder.Query(ctx, ShipOrderQueryParams{
 		Status:   null.IntFrom(int64(status)),
 		SortType: null.IntFrom(0),
 	})
-	assert.Nil(t, err, "temuClient.Services.ShipOrder.All(ctx, {})")
+	assert.Nil(t, err, "temuClient.Services.ShipOrder.Query(ctx, {})")
 	n := len(shipOrders)
 	if n != 0 {
 		shipOrder := shipOrders[rand.Intn(n)]

@@ -36,9 +36,9 @@ func (m ShipOrderStagingQueryParams) Validate() error {
 	)
 }
 
-// All List all staging orders
+// Query List all staging orders
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#NOA03y
-func (s shipOrderStagingService) All(ctx context.Context, params ShipOrderStagingQueryParams) (items []entity.ShipOrderStaging, total, totalPages int, isLastPage bool, err error) {
+func (s shipOrderStagingService) Query(ctx context.Context, params ShipOrderStagingQueryParams) (items []entity.ShipOrderStaging, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
@@ -67,7 +67,7 @@ func (s shipOrderStagingService) All(ctx context.Context, params ShipOrderStagin
 
 // One 搜索单个发货台数据
 func (s shipOrderStagingService) One(ctx context.Context, subPurchaseOrderSn string) (item entity.ShipOrderStaging, err error) {
-	items, _, _, _, err := s.All(ctx, ShipOrderStagingQueryParams{
+	items, _, _, _, err := s.Query(ctx, ShipOrderStagingQueryParams{
 		SubPurchaseOrderSnList: []string{subPurchaseOrderSn},
 	})
 	if err != nil {

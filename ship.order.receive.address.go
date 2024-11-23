@@ -10,9 +10,9 @@ import (
 // 大仓收货地址
 type shipOrderReceiveAddressService service
 
-// All 查询大仓收货地址 V2
+// Query 查询大仓收货地址 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#chUUk1
-func (s shipOrderReceiveAddressService) All(ctx context.Context, subPurchaseOrderSnList ...string) (items []entity.ShipOrderReceiveAddress, err error) {
+func (s shipOrderReceiveAddressService) Query(ctx context.Context, subPurchaseOrderSnList ...string) (items []entity.ShipOrderReceiveAddress, err error) {
 	if len(subPurchaseOrderSnList) == 0 {
 		return
 	}
@@ -37,7 +37,7 @@ func (s shipOrderReceiveAddressService) All(ctx context.Context, subPurchaseOrde
 
 // One [WIP] 查询单个备货单收货地址
 func (s shipOrderReceiveAddressService) One(ctx context.Context, subPurchaseOrderSn string) (item entity.ShipOrderReceiveAddress, err error) {
-	items, err := s.All(ctx, subPurchaseOrderSn)
+	items, err := s.Query(ctx, subPurchaseOrderSn)
 	if err != nil {
 		return
 	}

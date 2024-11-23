@@ -34,9 +34,9 @@ func (m GoodsQueryParams) Validate() error {
 	return nil
 }
 
-// All 货品列表查询
+// Query 货品列表查询
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#SjadVR
-func (s goodsService) All(ctx context.Context, params GoodsQueryParams) (items []entity.Goods, total, totalPages int, isLastPage bool, err error) {
+func (s goodsService) Query(ctx context.Context, params GoodsQueryParams) (items []entity.Goods, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return
@@ -64,7 +64,7 @@ func (s goodsService) All(ctx context.Context, params GoodsQueryParams) (items [
 
 // One 根据商品 SKC ID 查询
 func (s goodsService) One(ctx context.Context, productSkcId int64) (item entity.Goods, err error) {
-	items, _, _, _, err := s.All(ctx, GoodsQueryParams{ProductSkcIds: []int64{productSkcId}})
+	items, _, _, _, err := s.Query(ctx, GoodsQueryParams{ProductSkcIds: []int64{productSkcId}})
 	if err != nil {
 		return
 	}

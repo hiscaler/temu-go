@@ -40,9 +40,9 @@ func (m ShipOrderQueryParams) Validate() error {
 	)
 }
 
-// All 查询发货单 V2
+// Query 查询发货单 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#B7c51j
-func (s shipOrderService) All(ctx context.Context, params ShipOrderQueryParams) (items []entity.ShipOrder, total, totalPages int, isLastPage bool, err error) {
+func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams) (items []entity.ShipOrder, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	if err = params.Validate(); err != nil {
 		return

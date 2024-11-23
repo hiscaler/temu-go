@@ -20,17 +20,17 @@ func TestShipOrderPackingService_Match(t *testing.T) {
 // TestShipOrderPackingService_SendForSelf 自送发货
 func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 	// 发货地址
-	addresses, err := temuClient.Services.MallAddress.All(ctx)
-	assert.Nilf(t, err, "temuClient.Services.MallAddress.All(ctx): error")
-	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.MallAddress.All(ctx): results")
+	addresses, err := temuClient.Services.MallAddress.Query(ctx)
+	assert.Nilf(t, err, "temuClient.Services.MallAddress.Query(ctx): error")
+	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.MallAddress.Query(ctx): results")
 	address := addresses[0]
 
 	params := ShipOrderQueryParams{
 		Status: null.IntFrom(entity.ShipOrderStatusWaitingPacking),
 	}
 	params.PageSize = 1
-	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
-	assert.Nilf(t, err, "temuClient.Services.ShipOrder.All(ctx, %s)", jsonx.ToJson(params, "{}"))
+	items, _, _, _, err := temuClient.Services.ShipOrder.Query(ctx, params)
+	assert.Nilf(t, err, "temuClient.Services.ShipOrder.Query(ctx, %s)", jsonx.ToJson(params, "{}"))
 	if len(items) != 0 {
 		shipOrder := items[0]
 		// 必须打印箱唛
@@ -66,9 +66,9 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 // TestShipOrderPackingService_SendForPlatformRecommendation 平台推荐物流发货
 func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 	// 发货地址
-	addresses, err := temuClient.Services.MallAddress.All(ctx)
-	assert.Nilf(t, err, "temuClient.Services.MallAddress.All(ctx): error")
-	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.MallAddress.All(ctx): results")
+	addresses, err := temuClient.Services.MallAddress.Query(ctx)
+	assert.Nilf(t, err, "temuClient.Services.MallAddress.Query(ctx): error")
+	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.MallAddress.Query(ctx): results")
 	address := addresses[0]
 
 	// 快递公司
@@ -81,8 +81,8 @@ func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 		Status: null.IntFrom(entity.ShipOrderStatusWaitingPacking),
 	}
 	params.PageSize = 1
-	items, _, _, _, err := temuClient.Services.ShipOrder.All(ctx, params)
-	assert.Nilf(t, err, "temuClient.Services.ShipOrder.All(ctx, %s)", jsonx.ToJson(params, "{}"))
+	items, _, _, _, err := temuClient.Services.ShipOrder.Query(ctx, params)
+	assert.Nilf(t, err, "temuClient.Services.ShipOrder.Query(ctx, %s)", jsonx.ToJson(params, "{}"))
 	if len(items) != 0 {
 		shipOrder := items[0]
 		// 必须打印箱唛

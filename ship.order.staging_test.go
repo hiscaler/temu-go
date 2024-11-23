@@ -7,17 +7,17 @@ import (
 	"testing"
 )
 
-func TestShipOrderStagingService_All(t *testing.T) {
-	params := ShipOrderStagingQueryParams{SubPurchaseOrderSnList: []string{"WB2408163594797"}}
-	_, _, _, _, err := temuClient.Services.ShipOrderStaging.All(ctx, params)
-	assert.Nilf(t, err, "Services.ShipOrderStaging.All(ctx, %s)", jsonx.ToJson(params, "{}"))
+func TestShipOrderStagingService_Query(t *testing.T) {
+	params := ShipOrderStagingQueryParams{SubPurchaseOrderSnList: []string{"WB2410143760309"}}
+	_, _, _, _, err := temuClient.Services.ShipOrderStaging.Query(ctx, params)
+	assert.Nilf(t, err, "Services.ShipOrderStaging.Query(ctx, %s)", jsonx.ToJson(params, "{}"))
 }
 
 func TestShipOrderStagingService_Add(t *testing.T) {
 	req := ShipOrderStagingAddRequest{}
 	req.JoinInfoList = []ShipOrderStagingAddInfo{
 		{
-			SubPurchaseOrderSn:  "WB2408182975602",
+			SubPurchaseOrderSn:  "WB2409203163348",
 			DeliveryAddressType: entity.DeliveryAddressTypeChineseMainland,
 		},
 	}
@@ -28,7 +28,9 @@ func TestShipOrderStagingService_Add(t *testing.T) {
 }
 
 func TestShipOrderStagingService_One(t *testing.T) {
-	items, _, _, _, err := temuClient.Services.ShipOrderStaging.All(ctx, ShipOrderStagingQueryParams{})
+	qp := ShipOrderStagingQueryParams{}
+	qp.SubPurchaseOrderSnList = []string{"WB2409203163348"}
+	items, _, _, _, err := temuClient.Services.ShipOrderStaging.Query(ctx, qp)
 	if err == nil && len(items) != 0 {
 		item := items[0]
 		subPurchaseOrderSn := item.SubPurchaseOrderBasicVO.SubPurchaseOrderSn

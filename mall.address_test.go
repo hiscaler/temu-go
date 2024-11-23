@@ -6,9 +6,9 @@ import (
 	"testing"
 )
 
-func Test_mallAddressService_All(t *testing.T) {
-	addresses, err := temuClient.Services.MallAddress.All(ctx)
-	assert.Equal(t, nil, err, "Test_mallAddressService_All")
+func Test_mallAddressService_Query(t *testing.T) {
+	addresses, err := temuClient.Services.MallAddress.Query(ctx)
+	assert.Equal(t, nil, err, "Test_mallAddressService_Query")
 
 	for _, address := range addresses {
 		var addr entity.MallAddress

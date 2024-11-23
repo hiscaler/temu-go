@@ -7,33 +7,34 @@ import (
 	"testing"
 )
 
-func Test_purchaseOrderService_All(t *testing.T) {
+func Test_purchaseOrderService_Query(t *testing.T) {
 	params := PurchaseOrderQueryParams{
 		StatusList: []int{
 			// entity.PurchaseOrderStatusWaitingMerchantReceive, // 待接单
 			// entity.PurchaseOrderStatusMerchantReceived,       // 已接单/待发货
 			// entity.PurchaseOrderStatusMerchantSend, // 已送货
 			// entity.PurchaseOrderStatusPlatformReceived,       // 已收货
-			// entity.PurchaseOrderStatusPlatformRejected,       // 已拒收
-			// entity.PurchaseOrderStatusPlatformReturned,       // 已验收/全部退回
+			// entity.PurchaseOrderStatusPlatformR收
+			//			// entity.PurchaseOrderStatusPlatformReturned,       // 已验ejected,       // 已拒收/全部退回
 			// entity.PurchaseOrderStatusPlatformApproved,       // 已验收
 			// entity.PurchaseOrderStatusPlatformPutInStorage,   // 已入库
 			// entity.PurchaseOrderStatusDiscard,                // 作废
 			// entity.PurchaseOrderStatusTimeout,                // 已超时
 			// entity.PurchaseOrderStatusCancel,                 // 已取消
 		},
-		//SubPurchaseOrderSnList: []string{"WB2411153332690"},
-		StockType: null.IntFrom(entity.StockTypeJIT),
-		//IsCustomGoods:        null.NewBool(false, true),
-		//JoinDeliveryPlatform: null.NewBool(false, true),
-		//IsFirst:              null.NewBool(false, true),
-		//UrgencyType: IntPtr(1),
+		SubPurchaseOrderSnList: []string{"FH2411191576410"},
+		// StockType:              null.IntFrom(entity.StockTypeCustomized),
+		IsCustomGoods: null.NewBool(true, true),
+		// PurchaseStockType: null.IntFrom(0),
+		// JoinDeliveryPlatform: null.NewBool(false, true),
+		// IsFirst:              null.NewBool(false, true),
+		// UrgencyType:          null.NewInt(0, false),
 	}
-	params.PageSize = 10
-	items, _, err := temuClient.Services.PurchaseOrder.All(ctx, params)
-	assert.Equalf(t, nil, err, "Services.PurchaseOrder.All(ctx, %#v) err", params)
+	params.PageSize = 2
+	items, _, err := temuClient.Services.PurchaseOrder.Query(ctx, params)
+	assert.Equalf(t, nil, err, "Services.PurchaseOrder.Query(ctx, %#v) err", params)
 
-	if len(items) != 0 {
+	if len(items) == 1111 {
 		item := items[0]
 		var order entity.PurchaseOrder
 

@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-var deliveryOrderSnList = []string{"FH2408151907154", "FH2408161777912"}
+var deliveryOrderSnList = []string{"FH2410192582506"}
 
 func Test_barcodeService_BoxMarkPrintUrl(t *testing.T) {
 	url, err := temuClient.Services.Barcode.BoxMarkPrintUrl(ctx, deliveryOrderSnList...)

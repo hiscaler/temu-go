@@ -95,9 +95,9 @@ func (m PurchaseOrderQueryParams) Validate() error {
 	)
 }
 
-// All 查询采购单列表 V2
+// Query 查询采购单列表 V2
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Ip0Gso
-func (s purchaseOrderService) All(ctx context.Context, params PurchaseOrderQueryParams) (items []entity.PurchaseOrder, stat entity.PurchaseOrderStatistic, err error) {
+func (s purchaseOrderService) Query(ctx context.Context, params PurchaseOrderQueryParams) (items []entity.PurchaseOrder, stat entity.PurchaseOrderStatistic, err error) {
 	params.TidyPager()
 	if params.StockType.Valid {
 		switch params.StockType.Int64 {
@@ -157,7 +157,7 @@ func (s purchaseOrderService) One(ctx context.Context, purchaseOrderSn string) (
 	} else {
 		params.OriginalPurchaseOrderSnList = []string{purchaseOrderSn}
 	}
-	items, _, err := s.All(ctx, params)
+	items, _, err := s.Query(ctx, params)
 	if err != nil {
 		return
 	}
