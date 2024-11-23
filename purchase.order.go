@@ -48,7 +48,7 @@ type PurchaseOrderQueryParams struct {
 	LackOrSoldOutTagList            []int     `json:"lackOrSoldOutTagList,omitempty"`            // 标签：1-含缺货SKU；2-含售罄SKU
 	IsTodayPlatformPurchase         null.Bool `json:"isTodayPlatformPurchase,omitempty"`         // 是否今日平台下单
 	JoinDeliveryPlatform            null.Bool `json:"joinDeliveryPlatform,omitempty"`            // 是否加入了发货台
-	StockType                       null.Int  `json:"stockType,omitempty"`                       // 备货类型（0：普通备货单、1：JIT 备货单、2：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
+	StockType                       null.Int  `json:"stockType,omitempty"`                       // 备货类型（1：普通备货单、2：JIT 备货单、3：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
 }
 
 func (m PurchaseOrderQueryParams) Validate() error {
