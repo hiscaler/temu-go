@@ -48,7 +48,7 @@ type PurchaseOrderQueryParams struct {
 	LackOrSoldOutTagList            []int     `json:"lackOrSoldOutTagList,omitempty"`            // 标签：1-含缺货SKU；2-含售罄SKU
 	IsTodayPlatformPurchase         null.Bool `json:"isTodayPlatformPurchase,omitempty"`         // 是否今日平台下单
 	JoinDeliveryPlatform            null.Bool `json:"joinDeliveryPlatform,omitempty"`            // 是否加入了发货台
-	StockType                       null.Int  `json:"stockType,omitempty"`                       // 备货类型（1：普通备货单、2：JIT 备货单、3：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
+	StockType                       null.Int  `json:"stockType,omitempty"`                       // 备货类型（0：普通备货单、1：JIT 备货单、2：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
 }
 
 func (m PurchaseOrderQueryParams) Validate() error {
@@ -60,13 +60,25 @@ func (m PurchaseOrderQueryParams) Validate() error {
 		),
 		validation.Field(&m.UrgencyType,
 			validation.When(m.UrgencyType.Valid,
-				validation.In(null.IntFrom(entity.FalseNumber), null.IntFrom(entity.TrueNumber)).Error("无效的是否紧急值"),
+				validation.By(func(value interface{}) error {
+					v, ok := value.(null.Int)
+					if !ok {
+						return errors.New("无效的紧急类型")
+					}
+					return validation.Validate(int(v.Int64), validation.In(entity.FalseNumber, entity.TrueNumber).Error("无效的紧急类型"))
+				}),
 			),
 		),
 		validation.Field(&m.SubPurchaseOrderSnList, validation.Each(validation.By(is.PurchaseOrderNumber()))),
 		validation.Field(&m.PurchaseStockType,
 			validation.When(m.PurchaseStockType.Valid,
-				validation.In(null.IntFrom(entity.PurchaseStockTypeNormal), null.IntFrom(entity.PurchaseStockTypeJIT)).Error("无效的是否为 JIT 备货值"),
+				validation.By(func(value interface{}) error {
+					v, ok := value.(null.Int)
+					if !ok {
+						return errors.New("无效的备货类型")
+					}
+					return validation.Validate(int(v.Int64), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的备货类型"))
+				}),
 			),
 		),
 		validation.Field(&m.SourceList,
