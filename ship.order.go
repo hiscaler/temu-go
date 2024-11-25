@@ -6,6 +6,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -153,7 +154,10 @@ type ShipOrderCancelRequest struct {
 
 func (m ShipOrderCancelRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.DeliveryOrderSn, validation.Required.Error("发货单号不能为空")),
+		validation.Field(&m.DeliveryOrderSn,
+			validation.Required.Error("发货单号不能为空"),
+			validation.By(is.ShipOrderNumber()),
+		),
 	)
 }
 
