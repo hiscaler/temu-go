@@ -30,7 +30,7 @@ type ShipOrderStagingQueryParams struct {
 	InventoryRegion        []int     `json:"inventoryRegion,omitempty"`        // DOMESTIC(1, "国内备货"), OVERSEAS(2, "海外备货"), BOUNDED_WAREHOUSE(3, "保税仓备货"),
 }
 
-func (m ShipOrderStagingQueryParams) Validate() error {
+func (m ShipOrderStagingQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SettlementType, validation.When(m.SettlementType.Valid,
 			validation.By(func(value interface{}) error {
@@ -59,7 +59,7 @@ func (m ShipOrderStagingQueryParams) Validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#NOA03y
 func (s shipOrderStagingService) Query(ctx context.Context, params ShipOrderStagingQueryParams) (items []entity.ShipOrderStaging, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 
@@ -106,7 +106,7 @@ type ShipOrderStagingAddInfo struct {
 	DeliveryAddressType int    `json:"deliveryAddressType"` // 发货地址类型，1-内地，2-香港，内地主体（店铺货币选择CNY，默认入参1，其余主体选择2）
 }
 
-func (m ShipOrderStagingAddInfo) Validate() error {
+func (m ShipOrderStagingAddInfo) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SubPurchaseOrderSn,
 			validation.Required.Error("备货单号不能为空"),
@@ -125,7 +125,7 @@ type ShipOrderStagingAddRequest struct {
 	JoinInfoList []ShipOrderStagingAddInfo `json:"joinInfoList"` // 加入发货台的信息列表
 }
 
-func (m ShipOrderStagingAddRequest) Validate() error {
+func (m ShipOrderStagingAddRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.JoinInfoList, validation.Required.Error("发货数据不能为空")),
 	)
@@ -134,7 +134,7 @@ func (m ShipOrderStagingAddRequest) Validate() error {
 // Add 加入发货台
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YSg2AE
 func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAddRequest) (ok bool, results []entity.ShipOrderStagingAddResult, err error) {
-	if err = req.Validate(); err != nil {
+	if err = req.validate(); err != nil {
 		return
 	}
 

@@ -13,7 +13,7 @@ type GoodsSizeChartClassQueryParams struct {
 	CatId int `json:"catId,omitempty"` // 叶子类目id，通过bg.goods.cats.get获取
 }
 
-func (m GoodsSizeChartClassQueryParams) Validate() error {
+func (m GoodsSizeChartClassQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.CatId, validation.Required.Error("类目 ID 不能为空")),
 	)
@@ -21,7 +21,7 @@ func (m GoodsSizeChartClassQueryParams) Validate() error {
 
 // Query 查询尺码表模板
 func (s *goodsSizeChartClassService) Query(ctx context.Context, params GoodsSizeChartClassQueryParams) (items []entity.GoodsSizeChartClass, err error) {
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 

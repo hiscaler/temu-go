@@ -18,7 +18,7 @@ type ShipOrderPackageQueryParams struct {
 	DeliveryOrderSn string `json:"deliveryOrderSn"` // 发货单号
 }
 
-func (m ShipOrderPackageQueryParams) Validate() error {
+func (m ShipOrderPackageQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderSn,
 			validation.Required.Error("发货单号不能为空"),
@@ -31,7 +31,7 @@ func (m ShipOrderPackageQueryParams) Validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#eprtWq
 func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderSn string) (items []entity.ShipOrderPackage, err error) {
 	params := ShipOrderPackageQueryParams{DeliveryOrderSn: deliveryOrderSn}
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 

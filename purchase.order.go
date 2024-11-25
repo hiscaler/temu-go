@@ -51,7 +51,7 @@ type PurchaseOrderQueryParams struct {
 	StockType                       null.Int  `json:"stockType,omitempty"`                       // 备货类型（0：普通备货单、1：JIT 备货单、2：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
 }
 
-func (m PurchaseOrderQueryParams) Validate() error {
+func (m PurchaseOrderQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SettlementType,
 			validation.When(m.SettlementType.Valid,
@@ -155,7 +155,7 @@ func (s purchaseOrderService) Query(ctx context.Context, params PurchaseOrderQue
 		}
 		params.StockType = null.NewInt(0, false)
 	}
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 	var result = struct {
@@ -219,7 +219,7 @@ type PurchaseOrderApplyDetail struct {
 	ProductSkuPurchaseQuantity int   `json:"productSkuPurchaseQuantity"` // 申请备货数量
 }
 
-func (m PurchaseOrderApplyDetail) Validate() error {
+func (m PurchaseOrderApplyDetail) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductSkuId, validation.Required.Error("SKU 不能为空")),
 		validation.Field(&m.ProductSkuPurchaseQuantity, validation.Min(1).Error("备货数量不能小于 {.min}")),

@@ -62,7 +62,7 @@ type LogisticsMatchRequest struct {
 	DeliveryOrderSns          []string              `json:"deliveryOrderSns,omitempty"`    // 发货单列表
 }
 
-func (m LogisticsMatchRequest) Validate() error {
+func (m LogisticsMatchRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.PredictTotalPackageWeight,
 			validation.Required.Error("预估总包裹重量不能为空"),
@@ -82,7 +82,7 @@ func (m LogisticsMatchRequest) Validate() error {
 }
 
 func (s logisticsService) Match(ctx context.Context, request LogisticsMatchRequest) (items []entity.LogisticsMatch, err error) {
-	if err = request.Validate(); err != nil {
+	if err = request.validate(); err != nil {
 		return
 	}
 

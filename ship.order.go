@@ -35,7 +35,7 @@ type ShipOrderQueryParams struct {
 	TargetDeliveryAddress    string    `json:"targetDeliveryAddress,omitempty"`    // 筛选项-发货地址（精准匹配）
 }
 
-func (m ShipOrderQueryParams) Validate() error {
+func (m ShipOrderQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.UrgencyType, validation.When(
 			m.UrgencyType.Valid,
@@ -54,7 +54,7 @@ func (m ShipOrderQueryParams) Validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#B7c51j
 func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams) (items []entity.ShipOrder, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 
@@ -116,7 +116,7 @@ type ShipOrderCreateRequest struct {
 	DeliveryOrderCreateGroupList []ShipOrderCreateRequestDeliveryOrder `json:"deliveryOrderCreateGroupList"` // 发货单创建组列表
 }
 
-func (m ShipOrderCreateRequest) Validate() error {
+func (m ShipOrderCreateRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderCreateGroupList, validation.Required.Error("发货单创建组列表不能为空")),
 	)
@@ -124,7 +124,7 @@ func (m ShipOrderCreateRequest) Validate() error {
 
 // Create 创建发货单接口 V3
 func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest) (ok bool, err error) {
-	if err = req.Validate(); err != nil {
+	if err = req.validate(); err != nil {
 		return
 	}
 
@@ -151,7 +151,7 @@ type ShipOrderCancelRequest struct {
 	DeliveryOrderSn string `json:"deliveryOrderSn"` // 发货单 ID
 }
 
-func (m ShipOrderCancelRequest) Validate() error {
+func (m ShipOrderCancelRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderSn, validation.Required.Error("发货单号不能为空")),
 	)
@@ -161,7 +161,7 @@ func (m ShipOrderCancelRequest) Validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#UywT8E
 func (s shipOrderService) Cancel(ctx context.Context, deliveryOrderSn string) (ok bool, err error) {
 	req := ShipOrderCancelRequest{DeliveryOrderSn: deliveryOrderSn}
-	if err = req.Validate(); err != nil {
+	if err = req.validate(); err != nil {
 		return
 	}
 

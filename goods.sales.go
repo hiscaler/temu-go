@@ -42,7 +42,7 @@ type GoodsSalesQueryParams struct {
 	MinAvailableSaleDays      string    `json:"minAvailableSaleDays,omitempty"`      // 最小可售天数
 }
 
-func (m GoodsSalesQueryParams) Validate() error {
+func (m GoodsSalesQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Page, validation.Required.Error("页码不能为空")),
 		validation.Field(&m.PageSize, validation.Required.Error("页数不能为空")),
@@ -53,7 +53,7 @@ func (m GoodsSalesQueryParams) Validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#8sCZQ8
 func (s goodsSalesService) Query(ctx context.Context, params GoodsSalesQueryParams) (items []entity.GoodsSales, err error) {
 	params.TidyPager()
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 	var result = struct {

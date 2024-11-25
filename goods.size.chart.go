@@ -16,7 +16,7 @@ type GoodsSizeChartQueryParams struct {
 	CatId int `json:"catId,omitempty"` // 类目 ID
 }
 
-func (m GoodsSizeChartQueryParams) Validate() error {
+func (m GoodsSizeChartQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Page, validation.Required.Error("页码不能为空")),
 		validation.Field(&m.PageSize, validation.Required.Error("页面大小不能为空")),
@@ -26,7 +26,7 @@ func (m GoodsSizeChartQueryParams) Validate() error {
 // Query 查询尺码表模板
 func (s *goodsSizeChartService) Query(ctx context.Context, params GoodsSizeChartQueryParams) (items []entity.GoodsSizeChart, err error) {
 	params.TidyPager(0)
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 

@@ -30,7 +30,7 @@ type GoodsQueryParams struct {
 	CreatedAtEnd           int     `json:"createdAtEnd,omitempty"`           // 创建时间结束，毫秒级时间戳
 }
 
-func (m GoodsQueryParams) Validate() error {
+func (m GoodsQueryParams) validate() error {
 	return nil
 }
 
@@ -38,7 +38,7 @@ func (m GoodsQueryParams) Validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#SjadVR
 func (s goodsService) Query(ctx context.Context, params GoodsQueryParams) (items []entity.Goods, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 	var result = struct {

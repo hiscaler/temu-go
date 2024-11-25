@@ -41,7 +41,7 @@ type SkuVirtualStockChangeRequest struct {
 	VirtualStockDiff int   `json:"virtualStockDiff"` // 虚拟库存(含商家自管库存)变更，大于0代表增加，小于0代表减少
 }
 
-func (m SkuVirtualStockChangeRequest) Validate() error {
+func (m SkuVirtualStockChangeRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductSkuId, validation.Required.Error("货品 SKU 不能为空")),
 		validation.Field(&m.VirtualStockDiff,
@@ -62,7 +62,7 @@ type VirtualInventoryJitEditRequest struct {
 	SkuVirtualStockChangeList []SkuVirtualStockChangeRequest `json:"skuVirtualStockChangeList"` // 虚拟库存模式下使用，虚拟库存调整信息.
 }
 
-func (m VirtualInventoryJitEditRequest) Validate() error {
+func (m VirtualInventoryJitEditRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductSkcId, validation.Required.Error("货品 SKC 不能为空")),
 		validation.Field(&m.SkuVirtualStockChangeList, validation.Required.Error("虚拟库存不能为空")),
@@ -72,7 +72,7 @@ func (m VirtualInventoryJitEditRequest) Validate() error {
 // Edit 虚拟库存编辑接口
 // https://seller.kuajingmaihuo.com/sop/view/706628248275137588#hALnFd
 func (s jitVirtualInventoryService) Edit(ctx context.Context, request VirtualInventoryJitEditRequest) (ok bool, err error) {
-	if err = request.Validate(); err != nil {
+	if err = request.validate(); err != nil {
 		return
 	}
 

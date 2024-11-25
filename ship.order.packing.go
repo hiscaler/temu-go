@@ -55,7 +55,7 @@ type ShipOrderPackingSendRequest struct {
 	ThirdPartyExpressDeliveryInfoVO *ShipOrderPackingSendRequestThirdPartyDeliveryInformation             `json:"thirdPartyExpressDeliveryInfoVO,omitempty"` // 第三方配送
 }
 
-func (m ShipOrderPackingSendRequest) Validate() error {
+func (m ShipOrderPackingSendRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliverMethod,
 			validation.Required.Error("发货方式不能为空"),
@@ -69,7 +69,7 @@ func (m ShipOrderPackingSendRequest) Validate() error {
 // Send 装箱发货接口
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#ezXrHy
 func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPackingSendRequest) (number string, err error) {
-	if err = request.Validate(); err != nil {
+	if err = request.validate(); err != nil {
 		return
 	}
 
@@ -100,7 +100,7 @@ type ShipOrderPackingMatchRequest struct {
 	DeliveryOrderSnList []string `json:"deliveryOrderSnList"` // 发货单号
 }
 
-func (m ShipOrderPackingMatchRequest) Validate() error {
+func (m ShipOrderPackingMatchRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderSnList,
 			validation.Required.Error("发货单号列表不能为空"),
@@ -112,7 +112,7 @@ func (m ShipOrderPackingMatchRequest) Validate() error {
 // Match 装箱发货校验
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#TDP3qU
 func (s shipOrderPackingService) Match(ctx context.Context, request ShipOrderPackingMatchRequest) (item entity.ShipOrderPackingMatchResult, err error) {
-	if err = request.Validate(); err != nil {
+	if err = request.validate(); err != nil {
 		return
 	}
 

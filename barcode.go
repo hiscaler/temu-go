@@ -21,7 +21,7 @@ type NormalGoodsBarcodeQueryParams struct {
 	LabelCode        int     `json:"labelCode,omitempty"`        // 标签条码
 }
 
-func (m NormalGoodsBarcodeQueryParams) Validate() error {
+func (m NormalGoodsBarcodeQueryParams) validate() error {
 	return nil
 }
 
@@ -29,7 +29,7 @@ func (m NormalGoodsBarcodeQueryParams) Validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#5LRokG
 func (s barcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
 	params.TidyPager()
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 
@@ -61,7 +61,7 @@ type CustomGoodsBarcodeQueryParams struct {
 	PersonalProductSkuIdList []int64 `json:"personalProductSkuIdList,omitempty"` // 定制品 sku id
 }
 
-func (m CustomGoodsBarcodeQueryParams) Validate() error {
+func (m CustomGoodsBarcodeQueryParams) validate() error {
 	return nil
 }
 
@@ -69,7 +69,7 @@ func (m CustomGoodsBarcodeQueryParams) Validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Hc5wmR
 func (s barcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
 	params.TidyPager()
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 
@@ -102,7 +102,7 @@ type BoxMarkBarcodeQueryParams struct {
 	DeliveryOrderSnList []string  `json:"deliveryOrderSnList"` // 发货单对象列表
 }
 
-func (m BoxMarkBarcodeQueryParams) Validate() error {
+func (m BoxMarkBarcodeQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderSnList,
 			validation.Required.Error("发货单对象列表不能为空"),
@@ -117,7 +117,7 @@ func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, deliveryOrderSnList
 		ReturnDataKey:       null.BoolFrom(true),
 		DeliveryOrderSnList: deliveryOrderSnList,
 	}
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 
@@ -143,7 +143,7 @@ func (s barcodeService) BoxMark(ctx context.Context, deliveryOrderSnList ...stri
 		ReturnDataKey:       null.BoolFrom(true),
 		DeliveryOrderSnList: deliveryOrderSnList,
 	}
-	if err = params.Validate(); err != nil {
+	if err = params.validate(); err != nil {
 		return
 	}
 
