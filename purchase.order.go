@@ -334,28 +334,22 @@ func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEdi
 
 // 批量取消待接单的备货单（bg.purchaseorder.cancel）
 
-type purchaseOrderCancelResult struct {
-	Number string
-	Ok     bool
-	Error  null.String
-}
-
-func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumbers ...string) (results []purchaseOrderCancelResult, err error) {
+func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumbers ...string) (results []entity.Result, err error) {
 	if len(rawPurchaseOrderNumbers) == 0 {
 		return results, errors.New("备货单号不能为空")
 	}
 
-	results = make([]purchaseOrderCancelResult, len(rawPurchaseOrderNumbers))
+	results = make([]entity.Result, len(rawPurchaseOrderNumbers))
 	numbers := make([]string, 0)
 	for i, number := range rawPurchaseOrderNumbers {
-		result := purchaseOrderCancelResult{Number: number}
+		result := entity.Result{Key: number}
 		number = strings.TrimSpace(number)
 		err = validation.Validate(number, validation.By(is.PurchaseOrderNumber()))
 		if err != nil {
-			result.Ok = false
+			result.Success = false
 			result.Error = null.StringFrom(err.Error())
 		} else {
-			result.Ok = true // Default is true? Must check API response result and reset it.
+			result.Success = true // Default is true? Must check API response result and reset it.
 			numbers = append(numbers, number)
 		}
 		results[i] = result

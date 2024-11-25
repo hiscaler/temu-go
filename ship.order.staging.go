@@ -133,16 +133,16 @@ func (m ShipOrderStagingAddRequest) validate() error {
 
 // Add 加入发货台
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YSg2AE
-func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAddRequest) (ok bool, results []entity.ShipOrderStagingAddResult, err error) {
+func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAddRequest) (ok bool, results []entity.Result, err error) {
 	if err = req.validate(); err != nil {
 		return
 	}
 
-	results = make([]entity.ShipOrderStagingAddResult, len(req.JoinInfoList))
+	results = make([]entity.Result, len(req.JoinInfoList))
 	for i, info := range req.JoinInfoList {
-		results[i] = entity.ShipOrderStagingAddResult{
-			SubPurchaseOrderSn: info.SubPurchaseOrderSn,
-			Success:            true,
+		results[i] = entity.Result{
+			Key:     info.SubPurchaseOrderSn,
+			Success: true,
 		}
 	}
 
@@ -175,14 +175,14 @@ func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAd
 			kvJoinErrors[strings.ToLower(v.JoinErrorSubPurchaseOrderSn)] = v
 		}
 		for i, r := range results {
-			joinErr, exists := kvJoinErrors[strings.ToLower(r.SubPurchaseOrderSn)]
+			joinErr, exists := kvJoinErrors[strings.ToLower(r.Key)]
 			if !exists {
 				continue
 			}
 
 			r.Success = false
-			r.ErrorCode = null.IntFrom(int64(joinErr.ErrorCode))
-			r.ErrorMessage = nullx.StringFrom(joinErr.ErrorMsg)
+			r.Code = null.IntFrom(int64(joinErr.ErrorCode))
+			r.Error = nullx.StringFrom(joinErr.ErrorMsg)
 			results[i] = r
 		}
 	}
