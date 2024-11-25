@@ -89,6 +89,5 @@ func (s goodsCertificationService) QueryNeedUploadItems(ctx context.Context, req
 		return
 	}
 
-	items = result.Result.CertNeedUploadItems
-	return
+	return result.Result.CertNeedUploadItems, nil
 }

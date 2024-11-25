@@ -7,7 +7,7 @@ import (
 
 type jitModeService service
 
-// Activate 打开JIT（bg.jitmode.activate）
+// Activate 打开 JIT（bg.jitmode.activate）
 // https://seller.kuajingmaihuo.com/sop/view/706628248275137588#b4ikfi
 // 全托管JIT开通：全托管的SKC开通JIT模式，进行虚拟库存售卖，关联查询bg.product.search，SKC出参满足applyJitStatus=1时，可开通JIT模式，进行虚拟库存售卖
 func (s jitModeService) Activate(ctx context.Context, productId, productSkcId int64) (bool, error) {
