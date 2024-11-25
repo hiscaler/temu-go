@@ -7,6 +7,7 @@ import (
 	"regexp"
 )
 
+// ShipOrderNumber 发货单号数据验证
 func ShipOrderNumber() validation.RuleFunc {
 	return func(value interface{}) error {
 		s, ok := value.(string)

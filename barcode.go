@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
@@ -58,11 +59,27 @@ func (s barcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarco
 
 type CustomGoodsBarcodeQueryParams struct {
 	NormalGoodsBarcodeQueryParams
-	PersonalProductSkuIdList []int64 `json:"personalProductSkuIdList,omitempty"` // 定制品 sku id
+	ProductSkuIdList         []int64 `json:"productSkuIdList,omitempty"`         // 货品 SKU ID 列表
+	SkcExtCode               string  `json:"skcExtCode,omitempty"`               // SKC 货号
+	ProductSkcIdList         []int64 `json:"productSkcIdList,omitempty"`         // 货品· SKC ID 列表
+	SkuExtCode               string  `json:"skuExtCode,omitempty"`               // SKU 货号
+	LabelCode                int64   `json:"labelCode,omitempty"`                // 标签条码
+	PersonalProductSkuIdList []int64 `json:"personalProductSkuIdList,omitempty"` // 定制品 SKU ID
+	CreateTimeStart          int64   `json:"createTimeStart,omitempty"`          // 定制品创建时间，支持毫秒时间戳
+	CreateTimeEnd            int64   `json:"createTimeEnd,omitempty"`            // 定制品创建时间，支持毫秒时间戳
 }
 
 func (m CustomGoodsBarcodeQueryParams) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.CreateTimeStart, validation.When(m.CreateTimeStart >= 0), validation.By(is.Millisecond())),
+		validation.Field(&m.CreateTimeEnd, validation.When(m.CreateTimeEnd >= 0), validation.By(is.Millisecond()), validation.By(func(value interface{}) error {
+			v, _ := value.(int64)
+			if v < m.CreateTimeStart {
+				return errors.New("定制品创建结束时间必须大于等于开始时间")
+			}
+			return nil
+		})),
+	)
 }
 
 // CustomGoods 定制商品条码查询（bg.goods.custom.label.get）

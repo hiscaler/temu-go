@@ -7,6 +7,7 @@ import (
 	"regexp"
 )
 
+// PackageNumber 包裹号数据验证
 func PackageNumber() validation.RuleFunc {
 	return func(value interface{}) error {
 		s, ok := value.(string)
