@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/nullx"
 	"github.com/hiscaler/temu-go/entity"
@@ -31,8 +32,26 @@ type ShipOrderStagingQueryParams struct {
 
 func (m ShipOrderStagingQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.SettlementType, validation.When(!validation.IsEmpty(m.SettlementType), validation.In(entity.SettlementTypeVMI, entity.SettlementTypeNotVMI).Error("无效的结算类型"))),
-		validation.Field(&m.PurchaseStockType, validation.When(!validation.IsEmpty(m.PurchaseStockType), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的结算类型"))),
+		validation.Field(&m.SettlementType, validation.When(m.SettlementType.Valid,
+			validation.By(func(value interface{}) error {
+				v, ok := value.(null.Int)
+				if !ok {
+					return errors.New("无效的结算类型")
+				}
+
+				return validation.Validate(int(v.Int64), validation.In(entity.SettlementTypeVMI, entity.SettlementTypeNotVMI).Error("无效的结算类型"))
+			}),
+		)),
+		validation.Field(&m.PurchaseStockType, validation.When(m.PurchaseStockType.Valid,
+			validation.By(func(value interface{}) error {
+				v, ok := value.(null.Int)
+				if !ok {
+					return errors.New("无效的备货类型")
+				}
+
+				return validation.Validate(int(v.Int64), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的备货类型"))
+			}),
+		)),
 	)
 }
 

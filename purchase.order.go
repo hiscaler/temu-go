@@ -55,7 +55,14 @@ func (m PurchaseOrderQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SettlementType,
 			validation.When(m.SettlementType.Valid,
-				validation.In(null.IntFrom(entity.SettlementTypeNotVMI), null.IntFrom(entity.SettlementTypeVMI)).Error("无效的结算类型"),
+				validation.By(func(value interface{}) error {
+					v, ok := value.(null.Int)
+					if !ok {
+						return errors.New("无效的结算类型")
+					}
+
+					return validation.Validate(int(v.Int64), validation.In(entity.SettlementTypeNotVMI, entity.SettlementTypeVMI).Error("无效的结算类型"))
+				}),
 			),
 		),
 		validation.Field(&m.UrgencyType,
@@ -65,6 +72,7 @@ func (m PurchaseOrderQueryParams) Validate() error {
 					if !ok {
 						return errors.New("无效的紧急类型")
 					}
+
 					return validation.Validate(int(v.Int64), validation.In(entity.FalseNumber, entity.TrueNumber).Error("无效的紧急类型"))
 				}),
 			),
@@ -77,6 +85,7 @@ func (m PurchaseOrderQueryParams) Validate() error {
 					if !ok {
 						return errors.New("无效的备货类型")
 					}
+
 					return validation.Validate(int(v.Int64), validation.In(entity.PurchaseStockTypeNormal, entity.PurchaseStockTypeJIT).Error("无效的备货类型"))
 				}),
 			),
@@ -102,7 +111,14 @@ func (m PurchaseOrderQueryParams) Validate() error {
 			})),
 		),
 		validation.Field(&m.StockType,
-			validation.When(m.StockType.Valid, validation.In(null.IntFrom(entity.StockTypeNormal), null.IntFrom(entity.StockTypeJIT), null.IntFrom(entity.StockTypeCustomized)).Error("无效的备货类型")),
+			validation.When(m.StockType.Valid, validation.By(func(value interface{}) error {
+				v, ok := value.(null.Int)
+				if !ok {
+					return errors.New("无效的备货类型")
+				}
+
+				return validation.Validate(int(v.Int64), validation.In(entity.StockTypeNormal, entity.StockTypeJIT, entity.StockTypeCustomized).Error("无效的备货类型"))
+			})),
 		),
 	)
 }

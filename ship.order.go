@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -36,7 +37,16 @@ type ShipOrderQueryParams struct {
 
 func (m ShipOrderQueryParams) Validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.UrgencyType, validation.When(!validation.IsEmpty(m.UrgencyType), validation.In(entity.UrgencyTypeNormal, entity.UrgencyTypeUrgency).Error("无效的加急类型"))),
+		validation.Field(&m.UrgencyType, validation.When(
+			m.UrgencyType.Valid,
+			validation.By(func(value interface{}) error {
+				v, ok := value.(null.Int)
+				if !ok {
+					return errors.New("无效的加急类型")
+				}
+				return validation.Validate(int(v.Int64), validation.In(entity.UrgencyTypeNormal, entity.UrgencyTypeUrgency).Error("无效的加急类型"))
+			}),
+		)),
 	)
 }
 
