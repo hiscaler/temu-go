@@ -90,6 +90,18 @@ func (m PurchaseOrderQueryParams) Validate() error {
 				}),
 			),
 		),
+		validation.Field(&m.QcReject,
+			validation.When(m.PurchaseStockType.Valid,
+				validation.By(func(value interface{}) error {
+					v, ok := value.(null.Int)
+					if !ok {
+						return errors.New("无效的创单时质检是否合格查询值")
+					}
+
+					return validation.Validate(int(v.Int64), validation.In(entity.FalseNumber, entity.TrueNumber).Error("无效的创单时质检是否合格查询值"))
+				}),
+			),
+		),
 		validation.Field(&m.SourceList,
 			validation.When(len(m.SourceList) > 0, validation.By(func(value any) error {
 				sources, ok := value.([]int)

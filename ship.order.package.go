@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -61,15 +62,43 @@ type ShipOrderPackageUpdateRequestDeliverOrderDetail struct {
 	DeliverSkuNum int   `json:"deliverSkuNum"` // 发货 sku 数目
 }
 
+func (m ShipOrderPackageUpdateRequestDeliverOrderDetail) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.DeliverSkuNum, validation.Min(1).Error("发货数量不能小于 {.min}")),
+	)
+}
+
 // ShipOrderPackageUpdateRequestPackageDetail 包裹明细
 type ShipOrderPackageUpdateRequestPackageDetail struct {
 	ProductSkuId int64 `json:"productSkuId"` // skuId
 	SkuNum       int   `json:"skuNum"`       // 发货 sku 数目
 }
 
+func (m ShipOrderPackageUpdateRequestPackageDetail) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SkuNum, validation.Min(1).Error("发货数量不能小于 {.min}")),
+	)
+}
+
 // ShipOrderPackageUpdateRequestPackage 包裹信息
 type ShipOrderPackageUpdateRequestPackage struct {
 	PackageDetailSaveInfos []ShipOrderPackageUpdateRequestPackageDetail `json:"packageDetailSaveInfos"` // 包裹明细
+}
+
+func (m ShipOrderPackageUpdateRequestPackage) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.PackageDetailSaveInfos,
+			validation.Required.Error("发货包裹不能为空"),
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(ShipOrderPackageUpdateRequestPackageDetail)
+				if !ok {
+					return errors.New("无效的发货包裹详情")
+				}
+
+				return v.validate()
+			})),
+		),
+	)
 }
 
 type ShipOrderPackageUpdateRequest struct {
@@ -79,21 +108,41 @@ type ShipOrderPackageUpdateRequest struct {
 	PackageInfos            []ShipOrderPackageUpdateRequestPackage            `json:"packageInfos"`            // 包裹信息列表
 }
 
-func (m ShipOrderPackageUpdateRequest) Validate() error {
+func (m ShipOrderPackageUpdateRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderSn,
 			validation.Required.Error("发货单号不能为空"),
 			validation.By(is.ShipOrderNumber()),
 		),
-		validation.Field(&m.DeliverOrderDetailInfos, validation.Required.Error("发货单详情列表不能为空")),
-		validation.Field(&m.PackageInfos, validation.Required.Error("包裹信息列表不能为空")),
+		validation.Field(&m.DeliverOrderDetailInfos,
+			validation.Required.Error("发货单详情列表不能为空"),
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(ShipOrderPackageUpdateRequestDeliverOrderDetail)
+				if !ok {
+					return errors.New("无效的发货单详情")
+				}
+
+				return v.validate()
+			})),
+		),
+		validation.Field(&m.PackageInfos,
+			validation.Required.Error("包裹信息列表不能为空"),
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(ShipOrderPackageUpdateRequestPackage)
+				if !ok {
+					return errors.New("无效的发货包裹")
+				}
+
+				return v.validate()
+			})),
+		),
 	)
 }
 
 // Update 发货包裹编辑
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#qSU56c
 func (s shipOrderPackageService) Update(ctx context.Context, req ShipOrderPackageUpdateRequest) (ok bool, err error) {
-	if err = req.Validate(); err != nil {
+	if err = req.validate(); err != nil {
 		return
 	}
 
