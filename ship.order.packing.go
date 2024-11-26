@@ -61,8 +61,11 @@ func (m ShipOrderPackingSendRequest) validate() error {
 			validation.Required.Error("发货方式不能为空"),
 			validation.In(entity.DeliveryMethodSelf, entity.DeliveryMethodPlatformRecommendation, entity.DeliveryMethodThirdParty).Error("无效的发货方式"),
 		),
-		validation.Field(&m.DeliveryAddressId, validation.Required.Error("发货地址 ID 不能为空")),
-		validation.Field(&m.DeliveryOrderSnList, validation.Required.Error("发货单号不能为空")),
+		validation.Field(&m.DeliveryAddressId, validation.Required.Error("发货地址不能为空")),
+		validation.Field(&m.DeliveryOrderSnList,
+			validation.Required.Error("发货单号不能为空"),
+			validation.Each(validation.By(is.ShipOrderNumber())),
+		),
 	)
 }
 

@@ -77,7 +77,7 @@ func (m PurchaseOrderQueryParams) validate() error {
 				}),
 			),
 		),
-		validation.Field(&m.SubPurchaseOrderSnList, validation.Each(validation.By(is.PurchaseOrderNumber()))),
+		validation.Field(&m.SubPurchaseOrderSnList, validation.When(len(m.SubPurchaseOrderSnList) != 0, validation.Each(validation.By(is.PurchaseOrderNumber())))),
 		validation.Field(&m.PurchaseStockType,
 			validation.When(m.PurchaseStockType.Valid,
 				validation.By(func(value interface{}) error {
