@@ -23,7 +23,7 @@ func Test_purchaseOrderService_Query(t *testing.T) {
 			// entity.PurchaseOrderStatusCancel,                 // 已取消
 		},
 		SubPurchaseOrderSnList: []string{"FH2411191576410"},
-		// StockType:              null.IntFrom(entity.StockTypeCustomized),
+		// OrderType:              null.IntFrom(entity.StockTypeCustomized),
 		IsCustomGoods: null.NewBool(true, true),
 		// PurchaseStockType: null.IntFrom(0),
 		// JoinDeliveryPlatform: null.NewBool(false, true),

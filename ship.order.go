@@ -34,6 +34,7 @@ type ShipOrderQueryParams struct {
 	IsPrintBoxMark           null.Int  `json:"isPrintBoxMark,omitempty"`           // 是否已打印商品打包标签，0-未打印，1-已打印
 	TargetReceiveAddress     string    `json:"targetReceiveAddress,omitempty"`     // 筛选项-收货地址（精准匹配）
 	TargetDeliveryAddress    string    `json:"targetDeliveryAddress,omitempty"`    // 筛选项-发货地址（精准匹配）
+	OrderType                null.Int  `json:"orderType,omitempty"`                // 订单类型（0：普通备货单、1：JIT 备货单、2：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
 }
 
 func (m ShipOrderQueryParams) validate() error {
@@ -55,6 +56,22 @@ func (m ShipOrderQueryParams) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#B7c51j
 func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams) (items []entity.ShipOrder, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
+	if params.OrderType.Valid {
+		switch params.OrderType.Int64 {
+		case entity.StockTypeNormal:
+			params.IsCustomProduct = null.BoolFrom(false)
+			params.IsJit = null.BoolFrom(false)
+
+		case entity.StockTypeJIT:
+			params.IsCustomProduct = null.BoolFrom(false)
+			params.IsJit = null.BoolFrom(true)
+
+		case entity.StockTypeCustomized:
+			params.IsCustomProduct = null.BoolFrom(true)
+			params.IsJit = null.BoolFrom(false)
+		}
+		params.OrderType = null.NewInt(0, false)
+	}
 	if err = params.validate(); err != nil {
 		return
 	}

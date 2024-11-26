@@ -28,6 +28,7 @@ type ShipOrderStagingQueryParams struct {
 	IsCustomProduct        null.Bool `json:"isCustomProduct,omitempty"`        // 是否为定制品
 	SubWarehouseId         int64     `json:"subWarehouseId,omitempty"`         // 收货子仓
 	InventoryRegion        []int     `json:"inventoryRegion,omitempty"`        // DOMESTIC(1, "国内备货"), OVERSEAS(2, "海外备货"), BOUNDED_WAREHOUSE(3, "保税仓备货"),
+	OrderType              null.Int  `json:"orderType,omitempty"`              // 订单类型（0：普通备货单、1：JIT 备货单、2：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
 }
 
 func (m ShipOrderStagingQueryParams) validate() error {
@@ -59,6 +60,22 @@ func (m ShipOrderStagingQueryParams) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#NOA03y
 func (s shipOrderStagingService) Query(ctx context.Context, params ShipOrderStagingQueryParams) (items []entity.ShipOrderStaging, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
+	if params.OrderType.Valid {
+		switch params.OrderType.Int64 {
+		case entity.StockTypeNormal:
+			params.IsCustomProduct = null.BoolFrom(false)
+			params.IsJit = null.BoolFrom(false)
+
+		case entity.StockTypeJIT:
+			params.IsCustomProduct = null.BoolFrom(false)
+			params.IsJit = null.BoolFrom(true)
+
+		case entity.StockTypeCustomized:
+			params.IsCustomProduct = null.BoolFrom(true)
+			params.IsJit = null.BoolFrom(false)
+		}
+		params.OrderType = null.NewInt(0, false)
+	}
 	if err = params.validate(); err != nil {
 		return
 	}
