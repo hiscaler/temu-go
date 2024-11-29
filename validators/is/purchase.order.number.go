@@ -17,7 +17,7 @@ func PurchaseOrderNumber() validation.RuleFunc {
 		if s == "" {
 			return errors.New("备货单号不能为空")
 		}
-		if matched, err := regexp.MatchString("^(?i)wb[0-9]{13}$", s); err != nil || !matched {
+		if matched, err := regexp.MatchString("^(?i)wb[0-9]{12,13}$", s); err != nil || !matched {
 			return fmt.Errorf("无效的备货单号：%s", s)
 		}
 		return nil

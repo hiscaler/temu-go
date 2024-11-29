@@ -4,7 +4,8 @@ import (
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"time"
+	"regexp"
+	"strconv"
 )
 
 // Millisecond 判断是否为有效的毫秒值
@@ -15,7 +16,7 @@ func Millisecond() validation.RuleFunc {
 			return errors.New("无效的毫秒值")
 		}
 
-		if !(time.UnixMilli(s).UnixMilli() == s) {
+		if matched, err := regexp.MatchString("^[1-9]?[0-9]{12}$", strconv.Itoa(int(s))); err != nil || !matched {
 			return fmt.Errorf("无效的毫秒值：%d", s)
 		}
 
