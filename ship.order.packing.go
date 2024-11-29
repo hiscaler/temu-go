@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -58,8 +59,14 @@ type ShipOrderPackingSendRequest struct {
 func (m ShipOrderPackingSendRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliverMethod,
-			validation.Required.Error("发货方式不能为空"),
-			validation.In(entity.DeliveryMethodSelf, entity.DeliveryMethodPlatformRecommendation, entity.DeliveryMethodThirdParty).Error("无效的发货方式"),
+			validation.By(func(value interface{}) error {
+				v, ok := value.(null.Int)
+				if !ok || !v.Valid {
+					return errors.New("无效的发货方式")
+				}
+
+				return validation.Validate(int(v.Int64), validation.In(entity.DeliveryMethodSelf, entity.DeliveryMethodPlatformRecommendation, entity.DeliveryMethodThirdParty).Error("无效的发货方式"))
+			}),
 		),
 		validation.Field(&m.DeliveryAddressId, validation.Required.Error("发货地址不能为空")),
 		validation.Field(&m.DeliveryOrderSnList,
