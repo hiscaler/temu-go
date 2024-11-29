@@ -157,7 +157,7 @@ func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, deliveryOrderSnList
 // BoxMark 箱唛信息
 func (s barcodeService) BoxMark(ctx context.Context, deliveryOrderSnList ...string) (items []entity.BoxMarkInfo, err error) {
 	params := BoxMarkBarcodeQueryParams{
-		ReturnDataKey:       null.BoolFrom(true),
+		ReturnDataKey:       null.BoolFrom(false),
 		DeliveryOrderSnList: deliveryOrderSnList,
 	}
 	if err = params.validate(); err != nil {
