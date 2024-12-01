@@ -11,6 +11,7 @@ type goodsService service
 
 type GoodsQueryParams struct {
 	normal.ParameterWithPager
+	Page                   int     `json:"page"`                             // 页码
 	Cat1Id                 int     `json:"cat1Id,omitempty"`                 // 一级分类 ID
 	Cat2Id                 int     `json:"cat2Id,omitempty"`                 // 二级分类 ID
 	Cat3Id                 int     `json:"cat3Id,omitempty"`                 // 三级分类 ID
