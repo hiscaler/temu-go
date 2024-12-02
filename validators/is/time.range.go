@@ -25,12 +25,12 @@ func TimeRange(startTime, endTime, timeLayout any) validation.RuleFunc {
 			return errors.New("无效的时间格式")
 		}
 
-		err := validation.Validate(start, validation.Date(layout).Error(fmt.Sprintf("无效的开始时间 %s 格式，有效格式为：%s", start, layout)))
+		err := validation.Validate(start, validation.Date(layout).Error(fmt.Sprintf("无效的开始时间（%s）格式，有效格式为：%s", start, layout)))
 		if err != nil {
 			return err
 		}
 
-		err = validation.Validate(end, validation.Date(layout).Error(fmt.Sprintf("无效的结束时间 %s 格式，有效格式为：%s", end, layout)))
+		err = validation.Validate(end, validation.Date(layout).Error(fmt.Sprintf("无效的结束时间（%s）格式，有效格式为：%s", end, layout)))
 		if err != nil {
 			return err
 		}
