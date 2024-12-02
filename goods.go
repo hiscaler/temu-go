@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"gopkg.in/guregu/null.v4"
 )
 
 // 商品数据服务
@@ -11,24 +12,28 @@ type goodsService service
 
 type GoodsQueryParams struct {
 	normal.ParameterWithPager
-	Page                   int     `json:"page"`                             // 页码
-	Cat1Id                 int     `json:"cat1Id,omitempty"`                 // 一级分类 ID
-	Cat2Id                 int     `json:"cat2Id,omitempty"`                 // 二级分类 ID
-	Cat3Id                 int     `json:"cat3Id,omitempty"`                 // 三级分类 ID
-	Cat4Id                 int     `json:"cat4Id,omitempty"`                 // 四级分类 ID
-	Cat5Id                 int     `json:"cat5Id,omitempty"`                 // 五级分类 ID
-	Cat6Id                 int     `json:"cat6Id,omitempty"`                 // 六级分类 ID
-	Cat7Id                 int     `json:"cat7Id,omitempty"`                 // 七级分类 ID
-	Cat8Id                 int     `json:"cat8Id,omitempty"`                 // 八级分类 ID
-	Cat9Id                 int     `json:"cat9Id,omitempty"`                 // 九级分类 ID
-	Cat10Id                int     `json:"cat10Id,omitempty"`                // 十级分类 ID
-	SkcExtCode             string  `json:"skcExtCode,omitempty"`             // 货品 SKC 外部编码
-	SupportPersonalization int     `json:"supportPersonalization,omitempty"` // 是否支持定制品模板
-	BindSiteIds            []int   `json:"bindSiteIds,omitempty"`            // 经营站点
-	ProductName            string  `json:"productName,omitempty"`            // 货品名称
-	ProductSkcIds          []int64 `json:"productSkcIds,omitempty"`          // SKC 列表
-	CreatedAtStart         int     `json:"createdAtStart,omitempty"`         // 创建时间开始，毫秒级时间戳
-	CreatedAtEnd           int     `json:"createdAtEnd,omitempty"`           // 创建时间结束，毫秒级时间戳
+	Page                   int      `json:"page"`                             // 页码
+	Cat1Id                 int      `json:"cat1Id,omitempty"`                 // 一级分类 ID
+	Cat2Id                 int      `json:"cat2Id,omitempty"`                 // 二级分类 ID
+	Cat3Id                 int      `json:"cat3Id,omitempty"`                 // 三级分类 ID
+	Cat4Id                 int      `json:"cat4Id,omitempty"`                 // 四级分类 ID
+	Cat5Id                 int      `json:"cat5Id,omitempty"`                 // 五级分类 ID
+	Cat6Id                 int      `json:"cat6Id,omitempty"`                 // 六级分类 ID
+	Cat7Id                 int      `json:"cat7Id,omitempty"`                 // 七级分类 ID
+	Cat8Id                 int      `json:"cat8Id,omitempty"`                 // 八级分类 ID
+	Cat9Id                 int      `json:"cat9Id,omitempty"`                 // 九级分类 ID
+	Cat10Id                int      `json:"cat10Id,omitempty"`                // 十级分类 ID
+	SkcExtCode             string   `json:"skcExtCode,omitempty"`             // 货品 SKC 外部编码
+	SupportPersonalization int      `json:"supportPersonalization,omitempty"` // 是否支持定制品模板
+	BindSiteIds            []int    `json:"bindSiteIds,omitempty"`            // 经营站点
+	ProductName            string   `json:"productName,omitempty"`            // 货品名称
+	ProductSkcIds          []int64  `json:"productSkcIds,omitempty"`          // SKC 列表
+	QuickSellAgtSignStatus null.Int `json:"quickSellAgtSignStatus,omitempty"` // 快速售卖协议签署状态 0-未签署 1-已签署
+	MatchJitMode           null.Int `json:"matchJitMode,omitempty"`           // 是否命中 JIT 模式
+	SkcSiteStatus          null.Int `json:"skcSiteStatus,omitempty"`          // skc 加站点状态 (0: 未加入站点, 1: 已加入站点)
+	CreatedAtStart         int      `json:"createdAtStart,omitempty"`         // 创建时间开始，毫秒级时间戳
+	CreatedAtEnd           int      `json:"createdAtEnd,omitempty"`           // 创建时间结束，毫秒级时间戳
+
 }
 
 func (m GoodsQueryParams) validate() error {

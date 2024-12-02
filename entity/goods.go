@@ -47,8 +47,11 @@ type GoodsSkuSummary struct {
 		ProductSkuSensitiveLimit any `json:"productSkuSensitiveLimit"`
 		ProductSkuWmsVolumeLabel any `json:"productSkuWmsVolumeLabel"`
 	} `json:"productSkuWhExtAttr"`
-	VirtualStock       int             `json:"virtualStock"`
-	ProductSkuSpecList []Specification `json:"productSkuSpecList"`
+	VirtualStock          int             `json:"virtualStock"`
+	ProductSkuSpecList    []Specification `json:"productSkuSpecList"`
+	ProductSkuSaleExtAttr struct {
+		ProductSkuShippingMode int `json:"productSkuShippingMode"` // 1：卖家自发货、2：认证仓发货
+	} `json:"productSkuSaleExtAttr"` // 货品sku销售域扩展属性
 }
 
 type GoodsCategory struct {
@@ -60,7 +63,8 @@ type Goods struct {
 	ProductProperties []GoodsProperty `json:"productProperties"` // 货品普通属性
 	ProductId         int64           `json:"productId"`         // 货品 ID
 	ProductJitMode    struct {
-		QuickSellAgtSignStatus null.Int `json:"quickSellAgtSignStatus"` // 快速售卖协议签署状态 0-未签署 1-已签署
+		QuickSellAgtSignStatus null.Int `json:"quickSellAgtSignStatus"` // 快速售卖协议签署状态（0：未签署 1：已签署）
+		SignLatestJitVersion   bool     `json:"signLatestJitVersion"`   // 是否签署最新版本 JIT 预售协议
 		MatchJitMode           bool     `json:"matchJitMode"`           // 是否 JIT 模式
 	} `json:"productJitMode"` // 货品 JIT 模式信息
 	ProductSkuSummaries      []GoodsSkuSummary `json:"productSkuSummaries"`
