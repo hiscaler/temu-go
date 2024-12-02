@@ -3,7 +3,6 @@ package temu
 import (
 	"context"
 	"errors"
-	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -77,6 +76,24 @@ func (m PurchaseOrderQueryParams) validate() error {
 				}),
 			),
 		),
+		validation.Field(&m.StatusList,
+			validation.When(
+				len(m.StatusList) != 0,
+				validation.Each(validation.In(
+					entity.PurchaseOrderStatusWaitingMerchantReceive,
+					entity.PurchaseOrderStatusMerchantReceived,
+					entity.PurchaseOrderStatusMerchantSend,
+					entity.PurchaseOrderStatusPlatformReceived,
+					entity.PurchaseOrderStatusPlatformRejected,
+					entity.PurchaseOrderStatusPlatformReturned,
+					entity.PurchaseOrderStatusPlatformApproved,
+					entity.PurchaseOrderStatusPlatformPutInStorage,
+					entity.PurchaseOrderStatusDiscard,
+					entity.PurchaseOrderStatusTimeout,
+					entity.PurchaseOrderStatusCancel,
+				).Error("无效的状态")),
+			),
+		),
 		validation.Field(&m.SubPurchaseOrderSnList, validation.When(len(m.SubPurchaseOrderSnList) != 0, validation.Each(validation.By(is.PurchaseOrderNumber())))),
 		validation.Field(&m.PurchaseStockType,
 			validation.When(m.PurchaseStockType.Valid,
@@ -103,24 +120,14 @@ func (m PurchaseOrderQueryParams) validate() error {
 			),
 		),
 		validation.Field(&m.SourceList,
-			validation.When(len(m.SourceList) > 0, validation.By(func(value any) error {
-				sources, ok := value.([]int)
-				if !ok {
-					return errors.New("无效的下单来源")
-				}
-
-				validSources := map[int]any{
-					entity.PurchaseOrderSourceOperationalStaff: nil,
-					entity.PurchaseOrderSourceSeller:           nil,
-					entity.PurchaseOrderSourcePlatform:         nil,
-				}
-				for _, source := range sources {
-					if _, ok = validSources[source]; !ok {
-						return fmt.Errorf("无效的下单来源：%d", source)
-					}
-				}
-				return nil
-			})),
+			validation.When(
+				len(m.SourceList) > 0,
+				validation.Each(validation.In(
+					entity.PurchaseOrderSourceOperationalStaff,
+					entity.PurchaseOrderSourceSeller,
+					entity.PurchaseOrderSourcePlatform,
+				).Error("无效的下单来源")),
+			),
 		),
 		validation.Field(&m.OrderType,
 			validation.When(m.OrderType.Valid, validation.By(func(value interface{}) error {
