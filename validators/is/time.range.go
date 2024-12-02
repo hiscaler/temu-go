@@ -2,6 +2,7 @@ package is
 
 import (
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"time"
 )
@@ -24,22 +25,22 @@ func TimeRange(startTime, endTime, timeLayout any) validation.RuleFunc {
 			return errors.New("无效的时间格式")
 		}
 
-		err := validation.Validate(start, validation.Date(layout).Error("无效的开始时间格式"))
+		err := validation.Validate(start, validation.Date(layout).Error(fmt.Sprintf("无效的开始时间 %s 格式，有效格式为：%s", start, layout)))
 		if err != nil {
 			return err
 		}
 
-		err = validation.Validate(end, validation.Date(layout).Error("无效的结束时间格式"))
+		err = validation.Validate(end, validation.Date(layout).Error(fmt.Sprintf("无效的结束时间 %s 格式，有效格式为：%s", end, layout)))
 		if err != nil {
 			return err
 		}
 
-		sTime, err := time.Parse(layout, start)
+		sTime, err := time.ParseInLocation(layout, start, time.Local)
 		if err != nil {
 			return err
 		}
 
-		eTime, err := time.Parse(layout, end)
+		eTime, err := time.ParseInLocation(layout, end, time.Local)
 		if err != nil {
 			return err
 		}

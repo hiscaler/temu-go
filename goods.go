@@ -2,9 +2,13 @@ package temu
 
 import (
 	"context"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
+	"strconv"
+	"time"
 )
 
 // 商品数据服务
@@ -31,21 +35,34 @@ type GoodsQueryParams struct {
 	QuickSellAgtSignStatus null.Int `json:"quickSellAgtSignStatus,omitempty"` // 快速售卖协议签署状态 0-未签署 1-已签署
 	MatchJitMode           null.Int `json:"matchJitMode,omitempty"`           // 是否命中 JIT 模式
 	SkcSiteStatus          null.Int `json:"skcSiteStatus,omitempty"`          // skc 加站点状态 (0: 未加入站点, 1: 已加入站点)
-	CreatedAtStart         int      `json:"createdAtStart,omitempty"`         // 创建时间开始，毫秒级时间戳
-	CreatedAtEnd           int      `json:"createdAtEnd,omitempty"`           // 创建时间结束，毫秒级时间戳
-
+	CreatedAtStart         string   `json:"createdAtStart,omitempty"`         // 创建时间开始，毫秒级时间戳
+	CreatedAtEnd           string   `json:"createdAtEnd,omitempty"`           // 创建时间结束，毫秒级时间戳
 }
 
 func (m GoodsQueryParams) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.CreatedAtStart,
+			validation.When(m.CreatedAtStart != "" || m.CreatedAtEnd != "", validation.By(is.TimeRange(m.CreatedAtStart, m.CreatedAtEnd, time.DateOnly))),
+		),
+	)
 }
 
 // Query 货品列表查询
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#SjadVR
 func (s goodsService) Query(ctx context.Context, params GoodsQueryParams) (items []entity.Goods, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
+	if params.Page <= 0 {
+		params.Page = 1
+	}
 	if err = params.validate(); err != nil {
 		return
+	}
+
+	if params.CreatedAtStart != "" && params.CreatedAtEnd != "" {
+		t, _ := time.ParseInLocation(time.DateTime, params.CreatedAtStart+" 00:00:00", time.Local)
+		params.CreatedAtStart = strconv.Itoa(int(t.UnixMilli()))
+		t, _ = time.ParseInLocation(time.DateTime, params.CreatedAtEnd+" 23:59:59", time.Local)
+		params.CreatedAtEnd = strconv.Itoa(int(t.UnixMilli()))
 	}
 	var result = struct {
 		normal.Response

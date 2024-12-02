@@ -113,15 +113,22 @@ func generateSign(values map[string]any, appSecret string) map[string]any {
 	return values
 }
 
+var loc *time.Location
+
+func init() {
+	var err error
+	loc, err = time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		loc = time.FixedZone("CST", 8*3600)
+	}
+	time.Local = loc
+}
+
 func New(config config.Config) *Client {
 	logger := log.New(os.Stdout, "[ Temu ] ", log.LstdFlags|log.Llongfile)
 	client := &Client{
 		Debug:  config.Debug,
 		Logger: logger,
-	}
-	loc, err := time.LoadLocation("Asia/Shanghai")
-	if err != nil {
-		loc = time.FixedZone("CST", 8*3600)
 	}
 	client.TimeLocation = loc
 
