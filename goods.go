@@ -100,3 +100,88 @@ func (s goodsService) One(ctx context.Context, productSkcId int64) (item entity.
 
 	return item, ErrNotFound
 }
+
+// 添加货品
+
+type GoodsCreateRequest struct {
+	Cat1Id                   int `json:"cat1Id"`  // 一级类目id
+	Cat2Id                   int `json:"cat2Id"`  // 二级类目id
+	Cat3Id                   int `json:"cat3Id"`  // 三级类目id
+	Cat4Id                   int `json:"cat4Id"`  // 四级类目id（没有的情况传 0）
+	Cat5Id                   int `json:"cat5Id"`  // 五级类目id（没有的情况传 0）
+	Cat6Id                   int `json:"cat6Id"`  // 六级类目id（没有的情况传 0）
+	Cat7Id                   int `json:"cat7Id"`  // 七级类目id（没有的情况传 0）
+	Cat8Id                   int `json:"cat8Id"`  // 八级类目id（没有的情况传 0）
+	Cat9Id                   int `json:"cat9Id"`  // 九级类目id（没有的情况传 0）
+	Cat10Id                  int `json:"cat10Id"` // 十级类目id（没有的情况传 0）
+	ProductWarehouseRouteReq struct {
+		TargetRouteList []struct {
+			SiteIdList  []int  `json:"siteIdList"`  // 站点列表
+			WarehouseId string `json:"warehouseId"` // 仓库ID，使用goods.warehouse.list.get查询
+		} `json:"targetRouteList"` // 商品的目标路由列表
+	} `json:"productWarehouseRouteReq"` // 库存仓库配置对象。	半托管发品必传，全托管店铺不需要传这个属性，传入会报错。
+	ProductI18nReqs struct {
+		Language    string `json:"language"`    // 语言编码，en-美国
+		ProductName string `json:"productName"` // 对应语言的商品标题
+	} `json:"productI18nReqs"`                              // 多语言标题设置
+	ProductName                string `json:"productName "` // 货品名称
+	ProductCarouseVideoReqList []struct {
+		Vid      string `json:"vid"`      // 视频 VID
+		CoverUrl string `json:"coverUrl"` // 视频封面图
+		VideoUrl string `json:"videoUrl"` // 视频 URL
+		Width    int    `json:"width"`    // 视频宽度
+		Height   int    `json:"height"`   // 视频高度
+	} `json:"productCarouseVideoReqList"` // 商品主图视频 关于如何上传视频，请对接视频上传相关接口，获取图片相关参数即可用于此处入参 https://seller.kuajingmaihuo.com/sop/view/852640595329867111
+	ProductCustomReq struct {
+		GoodsLabelName   string `json:"goodsLabelName"`   // 货品关务标签名称
+		IsRecommendedTag bool   `json:"isRecommendedTag"` // 是否使用推荐标签
+	} `json:"productCustomReq"`                               // 货品关务标签
+	CarouselImageUrls     []string `json:"carouselImageUrls"` // 货品轮播图
+	CarouselImageI18nReqs []struct {
+		ImgUrlList []string `json:"imgUrlList"` // 图片列表
+		Language   string   `json:"language"`   // 语言
+	} `json:"carouselImageI18nReqs"` // 货品 SPU 多语言轮播图，服饰类不传，非服饰必传
+	ProductOuterPackageImageReqs []struct {
+		ImageUrl string `json:"imageUrl"` // 图片链接，通过图片上传接口，imageBizType=1获取
+	} `json:"productOuterPackageImageReqs"`            // 外包装图片
+	MaterialImgUrl      string `json:"materialImgUrl"` // 素材图
+	ProductPropertyReqs []struct {
+		TemplatePid      int64  `json:"templatePid"`      // 模板属性id
+		PID              int64  `json:"pid"`              // 属性 id
+		RefPid           int64  `json:"refPid"`           // 引用属性 id
+		PropName         string `json:"propName"`         // 引用属性名
+		Vid              int64  `json:"vid"`              // 基础属性值id，没有的情况传0
+		PropValue        string `json:"propValue"`        // 基础属性值
+		ValueUnit        string `json:"valueUnit"`        // 属性值单位，没有的情况传空字符串
+		NumberInputValue string `json:"numberInputValue"` // 属性输入值，例如：65.66
+		ValueExtendInfo  string `json:"valueExtendInfo"`  // 属性扩展信息，attrs.get返回
+	} `json:"productPropertyReqs"` // 货品属性
+	ProductSpecPropertyReqs []struct {
+		TemplatePid      int64  `json:"templatePid"`      // 模板属性id
+		PID              int64  `json:"pid"`              // 属性 id
+		RefPid           int64  `json:"refPid"`           // 引用属性 id
+		PropName         string `json:"propName"`         // 引用属性名
+		Vid              int64  `json:"vid"`              // 基础属性值id，没有的情况传0
+		PropValue        string `json:"propValue"`        // 基础属性值
+		ParentSpecId     int64  `json:"parentSpecId"`     // 父规格id
+		ParentSpecName   string `json:"parentSpecName"`   // 父规格名称
+		SpecId           int64  `json:"specId"`           // 规格id
+		SpecName         string `json:"specName"`         // 规格名称
+		ValueGroupId     int    `json:"valueGroupId"`     // 属性值组id，没有的情况传0
+		ValueGroupName   string `json:"valueGroupName"`   // 属性值组名称，没有的情况传空字符串
+		ValueUnit        string `json:"valueUnit"`        // 属性值单位，没有的情况传空字符串
+		NumberInputValue string `json:"numberInputValue"` // 属性输入值，例如：65.66
+		ValueExtendInfo  string `json:"valueExtendInfo"`  // 属性组扩展信息（色板）
+	} `json:"productSpecPropertyReqs"` // 货品规格属性
+	ProductWhExtAttrReq struct {
+		OuterGoodsUrl string `json:"outerGoodsUrl"` //  站外商品链接
+		ProductOrigin struct {
+			CountryShortName string `json:"countryShortName"` // 国家简称 (二字简码)
+		} `json:"productOrigin"` // 货品产地 (灰度内必传)，请注意，日本站点发品必须传产地，否则会被拦截
+	} `json:"productWhExtAttrReq"` // 货品仓配供应链侧扩展属性请求
+}
+
+// Create 添加货品
+func (s goodsService) Create(ctx context.Context, name string) error {
+	return nil
+}
