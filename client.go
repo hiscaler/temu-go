@@ -67,6 +67,7 @@ type services struct {
 	GoodsBrand              goodsBrandService
 	GoodsLifeCycle          goodsLifeCycleService
 	GoodsTopSelling         goodsTopSellingService
+	Product                 productService
 	Logistics               logisticsService
 	GoodsSizeChart          goodsSizeChartService
 	GoodsSizeChartClass     goodsSizeChartClassService
@@ -235,17 +236,23 @@ func New(config config.Config) *Client {
 		httpClient: httpClient,
 	}
 	client.Services = services{
-		ShipOrder:               (shipOrderService)(xService),
-		ShipOrderStaging:        (shipOrderStagingService)(xService),
-		ShipOrderPacking:        (shipOrderPackingService)(xService),
-		ShipOrderPackage:        (shipOrderPackageService)(xService),
-		Barcode:                 (barcodeService)(xService),
-		PurchaseOrder:           (purchaseOrderService)(xService),
-		GoodsSales:              (goodsSalesService)(xService),
-		GoodsCertification:      (goodsCertificationService)(xService),
-		GoodsBrand:              (goodsBrandService)(xService),
-		GoodsLifeCycle:          (goodsLifeCycleService)(xService),
-		GoodsTopSelling:         (goodsTopSellingService)(xService),
+		ShipOrder:          (shipOrderService)(xService),
+		ShipOrderStaging:   (shipOrderStagingService)(xService),
+		ShipOrderPacking:   (shipOrderPackingService)(xService),
+		ShipOrderPackage:   (shipOrderPackageService)(xService),
+		Barcode:            (barcodeService)(xService),
+		PurchaseOrder:      (purchaseOrderService)(xService),
+		GoodsSales:         (goodsSalesService)(xService),
+		GoodsCertification: (goodsCertificationService)(xService),
+		GoodsBrand:         (goodsBrandService)(xService),
+		GoodsLifeCycle:     (goodsLifeCycleService)(xService),
+		GoodsTopSelling:    (goodsTopSellingService)(xService),
+		Product: productService{
+			Data:      (goodsService)(xService),
+			Brand:     (goodsBrandService)(xService),
+			LifeCycle: (goodsLifeCycleService)(xService),
+			Sales:     (goodsSalesService)(xService),
+		},
 		Logistics:               (logisticsService)(xService),
 		GoodsSizeChart:          (goodsSizeChartService)(xService),
 		GoodsSizeChartClass:     (goodsSizeChartClassService)(xService),
