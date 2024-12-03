@@ -63,7 +63,7 @@ func (s goodsCertificationService) Query(ctx context.Context, params GoodsCertif
 
 type GoodsCertificationNeedUploadItemRequest struct {
 	CertType  int   `json:"certType"`  // 资质类型
-	ProductId int64 `json:"productId"` // 货品id
+	ProductId int64 `json:"productId"` // 货品 ID
 }
 
 func (m GoodsCertificationNeedUploadItemRequest) validate() error {

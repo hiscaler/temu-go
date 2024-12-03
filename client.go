@@ -64,6 +64,9 @@ type services struct {
 	PurchaseOrder           purchaseOrderService
 	GoodsSales              goodsSalesService
 	GoodsCertification      goodsCertificationService
+	GoodsBrand              goodsBrandService
+	GoodsLifeCycle          goodsLifeCycleService
+	GoodsTopSelling         goodsTopSellingService
 	Logistics               logisticsService
 	GoodsSizeChart          goodsSizeChartService
 	GoodsSizeChartClass     goodsSizeChartClassService
@@ -240,6 +243,9 @@ func New(config config.Config) *Client {
 		PurchaseOrder:           (purchaseOrderService)(xService),
 		GoodsSales:              (goodsSalesService)(xService),
 		GoodsCertification:      (goodsCertificationService)(xService),
+		GoodsBrand:              (goodsBrandService)(xService),
+		GoodsLifeCycle:          (goodsLifeCycleService)(xService),
+		GoodsTopSelling:         (goodsTopSellingService)(xService),
 		Logistics:               (logisticsService)(xService),
 		GoodsSizeChart:          (goodsSizeChartService)(xService),
 		GoodsSizeChartClass:     (goodsSizeChartClassService)(xService),

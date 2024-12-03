@@ -51,19 +51,14 @@ type GoodsSkuSummary struct {
 	ProductSkuSpecList    []Specification `json:"productSkuSpecList"`
 	ProductSkuSaleExtAttr struct {
 		ProductSkuShippingMode int `json:"productSkuShippingMode"` // 1：卖家自发货、2：认证仓发货
-	} `json:"productSkuSaleExtAttr"` // 货品sku销售域扩展属性
-}
-
-type GoodsCategory struct {
-	CatId   int    `json:"catId"`   // 类目 ID
-	CatName string `json:"catName"` // 类目名称
+	} `json:"productSkuSaleExtAttr"` // 货品 sku 销售域扩展属性
 }
 
 type Goods struct {
 	ProductProperties []GoodsProperty `json:"productProperties"` // 货品普通属性
 	ProductId         int64           `json:"productId"`         // 货品 ID
 	ProductJitMode    struct {
-		QuickSellAgtSignStatus null.Int `json:"quickSellAgtSignStatus"` // 快速售卖协议签署状态（0：未签署 1：已签署）
+		QuickSellAgtSignStatus null.Int `json:"quickSellAgtSignStatus"` // 快速售卖协议签署状态（0：未签署、1：已签署）
 		SignLatestJitVersion   bool     `json:"signLatestJitVersion"`   // 是否签署最新版本 JIT 预售协议
 		MatchJitMode           bool     `json:"matchJitMode"`           // 是否 JIT 模式
 	} `json:"productJitMode"` // 货品 JIT 模式信息
@@ -73,19 +68,19 @@ type Goods struct {
 	ProductSemiManaged       any               `json:"productSemiManaged"`
 	IsSupportPersonalization bool              `json:"isSupportPersonalization"`
 	ExtCode                  string            `json:"extCode"` // 货品 SKC 外部编码
-	LeafCat                  GoodsCategory     `json:"leafCat"` // 叶子类目
+	LeafCat                  SimpleCategory    `json:"leafCat"` // 叶子类目
 	Categories               struct {
-		Cat1    GoodsCategory `json:"cat1"`
-		Cat2    GoodsCategory `json:"cat2"`
-		Cat3    GoodsCategory `json:"cat3"`
-		Cat4    GoodsCategory `json:"cat4"`
-		Cat5    GoodsCategory `json:"cat5"`
-		Cat6    GoodsCategory `json:"cat6"`
-		Cat7    GoodsCategory `json:"cat7"`
-		Cat8    GoodsCategory `json:"cat8"`
-		Cat9    GoodsCategory `json:"cat9"`
-		Cat10   GoodsCategory `json:"cat10"`
-		LeafCat any           `json:"leafCat"`
+		Cat1    SimpleCategory `json:"cat1"`
+		Cat2    SimpleCategory `json:"cat2"`
+		Cat3    SimpleCategory `json:"cat3"`
+		Cat4    SimpleCategory `json:"cat4"`
+		Cat5    SimpleCategory `json:"cat5"`
+		Cat6    SimpleCategory `json:"cat6"`
+		Cat7    SimpleCategory `json:"cat7"`
+		Cat8    SimpleCategory `json:"cat8"`
+		Cat9    SimpleCategory `json:"cat9"`
+		Cat10   SimpleCategory `json:"cat10"`
+		LeafCat any            `json:"leafCat"`
 	} `json:"categories"`
 	ProductSkcId    int64  `json:"productSkcId"`
 	MatchSkcJitMode bool   `json:"matchSkcJitMode"`
