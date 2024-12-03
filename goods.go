@@ -123,7 +123,7 @@ type GoodsCreateRequest struct {
 	ProductI18nReqs struct {
 		Language    string `json:"language"`    // 语言编码，en-美国
 		ProductName string `json:"productName"` // 对应语言的商品标题
-	} `json:"productI18nReqs"`                              // 多语言标题设置
+	} `json:"productI18nReqs"` // 多语言标题设置
 	ProductName                string `json:"productName "` // 货品名称
 	ProductCarouseVideoReqList []struct {
 		Vid      string `json:"vid"`      // 视频 VID
@@ -135,7 +135,7 @@ type GoodsCreateRequest struct {
 	ProductCustomReq struct {
 		GoodsLabelName   string `json:"goodsLabelName"`   // 货品关务标签名称
 		IsRecommendedTag bool   `json:"isRecommendedTag"` // 是否使用推荐标签
-	} `json:"productCustomReq"`                               // 货品关务标签
+	} `json:"productCustomReq"` // 货品关务标签
 	CarouselImageUrls     []string `json:"carouselImageUrls"` // 货品轮播图
 	CarouselImageI18nReqs []struct {
 		ImgUrlList []string `json:"imgUrlList"` // 图片列表
@@ -143,7 +143,7 @@ type GoodsCreateRequest struct {
 	} `json:"carouselImageI18nReqs"` // 货品 SPU 多语言轮播图，服饰类不传，非服饰必传
 	ProductOuterPackageImageReqs []struct {
 		ImageUrl string `json:"imageUrl"` // 图片链接，通过图片上传接口，imageBizType=1获取
-	} `json:"productOuterPackageImageReqs"`            // 外包装图片
+	} `json:"productOuterPackageImageReqs"` // 外包装图片
 	MaterialImgUrl      string `json:"materialImgUrl"` // 素材图
 	ProductPropertyReqs []struct {
 		TemplatePid      int64  `json:"templatePid"`      // 模板属性id
@@ -184,4 +184,117 @@ type GoodsCreateRequest struct {
 // Create 添加货品
 func (s goodsService) Create(ctx context.Context, name string) error {
 	return nil
+}
+
+// 货品品牌
+
+type GoodsBrandQueryParams struct {
+	normal.ParameterWithPager
+	Page      int    `json:"page"`                // 页码
+	Vid       int64  `json:"vid,omitempty"`       // 搜索的属性id
+	BrandName string `json:"BrandName,omitempty"` // 搜索的品牌名称
+}
+
+func (m GoodsBrandQueryParams) validate() error {
+	return nil
+}
+
+// Brands 查询可绑定的品牌接口
+// https://seller.kuajingmaihuo.com/sop/view/750197804480663142#PjxWnZ
+func (s goodsService) Brands(ctx context.Context, params GoodsBrandQueryParams) (items []entity.GoodsBrand, total, totalPages int, isLastPage bool, err error) {
+	params.TidyPager()
+	if params.Page <= 0 {
+		params.Page = 1
+	}
+	if err = params.validate(); err != nil {
+		return
+	}
+
+	var result = struct {
+		normal.Response
+		Result struct {
+			Total     int                 `json:"total"`
+			PageItems []entity.GoodsBrand `json:"pageItems"`
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.goods.brand.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
+	}
+
+	items = result.Result.PageItems
+	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Total)
+	return
+}
+
+// 货品生命周期状态
+
+type GoodsLifeCycleQueryParams struct {
+	normal.ParameterWithPager
+	Page             int     `json:"pageNum"`          // 页码
+	ProductSkuIdList []int64 `json:"productSkuIdList"` // 货品 skuId 列表
+	MallId           int64   `json:"mallId"`           // 商家店铺 ID
+}
+
+func (m GoodsLifeCycleQueryParams) validate() error {
+	return nil
+}
+
+// 查询货品生命周期状态（bg.product.search）
+// https://seller.kuajingmaihuo.com/sop/view/750197804480663142#CK9soN
+
+func (s goodsService) LifeCycle(ctx context.Context, params GoodsBrandQueryParams) (items []entity.GoodsLifeCycle, total, totalPages int, isLastPage bool, err error) {
+	params.TidyPager()
+	if params.Page <= 0 {
+		params.Page = 1
+	}
+	if err = params.validate(); err != nil {
+		return
+	}
+
+	var result = struct {
+		normal.Response
+		Result struct {
+			Total    int                     `json:"total"`
+			DataList []entity.GoodsLifeCycle `json:"dataList"`
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.product.search")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
+	}
+
+	items = result.Result.DataList
+	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Total)
+	return
+}
+
+// 批量查询爆款售罄商品（bg.goods.topselling.soldout.get）
+// https://seller.kuajingmaihuo.com/sop/view/750197804480663142#1cxFkn
+
+func (s goodsService) TopSellingSoldOut(ctx context.Context) (items []entity.GoodsTopSellingSoldOut, err error) {
+	var result = struct {
+		normal.Response
+		Result struct {
+			SellOutProducts []entity.GoodsTopSellingSoldOut `json:"sellOutProducts"`
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetResult(&result).
+		Post("bg.goods.topselling.soldout.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
+	}
+
+	items = result.Result.SellOutProducts
+	return
 }

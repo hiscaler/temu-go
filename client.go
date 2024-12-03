@@ -312,7 +312,7 @@ func errorWrap(code int, message string) error {
 		message = "未设置 App Key"
 	case NoAccessTokenError:
 		message = "未设置 Access Token"
-	case InvalidAccessTokenError:
+	case InvalidAccessTokenError, 7000020:
 		message = "无效的 Access Token"
 	case AccessTokenKeyUnmatched:
 		message = "Access Token 和 Key 不匹配"
