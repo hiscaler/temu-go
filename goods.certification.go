@@ -9,6 +9,7 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
+// 资质服务
 type goodsCertificationService service
 
 type GoodsCertificationQueryParams struct {
