@@ -285,20 +285,20 @@ func invalidInput(e error) error {
 	}
 
 	var errs validation.Errors
-	if errors.As(e, &errs) {
-		var messages []string
-		var fields []string
-		for field := range errs {
-			fields = append(fields, field)
-		}
-		sort.Strings(fields)
-		for _, field := range fields {
-			messages = append(messages, errs[field].Error())
-		}
-		return errors.New(strings.Join(messages, "."))
+	if !errors.As(e, &errs) {
+		return e
 	}
 
-	return e
+	var messages []string
+	var fields []string
+	for field := range errs {
+		fields = append(fields, field)
+	}
+	sort.Strings(fields)
+	for _, field := range fields {
+		messages = append(messages, errs[field].Error())
+	}
+	return errors.New(strings.Join(messages, "."))
 }
 
 func recheckError(resp *resty.Response, result normal.Response, e error) (err error) {
