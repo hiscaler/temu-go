@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"regexp"
 )
 
 // PackageNumber 包裹号数据验证
@@ -18,7 +17,7 @@ func PackageNumber() validation.RuleFunc {
 			return errors.New("包裹号不能为空")
 		}
 
-		if matched, err := regexp.MatchString("^(?i)pc[0-9]{13}$", s); err != nil || !matched {
+		if !packageNumberPattern.MatchString(s) {
 			return fmt.Errorf("无效的包裹号：%s", s)
 		}
 		return nil

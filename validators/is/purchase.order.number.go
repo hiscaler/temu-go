@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"regexp"
 )
 
 // PurchaseOrderNumber 备货单号数据验证
@@ -17,7 +16,7 @@ func PurchaseOrderNumber() validation.RuleFunc {
 		if s == "" {
 			return errors.New("备货单号不能为空")
 		}
-		if matched, err := regexp.MatchString("^(?i)wb[0-9]{12,13}$", s); err != nil || !matched {
+		if !purchaseOrderNumberPattern.MatchString(s) {
 			return fmt.Errorf("无效的备货单号：%s", s)
 		}
 		return nil
