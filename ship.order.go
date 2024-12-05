@@ -49,6 +49,26 @@ func (m ShipOrderQueryParams) validate() error {
 				return validation.Validate(int(v.Int64), validation.In(entity.UrgencyTypeNormal, entity.UrgencyTypeUrgency).Error("无效的加急类型"))
 			}),
 		)),
+		validation.Field(&m.IsVim, validation.When(
+			m.IsVim.Valid,
+			validation.By(func(value interface{}) error {
+				v, ok := value.(null.Int)
+				if !ok {
+					return errors.New("无效的 VMI")
+				}
+				return validation.Validate(int(v.Int64), validation.In(entity.FalseNumber, entity.TrueNumber).Error("无效的 VMI"))
+			}),
+		)),
+		validation.Field(&m.OrderType,
+			validation.When(m.OrderType.Valid, validation.By(func(value interface{}) error {
+				v, ok := value.(null.Int)
+				if !ok {
+					return errors.New("无效的发货单类型")
+				}
+
+				return validation.Validate(int(v.Int64), validation.In(entity.StockTypeNormal, entity.StockTypeJIT, entity.StockTypeCustomized).Error("无效的发货单类型"))
+			})),
+		),
 	)
 }
 
