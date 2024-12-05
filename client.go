@@ -99,9 +99,7 @@ func generateSign(values map[string]any, appSecret string) map[string]any {
 		keys[i] = k
 		i++
 	}
-	sort.Slice(keys, func(i, j int) bool {
-		return keys[i] < keys[j]
-	})
+	sort.Strings(keys)
 	sb := strings.Builder{}
 	sb.WriteString(appSecret)
 	for _, key := range keys {
@@ -288,16 +286,16 @@ func invalidInput(e error) error {
 
 	var errs validation.Errors
 	if errors.As(e, &errs) {
-		var details []string
+		var messages []string
 		var fields []string
 		for field := range errs {
 			fields = append(fields, field)
 		}
 		sort.Strings(fields)
 		for _, field := range fields {
-			details = append(details, errs[field].Error())
+			messages = append(messages, errs[field].Error())
 		}
-		return errors.New(strings.Join(details, "."))
+		return errors.New(strings.Join(messages, "."))
 	}
 
 	return e
