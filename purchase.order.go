@@ -133,10 +133,10 @@ func (m PurchaseOrderQueryParams) validate() error {
 			validation.When(m.OrderType.Valid, validation.By(func(value interface{}) error {
 				v, ok := value.(null.Int)
 				if !ok {
-					return errors.New("无效的订单类型")
+					return errors.New("无效的备货单类型")
 				}
 
-				return validation.Validate(int(v.Int64), validation.In(entity.StockTypeNormal, entity.StockTypeJIT, entity.StockTypeCustomized).Error("无效的订单类型"))
+				return validation.Validate(int(v.Int64), validation.In(entity.StockTypeNormal, entity.StockTypeJIT, entity.StockTypeCustomized).Error("无效的备货单类型"))
 			})),
 		),
 	)
@@ -163,6 +163,7 @@ func (s purchaseOrderService) Query(ctx context.Context, params PurchaseOrderQue
 		params.OrderType = null.NewInt(0, false)
 	}
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 	var result = struct {

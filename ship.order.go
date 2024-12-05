@@ -93,6 +93,7 @@ func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams
 		params.OrderType = null.NewInt(0, false)
 	}
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

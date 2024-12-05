@@ -55,6 +55,7 @@ func (s goodsService) Query(ctx context.Context, params GoodsQueryParams) (items
 		params.Page = 1
 	}
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

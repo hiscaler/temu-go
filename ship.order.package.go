@@ -32,6 +32,7 @@ func (m ShipOrderPackageQueryParams) validate() error {
 func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderSn string) (items []entity.ShipOrderPackage, err error) {
 	params := ShipOrderPackageQueryParams{DeliveryOrderSn: deliveryOrderSn}
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

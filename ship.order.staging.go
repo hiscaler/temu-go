@@ -77,6 +77,7 @@ func (s shipOrderStagingService) Query(ctx context.Context, params ShipOrderStag
 		params.OrderType = null.NewInt(0, false)
 	}
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

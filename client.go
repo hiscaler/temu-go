@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-resty/resty/v2"
 	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/temu-go/config"
@@ -278,6 +279,28 @@ func parseResponseTotal(currentPage, pageSize, total int) (n, totalPages int, is
 
 	totalPages = (total / pageSize) + 1
 	return total, totalPages, currentPage >= totalPages
+}
+
+func invalidInput(e error) error {
+	if e == nil {
+		return e
+	}
+
+	var errs validation.Errors
+	if errors.As(e, &errs) {
+		var details []string
+		var fields []string
+		for field := range errs {
+			fields = append(fields, field)
+		}
+		sort.Strings(fields)
+		for _, field := range fields {
+			details = append(details, errs[field].Error())
+		}
+		return errors.New(strings.Join(details, "."))
+	}
+
+	return e
 }
 
 func recheckError(resp *resty.Response, result normal.Response, e error) (err error) {

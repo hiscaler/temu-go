@@ -31,6 +31,7 @@ func (s goodsLifeCycleService) Query(ctx context.Context, params GoodsBrandQuery
 		params.Page = 1
 	}
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

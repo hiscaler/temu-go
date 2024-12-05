@@ -31,6 +31,7 @@ func (m NormalGoodsBarcodeQueryParams) validate() error {
 func (s barcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
 	params.TidyPager()
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 
@@ -87,6 +88,7 @@ func (m CustomGoodsBarcodeQueryParams) validate() error {
 func (s barcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
 	params.TidyPager()
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 
@@ -135,6 +137,7 @@ func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, deliveryOrderSnList
 		DeliveryOrderSnList: deliveryOrderSnList,
 	}
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 
@@ -161,6 +164,7 @@ func (s barcodeService) BoxMark(ctx context.Context, deliveryOrderSnList ...stri
 		DeliveryOrderSnList: deliveryOrderSnList,
 	}
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

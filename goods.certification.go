@@ -41,6 +41,7 @@ func (m GoodsCertificationQueryParams) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/649320516224723675#Oq8dC9
 func (s goodsCertificationService) Query(ctx context.Context, params GoodsCertificationQueryParams) (certifications []entity.GoodsCertification, err error) {
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 	var result = struct {

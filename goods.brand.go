@@ -30,6 +30,7 @@ func (s goodsBrandService) Query(ctx context.Context, params GoodsBrandQueryPara
 		params.Page = 1
 	}
 	if err = params.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 
