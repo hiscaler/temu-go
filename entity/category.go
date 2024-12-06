@@ -6,11 +6,11 @@ type SimpleCategory struct {
 }
 
 type Category struct {
-	CatID       int64  `json:"catId"`
-	CatName     string `json:"catName"`
+	CatId       int64  `json:"catId"`   // 分类 ID
+	CatName     string `json:"catName"` // 分类名称
 	CatType     int    `json:"catType"` //  1 是服饰，其他的非服饰
 	CatLevel    int    `json:"catLevel"`
-	ParentCatID int64  `json:"parentCatId"`
+	ParentCatId int64  `json:"parentCatId"`
 	IsLeaf      bool   `json:"isLeaf"` // true=叶子类目
 	IsHidden    bool   `json:"isHidden"`
 	HiddenType  int    `json:"hiddenType"`
