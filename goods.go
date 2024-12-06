@@ -104,6 +104,15 @@ func (s goodsService) One(ctx context.Context, productSkcId int64) (item entity.
 
 // 添加货品
 
+type ProductImageUrl struct {
+	ImgUrlList []string `json:"imgUrlList"` // 图片列表
+	Language   string   `json:"language"`   // 语言
+}
+
+func (m ProductImageUrl) validate() error {
+	return nil
+}
+
 type GoodsCreateRequest struct {
 	Cat1Id                   int `json:"cat1Id"`  // 一级类目id
 	Cat2Id                   int `json:"cat2Id"`  // 二级类目id
@@ -137,11 +146,8 @@ type GoodsCreateRequest struct {
 		GoodsLabelName   string `json:"goodsLabelName"`   // 货品关务标签名称
 		IsRecommendedTag bool   `json:"isRecommendedTag"` // 是否使用推荐标签
 	} `json:"productCustomReq"` // 货品关务标签
-	CarouselImageUrls     []string `json:"carouselImageUrls"` // 货品轮播图
-	CarouselImageI18nReqs []struct {
-		ImgUrlList []string `json:"imgUrlList"` // 图片列表
-		Language   string   `json:"language"`   // 语言
-	} `json:"carouselImageI18nReqs"` // 货品 SPU 多语言轮播图，服饰类不传，非服饰必传
+	CarouselImageUrls            []string          `json:"carouselImageUrls"`     // 货品轮播图
+	CarouselImageI18nReqs        []ProductImageUrl `json:"carouselImageI18nReqs"` // 货品 SPU 多语言轮播图，服饰类不传，非服饰必传
 	ProductOuterPackageImageReqs []struct {
 		ImageUrl string `json:"imageUrl"` // 图片链接，通过图片上传接口，imageBizType=1获取
 	} `json:"productOuterPackageImageReqs"` // 外包装图片
@@ -181,34 +187,18 @@ type GoodsCreateRequest struct {
 		} `json:"productOrigin"` // 货品产地 (灰度内必传)，请注意，日本站点发品必须传产地，否则会被拦截
 	} `json:"productWhExtAttrReq"` // 货品仓配供应链侧扩展属性请求
 	ProductSkcReqs []struct {
-		PreviewImgUrls                  []string `json:"previewImgUrls"` // SKC 轮播图列表
-		ProductSkcCarouselImageI18nReqs []struct {
-			ImgUrlList []string `json:"imgUrlList"` // 图片列表
-			Language   string   `json:"language"`   // 语言
-		} `json:"productSkcCarouselImageI18nReqs"` // SKC多语言轮播图，服饰类必传，非服饰不传
-		ColorImageUrl          string `json:"colorImageUrl"` // SKC 色块图，可通过（bg.colorimageurl.get）转换获取
-		MainProductSkuSpecReqs []struct {
-			ParentSpecId   int64  `json:"parentSpecId"`   // 父规格id
-			ParentSpecName string `json:"parentSpecName"` // 父规格名称
-			SpecId         int64  `json:"specId"`         // 规格id
-			SpecName       string `json:"specName"`       // 规格名称
-		} `json:"mainProductSkuSpecReqs"` //  主销售规格列表
-		IsBasePlate    int `json:"isBasePlate"` // 是否底板
-		ProductSkuReqs []struct {
-			ThumbUrl                   string `json:"thumbUrl"` // 预览图
-			ProductSkuThumbUrlI18nReqs []struct {
-				ImgUrlList []string `json:"imgUrlList"` // 图片列表
-				Language   string   `json:"language"`   // 语言
-			} `json:"productSkuThumbUrlI18nReqs"` // SKU多语言预览图，服饰类不传，非服饰非必传 （英国英语、中东英语必传）
-			CurrencyType       string `json:"currencyType"` // 币种 (CNY: 人民币, USD: 美元) (默认人民币)
-			ProductSkuSpecReqs []struct {
-				ParentSpecId   int64  `json:"parentSpecId"`   // 父规格id
-				ParentSpecName string `json:"parentSpecName"` // 父规格名称
-				SpecId         int64  `json:"specId"`         // 规格id
-				SpecName       string `json:"specName"`       // 规格名称
-			} `json:"productSkuSpecReqs"` // 货品sku规格列表
-			SupplierPrice      int64 `json:"supplierPrice"` // 全托供货价 （单位：人民币-分/美元-美分），半托不传
-			SiteSupplierPrices []struct {
+		PreviewImgUrls                  []string               `json:"previewImgUrls"`                  // SKC 轮播图列表
+		ProductSkcCarouselImageI18nReqs []ProductImageUrl      `json:"productSkcCarouselImageI18nReqs"` // SKC多语言轮播图，服饰类必传，非服饰不传
+		ColorImageUrl                   string                 `json:"colorImageUrl"`                   // SKC 色块图，可通过（bg.colorimageurl.get）转换获取
+		MainProductSkuSpecReqs          []entity.Specification `json:"mainProductSkuSpecReqs"`          //  主销售规格列表
+		IsBasePlate                     int                    `json:"isBasePlate"`                     // 是否底板
+		ProductSkuReqs                  []struct {
+			ThumbUrl                   string                 `json:"thumbUrl"`                   // 预览图
+			ProductSkuThumbUrlI18nReqs []ProductImageUrl      `json:"productSkuThumbUrlI18nReqs"` // SKU多语言预览图，服饰类不传，非服饰非必传 （英国英语、中东英语必传）
+			CurrencyType               string                 `json:"currencyType"`               // 币种 (CNY: 人民币, USD: 美元) (默认人民币)
+			ProductSkuSpecReqs         []entity.Specification `json:"productSkuSpecReqs"`         // 货品sku规格列表
+			SupplierPrice              int64                  `json:"supplierPrice"`              // 全托供货价 （单位：人民币-分/美元-美分），半托不传
+			SiteSupplierPrices         []struct {
 				SiteId        int64 `json:"siteId"`        // 申报价格站点id
 				SupplierPrice int64 `json:"supplierPrice"` // 站点申报价格，单位 人民币：分，美元：美分
 			} `json:"siteSupplierPrices"` // 站点供货价列表，半托必传
