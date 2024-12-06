@@ -180,6 +180,63 @@ type GoodsCreateRequest struct {
 			CountryShortName string `json:"countryShortName"` // 国家简称 (二字简码)
 		} `json:"productOrigin"` // 货品产地 (灰度内必传)，请注意，日本站点发品必须传产地，否则会被拦截
 	} `json:"productWhExtAttrReq"` // 货品仓配供应链侧扩展属性请求
+	ProductSkcReqs []struct {
+		PreviewImgUrls                  []string `json:"previewImgUrls"` // SKC 轮播图列表
+		ProductSkcCarouselImageI18nReqs []struct {
+			ImgUrlList []string `json:"imgUrlList"` // 图片列表
+			Language   string   `json:"language"`   // 语言
+		} `json:"productSkcCarouselImageI18nReqs"` // SKC多语言轮播图，服饰类必传，非服饰不传
+		ColorImageUrl          string `json:"colorImageUrl"` // SKC 色块图，可通过（bg.colorimageurl.get）转换获取
+		MainProductSkuSpecReqs []struct {
+			ParentSpecId   int64  `json:"parentSpecId"`   // 父规格id
+			ParentSpecName string `json:"parentSpecName"` // 父规格名称
+			SpecId         int64  `json:"specId"`         // 规格id
+			SpecName       string `json:"specName"`       // 规格名称
+		} `json:"mainProductSkuSpecReqs"` //  主销售规格列表
+		IsBasePlate    int `json:"isBasePlate"` // 是否底板
+		ProductSkuReqs []struct {
+			ThumbUrl                   string `json:"thumbUrl"` // 预览图
+			ProductSkuThumbUrlI18nReqs []struct {
+				ImgUrlList []string `json:"imgUrlList"` // 图片列表
+				Language   string   `json:"language"`   // 语言
+			} `json:"productSkuThumbUrlI18nReqs"` // SKU多语言预览图，服饰类不传，非服饰非必传 （英国英语、中东英语必传）
+			CurrencyType       string `json:"currencyType"` // 币种 (CNY: 人民币, USD: 美元) (默认人民币)
+			ProductSkuSpecReqs []struct {
+				ParentSpecId   int64  `json:"parentSpecId"`   // 父规格id
+				ParentSpecName string `json:"parentSpecName"` // 父规格名称
+				SpecId         int64  `json:"specId"`         // 规格id
+				SpecName       string `json:"specName"`       // 规格名称
+			} `json:"productSkuSpecReqs"` // 货品sku规格列表
+			SupplierPrice      int64 `json:"supplierPrice"` // 全托供货价 （单位：人民币-分/美元-美分），半托不传
+			SiteSupplierPrices []struct {
+				SiteId        int64 `json:"siteId"`        // 申报价格站点id
+				SupplierPrice int64 `json:"supplierPrice"` // 站点申报价格，单位 人民币：分，美元：美分
+			} `json:"siteSupplierPrices"` // 站点供货价列表，半托必传
+			ProductSkuStockQuantityReq struct {
+				WarehouseStockQuantityReqs []struct {
+					TargetStockAvailable int    `json:"targetStockAvailable"` // sku目标库存值（覆盖写）
+					WarehouseId          string `json:"warehouseId"`          // 仓库 ID
+				} `json:"warehouseStockQuantityReqs"` // 仓库存库存请求列表
+			} `json:"productSkuStockQuantityReq"` // 货品sku仓库库存，半托管发品必传
+			ProductSkuMultiPackReq struct {
+				NumberOfPieces          int `json:"numberOfPieces"` // 件数，单品默认是1
+				ProductSkuNetContentReq struct {
+					NetContentUnitCode int `json:"netContentUnitCode"` // 净含量单位，1：液体盎司，2：毫升，3：加仑，4：升，5：克，6：千克，7：常衡盎司，8：磅
+					NetContentNumber   int `json:"netContentNumber"`   // 净含量数值
+				} `json:"productSkuNetContentReq"` // 净含量请求，传空对象表示空，指定类目灰度管控
+				SkuClassification int `json:"skuClassification"` // sku分类，1：单品，2：组合装，3：混合套装
+				PieceUnitCode     int `json:"pieceUnitCode"`     // 单件单位，1：件，2：双，3：包
+			} `json:"productSkuMultiPackReq"` // 货品多包规请求
+			// 货品sku建议价格请求
+			// 1. 建议零售价是制造商为产品设定的建议零售价或推荐零售价。建议零售价必须是市场上的真实销售价格，且符合任何可适用的法律法规的规定。如您的商品在欧盟市场上销售，则该产品必须有欧盟零售商以此价格进行真实的广告宣传和销售。如果您的产品没有符合这些标准的建议零售价，请勿填写建议零售价，而应该填写NA。当您所提供的建议零售价有所更新时，您需要确保对建议零售价进行更新。
+			// 2. 通过输入建议零售价，您确认：
+			//  a. - 您不是该产品在所销售的市场上唯一的卖家（因此在该市场上，建议零售价可以被用作比较价格）；并且
+			//  b. - 您有证据表明您提供的建议零售价是该产品真实的一般销售价格，如您的商品在欧盟市场上销售，则该产品必须有欧盟零售商以此价格进行真实的广告宣传和销售，且该建议零售价是经由制造商审慎计算的。当Temu要求的时候，您必须向其提供此类证据。
+			// 3. 如果得知或发现建议零售价不符合上述标准，Temu 有权自行决定删除任何建议零售价相关信息。
+			ProductSkuSuggestedPriceReq struct {
+			} `json:"productSkuSuggestedPriceReq"` // 货品sku建议价格请求
+		} `json:"productSkuReqs"` // 货品 sku 列表
+	} `json:"productSkcReqs"` // 货品 skc 列表
 }
 
 // Create 添加货品
