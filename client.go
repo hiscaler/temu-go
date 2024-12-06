@@ -280,10 +280,6 @@ func parseResponseTotal(currentPage, pageSize, total int) (n, totalPages int, is
 }
 
 func invalidInput(e error) error {
-	if e == nil {
-		return e
-	}
-
 	var errs validation.Errors
 	if !errors.As(e, &errs) {
 		return e
