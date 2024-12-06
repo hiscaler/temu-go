@@ -81,3 +81,8 @@ const (
 	ShipOrderStatusCanceled                = 5 // 已取消
 	ShipOrderStatusPartialReceive          = 6 // 部分收货
 )
+
+const (
+	LanguageZhCn = "zh" // 中文
+	LanguageEn   = "en" // 英文
+)
