@@ -213,7 +213,7 @@ type GoodsCreateRequest struct {
 				ProductSkuNetContentReq struct {
 					NetContentUnitCode int `json:"netContentUnitCode"` // 净含量单位，1：液体盎司，2：毫升，3：加仑，4：升，5：克，6：千克，7：常衡盎司，8：磅
 					NetContentNumber   int `json:"netContentNumber"`   // 净含量数值
-				} `json:"productSkuNetContentReq"` // 净含量请求，传空对象表示空，指定类目灰度管控
+				} `json:"productSkuNetContentReq"`               // 净含量请求，传空对象表示空，指定类目灰度管控
 				SkuClassification int `json:"skuClassification"` // sku分类，1：单品，2：组合装，3：混合套装
 				PieceUnitCode     int `json:"pieceUnitCode"`     // 单件单位，1：件，2：双，3：包
 			} `json:"productSkuMultiPackReq"` // 货品多包规请求
@@ -224,9 +224,145 @@ type GoodsCreateRequest struct {
 			//  b. - 您有证据表明您提供的建议零售价是该产品真实的一般销售价格，如您的商品在欧盟市场上销售，则该产品必须有欧盟零售商以此价格进行真实的广告宣传和销售，且该建议零售价是经由制造商审慎计算的。当Temu要求的时候，您必须向其提供此类证据。
 			// 3. 如果得知或发现建议零售价不符合上述标准，Temu 有权自行决定删除任何建议零售价相关信息。
 			ProductSkuSuggestedPriceReq struct {
+				// 特殊建议价格，用来标记商家是否有建议价格，传参规则如下：
+				// - 传参为NA，则认为商家没有货品建议价格，即suggestedPrice和suggestedPriceCurrencyType这两个字段都不需要传；
+				// - 不传该字段，则要求suggestedPrice和suggestedPriceCurrencyType字段必传，不传则会报错；
+				// 示例：
+				// - productSkuSuggestedPriceReq
+				// -specialSuggestedPrice：NA
+				// -----------------------------------------
+				// - productSkuSuggestedPriceReq
+				// -suggestedPriceCurrencyType：CNY
+				// -suggestedPrice：10
+				SpecialSuggestedPrice      string `json:"specialSuggestedPrice"`      //  特殊建议价格，用来标记商家是否有建议价格
+				SuggestedPriceCurrencyType string `json:"suggestedPriceCurrencyType"` // 建议价格币种（USD:美元,CNY:人民币,JPY:日元,CAD:加拿大元,GBP:英镑,AUD:澳大利亚元,NZD:新西兰元,EUR:欧元,MXN:墨西哥比索,PLN:波兰兹罗提,SEK:瑞典克朗,CHF:瑞士法郎,KRW:韩元,SAR:沙特里亚尔,SGD:新加坡元,AED:阿联酋迪拉姆,KWD:科威特第纳尔,NOK:挪威克朗,CLP:智利比索,MYR:马来西亚林吉特,PHP:菲律宾比索,TWD:新台湾元,THB:泰铢,QAR:卡塔尔里亚尔,JOD:约旦第纳尔,BRL:巴西雷亚尔,OMR:阿曼里亚尔,BHD:巴林第纳尔,ILS:以色列新锡克尔,ZAR:南非兰特,CZK:捷克克朗,HUF:匈牙利福林,DKK:丹麦克朗,RON:罗马尼亚列伊,BGN:保加利亚列瓦,HKD:港元,COP:哥伦比亚比索,GEL:格鲁吉亚拉里）
+				// 建议价格，币种枚举值：
+				// 备注：辅助单位分别为0、1、2、3分别对应前端录入信息时需要原值上
+				// ×1、10、100、1000，再把转换后的数据传给后端
+				//export declare enum Currency {
+				//    /** 美元，辅助单位为 2 */
+				//    USD = "USD",
+				//    /** 人民币，辅助单位为 2 */
+				//    CNY = "CNY",
+				//    /** 日元，辅助单位为 0 */
+				//    JPY = "JPY",
+				//    /** 加拿大元, 辅助单位为 2 */
+				//    CAD = "CAD",
+				//    /** 英镑，辅助单位为 2 */
+				//    GBP = "GBP",
+				//    /** 澳大利亚，辅助单位为 2 */
+				//    AUD = "AUD",
+				//    /** 新西兰，辅助单位为 2 */
+				//    NZD = "NZD",
+				//    /**
+				//     * 欧盟地区，统一用欧元，辅助单位为 2
+				//     * 欧元区： 亚克罗提利与德凯利亚、 安道尔（AD）、 奥地利（AT）、 比利时（BE）、 赛普勒斯（CY）、 爱沙尼亚（EE）、
+				//     * 芬兰（FI）、 法国（FR）、 德国（DE）、 希腊（GR）、 瓜德罗普（GP）、 爱尔兰（IE）、
+				//     * 义大利（IT）、 科索沃、 拉脱维亚（LV）、 立陶宛（LT）、 卢森堡（LU）、 马尔他（MT）、 马提尼克（MQ）、
+				//     * 马约特（YT）、 摩纳哥（MC）、 蒙特内哥罗（ME）、 荷兰（NL）、 葡萄牙（PT）、 留尼汪（RE）、 圣巴泰勒米（BL）、
+				//     * 圣皮埃尔和密克隆（PM）、 圣马力诺（SM）、 斯洛伐克（SK）、 斯洛维尼亚（SI）、 西班牙（ES）、 梵蒂冈（VA）;
+				//     */
+				//    EUR = "EUR",
+				//    /** 墨西哥，辅助单位为 2 */
+				//    MXN = "MXN",
+				//    /** 波兰，辅助单位为 2 */
+				//    PLN = "PLN",
+				//    /** 瑞典，辅助单位为 2 */
+				//    SEK = "SEK",
+				//    /** 瑞士，辅助单位为 2 */
+				//    CHF = "CHF",
+				//    /** 韩元，辅助单位为 0 */
+				//    KRW = "KRW",
+				//    /** 沙特, 辅助单位为 2 */
+				//    SAR = "SAR",
+				//    /** 新加坡, 辅助单位为 2 */
+				//    SGD = "SGD",
+				//    /** 阿联酋, 辅助单位为 2 */
+				//    AED = "AED",
+				//    /** 科威特，辅助单位为 3 */
+				//    KWD = "KWD",
+				//    /** 挪威, 辅助单位为 2 */
+				//    NOK = "NOK",
+				//    /** 智利, 辅助单位为 0 */
+				//    CLP = "CLP",
+				//    /** 马来西亚, 辅助单位为 2 */
+				//    MYR = "MYR",
+				//    /** 菲律宾, 辅助单位为 2 */
+				//    PHP = "PHP",
+				//    /** 台湾, 辅助单位为 2 */
+				//    TWD = "TWD",
+				//    /** 泰国, 辅助单位为 2 */
+				//    THB = "THB",
+				//    /** 卡塔尔, 辅助单位为 2 */
+				//    QAR = "QAR",
+				//    /** 约旦, 辅助单位为 3 */
+				//    JOD = "JOD",
+				//    /** 巴西, 辅助单位为 2 */
+				//    BRL = "BRL",
+				//    /** 阿曼, 辅助单位为 3 */
+				//    OMR = "OMR",
+				//    /** 巴林, 辅助单位为 3 */
+				//    BHD = "BHD",
+				//    /** 以色列, 辅助单位为 2 */
+				//    ILS = "ILS",
+				//    /** 南非, 辅助单位为 2 */
+				//    ZAR = "ZAR",
+				//    /** 捷克, 辅助单位为 2，但是输入的时候不能输入小数需特殊处理 */
+				//    CZK = "CZK",
+				//    /** 匈牙利, 辅助单位为 2，但是输入的时候不能输入小数需特殊处理 */
+				//    HUF = "HUF",
+				//    /** 丹麦, 辅助单位为 2 */
+				//    DKK = "DKK",
+				//    /** 罗马尼亚, 辅助单位为 2 */
+				//    RON = "RON",
+				//    /** 保加利亚, 辅助单位为 2 */
+				//    BGN = "BGN",
+				//    /** 香港, 辅助单位为 2 */
+				//    HKD = "HKD",
+				//    /** 哥伦比亚, 辅助单位为 2 */
+				//    COP = "COP",
+				//    /** 格鲁吉亚拉里, 辅助单位为 2 */
+				//    GEL = "GEL"
+				// }
+				SuggestedPrice int `json:"suggestedPrice"` // 建议价格
 			} `json:"productSkuSuggestedPriceReq"` // 货品sku建议价格请求
+			ProductSkuWhExtAttrReq struct {
+				ProductSkuWeightReq struct {
+					Value int `json:"value"` // 重量值，单位mg
+				} `json:"productSkuWeightReq"` // 货品sku重量
+				ProductSkuSameReferPriceReq struct {
+					Url string `json:"url"` // 站外同款商品售卖链接，有效链接规则，链接开头含：http:// 、 https:// 等
+				} `json:"productSkuSameReferPriceReq"` // 货品sku重量
+				ProductSkuSensitiveLimitReq struct {
+					MaxBatteryCapacity   int `json:"maxBatteryCapacity"`   // 最大电池容量 (Wh)
+					MaxBatteryCapacityHp int `json:"maxBatteryCapacityHp"` // 最大电池容量 (mWh)
+					MaxLiquidCapacity    int `json:"maxLiquidCapacity"`    // 最大液体容量 (mL)
+					MaxLiquidCapacityHp  int `json:"maxLiquidCapacityHp"`  // 最大液体容量 (μL)
+					MaxKnifeLength       int `json:"maxKnifeLength"`       // 最大刀具长度 (mm)
+					MaxKnifeLengthHp     int `json:"maxKnifeLengthHp"`     // 最大刀具长度 (μm)
+					KnifeTipAngle        struct {
+						Degrees int `json:"degrees"` //	度数
+					} `json:"knifeTipAngle"` // 刀尖角度
+				} `json:"productSkuSensitiveLimitReq"` // 货品sku敏感属性限制请求
+				ProductSkuVolumeReq struct {
+					Len    int `json:"len"`    // 长，单位mm
+					Width  int `json:"width"`  // 宽，单位mm
+					Height int `json:"height"` // 高，单位mm
+				} `json:"productSkuVolumeReq"` // 货品sku体积
+				ProductSkuSensitiveAttrReq struct {
+					IsSensitive   int   `json:"isSensitive"`   // 是否敏感属性，0：非敏感，1：敏感
+					SensitiveList []int `json:"sensitiveList"` // 敏感类型，        PURE_ELECTRIC(110001, "纯电"),    INTERNAL_ELECTRIC(120001, "内电"),    MAGNETISM(130001, "磁性"),    LIQUID(140001, "液体"),    POWDER(150001, "粉末"),    PASTE(160001, "膏体"),    CUTTER(170001, "刀具")
+				} `json:"productSkuSensitiveAttrReq"` // 货品 sku 敏感属性请求
+				ProductSkuBarCodeReqs []struct {
+					Code     string `json:"code"`     // 商品标准编码
+					CodeType int    `json:"codeType"` // 条码类型 (1: EAN, 2: UPC, 3: ISBN)
+				} `json:"productSkuBarCodeReqs"`
+				ExtCode string `json:"extCode"` // sku货号，没有的场景传空字符串
+			} `json:"productSkuWhExtAttrReq"` // 同款参考
+			ExtCode string `json:"extCode"`   // 货品 skc 外部编码，没有的场景传空字符串
 		} `json:"productSkuReqs"` // 货品 sku 列表
-	} `json:"productSkcReqs"` // 货品 skc 列表
+	} `json:"productSkcReqs"`                      // 货品 skc 列表
+	SizeTemplateIds []int `json:"sizeTemplateIds"` // 尺码表模板id（从sizecharts.template.create获取），无尺码表时传空数组[]
 }
 
 // Create 添加货品
