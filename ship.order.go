@@ -34,7 +34,7 @@ type ShipOrderQueryParams struct {
 	IsPrintBoxMark           null.Int  `json:"isPrintBoxMark,omitempty"`           // 是否已打印商品打包标签，0-未打印，1-已打印
 	TargetReceiveAddress     string    `json:"targetReceiveAddress,omitempty"`     // 筛选项-收货地址（精准匹配）
 	TargetDeliveryAddress    string    `json:"targetDeliveryAddress,omitempty"`    // 筛选项-发货地址（精准匹配）
-	OrderType                null.Int  `json:"orderType,omitempty"`                // 订单类型（0：普通备货单、1：JIT 备货单、2：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
+	OrderType                null.Int  `json:"orderType,omitempty"`                // 订单类型（1：普通备货单、2：JIT 备货单、3：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
 }
 
 func (m ShipOrderQueryParams) validate() error {
@@ -66,7 +66,7 @@ func (m ShipOrderQueryParams) validate() error {
 					return errors.New("无效的发货单类型")
 				}
 
-				return validation.Validate(int(v.Int64), validation.In(entity.StockTypeNormal, entity.StockTypeJIT, entity.StockTypeCustomized).Error("无效的发货单类型"))
+				return validation.Validate(int(v.Int64), validation.In(entity.OrderTypeNormal, entity.OrderTypeJIT, entity.OrderTypeCustomized).Error("无效的发货单类型"))
 			})),
 		),
 	)
@@ -78,15 +78,15 @@ func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams
 	params.TidyPager()
 	if params.OrderType.Valid {
 		switch params.OrderType.Int64 {
-		case entity.StockTypeNormal:
+		case entity.OrderTypeNormal:
 			params.IsCustomProduct = null.BoolFrom(false)
 			params.IsJit = null.BoolFrom(false)
 
-		case entity.StockTypeJIT:
+		case entity.OrderTypeJIT:
 			params.IsCustomProduct = null.BoolFrom(false)
 			params.IsJit = null.BoolFrom(true)
 
-		case entity.StockTypeCustomized:
+		case entity.OrderTypeCustomized:
 			params.IsCustomProduct = null.BoolFrom(true)
 			params.IsJit = null.BoolFrom(false)
 		}

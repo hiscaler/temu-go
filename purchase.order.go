@@ -47,7 +47,7 @@ type PurchaseOrderQueryParams struct {
 	LackOrSoldOutTagList            []int     `json:"lackOrSoldOutTagList,omitempty"`            // 标签：1-含缺货SKU；2-含售罄SKU
 	IsTodayPlatformPurchase         null.Bool `json:"isTodayPlatformPurchase,omitempty"`         // 是否今日平台下单
 	JoinDeliveryPlatform            null.Bool `json:"joinDeliveryPlatform,omitempty"`            // 是否加入了发货台
-	OrderType                       null.Int  `json:"orderType,omitempty"`                       // 订单类型（0：普通备货单、1：JIT 备货单、2：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
+	OrderType                       null.Int  `json:"orderType,omitempty"`                       // 订单类型（1：普通备货单、2：JIT 备货单、3：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
 }
 
 func (m PurchaseOrderQueryParams) validate() error {
@@ -136,7 +136,7 @@ func (m PurchaseOrderQueryParams) validate() error {
 					return errors.New("无效的备货单类型")
 				}
 
-				return validation.Validate(int(v.Int64), validation.In(entity.StockTypeNormal, entity.StockTypeJIT, entity.StockTypeCustomized).Error("无效的备货单类型"))
+				return validation.Validate(int(v.Int64), validation.In(entity.OrderTypeNormal, entity.OrderTypeJIT, entity.OrderTypeCustomized).Error("无效的备货单类型"))
 			})),
 		),
 	)
@@ -148,15 +148,15 @@ func (s purchaseOrderService) Query(ctx context.Context, params PurchaseOrderQue
 	params.TidyPager()
 	if params.OrderType.Valid {
 		switch params.OrderType.Int64 {
-		case entity.StockTypeNormal:
+		case entity.OrderTypeNormal:
 			params.IsCustomGoods = null.BoolFrom(false)
 			params.PurchaseStockType = null.IntFrom(entity.PurchaseStockTypeNormal)
 
-		case entity.StockTypeJIT:
+		case entity.OrderTypeJIT:
 			params.IsCustomGoods = null.BoolFrom(false)
 			params.PurchaseStockType = null.IntFrom(entity.PurchaseStockTypeJIT)
 
-		case entity.StockTypeCustomized:
+		case entity.OrderTypeCustomized:
 			params.IsCustomGoods = null.BoolFrom(true)
 			params.PurchaseStockType = null.NewInt(0, false)
 		}
