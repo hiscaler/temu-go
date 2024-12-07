@@ -74,6 +74,7 @@ func (m GoodsCertificationNeedUploadItemRequest) validate() error {
 
 func (s goodsCertificationService) QueryNeedUploadItems(ctx context.Context, request GoodsCertificationNeedUploadItemRequest) (items []entity.GoodsCertificationNeedUploadItem, err error) {
 	if err = request.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 	var result = struct {

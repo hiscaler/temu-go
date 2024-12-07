@@ -265,6 +265,7 @@ func (m PurchaseOrderApplyRequest) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#nsjLx8
 func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderApplyRequest) (ok bool, err error) {
 	if err = request.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 	var result = struct {
@@ -322,6 +323,7 @@ func (m PurchaseOrderEditRequest) validate() error {
 
 func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEditRequest) (ok bool, err error) {
 	if err = request.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 	var result = struct {

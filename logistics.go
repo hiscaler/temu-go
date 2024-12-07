@@ -83,6 +83,7 @@ func (m LogisticsMatchRequest) validate() error {
 
 func (s logisticsService) Match(ctx context.Context, request LogisticsMatchRequest) (items []entity.LogisticsMatch, err error) {
 	if err = request.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

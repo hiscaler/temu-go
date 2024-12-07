@@ -85,6 +85,7 @@ func (m CreateDeliveryAddressRequest) validate() error {
 
 func (s mallAddressService) Create(ctx context.Context, request CreateDeliveryAddressRequest) (addressId int64, err error) {
 	if err = request.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 	var result = struct {

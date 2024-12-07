@@ -60,6 +60,7 @@ func (m JitPresaleRuleSignRequest) validate() error {
 
 func (s jitPresaleRuleService) Sign(ctx context.Context, request JitPresaleRuleSignRequest) (ok bool, err error) {
 	if err = request.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

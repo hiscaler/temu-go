@@ -153,6 +153,7 @@ func (m ShipOrderStagingAddRequest) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YSg2AE
 func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAddRequest) (ok bool, results []entity.Result, err error) {
 	if err = req.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

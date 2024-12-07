@@ -144,6 +144,7 @@ func (m ShipOrderPackageUpdateRequest) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#qSU56c
 func (s shipOrderPackageService) Update(ctx context.Context, req ShipOrderPackageUpdateRequest) (ok bool, err error) {
 	if err = req.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

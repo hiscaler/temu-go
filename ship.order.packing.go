@@ -80,6 +80,7 @@ func (m ShipOrderPackingSendRequest) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#ezXrHy
 func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPackingSendRequest) (number string, err error) {
 	if err = request.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 
@@ -123,6 +124,7 @@ func (m ShipOrderPackingMatchRequest) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#TDP3qU
 func (s shipOrderPackingService) Match(ctx context.Context, request ShipOrderPackingMatchRequest) (item entity.ShipOrderPackingMatchResult, err error) {
 	if err = request.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

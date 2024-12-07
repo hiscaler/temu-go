@@ -12,7 +12,14 @@ import (
 )
 
 // 商品数据服务
-type goodsService service
+type goodsService struct {
+	service
+	Brand         goodsBrandService         // 商品品牌数据
+	LifeCycle     goodsLifeCycleService     // 商品生命周期数据
+	TopSelling    goodsTopSellingService    // 畅销商品数据
+	Sales         goodsSalesService         // 销售数据
+	Certification goodsCertificationService // 资质服务
+}
 
 type GoodsQueryParams struct {
 	normal.ParameterWithPager

@@ -73,6 +73,7 @@ func (m VirtualInventoryJitEditRequest) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/706628248275137588#hALnFd
 func (s jitVirtualInventoryService) Edit(ctx context.Context, request VirtualInventoryJitEditRequest) (ok bool, err error) {
 	if err = request.validate(); err != nil {
+		err = invalidInput(err)
 		return
 	}
 

@@ -63,12 +63,6 @@ type services struct {
 	ShipOrderPackage        shipOrderPackageService
 	Barcode                 barcodeService
 	PurchaseOrder           purchaseOrderService
-	GoodsSales              goodsSalesService
-	GoodsCertification      goodsCertificationService
-	GoodsBrand              goodsBrandService
-	GoodsLifeCycle          goodsLifeCycleService
-	GoodsTopSelling         goodsTopSellingService
-	Product                 productService
 	Logistics               logisticsService
 	GoodsSizeChart          goodsSizeChartService
 	GoodsSizeChartClass     goodsSizeChartClassService
@@ -235,19 +229,14 @@ func New(config config.Config) *Client {
 		httpClient: httpClient,
 	}
 	client.Services = services{
-		ShipOrder:          (shipOrderService)(xService),
-		ShipOrderStaging:   (shipOrderStagingService)(xService),
-		ShipOrderPacking:   (shipOrderPackingService)(xService),
-		ShipOrderPackage:   (shipOrderPackageService)(xService),
-		Barcode:            (barcodeService)(xService),
-		PurchaseOrder:      (purchaseOrderService)(xService),
-		GoodsSales:         (goodsSalesService)(xService),
-		GoodsCertification: (goodsCertificationService)(xService),
-		GoodsBrand:         (goodsBrandService)(xService),
-		GoodsLifeCycle:     (goodsLifeCycleService)(xService),
-		GoodsTopSelling:    (goodsTopSellingService)(xService),
-		Product: productService{
-			Data:          (goodsService)(xService),
+		ShipOrder:        (shipOrderService)(xService),
+		ShipOrderStaging: (shipOrderStagingService)(xService),
+		ShipOrderPacking: (shipOrderPackingService)(xService),
+		ShipOrderPackage: (shipOrderPackageService)(xService),
+		Barcode:          (barcodeService)(xService),
+		PurchaseOrder:    (purchaseOrderService)(xService),
+		Goods: goodsService{
+			service:       xService,
 			Brand:         (goodsBrandService)(xService),
 			LifeCycle:     (goodsLifeCycleService)(xService),
 			Sales:         (goodsSalesService)(xService),
@@ -260,7 +249,6 @@ func New(config config.Config) *Client {
 		GoodsSizeChartSetting:   (goodsSizeChartSettingService)(xService),
 		MallAddress:             (mallAddressService)(xService),
 		ShipOrderReceiveAddress: (shipOrderReceiveAddressService)(xService),
-		Goods:                   (goodsService)(xService),
 		Mall:                    (mallService)(xService),
 		JitVirtualInventory:     (jitVirtualInventoryService)(xService),
 		JitMode:                 (jitModeService)(xService),
@@ -285,12 +273,17 @@ func invalidInput(e error) error {
 		return e
 	}
 
-	var fields []string
+	size := len(errs)
+	if size == 0 {
+		return errors.New("未知错误")
+	}
+
+	fields := make([]string, 0, size)
 	for field := range errs {
 		fields = append(fields, field)
 	}
 	sort.Strings(fields)
-	messages := make([]string, len(fields))
+	messages := make([]string, size)
 	for i, field := range fields {
 		messages[i] = errs[field].Error()
 	}
@@ -348,6 +341,8 @@ func errorWrap(code int, message string) error {
 		message = "无效的 Access Token"
 	case AccessTokenKeyUnmatched:
 		message = "Access Token 和 Key 不匹配"
+	case 2000000:
+		return errors.New(message)
 	default:
 		message = fmt.Sprintf("%d: %s", code, message)
 	}
