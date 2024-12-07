@@ -2,8 +2,11 @@ package temu
 
 import (
 	"context"
+	"errors"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/hiscaler/temu-go/validators/is"
 	"strings"
 )
 
@@ -14,6 +17,13 @@ type shipOrderReceiveAddressService service
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#chUUk1
 func (s shipOrderReceiveAddressService) Query(ctx context.Context, subPurchaseOrderSnList ...string) (items []entity.ShipOrderReceiveAddress, err error) {
 	if len(subPurchaseOrderSnList) == 0 {
+		err = errors.New("备货单号不能为空")
+		return
+	}
+
+	err = validation.Validate(subPurchaseOrderSnList, validation.Each(validation.By(is.PurchaseOrderNumber())))
+	if err != nil {
+		err = invalidInput(err)
 		return
 	}
 
