@@ -36,6 +36,16 @@ func main() {
 }
 ```
 
+## 服务说明
+| 服务地址                             | 说明             | 查询参数参考地址 |
+|----------------------------------|----------------|----------|
+| client.Services.Goods.Query      | 商品查询           |          |
+| client.Services.Goods.One        | 根据商品 SKC ID 查询 |          |
+| client.Services.Goods.Create     | 创建商品           |          |
+| client.Services.Goods.Brand.Query | 查询可绑定的品牌接口 |          |
+
+ - 
+
 ## 文档地址
 
 [TEMU 开发者指南](https://seller.kuajingmaihuo.com/sop/view/634117628601810731)

@@ -6,6 +6,7 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
+// 商品尺码设置服务
 type goodsSizeChartSettingService service
 
 // View 查询尺码模板规则

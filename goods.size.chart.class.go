@@ -7,6 +7,7 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
+// 商品尺码类服务
 type goodsSizeChartClassService service
 
 type GoodsSizeChartClassQueryParams struct {
