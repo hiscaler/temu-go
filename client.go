@@ -12,7 +12,7 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/json-iterator/go/extra"
-	"log"
+	"log/slog"
 	"net"
 	"net/http"
 	"os"
@@ -52,7 +52,7 @@ var ErrInvalidParameters = errors.New("无效的参数")
 
 type service struct {
 	debug      bool          // Is debug mode
-	logger     *log.Logger   // Log
+	logger     *slog.Logger  // Log
 	httpClient *resty.Client // HTTP client
 }
 
@@ -78,7 +78,7 @@ type services struct {
 
 type Client struct {
 	Debug        bool           // Is debug mode
-	Logger       *log.Logger    // Log
+	Logger       *slog.Logger   // Log
 	Services     services       // API services
 	TimeLocation *time.Location // 时区
 }
@@ -122,13 +122,21 @@ func init() {
 }
 
 func New(config config.Config) *Client {
-	logger := log.New(os.Stdout, "[ Temu ] ", log.LstdFlags|log.Llongfile)
-	client := &Client{
-		Debug:  config.Debug,
-		Logger: logger,
+	var l *slog.Logger
+	if config.Logger != nil {
+		l = config.Logger
+	} else {
+		if config.Debug {
+			l = slog.New(slog.NewTextHandler(os.Stdout, nil))
+		} else {
+			l = slog.New(slog.NewJSONHandler(os.Stdout, nil))
+		}
 	}
-	client.TimeLocation = loc
-
+	client := &Client{
+		Debug:        config.Debug,
+		Logger:       l,
+		TimeLocation: loc,
+	}
 	httpClient := resty.New().
 		SetDebug(config.Debug).
 		EnableTrace().
@@ -213,7 +221,7 @@ func New(config config.Config) *Client {
 					if endpoint != "" {
 						messages = append(messages, "Type: "+endpoint)
 					}
-					logger.Print("Retry ", strings.Join(messages, " "))
+					l.Info("Retry " + strings.Join(messages, " "))
 				}
 			}
 			return retry
@@ -225,7 +233,7 @@ func New(config config.Config) *Client {
 	httpClient.JSONUnmarshal = json.Unmarshal
 	xService := service{
 		debug:      config.Debug,
-		logger:     logger,
+		logger:     l,
 		httpClient: httpClient,
 	}
 	client.Services = services{
@@ -329,7 +337,7 @@ func errorWrap(code int, message string) error {
 		message = "服务器内部错误"
 	case MethodNotImplementedError:
 		message = "请求方法未实现"
-	case SystemExceptionError:
+	case SystemExceptionError, 4000000:
 		message = "Temu 平台异常"
 	case InvalidSignError:
 		return ErrInvalidSign
