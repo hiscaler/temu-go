@@ -87,23 +87,23 @@ type Client struct {
 func generateSign(values map[string]any, appSecret string) map[string]any {
 	delete(values, "sign")
 	values["timestamp"] = time.Now().Unix()
-	keys := make([]string, len(values))
-	i := 0
+	size := len(values)
+	keys := make([]string, size)
 	for k := range values {
-		keys[i] = k
-		i++
+		size--
+		keys[size] = k
 	}
 	sort.Strings(keys)
 	sb := strings.Builder{}
 	sb.WriteString(appSecret)
 	for _, key := range keys {
-		str := stringx.String(values[key])
-		if str == "" {
+		value := stringx.String(values[key])
+		if value == "" {
 			delete(values, key)
 			continue
 		}
 		sb.WriteString(key)
-		sb.WriteString(str)
+		sb.WriteString(value)
 	}
 	sb.WriteString(appSecret)
 	values["sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
