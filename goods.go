@@ -140,7 +140,7 @@ type GoodsCreateRequest struct {
 	ProductI18nReqs struct {
 		Language    string `json:"language"`    // 语言编码，en-美国
 		ProductName string `json:"productName"` // 对应语言的商品标题
-	} `json:"productI18nReqs"`                              // 多语言标题设置
+	} `json:"productI18nReqs"` // 多语言标题设置
 	ProductName                string `json:"productName "` // 货品名称
 	ProductCarouseVideoReqList []struct {
 		Vid      string `json:"vid"`      // 视频 VID
@@ -152,12 +152,12 @@ type GoodsCreateRequest struct {
 	ProductCustomReq struct {
 		GoodsLabelName   string `json:"goodsLabelName"`   // 货品关务标签名称
 		IsRecommendedTag bool   `json:"isRecommendedTag"` // 是否使用推荐标签
-	} `json:"productCustomReq"`                                                   // 货品关务标签
+	} `json:"productCustomReq"` // 货品关务标签
 	CarouselImageUrls            []string          `json:"carouselImageUrls"`     // 货品轮播图
 	CarouselImageI18nReqs        []ProductImageUrl `json:"carouselImageI18nReqs"` // 货品 SPU 多语言轮播图，服饰类不传，非服饰必传
 	ProductOuterPackageImageReqs []struct {
 		ImageUrl string `json:"imageUrl"` // 图片链接，通过图片上传接口，imageBizType=1获取
-	} `json:"productOuterPackageImageReqs"`            // 外包装图片
+	} `json:"productOuterPackageImageReqs"` // 外包装图片
 	MaterialImgUrl      string `json:"materialImgUrl"` // 素材图
 	ProductPropertyReqs []struct {
 		TemplatePid      int64  `json:"templatePid"`      // 模板属性id
@@ -220,7 +220,7 @@ type GoodsCreateRequest struct {
 				ProductSkuNetContentReq struct {
 					NetContentUnitCode int `json:"netContentUnitCode"` // 净含量单位，1：液体盎司，2：毫升，3：加仑，4：升，5：克，6：千克，7：常衡盎司，8：磅
 					NetContentNumber   int `json:"netContentNumber"`   // 净含量数值
-				} `json:"productSkuNetContentReq"`               // 净含量请求，传空对象表示空，指定类目灰度管控
+				} `json:"productSkuNetContentReq"` // 净含量请求，传空对象表示空，指定类目灰度管控
 				SkuClassification int `json:"skuClassification"` // sku分类，1：单品，2：组合装，3：混合套装
 				PieceUnitCode     int `json:"pieceUnitCode"`     // 单件单位，1：件，2：双，3：包
 			} `json:"productSkuMultiPackReq"` // 货品多包规请求
@@ -366,9 +366,9 @@ type GoodsCreateRequest struct {
 				} `json:"productSkuBarCodeReqs"`
 				ExtCode string `json:"extCode"` // sku货号，没有的场景传空字符串
 			} `json:"productSkuWhExtAttrReq"` // 同款参考
-			ExtCode string `json:"extCode"`   // 货品 skc 外部编码，没有的场景传空字符串
+			ExtCode string `json:"extCode"` // 货品 skc 外部编码，没有的场景传空字符串
 		} `json:"productSkuReqs"` // 货品 sku 列表
-	} `json:"productSkcReqs"`                      // 货品 skc 列表
+	} `json:"productSkcReqs"` // 货品 skc 列表
 	SizeTemplateIds []int `json:"sizeTemplateIds"` // 尺码表模板id（从sizecharts.template.create获取），无尺码表时传空数组[]
 	GoodsModelReqs  []struct {
 		ModelProfileUrl string `json:"modelProfileUrl"` // 模特头像
@@ -385,7 +385,7 @@ type GoodsCreateRequest struct {
 		ModelFootLength string `json:"modelFootLength"` // 模特脚长文本modelType=1传空值
 		TryOnResult     int    `json:"tryOnResult"`     // 试穿心得，        TRUE_TO_SIZE(1, "舒适"),    TOO_SMALL(2, "紧身"),    TOO_LARGE(3, "宽松"),
 		ModelHip        string `json:"modelHip"`        // 模特臀围文本modelType=2传空值
-	} `json:"goodsModelReqs"`                                   // 商品模特列表请求
+	} `json:"goodsModelReqs"` // 商品模特列表请求
 	ShowSizeTemplateIds    []int64 `json:"showSizeTemplateIds"` // 套装尺码表展示，至多2个尺码表模板id入参
 	ProductOuterPackageReq struct {
 		PackageShape int `json:"packageShape"` // 外包装形状0:不规则形状 1:长方体 2:圆柱体
@@ -416,7 +416,7 @@ type GoodsCreateRequest struct {
 				FontColor       string `json:"fontColor"`       // 文字颜色文本-text必填，六位值，例#333333
 			} `json:"textModuleDetails"` // 文字模块详情文本-text必填
 		} `json:"contentList"` // 楼层内容
-	} `json:"goodsLayerDecorationReqs"`                      // 商详装饰
+	} `json:"goodsLayerDecorationReqs"` // 商详装饰
 	PersonalizationSwitch int `json:"personalizationSwitch"` // 是否定制品，API发品标记定制品后，请及时在卖家中心配置定制模版信息，否则无法正常加站点售卖 0：非定制品、1：定制品
 	ProductSemiManagedReq struct {
 		BindSiteIds []int64 `json:"bindSiteIds"` // 绑定站点列表
@@ -436,7 +436,7 @@ type GoodsCreateRequest struct {
 	ProductShipmentReq struct {
 		FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板id，使用bg.logistics.template.get查询，详见：https://seller.kuajingmaihuo.com/sop/view/867739977041685428
 		ShipmentLimitSecond int    `json:"shipmentLimitSecond"` // 承诺发货时间(单位:s)，可选值：86400，172800，259200（仅定制品可用）
-	} `json:"productShipmentReq"`                                   // 半托管货品配送信息请求
+	} `json:"productShipmentReq"` // 半托管货品配送信息请求
 	AddProductChannelType  int      `json:"addProductChannelType"`  // 发品渠道
 	MaterialMultiLanguages []string `json:"materialMultiLanguages"` // 图片多语言列表
 }
