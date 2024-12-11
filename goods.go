@@ -140,7 +140,7 @@ type GoodsCreateRequest struct {
 	ProductI18nReqs struct {
 		Language    string `json:"language"`    // 语言编码，en-美国
 		ProductName string `json:"productName"` // 对应语言的商品标题
-	} `json:"productI18nReqs"` // 多语言标题设置
+	} `json:"productI18nReqs"`                              // 多语言标题设置
 	ProductName                string `json:"productName "` // 货品名称
 	ProductCarouseVideoReqList []struct {
 		Vid      string `json:"vid"`      // 视频 VID
@@ -152,12 +152,12 @@ type GoodsCreateRequest struct {
 	ProductCustomReq struct {
 		GoodsLabelName   string `json:"goodsLabelName"`   // 货品关务标签名称
 		IsRecommendedTag bool   `json:"isRecommendedTag"` // 是否使用推荐标签
-	} `json:"productCustomReq"` // 货品关务标签
+	} `json:"productCustomReq"`                                                   // 货品关务标签
 	CarouselImageUrls            []string          `json:"carouselImageUrls"`     // 货品轮播图
 	CarouselImageI18nReqs        []ProductImageUrl `json:"carouselImageI18nReqs"` // 货品 SPU 多语言轮播图，服饰类不传，非服饰必传
 	ProductOuterPackageImageReqs []struct {
 		ImageUrl string `json:"imageUrl"` // 图片链接，通过图片上传接口，imageBizType=1获取
-	} `json:"productOuterPackageImageReqs"` // 外包装图片
+	} `json:"productOuterPackageImageReqs"`            // 外包装图片
 	MaterialImgUrl      string `json:"materialImgUrl"` // 素材图
 	ProductPropertyReqs []struct {
 		TemplatePid      int64  `json:"templatePid"`      // 模板属性id
@@ -370,9 +370,113 @@ type GoodsCreateRequest struct {
 		} `json:"productSkuReqs"` // 货品 sku 列表
 	} `json:"productSkcReqs"`                      // 货品 skc 列表
 	SizeTemplateIds []int `json:"sizeTemplateIds"` // 尺码表模板id（从sizecharts.template.create获取），无尺码表时传空数组[]
+	GoodsModelReqs  []struct {
+		ModelProfileUrl string `json:"modelProfileUrl"` // 模特头像
+		SizeSpecName    string `json:"sizeSpecName"`    // 试穿尺码规格名称
+		ModelId         int    `json:"modelId"`         // 模特id，通过模特信息查询接口获取
+		SizeSpecId      int    `json:"sizeSpecId"`      // 试穿尺码规格id
+		ModelWaist      string `json:"modelWaist"`      // 模特腰围文本, modelType=2传空值
+		ModelType       int    `json:"modelType"`       // 模特类型，1：成衣模特，2：鞋模
+		ModelName       string `json:"modelName"`       // 模特名称
+		ModelHeight     string `json:"modelHeight"`     // 模特身高文本modelType=2传空值
+		ModelFeature    int    `json:"modelFeature"`    // 模特特性，1：真实模特
+		ModelFootWidth  string `json:"modelFootWidth"`  // 模特脚宽文本modelType=1传空值
+		ModelBust       string `json:"modelBust"`       // 模特胸围文本modelType=2传空值
+		ModelFootLength string `json:"modelFootLength"` // 模特脚长文本modelType=1传空值
+		TryOnResult     int    `json:"tryOnResult"`     // 试穿心得，        TRUE_TO_SIZE(1, "舒适"),    TOO_SMALL(2, "紧身"),    TOO_LARGE(3, "宽松"),
+		ModelHip        string `json:"modelHip"`        // 模特臀围文本modelType=2传空值
+	} `json:"goodsModelReqs"`                                   // 商品模特列表请求
+	ShowSizeTemplateIds    []int64 `json:"showSizeTemplateIds"` // 套装尺码表展示，至多2个尺码表模板id入参
+	ProductOuterPackageReq struct {
+		PackageShape int `json:"packageShape"` // 外包装形状0:不规则形状 1:长方体 2:圆柱体
+		PackageType  int `json:"packageType"`  // 外包装类型0:硬包装 1:软包装+硬物 2:软包装+软物
+	} `json:"productOuterPackageReq"` // 货品外包装信息
+	ProductGuideFileReqs []struct {
+		FileName      string   `json:"fileName"`      // 文件名称
+		PdfMaterialId int      `json:"pdfMaterialId"` // pdf文件id，通过file.upload上传返回得到
+		Languages     []string `json:"languages"`     // 语言（zh-中文、en-英文）
+	} `json:"productGuideFileReqs"` // 说明书请求对象
+	GoodsLayerDecorationReqs []struct {
+		FloorId     null.Int `json:"floorId"`  // 楼层id,null:新增,否则为更新
+		GoodsId     int64    `json:"goodsId"`  // 商品 ID
+		Lang        string   `json:"lang"`     // 语言类型
+		Type        string   `json:"type"`     // 组件类型type,图片-image,文本-text 商详需要包含至少一个图片类型组件
+		Priority    int      `json:"priority"` // 楼层排序
+		Key         string   `json:"key"`      // 楼层类型的key,目前默认传'DecImage'
+		ContentList []struct {
+			ImgUrl            string `json:"imgUrl"` // 图片地址--通用，图片最大3M
+			Width             int    `json:"width"`  // 图片宽度--通用，宽度最小480px
+			Text              string `json:"text"`   // 文字信息--文字模块，文本-text必填，长度限制500字符内
+			Height            int    `json:"height"` // 图片高度--通用，高度最小480px
+			TextModuleDetails struct {
+				BackgroundColor string `json:"backgroundColor"` // 背景颜色文本-text必填，六位值，例#ffffff
+				FontFamily      int    `json:"fontFamily"`      // 字体类型文本-text不传
+				FontSize        int    `json:"fontSize"`        // 文字模块字体大小文本-text必传12
+				Align           string `json:"align"`           // 文字对齐方式，left--左对齐；right--右对齐；center--居中；justify--两端对齐文本-text必填
+				FontColor       string `json:"fontColor"`       // 文字颜色文本-text必填，六位值，例#333333
+			} `json:"textModuleDetails"` // 文字模块详情文本-text必填
+		} `json:"contentList"` // 楼层内容
+	} `json:"goodsLayerDecorationReqs"`                      // 商详装饰
+	PersonalizationSwitch int `json:"personalizationSwitch"` // 是否定制品，API发品标记定制品后，请及时在卖家中心配置定制模版信息，否则无法正常加站点售卖 0：非定制品、1：定制品
+	ProductSemiManagedReq struct {
+		BindSiteIds []int64 `json:"bindSiteIds"` // 绑定站点列表
+		// 半托管-素材语种策略，不传默认2
+		// 1：仅站点本地语种素材，允许只上传站点本地语种的素材（多语言素材节点上传本地素材，英语素材也可使用本地语种素材填充）
+		// 关联节点如下：
+		// - 多语言标题（productI18nReqs）
+		// - 多语言素材（materialMultiLanguages、carouselImageI18nReqs、productSkcCarouselImageI18nReqs、productSkuThumbUrlI18nReqs）
+		//
+		// 当前支持日本站、墨西哥站，使用语言如下：
+		// 日本站：多语言标题和素材均使用ja
+		// 墨西哥站：多语言标题语言传es-MX。多语言素材语言传es
+		//
+		// 2：英语以及其他语种
+		SemiLanguageStrategy int `json:"emiLanguageStrategy"` // 半托管-素材语种策略
+	} `json:"productSemiManagedReq"` // 半托管相关信息
+	ProductShipmentReq struct {
+		FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板id，使用bg.logistics.template.get查询，详见：https://seller.kuajingmaihuo.com/sop/view/867739977041685428
+		ShipmentLimitSecond int    `json:"shipmentLimitSecond"` // 承诺发货时间(单位:s)，可选值：86400，172800，259200（仅定制品可用）
+	} `json:"productShipmentReq"`                                   // 半托管货品配送信息请求
+	AddProductChannelType  int      `json:"addProductChannelType"`  // 发品渠道
+	MaterialMultiLanguages []string `json:"materialMultiLanguages"` // 图片多语言列表
+}
+
+func (m GoodsCreateRequest) validate() error {
+	return nil
+}
+
+type GoodsCreateResult struct {
+	ProductId      int64 `json:"productId"` // 货品 id
+	ProductSkcList []struct {
+		ProductSkcId int64 `json:"productSkcId"` // skc id
+	} `json:"productSkcList"` //  skc列表
+	ProductSkuList []struct {
+		ProductSkcId int64                  `json:"productSkcId "` // SKC ID
+		ProductSkuId int64                  `json:"productSkuId"`  // sku id
+		ExtCode      string                 `json:"extCode"`       // sku 外部编码
+		SkuSpecList  []entity.Specification `json:"skuSpecList"`   // sku 规格
+	} `json:"productSkuList"` // sku 列表
 }
 
 // Create 添加货品
-func (s goodsService) Create(ctx context.Context, name string) error {
-	return nil
+func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (res GoodsCreateResult, err error) {
+	if err = request.validate(); err != nil {
+		err = invalidInput(err)
+		return
+	}
+
+	var result = struct {
+		normal.Response
+		Result GoodsCreateResult `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.goods.add")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
+	}
+
+	return
 }
