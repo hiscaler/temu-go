@@ -19,6 +19,7 @@ type goodsService struct {
 	TopSelling    goodsTopSellingService    // 畅销商品数据
 	Sales         goodsSalesService         // 销售数据
 	Certification goodsCertificationService // 资质服务
+	Warehouse     goodsWarehouseService     // 销售数据
 }
 
 type GoodsQueryParams struct {
@@ -383,7 +384,7 @@ type GoodsCreateRequest struct {
 		ModelFootWidth  string `json:"modelFootWidth"`  // 模特脚宽文本modelType=1传空值
 		ModelBust       string `json:"modelBust"`       // 模特胸围文本modelType=2传空值
 		ModelFootLength string `json:"modelFootLength"` // 模特脚长文本modelType=1传空值
-		TryOnResult     int    `json:"tryOnResult"`     // 试穿心得，        TRUE_TO_SIZE(1, "舒适"),    TOO_SMALL(2, "紧身"),    TOO_LARGE(3, "宽松"),
+		TryOnResult     int    `json:"tryOnResult"`     // 试穿心得 TRUE_TO_SIZE(1, "舒适"),    TOO_SMALL(2, "紧身"),    TOO_LARGE(3, "宽松"),
 		ModelHip        string `json:"modelHip"`        // 模特臀围文本modelType=2传空值
 	} `json:"goodsModelReqs"` // 商品模特列表请求
 	ShowSizeTemplateIds    []int64 `json:"showSizeTemplateIds"` // 套装尺码表展示，至多2个尺码表模板id入参
@@ -442,7 +443,13 @@ type GoodsCreateRequest struct {
 }
 
 func (m GoodsCreateRequest) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Cat1Id, validation.Required.Error("分类 1 不能为空")),
+		validation.Field(&m.Cat2Id, validation.Required.Error("分类 2 不能为空")),
+		validation.Field(&m.Cat3Id, validation.Required.Error("分类 3 不能为空")),
+		validation.Field(&m.ProductName, validation.Required.Error("商品名称不能为空")),
+		validation.Field(&m.AddProductChannelType, validation.Required.Error("发品渠道不能为空")),
+	)
 }
 
 type GoodsCreateResult struct {

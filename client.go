@@ -250,6 +250,7 @@ func New(config config.Config) *Client {
 			Sales:         (goodsSalesService)(xService),
 			TopSelling:    (goodsTopSellingService)(xService),
 			Certification: (goodsCertificationService)(xService),
+			Warehouse:     (goodsWarehouseService)(xService),
 		},
 		Logistics:               (logisticsService)(xService),
 		GoodsSizeChart:          (goodsSizeChartService)(xService),
@@ -349,7 +350,9 @@ func errorWrap(code int, message string) error {
 		message = "无效的 Access Token"
 	case AccessTokenKeyUnmatched:
 		message = "Access Token 和 Key 不匹配"
-	case 2000000:
+	case 7000016:
+		return errors.New("无效的请求地址")
+	case 2000000, 2000090:
 		return errors.New(message)
 	default:
 		message = fmt.Sprintf("%d: %s", code, message)
