@@ -14,6 +14,7 @@ import (
 // 商品数据服务
 type goodsService struct {
 	service
+	Category      goodsCategoryService      // 商品分类
 	Brand         goodsBrandService         // 商品品牌数据
 	LifeCycle     goodsLifeCycleService     // 商品生命周期数据
 	TopSelling    goodsTopSellingService    // 畅销商品数据

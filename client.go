@@ -245,6 +245,7 @@ func New(config config.Config) *Client {
 		PurchaseOrder:    (purchaseOrderService)(xService),
 		Goods: goodsService{
 			service:       xService,
+			Category:      (goodsCategoryService)(xService),
 			Brand:         (goodsBrandService)(xService),
 			LifeCycle:     (goodsLifeCycleService)(xService),
 			Sales:         (goodsSalesService)(xService),
@@ -287,7 +288,7 @@ func invalidInput(e error) error {
 		return errors.New("未知错误")
 	}
 
-	fields := make([]string, 0, size)
+	fields := make([]string, size)
 	messages := make([]string, size)
 	for field := range errs {
 		size--
