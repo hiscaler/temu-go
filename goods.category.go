@@ -11,7 +11,7 @@ import (
 type goodsCategoryService service
 
 type GoodsCategoryQueryParams struct {
-	ParentCatId null.Int `json:"parentCatId"` // 上级分类 ID
+	ParentCatId null.Int `json:"parentCatId,omitempty"` // 上级分类 ID
 }
 
 func (m GoodsCategoryQueryParams) validate() error {

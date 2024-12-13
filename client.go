@@ -298,7 +298,7 @@ func invalidInput(e error) error {
 	for i, field := range fields {
 		messages[i] = errs[field].Error()
 	}
-	return errors.New(strings.Join(messages, "."))
+	return errors.New(strings.Join(messages, ". "))
 }
 
 func recheckError(resp *resty.Response, result normal.Response, e error) (err error) {
