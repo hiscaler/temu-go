@@ -27,7 +27,7 @@ func (s goodsWarehouseService) Query(ctx context.Context, params GoodsWarehouseQ
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
-		SetBody(map[string][]int{"siteIdList": {1}}).
+		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.warehouse.list.get")
 	if err = recheckError(resp, result.Response, err); err != nil {

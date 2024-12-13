@@ -288,11 +288,12 @@ func invalidInput(e error) error {
 	}
 
 	fields := make([]string, 0, size)
+	messages := make([]string, size)
 	for field := range errs {
-		fields = append(fields, field)
+		size--
+		fields[size] = field
 	}
 	sort.Strings(fields)
-	messages := make([]string, size)
 	for i, field := range fields {
 		messages[i] = errs[field].Error()
 	}
