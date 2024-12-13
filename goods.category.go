@@ -4,12 +4,14 @@ import (
 	"context"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"gopkg.in/guregu/null.v4"
 )
 
 // 商品分类服务
 type goodsCategoryService service
 
 type GoodsCategoryQueryParams struct {
+	ParentCatId null.Int `json:"parentCatId"` // 上级分类 ID
 }
 
 func (m GoodsCategoryQueryParams) validate() error {
