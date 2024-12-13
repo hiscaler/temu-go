@@ -22,6 +22,7 @@ func (s goodsCategoryService) Query(ctx context.Context, params GoodsCategoryQue
 		err = invalidInput(err)
 		return
 	}
+
 	var result = struct {
 		normal.Response
 		Result struct {
