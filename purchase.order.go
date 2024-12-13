@@ -182,28 +182,41 @@ func (s purchaseOrderService) Query(ctx context.Context, params PurchaseOrderQue
 		return
 	}
 
-	return result.Result.SubOrderForSupplierList, result.Result.PurchaseOrderStatistic, nil
+	items = result.Result.SubOrderForSupplierList
+	for i, item := range items {
+		orderType := 0 // Unknown
+		if item.IsCustomProduct {
+			orderType = entity.OrderTypeCustomized
+		} else if item.PurchaseStockType == entity.PurchaseStockTypeJIT {
+			orderType = entity.OrderTypeJIT
+		} else {
+			orderType = entity.OrderTypeNormal
+		}
+		items[i].OrderType = orderType
+	}
+
+	return items, result.Result.PurchaseOrderStatistic, nil
 }
 
 // One 根据子采购单或者母采购单号查询采购单数据
-func (s purchaseOrderService) One(ctx context.Context, purchaseOrderSn string) (item entity.PurchaseOrder, err error) {
-	if len(purchaseOrderSn) <= 2 {
+func (s purchaseOrderService) One(ctx context.Context, number string) (item entity.PurchaseOrder, err error) {
+	if len(number) <= 2 {
 		err = ErrInvalidParameters
 		return
 	}
 
-	prefix := strings.ToLower(purchaseOrderSn[0:2])
+	prefix := strings.ToLower(number[0:2])
 	if prefix != "wp" && prefix != "wb" {
 		err = ErrInvalidParameters
 		return
 	}
 
-	isSub := prefix == "wb"
+	isPurchaseOrder := prefix == "wb"
 	params := PurchaseOrderQueryParams{}
-	if isSub {
-		params.SubPurchaseOrderSnList = []string{purchaseOrderSn}
+	if isPurchaseOrder {
+		params.SubPurchaseOrderSnList = []string{number}
 	} else {
-		params.OriginalPurchaseOrderSnList = []string{purchaseOrderSn}
+		params.OriginalPurchaseOrderSnList = []string{number}
 	}
 	items, _, err := s.Query(ctx, params)
 	if err != nil {
@@ -211,8 +224,8 @@ func (s purchaseOrderService) One(ctx context.Context, purchaseOrderSn string) (
 	}
 
 	for _, order := range items {
-		if (isSub && strings.EqualFold(order.SubPurchaseOrderSn, purchaseOrderSn)) ||
-			(!isSub && strings.EqualFold(order.OriginalPurchaseOrderSn, purchaseOrderSn)) {
+		if (isPurchaseOrder && strings.EqualFold(order.SubPurchaseOrderSn, number)) ||
+			(!isPurchaseOrder && strings.EqualFold(order.OriginalPurchaseOrderSn, number)) {
 			return order, nil
 		}
 	}

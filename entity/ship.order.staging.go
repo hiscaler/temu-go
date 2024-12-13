@@ -42,4 +42,5 @@ type ShipOrderStaging struct {
 		PurchaseTime                       int64          `json:"purchaseTime"`
 		SubPurchaseOrderSn                 string         `json:"subPurchaseOrderSn"`
 	} `json:"subPurchaseOrderBasicVO"` // 子订单基本信息
+	OrderType int `json:"orderType"` // 自处理后的发货台数据类型（1：普通、2：JIT、3：定制）
 }

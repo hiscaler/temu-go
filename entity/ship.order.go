@@ -81,4 +81,5 @@ type ShipOrder struct {
 	SkcPurchaseNum          int    `json:"skcPurchaseNum"`
 	DeliverSkcNum           int    `json:"deliverSkcNum"`
 	DeliveryOrderCreateTime int64  `json:"deliveryOrderCreateTime"`
+	OrderType               int    `json:"orderType"` // 自处理后的发货单类型（1：普通、2：JIT、3：定制）
 }

@@ -114,6 +114,17 @@ func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams
 	}
 
 	items = result.Result.List
+	for i, item := range items {
+		orderType := 0 // Unknown
+		if item.IsCustomProduct {
+			orderType = entity.OrderTypeCustomized
+		} else if item.PurchaseStockType == entity.PurchaseStockTypeJIT {
+			orderType = entity.OrderTypeJIT
+		} else {
+			orderType = entity.OrderTypeNormal
+		}
+		items[i].OrderType = orderType
+	}
 	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Total)
 
 	return

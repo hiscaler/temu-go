@@ -91,4 +91,5 @@ type PurchaseOrder struct {
 	PurchaseTime                    int64       `json:"purchaseTime"`
 	ApplyChangeSupplyStatus         int         `json:"applyChangeSupplyStatus"`
 	Category                        string      `json:"category"`
+	OrderType                       int         `json:"orderType"` // 自处理后的备货单类型（1：普通、2：JIT、3：定制）
 }
