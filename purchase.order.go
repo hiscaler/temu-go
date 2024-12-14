@@ -358,7 +358,10 @@ func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEdi
 // 批量取消待接单的备货单（bg.purchaseorder.cancel）
 
 func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumbers ...string) (results []entity.Result, err error) {
-	err = validation.Validate(rawPurchaseOrderNumbers, validation.Each(validation.By(is.PurchaseOrderNumber())))
+	err = validation.Validate(rawPurchaseOrderNumbers,
+		validation.Required.Error("备货单号不能为空"),
+		validation.Each(validation.By(is.PurchaseOrderNumber())),
+	)
 	if err != nil {
 		return results, invalidInput(err)
 	}
