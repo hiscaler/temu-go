@@ -60,9 +60,6 @@ func (m GoodsQueryParams) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#SjadVR
 func (s goodsService) Query(ctx context.Context, params GoodsQueryParams) (items []entity.Goods, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
-	if params.Page <= 0 {
-		params.Page = 1
-	}
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return

@@ -27,9 +27,6 @@ func (m GoodsLifeCycleQueryParams) validate() error {
 
 func (s goodsLifeCycleService) Query(ctx context.Context, params GoodsLifeCycleQueryParams) (items []entity.GoodsLifeCycle, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
-	if params.Page <= 0 {
-		params.Page = 1
-	}
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return

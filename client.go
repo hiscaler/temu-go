@@ -347,7 +347,7 @@ func errorWrap(code int, message string) error {
 		message = "Access Token 和 Key 不匹配"
 	case 7000016:
 		return errors.New("无效的请求地址")
-	case 2000000, 2000090:
+	case 2000000, 2000090, 3000000:
 		return errors.New(message)
 	default:
 		message = fmt.Sprintf("%d: %s", code, message)

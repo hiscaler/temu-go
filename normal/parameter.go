@@ -24,14 +24,13 @@ type ParameterWithPager struct {
 }
 
 // TidyPager 设置翻页数据
-func (p *Pager) TidyPager(values ...int) *Pager {
-	page := 1
-	maxPageSize := entity.MaxPageSize
-	n := len(values)
+func (p *Pager) TidyPager(options ...int) *Pager {
+	page, maxPageSize := 1, entity.MaxPageSize
+	n := len(options)
 	if n != 0 {
-		page = values[0]
+		page = options[0]
 		if n >= 2 {
-			maxPageSize = values[1]
+			maxPageSize = options[1]
 		}
 	}
 	if p.Page <= 0 {
