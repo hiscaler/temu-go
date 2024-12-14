@@ -1,19 +1,11 @@
 package entity
 
 import (
+	"errors"
 	"fmt"
+	"sort"
 	"time"
 )
-
-var loc *time.Location
-
-func init() {
-	var err error
-	loc, err = time.LoadLocation("Asia/Shanghai")
-	if err != nil {
-		loc = time.FixedZone("CST", 8*3600)
-	}
-}
 
 type LogisticsMatchChannelScheduleTime struct {
 	BjDate      string `json:"bjDate"`
@@ -21,17 +13,26 @@ type LogisticsMatchChannelScheduleTime struct {
 	BjEndTime   string `json:"bjEndTime"`
 }
 
+// LogisticsChannelAppointmentTime 物流渠道预约时间
+type LogisticsChannelAppointmentTime struct {
+	Start time.Time
+	End   time.Time
+}
+
 // Range 时间范围
-func (st LogisticsMatchChannelScheduleTime) Range() (start, end time.Time, err error) {
+func (st LogisticsMatchChannelScheduleTime) Range() (t LogisticsChannelAppointmentTime, err error) {
 	layout := "2006-01-02 15:04"
-	start, err = time.ParseInLocation(layout, fmt.Sprintf("%s %s", st.BjDate, st.BjStartTime), loc)
+	start, err := time.ParseInLocation(layout, fmt.Sprintf("%s %s", st.BjDate, st.BjStartTime), time.Local)
 	if err != nil {
 		return
 	}
 
-	end, err = time.ParseInLocation(layout, fmt.Sprintf("%s %s", st.BjDate, st.BjEndTime), loc)
+	end, err := time.ParseInLocation(layout, fmt.Sprintf("%s %s", st.BjDate, st.BjEndTime), time.Local)
+	if err != nil {
+		return
+	}
 
-	return
+	return LogisticsChannelAppointmentTime{Start: start, End: end}, nil
 }
 
 // LogisticsMatch 推荐物流商匹配
@@ -50,22 +51,25 @@ type LogisticsMatch struct {
 }
 
 // LatestScheduleTime 获取最近可用的时间
-func (lm LogisticsMatch) LatestScheduleTime() *LogisticsMatchChannelScheduleTime {
+func (lm LogisticsMatch) LatestScheduleTime() (t LogisticsChannelAppointmentTime, err error) {
 	if len(lm.ChannelScheduleTimeList) == 0 {
-		return nil
+		return
 	}
 
+	schedules := lm.ChannelScheduleTimeList
+	sort.Slice(schedules, func(i, j int) bool {
+		return (schedules[i].BjDate + schedules[i].BjStartTime) < (schedules[j].BjDate + schedules[j].BjStartTime)
+	})
 	now := time.Now()
-	for _, scheduleTime := range lm.ChannelScheduleTimeList {
-		start, end, err := scheduleTime.Range()
-		if err != nil {
-			return nil
+	for _, scheduleTime := range schedules {
+		st, e := scheduleTime.Range()
+		if e != nil {
+			return t, e
 		}
 
-		if start.After(now) && end.Before(now) {
-			return &scheduleTime
+		if (now.Before(st.Start) || now.Equal(st.Start)) && (now.Before(st.End) || now.Equal(st.End)) {
+			return st, nil
 		}
 	}
-
-	return nil
+	return t, errors.New("not exists")
 }
