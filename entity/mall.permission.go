@@ -28,6 +28,11 @@ func (m MallPermission) Accessible(api string) bool {
 }
 
 // Expired Token 是否过期
-func (m MallPermission) Expired() bool {
-	return m.ExpiredTime >= time.Now().UnixMilli()
+// days 如果大于零，则表示几天后过期，为零或者小于零则表示当前是否过期
+func (m MallPermission) Expired(days int) bool {
+	now := time.Now()
+	if days > 0 {
+		now = now.AddDate(0, 0, -days)
+	}
+	return m.ExpiredTime >= now.UnixMilli()
 }
