@@ -15,11 +15,11 @@ type logisticsService service
 
 // Companies 查询发货快递公司
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#wjtGTK
-func (s logisticsService) Companies(ctx context.Context) (items []entity.LogisticsCompany, err error) {
+func (s logisticsService) Companies(ctx context.Context) (items []entity.LogisticsShipmentCompany, err error) {
 	var result = struct {
 		normal.Response
 		Result struct {
-			ShipList []entity.LogisticsCompany `json:"shipList"` // 快递公司列表
+			ShipList []entity.LogisticsShipmentCompany `json:"shipList"` // 快递公司列表
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
@@ -34,14 +34,14 @@ func (s logisticsService) Companies(ctx context.Context) (items []entity.Logisti
 }
 
 // Company 根据 ID 查询发货快递公司
-func (s logisticsService) Company(ctx context.Context, shipId int) (item entity.LogisticsCompany, err error) {
+func (s logisticsService) Company(ctx context.Context, shipmentId int) (item entity.LogisticsShipmentCompany, err error) {
 	items, err := s.Companies(ctx)
 	if err != nil {
 		return
 	}
 
 	for _, company := range items {
-		if company.ShipId == shipId {
+		if company.ShipId == shipmentId {
 			return company, nil
 		}
 	}
