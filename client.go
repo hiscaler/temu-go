@@ -7,11 +7,10 @@ import (
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-resty/resty/v2"
+	"github.com/goccy/go-json"
 	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/temu-go/config"
 	"github.com/hiscaler/temu-go/normal"
-	jsoniter "github.com/json-iterator/go"
-	"github.com/json-iterator/go/extra"
 	"log/slog"
 	"net"
 	"net/http"
@@ -39,12 +38,6 @@ const (
 	InvalidAccessTokenError   = 7000018 // 无效的 Access Token
 	AccessTokenKeyUnmatched   = 7000006 // Access Token 和 Key 不匹配
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
-
-func init() {
-	extra.RegisterFuzzyDecoders()
-}
 
 var ErrNotFound = errors.New("数据不存在")
 var ErrInvalidSign = errors.New("无效的签名")
@@ -121,7 +114,7 @@ func init() {
 	time.Local = loc
 }
 
-func New(config config.Config) *Client {
+func NewClient(config config.Config) *Client {
 	var l *slog.Logger
 	if config.Logger != nil {
 		l = config.Logger

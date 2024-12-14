@@ -2,8 +2,8 @@ package temu
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+	"github.com/goccy/go-json"
 	"github.com/hiscaler/temu-go/config"
 	"os"
 	"testing"
@@ -23,7 +23,7 @@ func TestMain(m *testing.M) {
 		panic(fmt.Sprintf("Parse config file error: %s", err.Error()))
 	}
 
-	temuClient = New(cfg)
+	temuClient = NewClient(cfg)
 	ctx = context.Background()
 	m.Run()
 }

@@ -15,7 +15,7 @@ Temu SDK for Golang
 package main
 
 import (
-	"encoding/json"
+	"github.com/goccy/go-json"
 	"fmt"
 	"github.com/hiscaler/temu-go"
 	"github.com/hiscaler/temu-go/config"
