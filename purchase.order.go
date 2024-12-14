@@ -336,9 +336,9 @@ func (m PurchaseOrderEditRequest) validate() error {
 
 func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEditRequest) (ok bool, err error) {
 	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return false, invalidInput(err)
 	}
+
 	var result = struct {
 		normal.Response
 		Result any `json:"result"`
@@ -358,8 +358,9 @@ func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEdi
 // 批量取消待接单的备货单（bg.purchaseorder.cancel）
 
 func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumbers ...string) (results []entity.Result, err error) {
-	if len(rawPurchaseOrderNumbers) == 0 {
-		return results, errors.New("备货单号不能为空")
+	err = validation.Validate(rawPurchaseOrderNumbers, validation.Each(validation.By(is.PurchaseOrderNumber())))
+	if err != nil {
+		return results, invalidInput(err)
 	}
 
 	results = make([]entity.Result, len(rawPurchaseOrderNumbers))
