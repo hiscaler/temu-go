@@ -1,6 +1,6 @@
 package entity
 
-// ReceiveAddress 地址信息
+// ReceiveAddress 收货地址信息
 type ReceiveAddress struct {
 	ProvinceCode  int64  `json:"provinceCode"`           // 省份编码
 	ProvinceName  string `json:"provinceName"`           // 省
