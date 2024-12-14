@@ -3,14 +3,14 @@ package entity
 // MallAddress 卖家发货地址
 type MallAddress struct {
 	ID            int64  `json:"id"`
-	IsDefault     bool   `json:"isDefault"`
-	DistrictCode  int    `json:"districtCode"`
-	AddressDetail string `json:"addressDetail"`
-	CityName      string `json:"cityName"`
-	DistrictName  string `json:"districtName"`
 	MallId        int64  `json:"mallId"`
-	ProvinceCode  int    `json:"provinceCode"`
-	CityCode      int    `json:"cityCode"`
+	ProvinceCode  int64  `json:"provinceCode"`
 	ProvinceName  string `json:"provinceName"`
+	CityCode      int64  `json:"cityCode"`
+	CityName      string `json:"cityName"`
+	DistrictCode  int64  `json:"districtCode"`
+	DistrictName  string `json:"districtName"`
 	AddressLabel  string `json:"addressLabel"`
+	AddressDetail string `json:"addressDetail"`
+	IsDefault     bool   `json:"isDefault"`
 }
