@@ -358,23 +358,18 @@ func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEdi
 // 批量取消待接单的备货单（bg.purchaseorder.cancel）
 
 func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumbers ...string) (results []entity.Result, err error) {
-	err = validation.Validate(rawPurchaseOrderNumbers,
-		validation.Required.Error("备货单号不能为空"),
-		validation.Each(validation.By(is.PurchaseOrderNumber())),
-	)
-	if err != nil {
-		return results, invalidInput(err)
+	if len(rawPurchaseOrderNumbers) == 0 {
+		return results, nil
 	}
 
 	results = make([]entity.Result, len(rawPurchaseOrderNumbers))
 	numbers := make([]string, 0)
 	for i, number := range rawPurchaseOrderNumbers {
 		result := entity.Result{Key: number}
-		number = strings.TrimSpace(number)
-		err = validation.Validate(number, validation.By(is.PurchaseOrderNumber()))
-		if err != nil {
+		e := validation.Validate(number, validation.By(is.PurchaseOrderNumber()))
+		if e != nil {
 			result.Success = false
-			result.Error = null.StringFrom(err.Error())
+			result.Error = null.StringFrom(invalidInput(e).Error())
 		} else {
 			result.Success = true // Default is true? Must check API response result and reset it.
 			numbers = append(numbers, number)
