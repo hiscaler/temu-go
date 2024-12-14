@@ -13,9 +13,9 @@ type goodsLifeCycleService service
 
 type GoodsLifeCycleQueryParams struct {
 	normal.ParameterWithPager
-	Page             int     `json:"pageNum"`          // 页码
-	ProductSkuIdList []int64 `json:"productSkuIdList"` // 货品 skuId 列表
-	MallId           int64   `json:"mallId"`           // 商家店铺 ID
+	Page             int     `json:"pageNum"`                    // 页码
+	ProductSkuIdList []int64 `json:"productSkuIdList,omitempty"` // 货品 skuId 列表
+	MallId           int64   `json:"mallId,omitempty"`           // 商家店铺 ID
 }
 
 func (m GoodsLifeCycleQueryParams) validate() error {
@@ -25,7 +25,7 @@ func (m GoodsLifeCycleQueryParams) validate() error {
 // 查询货品生命周期状态（bg.product.search）
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#CK9soN
 
-func (s goodsLifeCycleService) Query(ctx context.Context, params GoodsBrandQueryParams) (items []entity.GoodsLifeCycle, total, totalPages int, isLastPage bool, err error) {
+func (s goodsLifeCycleService) Query(ctx context.Context, params GoodsLifeCycleQueryParams) (items []entity.GoodsLifeCycle, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	if params.Page <= 0 {
 		params.Page = 1
