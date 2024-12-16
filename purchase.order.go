@@ -363,7 +363,7 @@ func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumber
 	}
 
 	results = make([]entity.Result, len(rawPurchaseOrderNumbers))
-	numbers := make([]string, 0)
+	numbers := make([]string, 0, len(rawPurchaseOrderNumbers))
 	for i, number := range rawPurchaseOrderNumbers {
 		result := entity.Result{Key: number}
 		e := validation.Validate(number, validation.By(is.PurchaseOrderNumber()))
