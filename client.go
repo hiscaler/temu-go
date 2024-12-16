@@ -229,7 +229,13 @@ func NewClient(config config.Config) *Client {
 		httpClient: httpClient,
 	}
 	client.Services = services{
-		ShipOrder:        (shipOrderService)(xService),
+		ShipOrder: shipOrderService{
+			service:        xService,
+			Staging:        (shipOrderStagingService)(xService),
+			ReceiveAddress: (shipOrderReceiveAddressService)(xService),
+			Packing:        (shipOrderPackingService)(xService),
+			Package:        (shipOrderPackageService)(xService),
+		},
 		ShipOrderStaging: (shipOrderStagingService)(xService),
 		ShipOrderPacking: (shipOrderPackingService)(xService),
 		ShipOrderPackage: (shipOrderPackageService)(xService),
