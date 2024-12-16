@@ -14,7 +14,7 @@ type goodsSizeChartService service
 // Page 第一页从 0 开始
 type GoodsSizeChartQueryParams struct {
 	normal.ParameterWithPager
-	CatId int `json:"catId,omitempty"` // 类目 ID
+	CatId int64 `json:"catId,omitempty"` // 类目 ID
 }
 
 func (m GoodsSizeChartQueryParams) validate() error {

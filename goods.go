@@ -27,16 +27,16 @@ type goodsService struct {
 type GoodsQueryParams struct {
 	normal.ParameterWithPager
 	Page                   int      `json:"page"`                             // 页码
-	Cat1Id                 int      `json:"cat1Id,omitempty"`                 // 一级分类 ID
-	Cat2Id                 int      `json:"cat2Id,omitempty"`                 // 二级分类 ID
-	Cat3Id                 int      `json:"cat3Id,omitempty"`                 // 三级分类 ID
-	Cat4Id                 int      `json:"cat4Id,omitempty"`                 // 四级分类 ID
-	Cat5Id                 int      `json:"cat5Id,omitempty"`                 // 五级分类 ID
-	Cat6Id                 int      `json:"cat6Id,omitempty"`                 // 六级分类 ID
-	Cat7Id                 int      `json:"cat7Id,omitempty"`                 // 七级分类 ID
-	Cat8Id                 int      `json:"cat8Id,omitempty"`                 // 八级分类 ID
-	Cat9Id                 int      `json:"cat9Id,omitempty"`                 // 九级分类 ID
-	Cat10Id                int      `json:"cat10Id,omitempty"`                // 十级分类 ID
+	Cat1Id                 int64    `json:"cat1Id,omitempty"`                 // 一级分类 ID
+	Cat2Id                 int64    `json:"cat2Id,omitempty"`                 // 二级分类 ID
+	Cat3Id                 int64    `json:"cat3Id,omitempty"`                 // 三级分类 ID
+	Cat4Id                 int64    `json:"cat4Id,omitempty"`                 // 四级分类 ID
+	Cat5Id                 int64    `json:"cat5Id,omitempty"`                 // 五级分类 ID
+	Cat6Id                 int64    `json:"cat6Id,omitempty"`                 // 六级分类 ID
+	Cat7Id                 int64    `json:"cat7Id,omitempty"`                 // 七级分类 ID
+	Cat8Id                 int64    `json:"cat8Id,omitempty"`                 // 八级分类 ID
+	Cat9Id                 int64    `json:"cat9Id,omitempty"`                 // 九级分类 ID
+	Cat10Id                int64    `json:"cat10Id,omitempty"`                // 十级分类 ID
 	SkcExtCode             string   `json:"skcExtCode,omitempty"`             // 货品 SKC 外部编码
 	SupportPersonalization int      `json:"supportPersonalization,omitempty"` // 是否支持定制品模板
 	BindSiteIds            []int    `json:"bindSiteIds,omitempty"`            // 经营站点
@@ -120,16 +120,16 @@ func (m ProductImageUrl) validate() error {
 }
 
 type GoodsCreateRequest struct {
-	Cat1Id                   int `json:"cat1Id"`  // 一级类目id
-	Cat2Id                   int `json:"cat2Id"`  // 二级类目id
-	Cat3Id                   int `json:"cat3Id"`  // 三级类目id
-	Cat4Id                   int `json:"cat4Id"`  // 四级类目id（没有的情况传 0）
-	Cat5Id                   int `json:"cat5Id"`  // 五级类目id（没有的情况传 0）
-	Cat6Id                   int `json:"cat6Id"`  // 六级类目id（没有的情况传 0）
-	Cat7Id                   int `json:"cat7Id"`  // 七级类目id（没有的情况传 0）
-	Cat8Id                   int `json:"cat8Id"`  // 八级类目id（没有的情况传 0）
-	Cat9Id                   int `json:"cat9Id"`  // 九级类目id（没有的情况传 0）
-	Cat10Id                  int `json:"cat10Id"` // 十级类目id（没有的情况传 0）
+	Cat1Id                   int64 `json:"cat1Id"`  // 一级类目id
+	Cat2Id                   int64 `json:"cat2Id"`  // 二级类目id
+	Cat3Id                   int64 `json:"cat3Id"`  // 三级类目id
+	Cat4Id                   int64 `json:"cat4Id"`  // 四级类目id（没有的情况传 0）
+	Cat5Id                   int64 `json:"cat5Id"`  // 五级类目id（没有的情况传 0）
+	Cat6Id                   int64 `json:"cat6Id"`  // 六级类目id（没有的情况传 0）
+	Cat7Id                   int64 `json:"cat7Id"`  // 七级类目id（没有的情况传 0）
+	Cat8Id                   int64 `json:"cat8Id"`  // 八级类目id（没有的情况传 0）
+	Cat9Id                   int64 `json:"cat9Id"`  // 九级类目id（没有的情况传 0）
+	Cat10Id                  int64 `json:"cat10Id"` // 十级类目id（没有的情况传 0）
 	ProductWarehouseRouteReq struct {
 		TargetRouteList []struct {
 			SiteIdList  []int  `json:"siteIdList"`  // 站点列表
@@ -442,9 +442,9 @@ type GoodsCreateRequest struct {
 
 func (m GoodsCreateRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.Cat1Id, validation.Required.Error("分类 1 不能为空")),
-		validation.Field(&m.Cat2Id, validation.Required.Error("分类 2 不能为空")),
-		validation.Field(&m.Cat3Id, validation.Required.Error("分类 3 不能为空")),
+		validation.Field(&m.Cat1Id, validation.Required.Error("分类1 不能为空")),
+		validation.Field(&m.Cat2Id, validation.Required.Error("分类2 不能为空")),
+		validation.Field(&m.Cat3Id, validation.Required.Error("分类3 不能为空")),
 		validation.Field(&m.ProductName, validation.Required.Error("商品名称不能为空")),
 		validation.Field(&m.AddProductChannelType, validation.Required.Error("发品渠道不能为空")),
 	)

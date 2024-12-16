@@ -11,7 +11,7 @@ import (
 type goodsSizeChartClassService service
 
 type GoodsSizeChartClassQueryParams struct {
-	CatId int `json:"catId,omitempty"` // 叶子类目id，通过bg.goods.cats.get获取
+	CatId int64 `json:"catId,omitempty"` // 叶子类目id，通过bg.goods.cats.get获取
 }
 
 func (m GoodsSizeChartClassQueryParams) validate() error {
