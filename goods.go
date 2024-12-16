@@ -4,10 +4,10 @@ import (
 	"context"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
+	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
-	"strconv"
 	"time"
 )
 
@@ -21,6 +21,7 @@ type goodsService struct {
 	Sales         goodsSalesService         // 销售数据
 	Certification goodsCertificationService // 资质服务
 	Warehouse     goodsWarehouseService     // 销售数据
+	Barcode       goodsBarcodeService       // 条码数据
 }
 
 type GoodsQueryParams struct {
@@ -60,16 +61,15 @@ func (m GoodsQueryParams) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#SjadVR
 func (s goodsService) Query(ctx context.Context, params GoodsQueryParams) (items []entity.Goods, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
+	params.Page = params.Pager.Page
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return
 	}
 
-	if params.CreatedAtStart != "" && params.CreatedAtEnd != "" {
-		t, _ := time.ParseInLocation(time.DateTime, params.CreatedAtStart+" 00:00:00", time.Local)
-		params.CreatedAtStart = strconv.Itoa(int(t.UnixMilli()))
-		t, _ = time.ParseInLocation(time.DateTime, params.CreatedAtEnd+" 23:59:59", time.Local)
-		params.CreatedAtEnd = strconv.Itoa(int(t.UnixMilli()))
+	if start, end, e := helpers.StrTime2UnixMilli(params.CreatedAtStart, params.CreatedAtEnd); e == nil {
+		params.CreatedAtStart = start
+		params.CreatedAtEnd = end
 	}
 	var result = struct {
 		normal.Response

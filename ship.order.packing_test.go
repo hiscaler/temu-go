@@ -35,8 +35,8 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 		shipOrder := items[0]
 		// 必须打印箱唛
 		if !shipOrder.IsPrintBoxMark {
-			_, err = temuClient.Services.Barcode.BoxMark(ctx, shipOrder.DeliveryOrderSn)
-			assert.Nilf(t, err, "temuClient.Services.Barcode.BoxMark(ctx, %s)", shipOrder.DeliveryOrderSn)
+			_, err = temuClient.Services.Goods.Barcode.BoxMark(ctx, shipOrder.DeliveryOrderSn)
+			assert.Nilf(t, err, "temuClient.Services.Goods.Barcode.BoxMark(ctx, %s)", shipOrder.DeliveryOrderSn)
 		}
 
 		driverName := shipOrder.DriverName
@@ -87,8 +87,8 @@ func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 		shipOrder := items[0]
 		// 必须打印箱唛
 		if !shipOrder.IsPrintBoxMark {
-			_, err = temuClient.Services.Barcode.BoxMark(ctx, shipOrder.DeliveryOrderSn)
-			assert.Nilf(t, err, "temuClient.Services.Barcode.BoxMark(ctx, %s)", shipOrder.DeliveryOrderSn)
+			_, err = temuClient.Services.Goods.Barcode.BoxMark(ctx, shipOrder.DeliveryOrderSn)
+			assert.Nilf(t, err, "temuClient.Services.Goods.Barcode.BoxMark(ctx, %s)", shipOrder.DeliveryOrderSn)
 		}
 
 		d, _ := time.ParseInLocation(time.DateTime, time.Now().Format(time.DateOnly)+" 18:00:00", temuClient.TimeLocation)

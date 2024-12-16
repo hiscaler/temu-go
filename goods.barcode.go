@@ -2,16 +2,17 @@ package temu
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
+	"strconv"
+	"time"
 )
 
-type barcodeService service
+type goodsBarcodeService service
 
 type NormalGoodsBarcodeQueryParams struct {
 	normal.ParameterWithPager
@@ -28,7 +29,7 @@ func (m NormalGoodsBarcodeQueryParams) validate() error {
 
 // NormalGoods 商品条码查询v2（bg.goods.labelv2.get）
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#5LRokG
-func (s barcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
+func (s goodsBarcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
 	params.TidyPager()
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
@@ -66,30 +67,32 @@ type CustomGoodsBarcodeQueryParams struct {
 	SkuExtCode               string  `json:"skuExtCode,omitempty"`               // SKU 货号
 	LabelCode                int64   `json:"labelCode,omitempty"`                // 标签条码
 	PersonalProductSkuIdList []int64 `json:"personalProductSkuIdList,omitempty"` // 定制品 SKU ID
-	CreateTimeStart          int64   `json:"createTimeStart,omitempty"`          // 定制品创建时间，支持毫秒时间戳
-	CreateTimeEnd            int64   `json:"createTimeEnd,omitempty"`            // 定制品创建时间，支持毫秒时间戳
+	CreateTimeStart          string  `json:"createTimeStart,omitempty"`          // 定制品创建时间，支持毫秒时间戳
+	CreateTimeEnd            string  `json:"createTimeEnd,omitempty"`            // 定制品创建时间，支持毫秒时间戳
 }
 
 func (m CustomGoodsBarcodeQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.CreateTimeStart, validation.When(m.CreateTimeStart >= 0), validation.By(is.Millisecond())),
-		validation.Field(&m.CreateTimeEnd, validation.When(m.CreateTimeEnd >= 0), validation.By(is.Millisecond()), validation.By(func(value interface{}) error {
-			v, _ := value.(int64)
-			if v < m.CreateTimeStart {
-				return errors.New("定制品创建结束时间必须大于等于开始时间")
-			}
-			return nil
-		})),
+		validation.Field(&m.CreateTimeStart,
+			validation.When(m.CreateTimeStart != "" || m.CreateTimeEnd != "", validation.By(is.TimeRange(m.CreateTimeStart, m.CreateTimeEnd, time.DateOnly))),
+		),
 	)
 }
 
 // CustomGoods 定制商品条码查询（bg.goods.custom.label.get）
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Hc5wmR
-func (s barcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
+func (s goodsBarcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
 	params.TidyPager()
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return
+	}
+
+	if params.CreateTimeStart != "" && params.CreateTimeEnd != "" {
+		t, _ := time.ParseInLocation(time.DateTime, params.CreateTimeStart+" 00:00:00", time.Local)
+		params.CreateTimeStart = strconv.Itoa(int(t.UnixMilli()))
+		t, _ = time.ParseInLocation(time.DateTime, params.CreateTimeEnd+" 23:59:59", time.Local)
+		params.CreateTimeEnd = strconv.Itoa(int(t.UnixMilli()))
 	}
 
 	var result = struct {
@@ -131,7 +134,7 @@ func (m BoxMarkBarcodeQueryParams) validate() error {
 }
 
 // BoxMarkPrintUrl 箱唛打印地址
-func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, shipOrderNumbers ...string) (dataKey string, err error) {
+func (s goodsBarcodeService) BoxMarkPrintUrl(ctx context.Context, shipOrderNumbers ...string) (dataKey string, err error) {
 	params := BoxMarkBarcodeQueryParams{
 		ReturnDataKey:       null.BoolFrom(true),
 		DeliveryOrderSnList: shipOrderNumbers,
@@ -158,7 +161,7 @@ func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, shipOrderNumbers ..
 }
 
 // BoxMark 箱唛信息
-func (s barcodeService) BoxMark(ctx context.Context, shipOrderNumbers ...string) (items []entity.BoxMarkInfo, err error) {
+func (s goodsBarcodeService) BoxMark(ctx context.Context, shipOrderNumbers ...string) (items []entity.BoxMarkInfo, err error) {
 	params := BoxMarkBarcodeQueryParams{
 		ReturnDataKey:       null.BoolFrom(false),
 		DeliveryOrderSnList: shipOrderNumbers,

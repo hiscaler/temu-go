@@ -54,7 +54,6 @@ type services struct {
 	ShipOrderStaging        shipOrderStagingService
 	ShipOrderPacking        shipOrderPackingService
 	ShipOrderPackage        shipOrderPackageService
-	Barcode                 barcodeService
 	PurchaseOrder           purchaseOrderService
 	Logistics               logisticsService
 	GoodsSizeChart          goodsSizeChartService
@@ -234,7 +233,6 @@ func NewClient(config config.Config) *Client {
 		ShipOrderStaging: (shipOrderStagingService)(xService),
 		ShipOrderPacking: (shipOrderPackingService)(xService),
 		ShipOrderPackage: (shipOrderPackageService)(xService),
-		Barcode:          (barcodeService)(xService),
 		PurchaseOrder:    (purchaseOrderService)(xService),
 		Goods: goodsService{
 			service:       xService,
@@ -245,6 +243,7 @@ func NewClient(config config.Config) *Client {
 			TopSelling:    (goodsTopSellingService)(xService),
 			Certification: (goodsCertificationService)(xService),
 			Warehouse:     (goodsWarehouseService)(xService),
+			Barcode:       (goodsBarcodeService)(xService),
 		},
 		Logistics:               (logisticsService)(xService),
 		GoodsSizeChart:          (goodsSizeChartService)(xService),

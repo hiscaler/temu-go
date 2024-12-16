@@ -26,7 +26,8 @@ func (m GoodsLifeCycleQueryParams) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#CK9soN
 
 func (s goodsLifeCycleService) Query(ctx context.Context, params GoodsLifeCycleQueryParams) (items []entity.GoodsLifeCycle, total, totalPages int, isLastPage bool, err error) {
-	params.TidyPager()
+	pager := params.TidyPager()
+	params.Page = pager.Page
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return
