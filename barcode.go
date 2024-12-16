@@ -62,7 +62,7 @@ type CustomGoodsBarcodeQueryParams struct {
 	NormalGoodsBarcodeQueryParams
 	ProductSkuIdList         []int64 `json:"productSkuIdList,omitempty"`         // 货品 SKU ID 列表
 	SkcExtCode               string  `json:"skcExtCode,omitempty"`               // SKC 货号
-	ProductSkcIdList         []int64 `json:"productSkcIdList,omitempty"`         // 货品· SKC ID 列表
+	ProductSkcIdList         []int64 `json:"productSkcIdList,omitempty"`         // 货品 SKC ID 列表
 	SkuExtCode               string  `json:"skuExtCode,omitempty"`               // SKU 货号
 	LabelCode                int64   `json:"labelCode,omitempty"`                // 标签条码
 	PersonalProductSkuIdList []int64 `json:"personalProductSkuIdList,omitempty"` // 定制品 SKU ID
