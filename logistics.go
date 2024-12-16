@@ -34,7 +34,7 @@ func (s logisticsService) Companies(ctx context.Context) (items []entity.Logisti
 }
 
 // Company 根据 ID 查询发货快递公司
-func (s logisticsService) Company(ctx context.Context, shipmentId int) (item entity.LogisticsShippingCompany, err error) {
+func (s logisticsService) Company(ctx context.Context, shipmentId int64) (item entity.LogisticsShippingCompany, err error) {
 	items, err := s.Companies(ctx)
 	if err != nil {
 		return
@@ -106,12 +106,14 @@ func (s logisticsService) Match(ctx context.Context, request LogisticsMatchReque
 // 物流单号与物流商校验（bg.shiporder.logisticsorder.match）
 
 type LogisticsVerifyRequest struct {
-	ShippingId int64  `json:"shippingId"` // 物流公司 id
+	ShippingId int64  `json:"shippingId"` // 物流公司 ID
 	ExpressNo  string `json:"expressNo"`  // 物流单号
 }
 
 func (m LogisticsVerifyRequest) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ExpressNo, validation.Required.Error("物流单号不能为空")),
+	)
 }
 
 // Verify 物流单号与物流商校验
