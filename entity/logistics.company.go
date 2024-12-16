@@ -1,7 +1,7 @@
 package entity
 
-// LogisticsShipmentCompany 发货快递公司
-type LogisticsShipmentCompany struct {
+// LogisticsShippingCompany 发货快递公司
+type LogisticsShippingCompany struct {
 	ShipId   int    `json:"shipId"`   // 快递公司 ID
 	ShipName string `json:"shipName"` // 快递公司名称
 }
