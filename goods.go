@@ -442,9 +442,9 @@ type GoodsCreateRequest struct {
 
 func (m GoodsCreateRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.Cat1Id, validation.Required.Error("分类1 不能为空")),
-		validation.Field(&m.Cat2Id, validation.Required.Error("分类2 不能为空")),
-		validation.Field(&m.Cat3Id, validation.Required.Error("分类3 不能为空")),
+		validation.Field(&m.Cat1Id, validation.Required.Error("一级类目不能为空")),
+		validation.Field(&m.Cat2Id, validation.Required.Error("二级类目不能为空")),
+		validation.Field(&m.Cat3Id, validation.Required.Error("三级类目不能为空")),
 		validation.Field(&m.ProductName, validation.Required.Error("商品名称不能为空")),
 		validation.Field(&m.AddProductChannelType, validation.Required.Error("发品渠道不能为空")),
 	)
