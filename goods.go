@@ -67,9 +67,11 @@ func (s goodsService) Query(ctx context.Context, params GoodsQueryParams) (items
 		return
 	}
 
-	if start, end, e := helpers.StrTime2UnixMilli(params.CreatedAtStart, params.CreatedAtEnd); e == nil {
-		params.CreatedAtStart = start
-		params.CreatedAtEnd = end
+	if params.CreatedAtStart != "" && params.CreatedAtEnd != "" {
+		if start, end, e := helpers.StrTime2UnixMilli(params.CreatedAtStart, params.CreatedAtEnd); e == nil {
+			params.CreatedAtStart = start
+			params.CreatedAtEnd = end
+		}
 	}
 	var result = struct {
 		normal.Response

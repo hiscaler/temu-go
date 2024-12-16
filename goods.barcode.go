@@ -5,10 +5,10 @@ import (
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
+	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
-	"strconv"
 	"time"
 )
 
@@ -89,10 +89,10 @@ func (s goodsBarcodeService) CustomGoods(ctx context.Context, params CustomGoods
 	}
 
 	if params.CreateTimeStart != "" && params.CreateTimeEnd != "" {
-		t, _ := time.ParseInLocation(time.DateTime, params.CreateTimeStart+" 00:00:00", time.Local)
-		params.CreateTimeStart = strconv.Itoa(int(t.UnixMilli()))
-		t, _ = time.ParseInLocation(time.DateTime, params.CreateTimeEnd+" 23:59:59", time.Local)
-		params.CreateTimeEnd = strconv.Itoa(int(t.UnixMilli()))
+		if start, end, e := helpers.StrTime2UnixMilli(params.CreateTimeStart, params.CreateTimeEnd); e == nil {
+			params.CreateTimeStart = start
+			params.CreateTimeEnd = end
+		}
 	}
 
 	var result = struct {
