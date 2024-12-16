@@ -25,7 +25,7 @@ type ShipOrderPackingSendRequestSelfDeliveryInformation struct {
 
 // ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation 平台推荐服务商配送信息
 type ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation struct {
-	ExpressCompanyId          int     `json:"expressCompanyId,omitempty"`          // 快递公司Id
+	ExpressCompanyId          int64   `json:"expressCompanyId,omitempty"`          // 快递公司Id
 	TmsChannelId              int     `json:"tmsChannelId,omitempty"`              // TMS快递产品类型ID
 	ExpressCompanyName        string  `json:"expressCompanyName,omitempty"`        // 快递公司名称
 	StandbyExpress            bool    `json:"standbyExpress"`                      // 是否是备用快递公司

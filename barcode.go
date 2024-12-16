@@ -38,10 +38,10 @@ func (s barcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarco
 	var result = struct {
 		normal.Response
 		Result struct {
-			labelCodePageResult struct {
+			LabelCodePageResult struct {
 				TotalCount int                 `json:"totalCount"` // 总数
 				Data       []entity.GoodsLabel `json:"data"`       // 结果列表
-			}
+			} `json:"labelCodePageResult"`
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
@@ -53,7 +53,7 @@ func (s barcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarco
 		return
 	}
 
-	return result.Result.labelCodePageResult.Data, nil
+	return result.Result.LabelCodePageResult.Data, nil
 }
 
 // 定制商品条码查询（bg.goods.custom.label.get）
