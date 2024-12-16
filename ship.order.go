@@ -213,8 +213,8 @@ func (m ShipOrderCancelRequest) validate() error {
 
 // Cancel 取消发货单
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#UywT8E
-func (s shipOrderService) Cancel(ctx context.Context, deliveryOrderSn string) (ok bool, err error) {
-	req := ShipOrderCancelRequest{DeliveryOrderSn: deliveryOrderSn}
+func (s shipOrderService) Cancel(ctx context.Context, shipOrderNumber string) (ok bool, err error) {
+	req := ShipOrderCancelRequest{DeliveryOrderSn: shipOrderNumber}
 	if err = req.validate(); err != nil {
 		err = invalidInput(err)
 		return
