@@ -17,7 +17,7 @@ type ShipOrderStaging struct {
 	SubPurchaseOrderBasicVO struct {
 		SupplierId                         int64          `json:"supplierId"`
 		IsCustomProduct                    bool           `json:"isCustomProduct"`                  // 是否为定制商品
-		ExpectLatestArrivalTimeOrDefault   int            `json:"expectLatestArrivalTimeOrDefault"` // 要求最晚到达时间带默认值（时间戳 单位：毫秒）
+		ExpectLatestArrivalTimeOrDefault   int64          `json:"expectLatestArrivalTimeOrDefault"` // 要求最晚到达时间带默认值（时间戳 单位：毫秒）
 		ProductSkcPicture                  string         `json:"productSkcPicture"`
 		ProductName                        string         `json:"productName"`
 		IsFirst                            bool           `json:"isFirst"`
@@ -31,7 +31,7 @@ type ShipOrderStaging struct {
 		UrgencyType                        int            `json:"urgencyType"`
 		SubWarehouseId                     int64          `json:"subWarehouseId"`
 		ProductInventoryRegion             int            `json:"productInventoryRegion"`
-		ExpectLatestDeliverTimeOrDefault   int            `json:"expectLatestDeliverTimeOrDefault"` // 要求最晚发货时间带默认值（时间戳 单位：毫秒）
+		ExpectLatestDeliverTimeOrDefault   int64          `json:"expectLatestDeliverTimeOrDefault"` // 要求最晚发货时间带默认值（时间戳 单位：毫秒）
 		ArrivalUpcomingDelayTimeMillis     int64          `json:"arrivalUpcomingDelayTimeMillis"`
 		ReceiveAddressInfo                 ReceiveAddress `json:"receiveAddressInfo"`
 		AutoRemoveFromDeliveryPlatformTime int64          `json:"autoRemoveFromDeliveryPlatformTime"`

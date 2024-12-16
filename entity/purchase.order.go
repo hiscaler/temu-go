@@ -38,8 +38,8 @@ type PurchaseOrder struct {
 		DeliverTime                      null.Int    `json:"deliverTime"`
 		ReceiveWarehouseId               null.Int    `json:"receiveWarehouseId"`
 		ReceiveWarehouseName             null.String `json:"receiveWarehouseName"`
-		ExpectLatestDeliverTimeOrDefault int         `json:"expectLatestDeliverTimeOrDefault"`
-		ExpectLatestArrivalTimeOrDefault int         `json:"expectLatestArrivalTimeOrDefault"`
+		ExpectLatestDeliverTimeOrDefault int64       `json:"expectLatestDeliverTimeOrDefault"`
+		ExpectLatestArrivalTimeOrDefault int64       `json:"expectLatestArrivalTimeOrDefault"`
 		DeliveryOrderSn                  null.String `json:"deliveryOrderSn"`
 	} `json:"deliverInfo"`
 	ProductSkcId         int64 `json:"productSkcId"`
