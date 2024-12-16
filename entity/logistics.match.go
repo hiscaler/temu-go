@@ -37,7 +37,7 @@ func (st LogisticsMatchChannelScheduleTime) Range() (t LogisticsChannelAppointme
 
 // LogisticsMatch 推荐物流商匹配
 type LogisticsMatch struct {
-	ExpressCompanyId        int                                 `json:"expressCompanyId"`        // 快递公司 ID
+	ExpressCompanyId        int64                               `json:"expressCompanyId"`        // 快递公司 ID
 	ExpressCompanyName      string                              `json:"expressCompanyName"`      // 快递公司名称
 	StandbyExpress          bool                                `json:"standbyExpress"`          // 是否是备用快递公司
 	TmsChannelId            int                                 `json:"tmsChannelId"`            // TMS 快递产品类型 ID
