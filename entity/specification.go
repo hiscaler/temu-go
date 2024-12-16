@@ -11,24 +11,25 @@ type Specification struct {
 }
 
 func (spec Specification) Ids() []int {
-	ids := make([]int, 0)
-	if spec.ParentSpecId != 0 {
-		ids = append(ids, spec.ParentSpecId)
-	}
-	if spec.SpecId != 0 {
-		ids = append(ids, spec.SpecId)
+	rawIds := []int{spec.ParentSpecId, spec.SpecId}
+	ids := make([]int, 0, len(rawIds))
+	for _, id := range rawIds {
+		if id == 0 {
+			continue
+		}
+		ids = append(ids, id)
 	}
 	return ids
 }
 
 func (spec Specification) Names() []string {
-	names := make([]string, 0)
-	name := strings.TrimSpace(spec.ParentSpecName)
-	if name != "" {
-		names = append(names, name)
-	}
-	name = strings.TrimSpace(spec.SpecName)
-	if name != "" {
+	rawNames := []string{spec.ParentSpecName, spec.SpecName}
+	names := make([]string, 0, len(rawNames))
+	for _, name := range rawNames {
+		name = strings.TrimSpace(name)
+		if name == "" {
+			continue
+		}
 		names = append(names, name)
 	}
 	return names
