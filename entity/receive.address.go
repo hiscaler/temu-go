@@ -12,3 +12,7 @@ type ReceiveAddress struct {
 	ReceiverName  string `json:"receiverName,omitempty"` // 收货人
 	Phone         string `json:"phone,omitempty"`        // 联系电话
 }
+
+func (m ReceiveAddress) validate() error {
+	return nil
+}

@@ -131,10 +131,10 @@ func (m BoxMarkBarcodeQueryParams) validate() error {
 }
 
 // BoxMarkPrintUrl 箱唛打印地址
-func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, deliveryOrderSnList ...string) (dataKey string, err error) {
+func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, shipOrderNumbers ...string) (dataKey string, err error) {
 	params := BoxMarkBarcodeQueryParams{
 		ReturnDataKey:       null.BoolFrom(true),
-		DeliveryOrderSnList: deliveryOrderSnList,
+		DeliveryOrderSnList: shipOrderNumbers,
 	}
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
@@ -158,10 +158,10 @@ func (s barcodeService) BoxMarkPrintUrl(ctx context.Context, deliveryOrderSnList
 }
 
 // BoxMark 箱唛信息
-func (s barcodeService) BoxMark(ctx context.Context, deliveryOrderSnList ...string) (items []entity.BoxMarkInfo, err error) {
+func (s barcodeService) BoxMark(ctx context.Context, shipOrderNumbers ...string) (items []entity.BoxMarkInfo, err error) {
 	params := BoxMarkBarcodeQueryParams{
 		ReturnDataKey:       null.BoolFrom(false),
-		DeliveryOrderSnList: deliveryOrderSnList,
+		DeliveryOrderSnList: shipOrderNumbers,
 	}
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
