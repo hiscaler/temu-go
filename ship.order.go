@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
@@ -181,9 +182,10 @@ func (m *ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s sh
 		validation.Field(&m.DeliveryOrderCreateInfos,
 			validation.Required.Error("发货单创建组列表不能为空"),
 			validation.By(func(value interface{}) error {
+				errorMessages := make([]string, 0)
 				requests, ok := value.([]ShipOrderCreateRequestOrderInfo)
 				if !ok {
-					return errors.New("发货单创建组列表不能为空")
+					return errors.New("无效的发货单创建组列表")
 				}
 				purchaseOrderNumbers := make([]string, 0)
 				for _, request := range requests {
@@ -192,7 +194,14 @@ func (m *ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s sh
 						return err
 					}
 
+					if inx.StringIn(request.SubPurchaseOrderSn, purchaseOrderNumbers...) {
+						errorMessages = append(errorMessages, fmt.Sprintf("备货单 %s 重复", request.SubPurchaseOrderSn))
+						continue
+					}
 					purchaseOrderNumbers = append(purchaseOrderNumbers, request.SubPurchaseOrderSn)
+				}
+				if len(errorMessages) != 0 {
+					return errors.New(strings.Join(errorMessages, ", "))
 				}
 
 				stagingOrders := make([]entity.ShipOrderStaging, 0)
@@ -216,20 +225,23 @@ func (m *ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s sh
 				for _, order := range stagingOrders {
 					kvNumberStagingOrder[strings.ToLower(order.SubPurchaseOrderBasicVO.SubPurchaseOrderSn)] = order
 				}
-
 				// 验证 DeliverOrderDetailInfos, PackageInfos 数据
 				// DeliverOrderDetailInfos, PackageInfos 为空表示全部数据创建发货单，如果指定的话则只有指定的数据会创建发货单
-				for _, request := range requests {
+				for i, request := range requests {
 					purchaseOrderNumber := request.SubPurchaseOrderSn
 					shipOrderStaging, exists := kvNumberStagingOrder[strings.ToLower(purchaseOrderNumber)]
 					if !exists {
-						return fmt.Errorf("%s 在发货台中不存在", purchaseOrderNumber)
+						errorMessages = append(errorMessages, fmt.Sprintf("%s 在发货台中不存在", purchaseOrderNumber))
+						continue
 					}
 
 					kvSkuIdQuantity := make(map[int64]int, len(shipOrderStaging.OrderDetailVOList)) // 默认发货的 sku 和数量（skuId: quantity）
 					for _, v := range shipOrderStaging.OrderDetailVOList {
 						skuId := v.ProductSkuId
-						kvSkuIdQuantity[skuId] = v.ProductSkuPurchaseQuantity
+						if shipOrderStaging.SubPurchaseOrderBasicVO.IsCustomProduct {
+							skuId = v.ProductOriginalSkuId
+						}
+						kvSkuIdQuantity[skuId] = v.SkuDeliveryQuantityMaxLimit
 					}
 					if len(request.DeliverOrderDetailInfos) == 0 && len(request.PackageInfos) == 0 {
 						// 用户未主动添加发货信息，默认将所有可发货的数据加进来
@@ -248,34 +260,55 @@ func (m *ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s sh
 								},
 							})
 						}
+						m.DeliveryOrderCreateInfos[i] = request // 补充发货单创建组列表数据
 					} else {
 						// 验证用户主动提交的信息
 						if len(request.DeliverOrderDetailInfos) == 0 {
-							return errors.New("采购单创建信息不能为空")
-						}
-						if len(request.PackageInfos) == 0 {
-							return errors.New("包裹信息列表不能为空")
+							errorMessages = append(errorMessages, fmt.Sprintf("%s 采购单创建信息不能为空", purchaseOrderNumber))
 						}
 						for _, v := range request.DeliverOrderDetailInfos {
 							var qty int
 							if qty, exists = kvSkuIdQuantity[v.ProductSkuId]; !exists {
-								return fmt.Errorf("%s SKU %d 不存在", request.SubPurchaseOrderSn, v.ProductSkuId)
+								errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 不存在", purchaseOrderNumber, v.ProductSkuId))
+								continue
 							}
 							deliveryQty := v.DeliverSkuNum
 							if deliveryQty <= 0 {
-								return fmt.Errorf("%s SKU %d 发货数量不能小于零", request.SubPurchaseOrderSn, v.ProductSkuId)
+								errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 发货数量不能小于零", purchaseOrderNumber, v.ProductSkuId))
 							}
 							if deliveryQty > qty {
-								return fmt.Errorf("%s SKU %d 发货数量不能超过 %d", request.SubPurchaseOrderSn, v.ProductSkuId, qty)
+								errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 发货数量不能超过 %d", purchaseOrderNumber, v.ProductSkuId, qty))
+							}
+						}
+
+						if len(request.PackageInfos) == 0 {
+							errorMessages = append(errorMessages, fmt.Sprintf("%s 包裹信息列表不能为空", purchaseOrderNumber))
+						}
+						for _, packageInfo := range request.PackageInfos {
+							for _, v := range packageInfo.PackageDetailSaveInfos {
+								var qty int
+								if qty, exists = kvSkuIdQuantity[v.ProductSkuId]; !exists {
+									errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 不存在", purchaseOrderNumber, v.ProductSkuId))
+									continue
+								}
+								deliveryQty := v.SkuNum
+								if deliveryQty <= 0 {
+									errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 包裹发货数量不能小于零", purchaseOrderNumber, v.ProductSkuId))
+								}
+								if deliveryQty > qty {
+									errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 包裹发货数量不能超过 %d", purchaseOrderNumber, v.ProductSkuId, qty))
+								}
 							}
 						}
 					}
 				}
 
-				m.DeliveryOrderCreateInfos = requests // 重置修正后的发货单创建组列表数据
+				if len(errorMessages) != 0 {
+					return errors.New(strings.Join(errorMessages, ", "))
+				}
 				return nil
 			})),
-		validation.Field(&m.SubWarehouseId, validation.Required.Error("子仓不能为空")),
+		validation.Field(&m.SubWarehouseId, validation.Required.Error("收货仓库不能为空")),
 	)
 }
 
