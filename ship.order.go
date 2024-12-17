@@ -10,6 +10,8 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
+	"maps"
+	"slices"
 	"strings"
 )
 
@@ -172,12 +174,12 @@ func (m ShipOrderCreateRequestOrderInfo) validate() error {
 }
 
 type ShipOrderCreateRequestDeliveryOrder struct {
-	DeliveryOrderCreateInfos []ShipOrderCreateRequestOrderInfo `json:"deliveryOrderCreateInfos"` // 发货单创建组列表
-	ReceiveAddressInfo       entity.ReceiveAddress             `json:"receiveAddressInfo"`       // 收货地址
-	SubWarehouseId           int64                             `json:"subWarehouseId"`           // 子仓 ID
+	DeliveryOrderCreateInfos []ShipOrderCreateRequestOrderInfo `json:"deliveryOrderCreateInfos"`     // 发货单创建组列表
+	ReceiveAddressInfo       entity.ReceiveAddress             `json:"receiveAddressInfo,omitempty"` // 收货地址
+	SubWarehouseId           int64                             `json:"subWarehouseId,omitempty"`     // 子仓 ID
 }
 
-func (m *ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shipOrderService) error {
+func (m ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shipOrderService) error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderCreateInfos,
 			validation.Required.Error("发货单创建组列表不能为空"),
@@ -191,7 +193,8 @@ func (m *ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s sh
 				for _, request := range requests {
 					err := request.validate()
 					if err != nil {
-						return err
+						errorMessages = append(errorMessages, err.Error())
+						continue
 					}
 
 					if inx.StringIn(request.SubPurchaseOrderSn, purchaseOrderNumbers...) {
@@ -204,26 +207,40 @@ func (m *ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s sh
 					return errors.New(strings.Join(errorMessages, "; "))
 				}
 
-				stagingOrders := make([]entity.ShipOrderStaging, 0)
-				shipOrderStagingQueryParams := ShipOrderStagingQueryParams{
-					SubPurchaseOrderSnList: purchaseOrderNumbers,
-				}
-				shipOrderStagingQueryParams.Page = 1
-				for {
-					rawStagingOrders, _, _, isLastPage, err := s.Staging.Query(ctx, shipOrderStagingQueryParams)
+				stagingOrders := make([]entity.ShipOrderStaging, 0, len(purchaseOrderNumbers))
+				pageSize := 20
+				for chunkPurchaseOrderNumbers := range slices.Chunk(purchaseOrderNumbers, pageSize) {
+					shipOrderStagingQueryParams := ShipOrderStagingQueryParams{
+						SubPurchaseOrderSnList: chunkPurchaseOrderNumbers,
+					}
+					shipOrderStagingQueryParams.Page = 1
+					shipOrderStagingQueryParams.PageSize = pageSize
+					rawStagingOrders, _, _, _, err := s.Staging.Query(ctx, shipOrderStagingQueryParams)
 					if err != nil {
 						return err
+					} else if len(rawStagingOrders) != 0 {
+						stagingOrders = append(stagingOrders, rawStagingOrders...)
 					}
-					stagingOrders = append(stagingOrders, rawStagingOrders...)
-					if isLastPage {
-						break
-					}
-					shipOrderStagingQueryParams.Page++
 				}
 
 				kvNumberStagingOrder := make(map[string]entity.ShipOrderStaging, len(stagingOrders))
-				for _, order := range stagingOrders {
-					kvNumberStagingOrder[strings.ToLower(order.SubPurchaseOrderBasicVO.SubPurchaseOrderSn)] = order
+				if len(stagingOrders) != 0 {
+					warehouseIdName := make(map[int64]string, 0)
+					for _, order := range stagingOrders {
+						purchaseOrder := order.SubPurchaseOrderBasicVO
+						m.SubWarehouseId = purchaseOrder.SubWarehouseId
+						m.ReceiveAddressInfo = purchaseOrder.ReceiveAddressInfo
+						warehouseIdName[m.SubWarehouseId] = purchaseOrder.SubWarehouseName
+						kvNumberStagingOrder[strings.ToLower(purchaseOrder.SubPurchaseOrderSn)] = order
+					}
+					switch len(warehouseIdName) {
+					case 0:
+						errorMessages = append(errorMessages, "无法获取收货仓库")
+					case 1:
+					default:
+						names := slices.Collect(maps.Values(warehouseIdName))
+						errorMessages = append(errorMessages, fmt.Sprintf("存在多个收货仓库: %s", strings.Join(names, ", ")))
+					}
 				}
 				// 验证 DeliverOrderDetailInfos, PackageInfos 数据
 				// DeliverOrderDetailInfos, PackageInfos 为空表示全部数据创建发货单，如果指定的话则只有指定的数据会创建发货单
@@ -308,7 +325,7 @@ func (m *ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s sh
 				}
 				return nil
 			})),
-		validation.Field(&m.SubWarehouseId, validation.Required.Error("收货仓库不能为空")),
+		// validation.Field(&m.SubWarehouseId, validation.Required.Error("收货仓库不能为空")),
 	)
 }
 
@@ -317,23 +334,17 @@ type ShipOrderCreateRequest struct {
 	DeliveryOrderCreateGroupList []ShipOrderCreateRequestDeliveryOrder `json:"deliveryOrderCreateGroupList"` // 发货单创建组列表
 }
 
-func (m *ShipOrderCreateRequest) validate(ctx context.Context, s shipOrderService) error {
+func (m ShipOrderCreateRequest) validate(ctx context.Context, s shipOrderService) error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderCreateGroupList,
 			validation.Required.Error("发货单创建组列表不能为空"),
-			validation.By(func(value interface{}) error {
-				_, ok := value.([]ShipOrderCreateRequestDeliveryOrder)
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(ShipOrderCreateRequestDeliveryOrder)
 				if !ok {
-					return errors.New("无效的发货单创建组数据")
+					return errors.New("无效的发货单创建数据")
 				}
-				for _, v := range m.DeliveryOrderCreateGroupList {
-					err := v.validate(ctx, s)
-					if err != nil {
-						return err
-					}
-				}
-				return nil
-			}),
+				return v.validate(ctx, s)
+			})),
 		),
 	)
 }

@@ -301,6 +301,9 @@ func invalidInput(e error) error {
 
 func recheckError(resp *resty.Response, result normal.Response, e error) (err error) {
 	if e != nil {
+		if errors.Is(e, http.ErrHandlerTimeout) {
+			e = errors.New("接口请求超时")
+		}
 		return e
 	}
 
