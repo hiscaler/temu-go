@@ -201,7 +201,7 @@ func (m *ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s sh
 					purchaseOrderNumbers = append(purchaseOrderNumbers, request.SubPurchaseOrderSn)
 				}
 				if len(errorMessages) != 0 {
-					return errors.New(strings.Join(errorMessages, ", "))
+					return errors.New(strings.Join(errorMessages, "; "))
 				}
 
 				stagingOrders := make([]entity.ShipOrderStaging, 0)
@@ -304,7 +304,7 @@ func (m *ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s sh
 				}
 
 				if len(errorMessages) != 0 {
-					return errors.New(strings.Join(errorMessages, ", "))
+					return errors.New(strings.Join(errorMessages, "; "))
 				}
 				return nil
 			})),
@@ -317,15 +317,30 @@ type ShipOrderCreateRequest struct {
 	DeliveryOrderCreateGroupList []ShipOrderCreateRequestDeliveryOrder `json:"deliveryOrderCreateGroupList"` // 发货单创建组列表
 }
 
-func (m ShipOrderCreateRequest) validate() error {
+func (m ShipOrderCreateRequest) validate(ctx context.Context, s shipOrderService) error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.DeliveryOrderCreateGroupList, validation.Required.Error("发货单创建组列表不能为空")),
+		validation.Field(&m.DeliveryOrderCreateGroupList,
+			validation.Required.Error("发货单创建组列表不能为空"),
+			validation.By(func(value interface{}) error {
+				values, ok := value.([]ShipOrderCreateRequestDeliveryOrder)
+				if !ok {
+					return errors.New("无效的发货单创建组数据")
+				}
+				for _, v := range values {
+					err := v.validate(ctx, s)
+					if err != nil {
+						return err
+					}
+				}
+				return nil
+			}),
+		),
 	)
 }
 
 // Create 创建发货单接口 V3
 func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest) (ok bool, err error) {
-	if err = req.validate(); err != nil {
+	if err = req.validate(ctx, s); err != nil {
 		err = invalidInput(err)
 		return
 	}
