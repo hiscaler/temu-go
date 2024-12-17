@@ -281,22 +281,32 @@ func invalidInput(e error) error {
 		return e
 	}
 
-	size := len(errs)
-	if size == 0 {
+	if len(errs) == 0 {
 		return errors.New("未知错误")
 	}
 
-	fields := make([]string, size)
-	messages := make([]string, size)
+	fields := make([]string, 0)
+	messages := make([]string, 0)
 	for field := range errs {
-		size--
-		fields[size] = field
+		fields = append(fields, field)
 	}
 	sort.Strings(fields)
-	for i, field := range fields {
-		messages[i] = errs[field].Error()
+	for _, field := range fields {
+		e1 := errs[field]
+		if e1 == nil {
+			continue
+		}
+
+		var errs1 validation.Errors
+		if errors.As(e1, &errs1) {
+			e1 = invalidInput(errs1)
+			if e1 == nil {
+				continue
+			}
+		}
+		messages = append(messages, e1.Error())
 	}
-	return errors.New(strings.Join(messages, ". "))
+	return errors.New(strings.Join(messages, "; "))
 }
 
 func recheckError(resp *resty.Response, result normal.Response, e error) (err error) {
