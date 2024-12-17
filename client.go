@@ -282,7 +282,7 @@ func invalidInput(e error) error {
 	}
 
 	if len(errs) == 0 {
-		return errors.New("未知错误")
+		return nil
 	}
 
 	fields := make([]string, 0)
