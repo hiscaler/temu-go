@@ -225,7 +225,7 @@ func (m ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shi
 
 				kvNumberStagingOrder := make(map[string]entity.ShipOrderStaging, len(stagingOrders))
 				if len(stagingOrders) != 0 {
-					warehouseIdName := make(map[int64]string, 0)
+					warehouseIdName := make(map[int64]string)
 					for _, order := range stagingOrders {
 						purchaseOrder := order.SubPurchaseOrderBasicVO
 						if !m.SubWarehouseId.Valid {
