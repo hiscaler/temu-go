@@ -317,16 +317,16 @@ type ShipOrderCreateRequest struct {
 	DeliveryOrderCreateGroupList []ShipOrderCreateRequestDeliveryOrder `json:"deliveryOrderCreateGroupList"` // 发货单创建组列表
 }
 
-func (m ShipOrderCreateRequest) validate(ctx context.Context, s shipOrderService) error {
+func (m *ShipOrderCreateRequest) validate(ctx context.Context, s shipOrderService) error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryOrderCreateGroupList,
 			validation.Required.Error("发货单创建组列表不能为空"),
 			validation.By(func(value interface{}) error {
-				values, ok := value.([]ShipOrderCreateRequestDeliveryOrder)
+				_, ok := value.([]ShipOrderCreateRequestDeliveryOrder)
 				if !ok {
 					return errors.New("无效的发货单创建组数据")
 				}
-				for _, v := range values {
+				for _, v := range m.DeliveryOrderCreateGroupList {
 					err := v.validate(ctx, s)
 					if err != nil {
 						return err
