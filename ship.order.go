@@ -175,8 +175,8 @@ func (m ShipOrderCreateRequestOrderInfo) validate() error {
 
 type ShipOrderCreateRequestDeliveryOrder struct {
 	DeliveryOrderCreateInfos []ShipOrderCreateRequestOrderInfo `json:"deliveryOrderCreateInfos"`     // 发货单创建组列表
-	ReceiveAddressInfo       entity.ReceiveAddress             `json:"receiveAddressInfo,omitempty"` // 收货地址
-	SubWarehouseId           int64                             `json:"subWarehouseId,omitempty"`     // 子仓 ID
+	ReceiveAddressInfo       *entity.ReceiveAddress            `json:"receiveAddressInfo,omitempty"` // 收货地址
+	SubWarehouseId           null.Int                          `json:"subWarehouseId,omitempty"`     // 子仓 ID
 }
 
 func (m ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shipOrderService) error {
@@ -228,15 +228,21 @@ func (m ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shi
 					warehouseIdName := make(map[int64]string, 0)
 					for _, order := range stagingOrders {
 						purchaseOrder := order.SubPurchaseOrderBasicVO
-						m.SubWarehouseId = purchaseOrder.SubWarehouseId
-						m.ReceiveAddressInfo = purchaseOrder.ReceiveAddressInfo
-						warehouseIdName[m.SubWarehouseId] = purchaseOrder.SubWarehouseName
+						if !m.SubWarehouseId.Valid {
+							m.SubWarehouseId = null.IntFrom(purchaseOrder.SubWarehouseId)
+						}
+						m.ReceiveAddressInfo = &purchaseOrder.ReceiveAddressInfo
+						warehouseIdName[purchaseOrder.SubWarehouseId] = purchaseOrder.SubWarehouseName
 						kvNumberStagingOrder[strings.ToLower(purchaseOrder.SubPurchaseOrderSn)] = order
 					}
 					switch len(warehouseIdName) {
 					case 0:
 						errorMessages = append(errorMessages, "无法获取收货仓库")
 					case 1:
+						actualWarehouseId := slices.Collect(maps.Keys(warehouseIdName))[0]
+						if m.SubWarehouseId.Int64 != actualWarehouseId {
+							errorMessages = append(errorMessages, fmt.Sprintf("设定收货仓库和数据实际收货仓库（%s）不一致", warehouseIdName[actualWarehouseId]))
+						}
 					default:
 						names := slices.Collect(maps.Values(warehouseIdName))
 						errorMessages = append(errorMessages, fmt.Sprintf("存在多个收货仓库: %s", strings.Join(names, ", ")))
