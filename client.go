@@ -171,8 +171,7 @@ func NewClient(config config.Config) *Client {
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
-			statusCode := response.StatusCode()
-			if config.Debug || (statusCode != http.StatusOK && statusCode != http.StatusCreated) {
+			if config.Debug || response.IsError() {
 				params := response.Request.Body
 				endpoint := ""
 				if v, ok := params.(map[string]any); ok {
@@ -183,13 +182,13 @@ func NewClient(config config.Config) *Client {
 				l.Error(fmt.Sprintf(`%s %s
    ENDPOINT: %s
  PARAMETERS: %s
-STATUS CODE: %d
+	 STATUS: %s
        BODY: %v`,
 					response.Request.Method,
 					response.Request.URL,
 					endpoint,
 					params,
-					statusCode,
+					response.Status(),
 					response.String(),
 				))
 			}
