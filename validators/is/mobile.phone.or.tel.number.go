@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// MobilePhoneOrTelNumber 判断是否为有效的手机号码或者座机号码
+// MobilePhoneOrTelNumber 判断是否为有效的手机或座机号码
 func MobilePhoneOrTelNumber() validation.RuleFunc {
 	return func(value interface{}) error {
 		s, ok := value.(string)
