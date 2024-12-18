@@ -36,8 +36,8 @@ func (m ShipOrderPackingSendRequestSelfDeliveryInformation) validate() error {
 
 // ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation 平台推荐服务商配送信息
 type ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation struct {
-	ExpressCompanyId          int64   `json:"expressCompanyId,omitempty"`          // 快递公司Id
-	TmsChannelId              int     `json:"tmsChannelId,omitempty"`              // TMS快递产品类型ID
+	ExpressCompanyId          int64   `json:"expressCompanyId,omitempty"`          // 快递公司 Id
+	TmsChannelId              int     `json:"tmsChannelId,omitempty"`              // TMS快递产品类型 ID
 	ExpressCompanyName        string  `json:"expressCompanyName,omitempty"`        // 快递公司名称
 	StandbyExpress            bool    `json:"standbyExpress"`                      // 是否是备用快递公司
 	ExpressDeliverySn         string  `json:"expressDeliverySn,omitempty"`         // 快递单号
@@ -46,7 +46,7 @@ type ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation struct
 	ExpressPackageNum         int     `json:"expressPackageNum,omitempty"`         // 交接给快递公司的包裹数
 	MinChargeAmount           float64 `json:"minChargeAmount,omitempty"`           // 最小预估运费（单位元）
 	MaxChargeAmount           float64 `json:"maxChargeAmount,omitempty"`           // 最大预估运费（单位元）
-	PredictId                 int64   `json:"predictId,omitempty"`                 // 预测ID
+	PredictId                 int64   `json:"predictId,omitempty"`                 // 预测 ID
 }
 
 func (m ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation) validate() error {
@@ -55,7 +55,7 @@ func (m ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation) va
 
 // ShipOrderPackingSendRequestThirdPartyDeliveryInformation 自行委托第三方物流配送信息
 type ShipOrderPackingSendRequestThirdPartyDeliveryInformation struct {
-	ExpressCompanyId   int    `json:"expressCompanyId"`            // 快递公司 Id
+	ExpressCompanyId   int64  `json:"expressCompanyId"`            // 快递公司 Id
 	ExpressCompanyName string `json:"expressCompanyName"`          // 快递公司名称
 	ExpressDeliverySn  string `json:"expressDeliverySn"`           // 快递单号
 	ExpressPackageNum  int    `json:"expressPackageNum,omitempty"` // 发货总箱数
