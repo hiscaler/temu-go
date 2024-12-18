@@ -170,6 +170,32 @@ func NewClient(config config.Config) *Client {
 			request.SetBody(generateSign(values, config.AppSecret))
 			return nil
 		}).
+		OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
+			statusCode := response.StatusCode()
+			if statusCode != http.StatusOK && statusCode != http.StatusCreated {
+				params := response.Request.Body
+				endpoint := ""
+				if v, ok := params.(map[string]any); ok {
+					if vv, ok := v["type"]; ok {
+						endpoint = vv.(string)
+					}
+				}
+				l.Error(fmt.Sprintf(`%s %s
+   ENDPOINT: %s
+ PARAMETERS: %s
+STATUS CODE: %d
+       BODY: %s
+`,
+					response.Request.Method,
+					response.Request.URL,
+					endpoint,
+					params,
+					statusCode,
+					response.String(),
+				))
+			}
+			return nil
+		}).
 		SetRetryCount(3).
 		SetRetryWaitTime(time.Duration(500) * time.Millisecond).
 		SetRetryMaxWaitTime(time.Duration(1) * time.Second).
