@@ -11,6 +11,7 @@ func TestTelNumber(t *testing.T) {
 		"88888888":      true,
 		"0731-88888888": true,
 		"0731-8888888":  false,
+		"731-88888888":  false,
 		"020-88888888":  true,
 		"02-88888888":   false,
 	}
