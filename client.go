@@ -56,16 +56,10 @@ type services struct {
 	ShipOrderPackage        shipOrderPackageService
 	PurchaseOrder           purchaseOrderService
 	Logistics               logisticsService
-	GoodsSizeChart          goodsSizeChartService
-	GoodsSizeChartClass     goodsSizeChartClassService
-	GoodsSizeChartSetting   goodsSizeChartSettingService
-	MallAddress             mallAddressService
 	ShipOrderReceiveAddress shipOrderReceiveAddressService
 	Goods                   goodsService
 	Mall                    mallService
-	JitVirtualInventory     jitVirtualInventoryService
-	JitMode                 jitModeService
-	JitPresaleRule          jitPresaleRuleService
+	Jit                     jitService
 }
 
 type Client struct {
@@ -265,26 +259,31 @@ func NewClient(config config.Config) *Client {
 		ShipOrderPackage: (shipOrderPackageService)(xService),
 		PurchaseOrder:    (purchaseOrderService)(xService),
 		Goods: goodsService{
-			service:       xService,
-			Category:      (goodsCategoryService)(xService),
-			Brand:         (goodsBrandService)(xService),
-			LifeCycle:     (goodsLifeCycleService)(xService),
-			Sales:         (goodsSalesService)(xService),
-			TopSelling:    (goodsTopSellingService)(xService),
-			Certification: (goodsCertificationService)(xService),
-			Warehouse:     (goodsWarehouseService)(xService),
-			Barcode:       (goodsBarcodeService)(xService),
+			service:           xService,
+			Barcode:           (goodsBarcodeService)(xService),
+			Brand:             (goodsBrandService)(xService),
+			Category:          (goodsCategoryService)(xService),
+			Certification:     (goodsCertificationService)(xService),
+			LifeCycle:         (goodsLifeCycleService)(xService),
+			Sales:             (goodsSalesService)(xService),
+			SizeChartClass:    (goodsSizeChartClassService)(xService),
+			SizeChart:         (goodsSizeChartService)(xService),
+			SizeChartSetting:  (goodsSizeChartSettingService)(xService),
+			SizeChartTemplate: (goodsSizeChartTemplateService)(xService),
+			TopSelling:        (goodsTopSellingService)(xService),
+			Warehouse:         (goodsWarehouseService)(xService),
 		},
 		Logistics:               (logisticsService)(xService),
-		GoodsSizeChart:          (goodsSizeChartService)(xService),
-		GoodsSizeChartClass:     (goodsSizeChartClassService)(xService),
-		GoodsSizeChartSetting:   (goodsSizeChartSettingService)(xService),
-		MallAddress:             (mallAddressService)(xService),
 		ShipOrderReceiveAddress: (shipOrderReceiveAddressService)(xService),
-		Mall:                    (mallService)(xService),
-		JitVirtualInventory:     (jitVirtualInventoryService)(xService),
-		JitMode:                 (jitModeService)(xService),
-		JitPresaleRule:          (jitPresaleRuleService)(xService),
+		Mall: mallService{
+			service: xService,
+			Address: (mallAddressService)(xService),
+		},
+		Jit: jitService{
+			service:          xService,
+			PresaleRule:      (jitPresaleRuleService)(xService),
+			VirtualInventory: (jitVirtualInventoryService)(xService),
+		},
 	}
 
 	return client

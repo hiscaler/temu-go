@@ -27,7 +27,7 @@ func TestShipOrderService_Query(t *testing.T) {
 }
 
 func TestShipOrderService_Create(t *testing.T) {
-	deliveryAddress, err := temuClient.Services.MallAddress.One(ctx, 5441063557369)
+	deliveryAddress, err := temuClient.Services.Mall.Address.One(ctx, 5441063557369)
 	assert.Nil(t, err, "Query mall deliveryAddress")
 
 	subPurchaseOrderSn := "WB2408182975602"

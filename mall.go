@@ -6,7 +6,10 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
-type mallService service
+type mallService struct {
+	service
+	Address mallAddressService
+}
 
 // IsSemiManaged 是否为半托管店铺
 // https://seller.kuajingmaihuo.com/sop/view/634117628601810731#uJ0fSb
