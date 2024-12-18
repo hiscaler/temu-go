@@ -249,10 +249,10 @@ func NewClient(config config.Config) *Client {
 	client.Services = services{
 		ShipOrder: shipOrderService{
 			service:        xService,
-			Staging:        (shipOrderStagingService)(xService),
-			ReceiveAddress: (shipOrderReceiveAddressService)(xService),
-			Packing:        (shipOrderPackingService)(xService),
 			Package:        (shipOrderPackageService)(xService),
+			Packing:        (shipOrderPackingService)(xService),
+			ReceiveAddress: (shipOrderReceiveAddressService)(xService),
+			Staging:        (shipOrderStagingService)(xService),
 		},
 		ShipOrderStaging: (shipOrderStagingService)(xService),
 		ShipOrderPacking: (shipOrderPackingService)(xService),

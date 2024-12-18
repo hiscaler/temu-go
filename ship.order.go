@@ -18,10 +18,10 @@ import (
 // 发货单服务
 type shipOrderService struct {
 	service
-	Staging        shipOrderStagingService        // 发货台
-	ReceiveAddress shipOrderReceiveAddressService // 收货地址
-	Packing        shipOrderPackingService        // 装箱发货
 	Package        shipOrderPackageService        // 包裹
+	Packing        shipOrderPackingService        // 装箱发货
+	ReceiveAddress shipOrderReceiveAddressService // 收货地址
+	Staging        shipOrderStagingService        // 发货台
 }
 
 type ShipOrderQueryParams struct {
