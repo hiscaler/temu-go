@@ -2,9 +2,11 @@ package temu
 
 import (
 	"context"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/hiscaler/temu-go/validators/is"
 )
 
 // 卖家发货地址服务
@@ -77,7 +79,25 @@ func (m CreateDeliveryAddressRequest) validate() error {
 		validation.Field(&m.DistrictCode, validation.Required.Error("区编码不能为空")),
 		validation.Field(&m.DistrictName, validation.Required.Error("区名不能为空")),
 		validation.Field(&m.ContactPersonName, validation.Required.Error("联系人不能为空")),
-		validation.Field(&m.ContactPersonPhone, validation.Required.Error("联系人电话不能为空")),
+		validation.Field(&m.ContactPersonPhone,
+			validation.Required.Error("联系人电话不能为空"),
+			validation.By(func(value interface{}) error {
+				s, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("无效的联系人电话：%v", s)
+				}
+
+				var err error
+				if err = validation.Validate(s, validation.By(is.MobilePhoneNumber())); err != nil {
+					err = validation.Validate(s, validation.By(is.TelNumber()))
+				}
+				if err != nil {
+					return fmt.Errorf("无效的联系人电话：%s", s)
+				}
+
+				return nil
+			}),
+		),
 		validation.Field(&m.AddressLabel, validation.Required.Error("地址标签不能为空")),
 		validation.Field(&m.AddressDetail, validation.Required.Error("详细地址不能为空")),
 	)
