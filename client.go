@@ -56,10 +56,6 @@ type services struct {
 	ShipOrderPackage        shipOrderPackageService
 	PurchaseOrder           purchaseOrderService
 	Logistics               logisticsService
-	GoodsSizeChart          goodsSizeChartService
-	GoodsSizeChartClass     goodsSizeChartClassService
-	GoodsSizeChartSetting   goodsSizeChartSettingService
-	MallAddress             mallAddressService
 	ShipOrderReceiveAddress shipOrderReceiveAddressService
 	Goods                   goodsService
 	Mall                    mallService
@@ -272,12 +268,11 @@ func NewClient(config config.Config) *Client {
 			Warehouse:         (goodsWarehouseService)(xService),
 		},
 		Logistics:               (logisticsService)(xService),
-		GoodsSizeChart:          (goodsSizeChartService)(xService),
-		GoodsSizeChartClass:     (goodsSizeChartClassService)(xService),
-		GoodsSizeChartSetting:   (goodsSizeChartSettingService)(xService),
-		MallAddress:             (mallAddressService)(xService),
 		ShipOrderReceiveAddress: (shipOrderReceiveAddressService)(xService),
-		Mall:                    (mallService)(xService),
+		Mall: mallService{
+			service: xService,
+			Address: (mallAddressService)(xService),
+		},
 		Jit: jitService{
 			service:          xService,
 			PresaleRule:      (jitPresaleRuleService)(xService),
