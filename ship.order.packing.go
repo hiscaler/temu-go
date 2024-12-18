@@ -50,7 +50,14 @@ type ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation struct
 }
 
 func (m ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ExpressCompanyId, validation.Required.Error("快递公司 Id 不能为空")),
+		validation.Field(&m.ExpressCompanyName, validation.Required.Error("快递公司名称不能为空")),
+		validation.Field(&m.ExpressDeliverySn, validation.Required.Error("快递单号不能为空")),
+		validation.Field(&m.PredictTotalPackageWeight, validation.Min(1).Error("预估总包裹重量不能小于 {.min}")),
+		validation.Field(&m.ExpressPackageNum, validation.Min(1).Error("发货总箱数不能小于 {.min}")),
+		validation.Field(&m.PredictId, validation.Required.Error("预测 Id 不能为空")),
+	)
 }
 
 // ShipOrderPackingSendRequestThirdPartyDeliveryInformation 自行委托第三方物流配送信息
@@ -62,7 +69,12 @@ type ShipOrderPackingSendRequestThirdPartyDeliveryInformation struct {
 }
 
 func (m ShipOrderPackingSendRequestThirdPartyDeliveryInformation) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ExpressCompanyId, validation.Required.Error("快递公司 Id 不能为空")),
+		validation.Field(&m.ExpressCompanyName, validation.Required.Error("快递公司名称不能为空")),
+		validation.Field(&m.ExpressDeliverySn, validation.Required.Error("快递单号不能为空")),
+		validation.Field(&m.ExpressPackageNum, validation.Min(1).Error("发货总箱数不能小于 {.min}")),
+	)
 }
 
 type ShipOrderPackingSendRequest struct {
@@ -95,19 +107,19 @@ func (m ShipOrderPackingSendRequest) validate() error {
 				switch v.Int64 {
 				case entity.DeliveryMethodSelf:
 					if m.SelfDeliveryInfo == nil {
-						return errors.New("自送信息不能为空")
+						return errors.New("装箱发货自送信息不能为空")
 					} else {
 						return m.SelfDeliveryInfo.validate()
 					}
 				case entity.DeliveryMethodPlatformRecommendation:
 					if m.ThirdPartyDeliveryInfo == nil {
-						return errors.New("物流信息不能为空")
+						return errors.New("装箱发货物流信息不能为空")
 					} else {
 						return m.ThirdPartyDeliveryInfo.validate()
 					}
 				case entity.DeliveryMethodThirdParty:
 					if m.ThirdPartyExpressDeliveryInfoVO == nil {
-						return errors.New("第三方配送不能为空")
+						return errors.New("装箱发货第三方配送信息不能为空")
 					} else {
 						return m.ThirdPartyExpressDeliveryInfoVO.validate()
 					}
