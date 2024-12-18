@@ -235,6 +235,31 @@ func NewClient(config config.Config) *Client {
 				}
 			}
 			return retry
+		}).
+		SetRetryAfter(func(client *resty.Client, response *resty.Response) (time.Duration, error) {
+			var milliseconds int64 = 0
+			if response != nil {
+				retry := response.StatusCode() == http.StatusTooManyRequests
+				if !retry {
+					r := struct {
+						Success   bool   `json:"success"`
+						ErrorCode int    `json:"errorCode"`
+						ErrorMsg  string `json:"errorMsg"`
+					}{}
+					retry = json.Unmarshal(response.Body(), &r) == nil &&
+						r.Success == false &&
+						r.ErrorCode == 4000000 &&
+						strings.EqualFold(r.ErrorMsg, "SYSTEM_EXCEPTION")
+				}
+				if retry {
+					milliseconds = 1000 - time.Now().UnixMilli()%1000 // 最多等待下一秒钟到目前的毫秒数
+				}
+			}
+			if milliseconds == 0 {
+				return 0, nil
+			}
+			l.Info("Retry waiting...", slog.Int64("milliseconds", milliseconds))
+			return time.Duration(milliseconds) * time.Millisecond, nil
 		})
 	if config.Debug {
 		httpClient.SetBaseURL("https://openapi.kuajingmaihuo.com/openapi/router")
