@@ -63,9 +63,7 @@ type services struct {
 	ShipOrderReceiveAddress shipOrderReceiveAddressService
 	Goods                   goodsService
 	Mall                    mallService
-	JitVirtualInventory     jitVirtualInventoryService
-	JitMode                 jitModeService
-	JitPresaleRule          jitPresaleRuleService
+	Jit                     jitService
 }
 
 type Client struct {
@@ -276,9 +274,11 @@ func NewClient(config config.Config) *Client {
 		MallAddress:             (mallAddressService)(xService),
 		ShipOrderReceiveAddress: (shipOrderReceiveAddressService)(xService),
 		Mall:                    (mallService)(xService),
-		JitVirtualInventory:     (jitVirtualInventoryService)(xService),
-		JitMode:                 (jitModeService)(xService),
-		JitPresaleRule:          (jitPresaleRuleService)(xService),
+		Jit: jitService{
+			Mode:             (jitModeService)(xService),
+			PresaleRule:      (jitPresaleRuleService)(xService),
+			VirtualInventory: (jitVirtualInventoryService)(xService),
+		},
 	}
 
 	return client

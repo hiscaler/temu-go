@@ -47,7 +47,7 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 			DeliveryAddressId:   address.ID,
 			DeliveryOrderSnList: []string{shipOrder.DeliveryOrderSn},
 			DeliverMethod:       null.IntFrom(entity.DeliveryMethodSelf),
-			SelfDeliveryInfo: &ShipOrderPackingSendRequestSelfDeliveryInformation{
+			SelfDeliveryInfo: &ShipOrderPackingSendSelfDeliveryInformation{
 				// DriverUid:             0,
 				DriverName: driverName,
 				// PlateNumber:           "",
@@ -96,7 +96,7 @@ func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 			DeliveryAddressId:   address.ID,
 			DeliveryOrderSnList: []string{shipOrder.DeliveryOrderSn},
 			DeliverMethod:       null.IntFrom(entity.DeliveryMethodPlatformRecommendation),
-			ThirdPartyDeliveryInfo: &ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation{
+			ThirdPartyDeliveryInfo: &ShipOrderPackingSendPlatformRecommendationDeliveryInformation{
 				ExpressCompanyId:          company.ShipId,
 				TmsChannelId:              0,
 				ExpressCompanyName:        company.ShipName,
