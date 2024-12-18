@@ -58,7 +58,7 @@ func TestShipOrderService_Create(t *testing.T) {
 		DeliverOrderDetailInfos: make([]ShipOrderCreateRequestOrderDetailInfo, 0),
 		SubPurchaseOrderSn:      subPurchaseOrderSn,
 		PackageInfos:            make([]ShipOrderCreateRequestOrderPackage, 0),
-		DeliveryAddressId:       1111,
+		DeliveryAddressId:       deliveryAddress.ID,
 	}
 	for _, v := range shipOrderStaging.OrderDetailVOList {
 		deliveryOrderCreateInfo.DeliverOrderDetailInfos = append(deliveryOrderCreateInfo.DeliverOrderDetailInfos, ShipOrderCreateRequestOrderDetailInfo{
