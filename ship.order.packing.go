@@ -15,12 +15,23 @@ type shipOrderPackingService service
 
 // ShipOrderPackingSendRequestSelfDeliveryInformation 自行配送信息
 type ShipOrderPackingSendRequestSelfDeliveryInformation struct {
-	DriverUid             int    `json:"driverUid,omitempty"`             // 司机uid
+	DriverUid             int    `json:"driverUid,omitempty"`             // 司机 uid
 	DriverName            string `json:"driverName,omitempty"`            // 司机姓名
 	PlateNumber           string `json:"plateNumber,omitempty"`           // 车牌号
 	DeliveryContactNumber string `json:"deliveryContactNumber,omitempty"` // 电话号码
 	DeliveryContactAreaNo string `json:"deliveryContactAreaNo,omitempty"` // 电话区号
 	ExpressPackageNum     int    `json:"expressPackageNum,omitempty"`     // 发货总箱数
+}
+
+func (m ShipOrderPackingSendRequestSelfDeliveryInformation) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.DeliveryContactNumber,
+			validation.When(len(m.DeliveryContactNumber) != 0, validation.By(is.MobilePhoneOrTelNumber())),
+		),
+		validation.Field(&m.DeliveryContactAreaNo,
+			validation.When(len(m.DeliveryContactAreaNo) != 0, validation.By(is.TelNumberAreaCode())),
+		),
+	)
 }
 
 // ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation 平台推荐服务商配送信息
@@ -38,12 +49,20 @@ type ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation struct
 	PredictId                 int64   `json:"predictId,omitempty"`                 // 预测ID
 }
 
+func (m ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation) validate() error {
+	return nil
+}
+
 // ShipOrderPackingSendRequestThirdPartyDeliveryInformation 自行委托第三方物流配送信息
 type ShipOrderPackingSendRequestThirdPartyDeliveryInformation struct {
 	ExpressCompanyId   int    `json:"expressCompanyId"`            // 快递公司 Id
 	ExpressCompanyName string `json:"expressCompanyName"`          // 快递公司名称
 	ExpressDeliverySn  string `json:"expressDeliverySn"`           // 快递单号
 	ExpressPackageNum  int    `json:"expressPackageNum,omitempty"` // 发货总箱数
+}
+
+func (m ShipOrderPackingSendRequestThirdPartyDeliveryInformation) validate() error {
+	return nil
 }
 
 type ShipOrderPackingSendRequest struct {
@@ -65,7 +84,35 @@ func (m ShipOrderPackingSendRequest) validate() error {
 					return errors.New("无效的发货方式")
 				}
 
-				return validation.Validate(int(v.Int64), validation.In(entity.DeliveryMethodSelf, entity.DeliveryMethodPlatformRecommendation, entity.DeliveryMethodThirdParty).Error("无效的发货方式"))
+				err := validation.Validate(int(v.Int64), validation.In(
+					entity.DeliveryMethodSelf,
+					entity.DeliveryMethodPlatformRecommendation,
+					entity.DeliveryMethodThirdParty,
+				).Error("无效的发货方式"))
+				if err != nil {
+					return err
+				}
+				switch v.Int64 {
+				case entity.DeliveryMethodSelf:
+					if m.SelfDeliveryInfo == nil {
+						return errors.New("自送信息不能为空")
+					} else {
+						return m.SelfDeliveryInfo.validate()
+					}
+				case entity.DeliveryMethodPlatformRecommendation:
+					if m.ThirdPartyDeliveryInfo == nil {
+						return errors.New("物流信息不能为空")
+					} else {
+						return m.ThirdPartyDeliveryInfo.validate()
+					}
+				case entity.DeliveryMethodThirdParty:
+					if m.ThirdPartyExpressDeliveryInfoVO == nil {
+						return errors.New("第三方配送不能为空")
+					} else {
+						return m.ThirdPartyExpressDeliveryInfoVO.validate()
+					}
+				}
+				return nil
 			}),
 		),
 		validation.Field(&m.DeliveryAddressId, validation.Required.Error("发货地址不能为空")),
