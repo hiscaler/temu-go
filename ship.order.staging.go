@@ -113,19 +113,26 @@ func (s shipOrderStagingService) Query(ctx context.Context, params ShipOrderStag
 	return
 }
 
-// One 搜索单个发货台数据
-func (s shipOrderStagingService) One(ctx context.Context, subPurchaseOrderSn string) (item entity.ShipOrderStaging, err error) {
+// One 根据备货单号搜索发货台数据
+func (s shipOrderStagingService) One(ctx context.Context, purchaseOrderNumber string) (item entity.ShipOrderStaging, err error) {
+	err = validation.Validate(purchaseOrderNumber, validation.By(is.PurchaseOrderNumber()))
+	if err != nil {
+		return item, invalidInput(err)
+	}
+
 	items, _, _, _, err := s.Query(ctx, ShipOrderStagingQueryParams{
-		SubPurchaseOrderSnList: []string{subPurchaseOrderSn},
+		SubPurchaseOrderSnList: []string{purchaseOrderNumber},
 	})
 	if err != nil {
 		return
 	}
-	if len(items) == 0 {
-		return item, ErrNotFound
-	}
 
-	return items[0], nil
+	for _, v := range items {
+		if strings.EqualFold(v.SubPurchaseOrderBasicVO.SubPurchaseOrderSn, purchaseOrderNumber) {
+			return v, nil
+		}
+	}
+	return item, ErrNotFound
 }
 
 // 加入发货台
