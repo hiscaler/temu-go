@@ -13,8 +13,8 @@ import (
 // 装箱发货
 type shipOrderPackingService service
 
-// ShipOrderPackingSendRequestSelfDeliveryInformation 自行配送信息
-type ShipOrderPackingSendRequestSelfDeliveryInformation struct {
+// ShipOrderPackingSendSelfDeliveryInformation 自行配送信息
+type ShipOrderPackingSendSelfDeliveryInformation struct {
 	DriverUid             int    `json:"driverUid,omitempty"`             // 司机 uid
 	DriverName            string `json:"driverName,omitempty"`            // 司机姓名
 	PlateNumber           string `json:"plateNumber,omitempty"`           // 车牌号
@@ -23,7 +23,7 @@ type ShipOrderPackingSendRequestSelfDeliveryInformation struct {
 	ExpressPackageNum     int    `json:"expressPackageNum,omitempty"`     // 发货总箱数
 }
 
-func (m ShipOrderPackingSendRequestSelfDeliveryInformation) validate() error {
+func (m ShipOrderPackingSendSelfDeliveryInformation) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.DeliveryContactNumber,
 			validation.When(len(m.DeliveryContactNumber) != 0, validation.By(is.MobilePhoneOrTelNumber())),
@@ -31,13 +31,14 @@ func (m ShipOrderPackingSendRequestSelfDeliveryInformation) validate() error {
 		validation.Field(&m.DeliveryContactAreaNo,
 			validation.When(len(m.DeliveryContactAreaNo) != 0, validation.By(is.TelNumberAreaCode())),
 		),
+		validation.Field(&m.ExpressPackageNum, validation.Min(1).Error("发货总箱数不能小于 {.min}")),
 	)
 }
 
-// ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation 平台推荐服务商配送信息
-type ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation struct {
+// ShipOrderPackingSendPlatformRecommendationDeliveryInformation 平台推荐服务商配送信息
+type ShipOrderPackingSendPlatformRecommendationDeliveryInformation struct {
 	ExpressCompanyId          int64   `json:"expressCompanyId,omitempty"`          // 快递公司 Id
-	TmsChannelId              int     `json:"tmsChannelId,omitempty"`              // TMS快递产品类型 ID
+	TmsChannelId              int     `json:"tmsChannelId,omitempty"`              // TMS 快递产品类型 Id
 	ExpressCompanyName        string  `json:"expressCompanyName,omitempty"`        // 快递公司名称
 	StandbyExpress            bool    `json:"standbyExpress"`                      // 是否是备用快递公司
 	ExpressDeliverySn         string  `json:"expressDeliverySn,omitempty"`         // 快递单号
@@ -49,7 +50,7 @@ type ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation struct
 	PredictId                 int64   `json:"predictId,omitempty"`                 // 预测 ID
 }
 
-func (m ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation) validate() error {
+func (m ShipOrderPackingSendPlatformRecommendationDeliveryInformation) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ExpressCompanyId, validation.Required.Error("快递公司 Id 不能为空")),
 		validation.Field(&m.ExpressCompanyName, validation.Required.Error("快递公司名称不能为空")),
@@ -60,15 +61,15 @@ func (m ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation) va
 	)
 }
 
-// ShipOrderPackingSendRequestThirdPartyDeliveryInformation 自行委托第三方物流配送信息
-type ShipOrderPackingSendRequestThirdPartyDeliveryInformation struct {
+// ShipOrderPackingSendThirdPartyDeliveryInformation 自行委托第三方物流配送信息
+type ShipOrderPackingSendThirdPartyDeliveryInformation struct {
 	ExpressCompanyId   int64  `json:"expressCompanyId"`            // 快递公司 Id
 	ExpressCompanyName string `json:"expressCompanyName"`          // 快递公司名称
 	ExpressDeliverySn  string `json:"expressDeliverySn"`           // 快递单号
 	ExpressPackageNum  int    `json:"expressPackageNum,omitempty"` // 发货总箱数
 }
 
-func (m ShipOrderPackingSendRequestThirdPartyDeliveryInformation) validate() error {
+func (m ShipOrderPackingSendThirdPartyDeliveryInformation) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ExpressCompanyId, validation.Required.Error("快递公司 Id 不能为空")),
 		validation.Field(&m.ExpressCompanyName, validation.Required.Error("快递公司名称不能为空")),
@@ -79,12 +80,12 @@ func (m ShipOrderPackingSendRequestThirdPartyDeliveryInformation) validate() err
 
 type ShipOrderPackingSendRequest struct {
 	normal.Parameter
-	DeliverMethod                   null.Int                                                              `json:"deliverMethod"`                             // 发货方式
-	DeliveryAddressId               int64                                                                 `json:"deliveryAddressId"`                         // 发货地址 ID
-	DeliveryOrderSnList             []string                                                              `json:"deliveryOrderSnList"`                       // 发货单号
-	SelfDeliveryInfo                *ShipOrderPackingSendRequestSelfDeliveryInformation                   `json:"selfDeliveryInfo,omitempty"`                // 自送信息
-	ThirdPartyDeliveryInfo          *ShipOrderPackingSendRequestPlatformRecommendationDeliveryInformation `json:"thirdPartyDeliveryInfo,omitempty"`          // 公司指定物流
-	ThirdPartyExpressDeliveryInfoVO *ShipOrderPackingSendRequestThirdPartyDeliveryInformation             `json:"thirdPartyExpressDeliveryInfoVO,omitempty"` // 第三方配送
+	DeliverMethod                   null.Int                                                       `json:"deliverMethod"`                             // 发货方式
+	DeliveryAddressId               int64                                                          `json:"deliveryAddressId"`                         // 发货地址 ID
+	DeliveryOrderSnList             []string                                                       `json:"deliveryOrderSnList"`                       // 发货单号
+	SelfDeliveryInfo                *ShipOrderPackingSendSelfDeliveryInformation                   `json:"selfDeliveryInfo,omitempty"`                // 自送信息
+	ThirdPartyDeliveryInfo          *ShipOrderPackingSendPlatformRecommendationDeliveryInformation `json:"thirdPartyDeliveryInfo,omitempty"`          // 公司指定物流
+	ThirdPartyExpressDeliveryInfoVO *ShipOrderPackingSendThirdPartyDeliveryInformation             `json:"thirdPartyExpressDeliveryInfoVO,omitempty"` // 第三方配送
 }
 
 func (m ShipOrderPackingSendRequest) validate() error {
@@ -104,6 +105,7 @@ func (m ShipOrderPackingSendRequest) validate() error {
 				if err != nil {
 					return err
 				}
+
 				switch v.Int64 {
 				case entity.DeliveryMethodSelf:
 					if m.SelfDeliveryInfo == nil {
