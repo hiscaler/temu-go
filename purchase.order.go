@@ -3,12 +3,14 @@ package temu
 import (
 	"context"
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -282,25 +284,54 @@ func (m PurchaseOrderApplyDetail) validate() error {
 type PurchaseOrderApplyRequest struct {
 	normal.Parameter
 	ProductSkcId            int64                    `json:"productSkcId"`                      // skcId
-	ExpectLatestDeliverTime null.Int                 `json:"expectLatestDeliverTime,omitempty"` // 最晚发货时间
-	ExpectLatestArrivalTime null.Int                 `json:"expectLatestArrivalTime,omitempty"` // 最晚送达时间
+	ExpectLatestDeliverTime string                   `json:"expectLatestDeliverTime,omitempty"` // 最晚发货时间
+	ExpectLatestArrivalTime string                   `json:"expectLatestArrivalTime,omitempty"` // 最晚送达时间
 	PurchaseDetailList      PurchaseOrderApplyDetail `json:"purchaseDetailList"`                // 详情
 }
 
 func (m PurchaseOrderApplyRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductSkcId, validation.Required.Error("SKC 不能为空")),
-		validation.Field(&m.ExpectLatestDeliverTime, validation.When(m.ExpectLatestDeliverTime.Valid), validation.By(is.Millisecond())),
+		validation.Field(&m.ExpectLatestDeliverTime,
+			validation.When(
+				m.ExpectLatestDeliverTime != "",
+				validation.Date(time.DateTime).Error("无效的最晚发货时间"),
+				validation.When(m.ExpectLatestArrivalTime != "", validation.By(func(value interface{}) error {
+					tStr1 := m.ExpectLatestDeliverTime // 最晚发货时间
+					tStr2 := m.ExpectLatestArrivalTime // 最晚送达时间
+					err := validation.Date(time.DateTime).Validate(tStr2)
+					if err != nil {
+						return fmt.Errorf("无效的最晚送达时间：%s", tStr2)
+					}
+					t1, _ := time.ParseInLocation(time.DateTime, tStr1, time.Local)
+					t2, _ := time.ParseInLocation(time.DateTime, tStr2, time.Local)
+					if t1.After(t2) {
+						return fmt.Errorf("最晚发货时间 %s 不能大于最晚送达时间 %s", tStr1, tStr2)
+					}
+
+					return nil
+				})),
+			),
+		),
 		validation.Field(&m.ExpectLatestArrivalTime,
-			validation.When(m.ExpectLatestArrivalTime.Valid),
-			validation.By(is.Millisecond()),
-			validation.When(m.ExpectLatestDeliverTime.Valid, validation.By(func(value interface{}) error {
-				v, _ := value.(int64)
-				if v > m.ExpectLatestArrivalTime.Int64 {
-					return errors.New("最晚送达时间不能小于最晚发货时间")
-				}
-				return nil
-			})),
+			validation.When(m.ExpectLatestArrivalTime != "",
+				validation.Date(time.DateTime).Error("无效的最晚送达时间"),
+				validation.When(m.ExpectLatestDeliverTime != "", validation.By(func(value interface{}) error {
+					tStr1 := m.ExpectLatestDeliverTime // 最晚发货时间
+					tStr2 := m.ExpectLatestArrivalTime // 最晚送达时间
+					err := validation.Date(time.DateTime).Validate(tStr1)
+					if err != nil {
+						return fmt.Errorf("无效的最晚送达时间：%s", tStr1)
+					}
+					t1, _ := time.ParseInLocation(time.DateTime, tStr1, time.Local)
+					t2, _ := time.ParseInLocation(time.DateTime, tStr2, time.Local)
+					if t1.After(t2) {
+						return fmt.Errorf("最晚发货时间 %s 不能大于最晚送达时间 %s", tStr1, tStr2)
+					}
+
+					return nil
+				})),
+			),
 		),
 		validation.Field(&m.PurchaseDetailList, validation.Required.Error("备货详情不能为空")),
 	)
@@ -313,6 +344,18 @@ func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderAp
 		err = invalidInput(err)
 		return
 	}
+
+	if request.ExpectLatestDeliverTime != "" {
+		if t, e := time.Parse(time.DateTime, request.ExpectLatestDeliverTime); e == nil {
+			request.ExpectLatestArrivalTime = strconv.Itoa(int(t.UnixMilli()))
+		}
+	}
+	if request.ExpectLatestArrivalTime != "" {
+		if t, e := time.Parse(time.DateTime, request.ExpectLatestArrivalTime); e == nil {
+			request.ExpectLatestArrivalTime = strconv.Itoa(int(t.UnixMilli()))
+		}
+	}
+
 	var result = struct {
 		normal.Response
 		Result any `json:"result"`
