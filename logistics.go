@@ -34,14 +34,14 @@ func (s logisticsService) Companies(ctx context.Context) (items []entity.Logisti
 }
 
 // Company 根据 ID 查询发货快递公司
-func (s logisticsService) Company(ctx context.Context, shipmentId int64) (item entity.LogisticsShippingCompany, err error) {
+func (s logisticsService) Company(ctx context.Context, shippingId int64) (item entity.LogisticsShippingCompany, err error) {
 	items, err := s.Companies(ctx)
 	if err != nil {
 		return
 	}
 
 	for _, company := range items {
-		if company.ShipId == shipmentId {
+		if company.ShipId == shippingId {
 			return company, nil
 		}
 	}
