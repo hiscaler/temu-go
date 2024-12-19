@@ -63,6 +63,14 @@ const (
 	PurchaseOrderSourcePlatform         = 9999 // 平台下单
 )
 
+// 备货单逾期状态
+const (
+	PurchaseOrderDeliveryWillBeDelay = 101 // 发货即将逾期
+	PurchaseOrderDeliveryDelay       = 102 // 发货已逾期
+	PurchaseOrderArrivalWillBeDelay  = 201 // 到货即将逾期
+	PurchaseOrderArrivalDelay        = 202 // 到货已逾期
+)
+
 // 发货方式
 const (
 	DeliveryMethodNone                   = 0 // 无
@@ -80,6 +88,21 @@ const (
 	ShipOrderStatusReturned                = 4 // 已退货
 	ShipOrderStatusCanceled                = 5 // 已取消
 	ShipOrderStatusPartialReceive          = 6 // 部分收货
+)
+
+// 商品选品状态
+const (
+	GoodsSelectionStatusWaitingForFirstOrder    = 10 // 待下首单
+	GoodsSelectionStatusHasBeenPlacedFirstOrder = 11 // 已下首单
+	GoodsSelectionStatusJoinedSite              = 12 // 已加入站点
+	GoodsSelectionStatusOffline                 = 13 // 已下架
+)
+
+// 商品售罄状态
+const (
+	GoodsStockStatusAbundant      = 0 // 库存充足
+	GoodsStockStatusWillBeSoldOut = 1 // 即将售罄
+	GoodsStockStatusSoldOut       = 2 // 已经售罄
 )
 
 const (
