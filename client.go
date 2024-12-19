@@ -113,6 +113,7 @@ type resp struct {
 	ErrorMsg  string `json:"errorMsg"`
 }
 
+// Retry 请求是否可重试
 func (r resp) Retry() bool {
 	return !r.Success && r.ErrorCode == 4000000 && strings.ToLower(r.ErrorMsg) == "system_exception"
 }
