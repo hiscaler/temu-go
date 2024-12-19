@@ -75,7 +75,7 @@ type CustomGoodsBarcodeQueryParams struct {
 func (m CustomGoodsBarcodeQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.CreateTimeStart,
-			validation.When(m.CreateTimeStart != "" || m.CreateTimeEnd != "", validation.By(is.TimeRange(m.CreateTimeStart, m.CreateTimeEnd, time.DateOnly))),
+			validation.When(m.CreateTimeStart != "" || m.CreateTimeEnd != "", validation.By(is.TimeRange(m.CreateTimeStart, m.CreateTimeEnd, time.DateTime))),
 		),
 	)
 }

@@ -56,7 +56,7 @@ type GoodsQueryParams struct {
 func (m GoodsQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.CreatedAtStart,
-			validation.When(m.CreatedAtStart != "" || m.CreatedAtEnd != "", validation.By(is.TimeRange(m.CreatedAtStart, m.CreatedAtEnd, time.DateOnly))),
+			validation.When(m.CreatedAtStart != "" || m.CreatedAtEnd != "", validation.By(is.TimeRange(m.CreatedAtStart, m.CreatedAtEnd, time.DateTime))),
 		),
 	)
 }

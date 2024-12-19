@@ -52,7 +52,7 @@ func (m ShipOrderQueryParams) validate() error {
 			}),
 		)),
 		validation.Field(&m.DeliverTimeFrom,
-			validation.When(m.DeliverTimeFrom != "" || m.DeliverTimeTo != "", validation.By(is.TimeRange(m.DeliverTimeFrom, m.DeliverTimeTo, time.DateOnly))),
+			validation.When(m.DeliverTimeFrom != "" || m.DeliverTimeTo != "", validation.By(is.TimeRange(m.DeliverTimeFrom, m.DeliverTimeTo, time.DateTime))),
 		),
 		validation.Field(&m.IsVim, validation.When(
 			m.IsVim.Valid,
