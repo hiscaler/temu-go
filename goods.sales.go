@@ -8,7 +8,7 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
-// 商品管理数据服务
+// 商品销售管理数据服务
 type goodsSalesService service
 
 type GoodsSalesQueryParams struct {

@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+// 商品条码服务
 type goodsBarcodeService service
 
 type NormalGoodsBarcodeQueryParams struct {
