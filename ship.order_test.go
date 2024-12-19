@@ -90,7 +90,7 @@ func TestShipOrderService_Create(t *testing.T) {
 
 // TestShipOrderService_SimpleCreate 只上传部分基础数据（备货单号、发货地址 ID），其他部分系统自动填充
 func TestShipOrderService_SimpleCreate(t *testing.T) {
-	deliveryAddress, err := temuClient.Services.MallAddress.One(ctx, 5441063557369)
+	deliveryAddress, err := temuClient.Services.Mall.Address.One(ctx, 5441063557369)
 	assert.Nil(t, err, "Query mall deliveryAddress")
 	req := ShipOrderCreateRequest{
 		DeliveryOrderCreateGroupList: []ShipOrderCreateRequestDeliveryOrder{},
