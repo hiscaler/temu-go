@@ -5,10 +5,12 @@ import (
 	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
+	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
 	"strings"
+	"time"
 )
 
 // 采购单（备货单）服务
@@ -24,15 +26,15 @@ type PurchaseOrderQueryParams struct {
 	SubPurchaseOrderSnList          []string  `json:"subPurchaseOrderSnList,omitempty"`          // 订单号（采购子单号）
 	ProductSnList                   []string  `json:"productSnList,omitempty"`                   // 货号列表
 	ProductSkcIdList                []int64   `json:"productSkcIdList,omitempty"`                // skc 列表
-	PurchaseTimeFrom                int64     `json:"purchaseTimeFrom,omitempty"`                // 下单时间-开始：毫秒
-	PurchaseTimeTo                  int64     `json:"purchaseTimeTo,omitempty"`                  // 下单时间-结束：毫秒
+	PurchaseTimeFrom                string    `json:"purchaseTimeFrom,omitempty"`                // 下单时间-开始：毫秒
+	PurchaseTimeTo                  string    `json:"purchaseTimeTo,omitempty"`                  // 下单时间-结束：毫秒
 	DeliverOrderSnList              []string  `json:"deliverOrderSnList,omitempty"`              // 发货单号列表
 	IsDelayDeliver                  null.Bool `json:"isDelayDeliver,omitempty"`                  // 是否延迟发货
 	IsDelayArrival                  null.Bool `json:"isDelayArrival,omitempty"`                  // 是否延迟到货
-	ExpectLatestDeliverTimeFrom     int64     `json:"expectLatestDeliverTimeFrom,omitempty"`     // 要求最晚发货时间-开始（时间戳 单位：毫秒）
-	ExpectLatestDeliverTimeTo       int64     `json:"expectLatestDeliverTimeTo,omitempty"`       // 要求最晚发货时间-结束（时间戳 单位：毫秒）
-	ExpectLatestArrivalTimeFrom     int64     `json:"expectLatestArrivalTimeFrom,omitempty"`     // 要求最晚到达时间-开始（时间戳 单位：毫秒）
-	ExpectLatestArrivalTimeTo       int64     `json:"expectLatestArrivalTimeTo,omitempty"`       // 要求最晚到达时间-结束（时间戳 单位：毫秒）
+	ExpectLatestDeliverTimeFrom     string    `json:"expectLatestDeliverTimeFrom,omitempty"`     // 要求最晚发货时间-开始（时间戳 单位：毫秒）
+	ExpectLatestDeliverTimeTo       string    `json:"expectLatestDeliverTimeTo,omitempty"`       // 要求最晚发货时间-结束（时间戳 单位：毫秒）
+	ExpectLatestArrivalTimeFrom     string    `json:"expectLatestArrivalTimeFrom,omitempty"`     // 要求最晚到达时间-开始（时间戳 单位：毫秒）
+	ExpectLatestArrivalTimeTo       string    `json:"expectLatestArrivalTimeTo,omitempty"`       // 要求最晚到达时间-结束（时间戳 单位：毫秒）
 	PurchaseStockType               null.Int  `json:"purchaseStockType,omitempty"`               // 是否是JIT备货， 0-普通，1-JIT备货
 	IsFirst                         null.Bool `json:"isFirst,omitempty"`                         // 是否首单 0-否 1-是
 	IsCustomGoods                   null.Bool `json:"isCustomGoods,omitempty"`                   // 是否为定制品
@@ -95,6 +97,15 @@ func (m PurchaseOrderQueryParams) validate() error {
 			),
 		),
 		validation.Field(&m.SubPurchaseOrderSnList, validation.When(len(m.SubPurchaseOrderSnList) != 0, validation.Each(validation.By(is.PurchaseOrderNumber())))),
+		validation.Field(&m.PurchaseTimeFrom,
+			validation.When(m.PurchaseTimeFrom != "" || m.PurchaseTimeTo != "", validation.By(is.TimeRange(m.PurchaseTimeFrom, m.PurchaseTimeTo, time.DateOnly))),
+		),
+		validation.Field(&m.ExpectLatestDeliverTimeFrom,
+			validation.When(m.ExpectLatestDeliverTimeFrom != "" || m.ExpectLatestDeliverTimeTo != "", validation.By(is.TimeRange(m.ExpectLatestDeliverTimeFrom, m.ExpectLatestDeliverTimeTo, time.DateOnly))),
+		),
+		validation.Field(&m.ExpectLatestArrivalTimeFrom,
+			validation.When(m.ExpectLatestArrivalTimeFrom != "" || m.ExpectLatestArrivalTimeTo != "", validation.By(is.TimeRange(m.ExpectLatestArrivalTimeFrom, m.ExpectLatestArrivalTimeTo, time.DateOnly))),
+		),
 		validation.Field(&m.PurchaseStockType,
 			validation.When(m.PurchaseStockType.Valid,
 				validation.By(func(value interface{}) error {
@@ -165,6 +176,27 @@ func (s purchaseOrderService) Query(ctx context.Context, params PurchaseOrderQue
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return
+	}
+
+	if params.PurchaseTimeFrom != "" && params.PurchaseTimeTo != "" {
+		if start, end, e := helpers.StrTime2UnixMilli(params.PurchaseTimeFrom, params.PurchaseTimeTo); e == nil {
+			params.PurchaseTimeFrom = start
+			params.PurchaseTimeTo = end
+		}
+	}
+
+	if params.ExpectLatestDeliverTimeFrom != "" && params.ExpectLatestDeliverTimeTo != "" {
+		if start, end, e := helpers.StrTime2UnixMilli(params.ExpectLatestDeliverTimeFrom, params.ExpectLatestDeliverTimeTo); e == nil {
+			params.ExpectLatestDeliverTimeFrom = start
+			params.ExpectLatestDeliverTimeTo = end
+		}
+	}
+
+	if params.ExpectLatestArrivalTimeFrom != "" && params.ExpectLatestArrivalTimeTo != "" {
+		if start, end, e := helpers.StrTime2UnixMilli(params.ExpectLatestArrivalTimeFrom, params.ExpectLatestArrivalTimeTo); e == nil {
+			params.ExpectLatestArrivalTimeFrom = start
+			params.ExpectLatestArrivalTimeTo = end
+		}
 	}
 	var result = struct {
 		normal.Response
