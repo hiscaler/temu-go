@@ -255,7 +255,7 @@ func NewClient(config config.Config) *Client {
 			if milliseconds == 0 {
 				return 0, nil
 			}
-			l.Debug("Retry waiting...", slog.Int64("milliseconds", milliseconds))
+			l.Debug(fmt.Sprintf("Retry waiting %d milliseconds...", milliseconds))
 			return time.Duration(milliseconds) * time.Millisecond, nil
 		})
 	if debug {
