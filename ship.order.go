@@ -7,12 +7,14 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/temu-go/entity"
+	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
 	"maps"
 	"slices"
 	"strings"
+	"time"
 )
 
 // 发货单服务
@@ -32,8 +34,8 @@ type ShipOrderQueryParams struct {
 	SkcExtCodeList           []string  `json:"skcExtCodeList,omitempty"`           // 货号列表
 	ProductSkcIdList         []int64   `json:"productSkcIdList,omitempty"`         // skcId 列表
 	SubWarehouseIdList       []int64   `json:"subWarehouseIdList,omitempty"`       // 收货子仓列表
-	DeliverTimeFrom          int64     `json:"deliverTimeFrom,omitempty"`          // 发货时间-开始时间
-	DeliverTimeTo            int64     `json:"deliverTimeTo,omitempty"`            // 发货时间-结束时间
+	DeliverTimeFrom          string    `json:"deliverTimeFrom,omitempty"`          // 发货时间-开始时间
+	DeliverTimeTo            string    `json:"deliverTimeTo,omitempty"`            // 发货时间-结束时间
 	Status                   null.Int  `json:"status,omitempty"`                   // 发货单状态，0：待装箱发货，1：待仓库收货，2：已收货，3：已入库，4：已退货，5：已取消，6：部分收货，查询发货批次时仅支持查询发货单状态=1
 	UrgencyType              null.Int  `json:"urgencyType,omitempty"`              // 是否是紧急发货单，0-普通，1-急采
 	IsCustomProduct          null.Bool `json:"isCustomProduct,omitempty"`          // 是否为定制品
@@ -60,6 +62,9 @@ func (m ShipOrderQueryParams) validate() error {
 				return validation.Validate(int(v.Int64), validation.In(entity.UrgencyTypeNormal, entity.UrgencyTypeUrgency).Error("无效的加急类型"))
 			}),
 		)),
+		validation.Field(&m.DeliverTimeFrom,
+			validation.When(m.DeliverTimeFrom != "" || m.DeliverTimeTo != "", validation.By(is.TimeRange(m.DeliverTimeFrom, m.DeliverTimeTo, time.DateTime))),
+		),
 		validation.Field(&m.IsVim, validation.When(
 			m.IsVim.Valid,
 			validation.By(func(value interface{}) error {
@@ -106,6 +111,13 @@ func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return
+	}
+
+	if params.DeliverTimeFrom != "" && params.DeliverTimeTo != "" {
+		if start, end, e := helpers.StrTime2UnixMilli(params.DeliverTimeFrom, params.DeliverTimeTo); e == nil {
+			params.DeliverTimeFrom = start
+			params.DeliverTimeTo = end
+		}
 	}
 
 	var result = struct {

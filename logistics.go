@@ -34,14 +34,14 @@ func (s logisticsService) Companies(ctx context.Context) (items []entity.Logisti
 }
 
 // Company 根据 ID 查询发货快递公司
-func (s logisticsService) Company(ctx context.Context, shipmentId int64) (item entity.LogisticsShippingCompany, err error) {
+func (s logisticsService) Company(ctx context.Context, shippingId int64) (item entity.LogisticsShippingCompany, err error) {
 	items, err := s.Companies(ctx)
 	if err != nil {
 		return
 	}
 
 	for _, company := range items {
-		if company.ShipId == shipmentId {
+		if company.ShipId == shippingId {
 			return company, nil
 		}
 	}
@@ -139,4 +139,16 @@ func (s logisticsService) Verify(ctx context.Context, request LogisticsVerifyReq
 	}
 
 	return result.Result.CheckResultMsg == "", nil
+}
+
+// 修改物流
+// bg.shiporder.logistics.change
+
+type LogisticsChangeRequest struct {
+	ShippingId int64  `json:"shippingId"` // 物流公司 id
+	ExpressNo  string `json:"expressNo"`  // 物流单号
+}
+
+func (m LogisticsChangeRequest) validate() error {
+	return nil
 }

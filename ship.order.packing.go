@@ -3,11 +3,13 @@ package temu
 import (
 	"context"
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
+	"time"
 )
 
 // 装箱发货
@@ -56,6 +58,22 @@ func (m ShipOrderPackingSendPlatformRecommendationDeliveryInformation) validate(
 		validation.Field(&m.ExpressCompanyName, validation.Required.Error("快递公司名称不能为空")),
 		validation.Field(&m.ExpressDeliverySn, validation.Required.Error("快递单号不能为空")),
 		validation.Field(&m.PredictTotalPackageWeight, validation.Min(1).Error("预估总包裹重量不能小于 {.min}")),
+		validation.Field(&m.ExpectPickUpGoodsTime,
+			validation.Required.Error("预约取货时间不能为空"),
+			validation.By(func(value interface{}) error {
+				v, ok := value.(int64)
+				if !ok {
+					return fmt.Errorf("无效的预约取货时间：%v", value)
+				}
+
+				t := time.UnixMilli(v)
+				if t.IsZero() || t.Before(time.Now()) {
+					return fmt.Errorf("无效的预约取货时间：%v", value)
+				}
+
+				return nil
+			}),
+		),
 		validation.Field(&m.ExpressPackageNum, validation.Min(1).Error("发货总箱数不能小于 {.min}")),
 		validation.Field(&m.PredictId, validation.Required.Error("预测 Id 不能为空")),
 	)
