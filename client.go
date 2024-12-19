@@ -107,24 +107,35 @@ func init() {
 	time.Local = loc
 }
 
+type resp struct {
+	Success   bool   `json:"success"`
+	ErrorCode int    `json:"errorCode"`
+	ErrorMsg  string `json:"errorMsg"`
+}
+
+func (r resp) Retry() bool {
+	return !r.Success && r.ErrorCode == 4000000 && strings.ToLower(r.ErrorMsg) == "system_exception"
+}
+
 func NewClient(config config.Config) *Client {
 	var l *slog.Logger
+	debug := config.Debug
 	if config.Logger != nil {
 		l = config.Logger
 	} else {
-		if config.Debug {
+		if debug {
 			l = slog.New(slog.NewTextHandler(os.Stdout, nil))
 		} else {
 			l = slog.New(slog.NewJSONHandler(os.Stdout, nil))
 		}
 	}
 	client := &Client{
-		Debug:        config.Debug,
+		Debug:        debug,
 		Logger:       l,
 		TimeLocation: loc,
 	}
 	httpClient := resty.New().
-		SetDebug(config.Debug).
+		SetDebug(debug).
 		EnableTrace().
 		SetBaseURL("https://openapi.kuajingmaihuo.com/openapi/router").
 		SetHeaders(map[string]string{
@@ -165,7 +176,7 @@ func NewClient(config config.Config) *Client {
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
-			if config.Debug || response.IsError() {
+			if debug || response.IsError() {
 				params := response.Request.Body
 				endpoint := ""
 				if v, ok := params.(map[string]any); ok {
@@ -198,15 +209,8 @@ func NewClient(config config.Config) *Client {
 
 			retry := response.StatusCode() == http.StatusTooManyRequests
 			if !retry {
-				r := struct {
-					Success   bool   `json:"success"`
-					ErrorCode int    `json:"errorCode"`
-					ErrorMsg  string `json:"errorMsg"`
-				}{}
-				retry = json.Unmarshal(response.Body(), &r) == nil &&
-					r.Success == false &&
-					r.ErrorCode == 4000000 &&
-					strings.EqualFold(r.ErrorMsg, "SYSTEM_EXCEPTION")
+				var r resp
+				retry = json.Unmarshal(response.Body(), &r) == nil && r.Retry()
 			}
 			if retry {
 				body := response.Request.Body
@@ -225,7 +229,7 @@ func NewClient(config config.Config) *Client {
 					}
 					retry = e == nil
 				}
-				if retry {
+				if retry && debug {
 					messages := make([]string, 0)
 					messages = append(messages, "URL: "+response.Request.URL)
 					if endpoint != "" {
@@ -241,15 +245,8 @@ func NewClient(config config.Config) *Client {
 			if response != nil {
 				retry := response.StatusCode() == http.StatusTooManyRequests
 				if !retry {
-					r := struct {
-						Success   bool   `json:"success"`
-						ErrorCode int    `json:"errorCode"`
-						ErrorMsg  string `json:"errorMsg"`
-					}{}
-					retry = json.Unmarshal(response.Body(), &r) == nil &&
-						r.Success == false &&
-						r.ErrorCode == 4000000 &&
-						strings.EqualFold(r.ErrorMsg, "SYSTEM_EXCEPTION")
+					var r resp
+					retry = json.Unmarshal(response.Body(), &r) == nil && r.Retry()
 				}
 				if retry {
 					milliseconds = 1000 - time.Now().UnixMilli()%1000 // 最多等待下一秒钟到目前的毫秒数
@@ -258,16 +255,16 @@ func NewClient(config config.Config) *Client {
 			if milliseconds == 0 {
 				return 0, nil
 			}
-			l.Info("Retry waiting...", slog.Int64("milliseconds", milliseconds))
+			l.Debug("Retry waiting...", slog.Int64("milliseconds", milliseconds))
 			return time.Duration(milliseconds) * time.Millisecond, nil
 		})
-	if config.Debug {
+	if debug {
 		httpClient.SetBaseURL("https://openapi.kuajingmaihuo.com/openapi/router")
 	}
 	httpClient.JSONMarshal = json.Marshal
 	httpClient.JSONUnmarshal = json.Unmarshal
 	xService := service{
-		debug:      config.Debug,
+		debug:      debug,
 		logger:     l,
 		httpClient: httpClient,
 	}
