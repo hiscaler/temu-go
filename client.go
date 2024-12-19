@@ -113,7 +113,8 @@ type resp struct {
 	ErrorMsg  string `json:"errorMsg"`
 }
 
-func (r resp) Retry() bool {
+// retry 请求是否可重试
+func (r resp) retry() bool {
 	return !r.Success && r.ErrorCode == 4000000 && strings.ToLower(r.ErrorMsg) == "system_exception"
 }
 
@@ -210,7 +211,7 @@ func NewClient(config config.Config) *Client {
 			retry := response.StatusCode() == http.StatusTooManyRequests
 			if !retry {
 				var r resp
-				retry = json.Unmarshal(response.Body(), &r) == nil && r.Retry()
+				retry = json.Unmarshal(response.Body(), &r) == nil && r.retry()
 			}
 			if retry {
 				body := response.Request.Body
@@ -246,7 +247,7 @@ func NewClient(config config.Config) *Client {
 				retry := response.StatusCode() == http.StatusTooManyRequests
 				if !retry {
 					var r resp
-					retry = json.Unmarshal(response.Body(), &r) == nil && r.Retry()
+					retry = json.Unmarshal(response.Body(), &r) == nil && r.retry()
 				}
 				if retry {
 					milliseconds = 1000 - time.Now().UnixMilli()%1000 // 最多等待下一秒钟到目前的毫秒数
