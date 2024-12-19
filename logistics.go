@@ -140,3 +140,15 @@ func (s logisticsService) Verify(ctx context.Context, request LogisticsVerifyReq
 
 	return result.Result.CheckResultMsg == "", nil
 }
+
+// 修改物流
+// bg.shiporder.logistics.change
+
+type LogisticsChangeRequest struct {
+	ShippingId int64  `json:"shippingId"` // 物流公司 id
+	ExpressNo  string `json:"expressNo"`  // 物流单号
+}
+
+func (m LogisticsChangeRequest) validate() error {
+	return nil
+}
