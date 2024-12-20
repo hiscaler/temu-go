@@ -155,20 +155,46 @@ func (m ShipOrderPackingSendRequest) validate() error {
 	)
 }
 
+type ShipOrderPackingSendCreateResult struct {
+	DeliveryOrderCreateInfos []struct {
+		SubPurchaseOrderSn string `json:"subPurchaseOrderSn"` // 采购子单号
+		PackageInfos       []struct {
+			PackageDetailSaveInfos []struct {
+				ProductSkuId int64 `json:"productSkuId"` // skuId
+				SkuNum       int   `json:"skuNum"`       // 发货 sku 数目
+			} `json:"packageDetailSaveInfos"` // 包裹明细
+		} `json:"packageInfos"` // 包裹信息列表
+	} `json:"deliveryOrderCreateInfos"` // 采购单创建信息列表
+	DeliverOrderDetailInfos []struct {
+		ProductSkuId  int64 `json:"productSkuId"`  // skuId
+		DeliverSkuNum int   `json:"deliverSkuNum"` // 发货 sku 数目
+	} `json:"deliverOrderDetailInfos"` // 发货单详情列表
+	// DeliveryAddressId  int64                  `json:"deliveryAddressId"`  // 发货地址 ID
+	ReceiveAddressInfo              *entity.ReceiveAddress                                         `json:"receiveAddressInfo"`              // 收货地址
+	SubWarehouseId                  int64                                                          `json:"subWarehouseId"`                  // 子仓 ID
+	DeliverMethod                   int                                                            `json:"deliverMethod"`                   // 发货方式
+	DeliveryAddressId               int64                                                          `json:"deliveryAddressId"`               // 发货地址 ID
+	SelfDeliveryInfo                *ShipOrderPackingSendSelfDeliveryInformation                   `json:"selfDeliveryInfo"`                // 自送信息
+	ThirdPartyDeliveryInfo          *ShipOrderPackingSendPlatformRecommendationDeliveryInformation `json:"thirdPartyDeliveryInfo"`          // 公司指定物流
+	ThirdPartyExpressDeliveryInfoVO *ShipOrderPackingSendThirdPartyDeliveryInformation             `json:"thirdPartyExpressDeliveryInfoVO"` // 第三方配送
+}
+
+type ShipOrderPackingSendResult struct {
+	CreateExpressErrorRequestList []ShipOrderPackingSendCreateResult `json:"createExpressErrorRequestList"` // 创建快递运单失败的请求列表
+	ExpressBatchSn                string                             `json:"expressBatchSn"`                // 创建生成的发货批次号
+}
+
 // Send 装箱发货接口
+// 成功后返回创建生成的发货批次号
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#ezXrHy
-func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPackingSendRequest) (number string, err error) {
-	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPackingSendRequest) (string, error) {
+	if err := request.validate(); err != nil {
+		return "", invalidInput(err)
 	}
 
 	var result = struct {
 		normal.Response
-		Result struct {
-			CreateExpressErrorRequestList []any  `json:"createExpressErrorRequestList"` // 创建快递运单失败的请求列表
-			ExpressBatchSn                string `json:"expressBatchSn"`                // 创建生成的发货批次号
-		} `json:"result"`
+		Result ShipOrderPackingSendResult `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
@@ -176,11 +202,10 @@ func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPack
 		SetResult(&result).
 		Post("bg.shiporder.packing.send")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return "", err
 	}
 
-	number = result.Result.ExpressBatchSn
-	return
+	return result.Result.ExpressBatchSn, nil
 }
 
 // 装箱发货校验
