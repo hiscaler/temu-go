@@ -185,11 +185,11 @@ type ShipOrderPackingSendResult struct {
 }
 
 // Send 装箱发货接口
+// 成功后返回创建生成的发货批次号
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#ezXrHy
-func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPackingSendRequest) (number string, err error) {
-	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPackingSendRequest) (string, error) {
+	if err := request.validate(); err != nil {
+		return "", invalidInput(err)
 	}
 
 	var result = struct {
@@ -202,11 +202,10 @@ func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPack
 		SetResult(&result).
 		Post("bg.shiporder.packing.send")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return "", err
 	}
 
-	number = result.Result.ExpressBatchSn
-	return
+	return result.Result.ExpressBatchSn, nil
 }
 
 // 装箱发货校验
