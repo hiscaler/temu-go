@@ -187,8 +187,7 @@ func (m ShipOrderCreateRequest) validate() error {
 // Create 创建发货单接口 V3
 func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest) (ok bool, err error) {
 	if err = req.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return false, invalidInput(err)
 	}
 
 	var result = struct {
@@ -228,8 +227,7 @@ func (m ShipOrderCancelRequest) validate() error {
 func (s shipOrderService) Cancel(ctx context.Context, shipOrderNumber string) (ok bool, err error) {
 	req := ShipOrderCancelRequest{DeliveryOrderSn: shipOrderNumber}
 	if err = req.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return false, invalidInput(err)
 	}
 
 	var result = struct {
