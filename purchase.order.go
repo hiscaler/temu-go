@@ -257,9 +257,13 @@ func (s purchaseOrderService) One(ctx context.Context, number string) (item enti
 		return
 	}
 
+	number = strings.ToLower(number)
 	for _, order := range items {
-		if (isPurchaseOrder && strings.EqualFold(order.SubPurchaseOrderSn, number)) ||
-			(!isPurchaseOrder && strings.EqualFold(order.OriginalPurchaseOrderSn, number)) {
+		value := order.SubPurchaseOrderSn
+		if !isPurchaseOrder {
+			value = order.OriginalPurchaseOrderSn
+		}
+		if strings.ToLower(value) == number {
 			return order, nil
 		}
 	}
