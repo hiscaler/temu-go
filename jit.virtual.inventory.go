@@ -80,10 +80,9 @@ func (m VirtualInventoryJitEditRequest) validate() error {
 
 // Edit 虚拟库存编辑接口
 // https://seller.kuajingmaihuo.com/sop/view/706628248275137588#hALnFd
-func (s jitVirtualInventoryService) Edit(ctx context.Context, request VirtualInventoryJitEditRequest) (ok bool, err error) {
-	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+func (s jitVirtualInventoryService) Edit(ctx context.Context, request VirtualInventoryJitEditRequest) (bool, error) {
+	if err := request.validate(); err != nil {
+		return false, invalidInput(err)
 	}
 
 	var result = struct {
@@ -96,7 +95,7 @@ func (s jitVirtualInventoryService) Edit(ctx context.Context, request VirtualInv
 		SetResult(&result).
 		Post("bg.virtualinventoryjit.edit")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return false, err
 	}
 
 	return true, nil

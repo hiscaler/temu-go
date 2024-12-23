@@ -41,9 +41,9 @@ func (m GoodsCertificationQueryParams) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/649320516224723675#Oq8dC9
 func (s goodsCertificationService) Query(ctx context.Context, params GoodsCertificationQueryParams) (certifications []entity.GoodsCertification, err error) {
 	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return certifications, invalidInput(err)
 	}
+
 	var result = struct {
 		normal.Response
 		Result struct {
@@ -74,9 +74,9 @@ func (m GoodsCertificationNeedUploadItemRequest) validate() error {
 
 func (s goodsCertificationService) QueryNeedUploadItems(ctx context.Context, request GoodsCertificationNeedUploadItemRequest) (items []entity.GoodsCertificationNeedUploadItem, err error) {
 	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return items, invalidInput(err)
 	}
+
 	var result = struct {
 		normal.Response
 		Result struct {

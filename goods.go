@@ -472,8 +472,7 @@ type GoodsCreateResult struct {
 // Create 添加货品
 func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (res GoodsCreateResult, err error) {
 	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return res, invalidInput(err)
 	}
 
 	var result = struct {

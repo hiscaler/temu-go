@@ -54,9 +54,9 @@ func (m GoodsSalesQueryParams) validate() error {
 func (s goodsSalesService) Query(ctx context.Context, params GoodsSalesQueryParams) (items []entity.GoodsSales, err error) {
 	params.TidyPager()
 	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return items, invalidInput(err)
 	}
+
 	var result = struct {
 		normal.Response
 		Result struct {

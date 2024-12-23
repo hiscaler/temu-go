@@ -261,8 +261,7 @@ func (m ShipOrderPackingMatchRequest) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#TDP3qU
 func (s shipOrderPackingService) Match(ctx context.Context, request ShipOrderPackingMatchRequest) (item entity.ShipOrderPackingMatchResult, err error) {
 	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return item, invalidInput(err)
 	}
 
 	var result = struct {
@@ -275,9 +274,8 @@ func (s shipOrderPackingService) Match(ctx context.Context, request ShipOrderPac
 		SetResult(&result).
 		Post("bg.shiporder.packing.match")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return item, err
 	}
 
-	item = result.Result
-	return
+	return result.Result, nil
 }
