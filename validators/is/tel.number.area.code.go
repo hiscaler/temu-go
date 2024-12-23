@@ -12,15 +12,15 @@ func TelNumberAreaCode() validation.RuleFunc {
 	return func(value interface{}) error {
 		s, ok := value.(string)
 		if !ok {
-			return fmt.Errorf("无效的电话号码区号: %v", value)
+			return fmt.Errorf("无效的座机号码区号: %v", value)
 		}
 
 		if strings.TrimSpace(s) == "" {
-			return errors.New("电话号码区号为空")
+			return errors.New("座机号码区号为空")
 		}
 
 		if !telNumberAreaCodePattern.MatchString(s) {
-			return fmt.Errorf("无效的电话号码区号：%s", s)
+			return fmt.Errorf("无效的座机号码区号：%s", s)
 		}
 
 		return nil

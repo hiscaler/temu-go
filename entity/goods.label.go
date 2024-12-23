@@ -11,9 +11,9 @@ type ProductSkcImage struct {
 type GoodsLabel struct {
 	ProductSkuSpecI18nMap map[string][]Specification `json:"productSkuSpecI18nMap"` // sku规格多语言信息
 	ProductSkuDTO         struct {
+		ProductId    int64  `json:"productId"`    // 货品 Id
 		ProductSkuId int64  `json:"productSkuId"` // 货品 skuId
 		ExtCode      string `json:"extCode"`      // sku 货号
-		ProductId    int64  `json:"productId"`    // 货品 Id
 	} `json:"productSkuDTO"` // sku信息
 	ProductLabelCodeDTO struct {
 		ProductSkuId               int64  `json:"productSkuId"`
