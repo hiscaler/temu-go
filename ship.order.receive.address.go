@@ -48,9 +48,10 @@ func (s shipOrderReceiveAddressService) One(ctx context.Context, purchaseOrderNu
 		return
 	}
 
+	purchaseOrderNumber = strings.ToLower(purchaseOrderNumber)
 	for _, d := range items {
 		for _, sn := range d.SubPurchaseOrderSnList {
-			if strings.EqualFold(sn, purchaseOrderNumber) {
+			if strings.ToLower(sn) == purchaseOrderNumber {
 				return d, nil
 			}
 		}

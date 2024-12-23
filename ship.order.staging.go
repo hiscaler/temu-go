@@ -127,8 +127,9 @@ func (s shipOrderStagingService) One(ctx context.Context, purchaseOrderNumber st
 		return
 	}
 
+	purchaseOrderNumber = strings.ToLower(purchaseOrderNumber)
 	for _, v := range items {
-		if strings.EqualFold(v.SubPurchaseOrderBasicVO.SubPurchaseOrderSn, purchaseOrderNumber) {
+		if strings.ToLower(v.SubPurchaseOrderBasicVO.SubPurchaseOrderSn) == purchaseOrderNumber {
 			return v, nil
 		}
 	}
