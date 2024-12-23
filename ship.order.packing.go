@@ -52,12 +52,43 @@ type ShipOrderPackingSendPlatformRecommendationDeliveryInformation struct {
 	PredictId                 int64   `json:"predictId,omitempty"`                 // 预测 ID
 }
 
+// 换转为整千克数
+// 1g = 1000g
+// 999g = 1000g
+// 1000g = 1000g
+// 1001g = 2000g
+func truncateWeightValue(value int64) int64 {
+	if value <= 0 {
+		return value
+	}
+
+	diffValue := value % 1000
+	if diffValue == 0 {
+		return value
+	}
+	return value - diffValue + 1000
+}
+
 func (m ShipOrderPackingSendPlatformRecommendationDeliveryInformation) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ExpressCompanyId, validation.Required.Error("快递公司 Id 不能为空")),
 		validation.Field(&m.ExpressCompanyName, validation.Required.Error("快递公司名称不能为空")),
 		validation.Field(&m.ExpressDeliverySn, validation.Required.Error("快递单号不能为空")),
-		validation.Field(&m.PredictTotalPackageWeight, validation.Min(1).Error("预估总包裹重量不能小于 {.min}")),
+		validation.Field(&m.PredictTotalPackageWeight,
+			validation.Min(1).Error("预估总包裹重量不能小于 {.min} 克"),
+			validation.By(func(value interface{}) error {
+				weight, ok := value.(int64)
+				if !ok {
+					return fmt.Errorf("无效的预估总包裹重量：%v 克", value)
+				}
+
+				// 传入值为克，需要转换为整数克值，比如 123 克 需要调整为 1000, 1001 需要调整为 2000
+				if weight != truncateWeightValue(weight) {
+					return fmt.Errorf("无效的预估总包裹重量：%d 克", weight)
+				}
+				return nil
+			}),
+		),
 		validation.Field(&m.ExpectPickUpGoodsTime,
 			validation.Required.Error("预约取货时间不能为空"),
 			validation.By(func(value interface{}) error {
