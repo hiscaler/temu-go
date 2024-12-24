@@ -73,10 +73,6 @@ func (m LogisticsMatchRequest) validate() error {
 			validation.Min(1).Error("包裹件数不能小于 {.min}"),
 		),
 		validation.Field(&m.SubWarehouseId, validation.Required.Error("收货子仓不能为空")),
-		validation.Field(&m.DeliveryOrderSns,
-			validation.Required.Error("发货单列表不能为空"),
-			validation.Each(validation.By(is.ShipOrderNumber())),
-		),
 		validation.Field(&m.ReceiveAddressInfo,
 			validation.Required.Error("收货信息不能为空"),
 			validation.By(func(value interface{}) error {
@@ -84,13 +80,16 @@ func (m LogisticsMatchRequest) validate() error {
 				return v.Validate()
 			}),
 		),
+		validation.Field(&m.DeliveryOrderSns,
+			validation.Required.Error("发货单列表不能为空"),
+			validation.Each(validation.By(is.ShipOrderNumber())),
+		),
 	)
 }
 
 func (s logisticsService) Match(ctx context.Context, request LogisticsMatchRequest) (items []entity.LogisticsMatch, err error) {
 	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return items, invalidInput(err)
 	}
 
 	var result = struct {
@@ -103,7 +102,7 @@ func (s logisticsService) Match(ctx context.Context, request LogisticsMatchReque
 		SetResult(&result).
 		Post("bg.shiporderv2.logisticsmatch.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return items, err
 	}
 
 	return result.Result, nil
@@ -123,8 +122,8 @@ func (m LogisticsVerifyRequest) validate() error {
 }
 
 // Verify 物流单号与物流商校验
-func (s logisticsService) Verify(ctx context.Context, request LogisticsVerifyRequest) (ok bool, err error) {
-	if err = request.validate(); err != nil {
+func (s logisticsService) Verify(ctx context.Context, request LogisticsVerifyRequest) (bool, error) {
+	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
 	}
 
@@ -140,7 +139,7 @@ func (s logisticsService) Verify(ctx context.Context, request LogisticsVerifyReq
 		SetResult(&result).
 		Post("bg.shiporder.logisticsorder.match")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return false, err
 	}
 
 	return result.Result.CheckResultMsg == "", nil

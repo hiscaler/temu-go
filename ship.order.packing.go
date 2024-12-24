@@ -6,6 +6,7 @@ import (
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
+	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
@@ -52,25 +53,6 @@ type ShipOrderPackingSendPlatformRecommendationDeliveryInformation struct {
 	PredictId                 int64   `json:"predictId,omitempty"`                 // 预测 ID
 }
 
-// 换转为整千克数
-// Example:
-//
-//	1g    = 1000g
-//	999g  = 1000g
-//	1000g = 1000g
-//	1001g = 2000g
-func truncateWeightValue(value int64) int64 {
-	if value <= 0 {
-		return value
-	}
-
-	diffValue := value % 1000
-	if diffValue == 0 {
-		return value
-	}
-	return value - diffValue + 1000
-}
-
 func (m ShipOrderPackingSendPlatformRecommendationDeliveryInformation) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ExpressCompanyId, validation.Required.Error("快递公司 Id 不能为空")),
@@ -85,7 +67,7 @@ func (m ShipOrderPackingSendPlatformRecommendationDeliveryInformation) validate(
 				}
 
 				// 传入值为克，需要转换为整数克值，比如 123 克 需要调整为 1000, 1001 需要调整为 2000
-				if weight != truncateWeightValue(weight) {
+				if weight != helpers.TruncateWeightValue(weight) {
 					return fmt.Errorf("无效的预估总包裹重量：%d 克", weight)
 				}
 				return nil
