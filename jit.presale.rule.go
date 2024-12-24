@@ -58,10 +58,9 @@ func (m JitPresaleRuleSignRequest) validate() error {
 	)
 }
 
-func (s jitPresaleRuleService) Sign(ctx context.Context, request JitPresaleRuleSignRequest) (ok bool, err error) {
-	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+func (s jitPresaleRuleService) Sign(ctx context.Context, request JitPresaleRuleSignRequest) (bool, error) {
+	if err := request.validate(); err != nil {
+		return false, invalidInput(err)
 	}
 
 	var result = struct {
@@ -74,7 +73,7 @@ func (s jitPresaleRuleService) Sign(ctx context.Context, request JitPresaleRuleS
 		SetResult(&result).
 		Post("bg.virtualinventoryjit.rule.sign")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return false, err
 	}
 
 	return true, nil
