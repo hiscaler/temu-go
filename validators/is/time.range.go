@@ -1,7 +1,6 @@
 package is
 
 import (
-	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"time"
@@ -13,17 +12,21 @@ func TimeRange(startTime, endTime, timeLayout any) validation.RuleFunc {
 	return func(value any) error {
 		start, ok := startTime.(string)
 		if !ok || start == "" {
-			return errors.New("无效的开始时间")
+			return fmt.Errorf("无效的开始时间：%v", startTime)
 		}
 
 		end, ok := endTime.(string)
 		if !ok || end == "" {
-			return errors.New("无效的结束时间")
+			return fmt.Errorf("无效的结束时间：%v", endTime)
 		}
 
 		layout, ok := timeLayout.(string)
-		if !ok || (layout != time.DateTime && layout != time.DateOnly && layout != time.TimeOnly) {
-			return errors.New("无效的时间格式")
+		if !ok {
+			return fmt.Errorf("无效的时间格式：%v", timeLayout)
+		}
+
+		if layout != time.DateTime && layout != time.DateOnly && layout != time.TimeOnly {
+			return fmt.Errorf("无效的时间格式：%s", layout)
 		}
 
 		friendlyLayout := ""
@@ -57,7 +60,7 @@ func TimeRange(startTime, endTime, timeLayout any) validation.RuleFunc {
 		}
 
 		if eTime.Before(sTime) {
-			return errors.New("结束时间不能大于开始时间")
+			return fmt.Errorf("结束时间 %s 不能大于开始时间 %s", end, start)
 		}
 
 		return nil
