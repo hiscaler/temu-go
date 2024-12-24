@@ -32,8 +32,7 @@ func (m ShipOrderPackageQueryParams) validate() error {
 func (s shipOrderPackageService) One(ctx context.Context, shipOrderNumber string) (items []entity.ShipOrderPackage, err error) {
 	params := ShipOrderPackageQueryParams{DeliveryOrderSn: shipOrderNumber}
 	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return nil, invalidInput(err)
 	}
 
 	var result = struct {
@@ -48,11 +47,10 @@ func (s shipOrderPackageService) One(ctx context.Context, shipOrderNumber string
 		SetResult(&result).
 		Post("bg.shiporder.package.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return nil, err
 	}
 
-	items = result.Result.PackageInfo
-	return
+	return result.Result.PackageInfo, nil
 }
 
 // 发货包裹编辑

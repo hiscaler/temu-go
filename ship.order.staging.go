@@ -127,8 +127,9 @@ func (s shipOrderStagingService) One(ctx context.Context, purchaseOrderNumber st
 		return
 	}
 
+	purchaseOrderNumber = strings.ToLower(purchaseOrderNumber)
 	for _, v := range items {
-		if strings.EqualFold(v.SubPurchaseOrderBasicVO.SubPurchaseOrderSn, purchaseOrderNumber) {
+		if strings.ToLower(v.SubPurchaseOrderBasicVO.SubPurchaseOrderSn) == purchaseOrderNumber {
 			return v, nil
 		}
 	}
@@ -171,8 +172,7 @@ func (m ShipOrderStagingAddRequest) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YSg2AE
 func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAddRequest) (ok bool, results []entity.Result, err error) {
 	if err = req.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return ok, results, invalidInput(err)
 	}
 
 	results = make([]entity.Result, len(req.JoinInfoList))

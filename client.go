@@ -388,7 +388,7 @@ func errorWrap(code int, message string) error {
 	case BadRequestError:
 		message = "请求错误"
 	case UnauthorizedError:
-		message = "认证失败，请确认您是否有相应的权限"
+		message = "认证失败，无法访问系统资源"
 	case InternalServerError:
 		message = "服务器内部错误"
 	case MethodNotImplementedError:

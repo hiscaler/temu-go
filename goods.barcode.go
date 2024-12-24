@@ -33,8 +33,7 @@ func (m NormalGoodsBarcodeQueryParams) validate() error {
 func (s goodsBarcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
 	params.TidyPager()
 	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return items, invalidInput(err)
 	}
 
 	var result = struct {
@@ -85,8 +84,7 @@ func (m CustomGoodsBarcodeQueryParams) validate() error {
 func (s goodsBarcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
 	params.TidyPager()
 	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return items, invalidInput(err)
 	}
 
 	if params.CreateTimeStart != "" && params.CreateTimeEnd != "" {
@@ -141,8 +139,7 @@ func (s goodsBarcodeService) BoxMarkPrintUrl(ctx context.Context, shipOrderNumbe
 		DeliveryOrderSnList: shipOrderNumbers,
 	}
 	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return "", invalidInput(err)
 	}
 
 	var result = struct {
@@ -168,8 +165,7 @@ func (s goodsBarcodeService) BoxMark(ctx context.Context, shipOrderNumbers ...st
 		DeliveryOrderSnList: shipOrderNumbers,
 	}
 	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return items, invalidInput(err)
 	}
 
 	var result = struct {

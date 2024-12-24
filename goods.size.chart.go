@@ -28,8 +28,7 @@ func (m GoodsSizeChartQueryParams) validate() error {
 func (s *goodsSizeChartService) Query(ctx context.Context, params GoodsSizeChartQueryParams) (items []entity.GoodsSizeChart, err error) {
 	params.TidyPager(0)
 	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return items, invalidInput(err)
 	}
 
 	var result = struct {

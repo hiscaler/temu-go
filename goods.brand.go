@@ -28,8 +28,7 @@ func (s goodsBrandService) Query(ctx context.Context, params GoodsBrandQueryPara
 	params.TidyPager()
 	params.Page = params.Pager.Page
 	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return items, 0, 0, true, invalidInput(err)
 	}
 
 	var result = struct {

@@ -372,6 +372,8 @@ func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest
 	if err = req.validate(ctx, s); err != nil {
 		err = invalidInput(err)
 		return
+	if err = req.validate(); err != nil {
+		return false, invalidInput(err)
 	}
 
 	var result = struct {
@@ -411,8 +413,7 @@ func (m ShipOrderCancelRequest) validate() error {
 func (s shipOrderService) Cancel(ctx context.Context, shipOrderNumber string) (ok bool, err error) {
 	req := ShipOrderCancelRequest{DeliveryOrderSn: shipOrderNumber}
 	if err = req.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return false, invalidInput(err)
 	}
 
 	var result = struct {
