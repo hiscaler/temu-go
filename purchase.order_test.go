@@ -30,11 +30,11 @@ func Test_purchaseOrderService_Query(t *testing.T) {
 		// IsFirst:              null.NewBool(false, true),
 		// UrgencyType:          null.NewInt(0, false),
 	}
-	params.PageSize = 2
+	params.Page = 1
+	params.PageSize = 10
 	items, _, err := temuClient.Services.PurchaseOrder.Query(ctx, params)
 	assert.Equalf(t, nil, err, "Services.PurchaseOrder.Query(ctx, %#v) err", params)
-
-	if len(items) == 1111 {
+	if len(items) != 0 {
 		item := items[0]
 		var order entity.PurchaseOrder
 
