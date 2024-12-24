@@ -370,9 +370,6 @@ func (m ShipOrderCreateRequest) validate(ctx context.Context, s shipOrderService
 // Create 创建发货单接口 V3
 func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest) (ok bool, err error) {
 	if err = req.validate(ctx, s); err != nil {
-		err = invalidInput(err)
-		return
-	if err = req.validate(); err != nil {
 		return false, invalidInput(err)
 	}
 
