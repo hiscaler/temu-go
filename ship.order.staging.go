@@ -33,6 +33,7 @@ type ShipOrderStagingQueryParams struct {
 
 func (m ShipOrderStagingQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.SubPurchaseOrderSnList, validation.Each(validation.By(is.PurchaseOrderNumber()))),
 		validation.Field(&m.SettlementType, validation.When(m.SettlementType.Valid,
 			validation.By(func(value interface{}) error {
 				v, ok := value.(null.Int)
