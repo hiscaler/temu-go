@@ -118,6 +118,11 @@ func (m PurchaseOrderQueryParams) validate() error {
 		validation.Field(&m.ExpectLatestArrivalTimeFrom,
 			validation.When(m.ExpectLatestArrivalTimeFrom != "" || m.ExpectLatestArrivalTimeTo != "", validation.By(is.TimeRange(m.ExpectLatestArrivalTimeFrom, m.ExpectLatestArrivalTimeTo, time.DateTime))),
 		),
+		validation.Field(&m.OriginalPurchaseOrderSnList,
+			validation.When(len(m.OriginalPurchaseOrderSnList) != 0,
+				validation.Each(validation.By(is.OriginalPurchaseOrderNumber())),
+			),
+		),
 		validation.Field(&m.PurchaseStockType,
 			validation.When(m.PurchaseStockType.Valid,
 				validation.By(func(value interface{}) error {
