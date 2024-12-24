@@ -39,7 +39,7 @@ func Test_logisticsService_Match(t *testing.T) {
 		SubWarehouseId:            shipOrder.SubWarehouseId,
 		QueryStandbyExpress:       null.BoolFrom(false),
 		TotalPackageNum:           2,
-		ReceiveAddressInfo:        receiveAddress.ReceiveAddressInfo,
+		ReceiveAddressInfo:        &receiveAddress.ReceiveAddressInfo,
 		DeliveryOrderSns:          []string{shipOrder.DeliveryOrderSn},
 	}
 	items, err := temuClient.Services.Logistics.Match(ctx, req)
