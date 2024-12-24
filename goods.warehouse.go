@@ -16,6 +16,7 @@ func (m GoodsWarehouseQueryParams) validate() error {
 	return nil
 }
 
+// Query todo 需要验证此接口的数据
 func (s goodsWarehouseService) Query(ctx context.Context, params GoodsWarehouseQueryParams) (err error) {
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)

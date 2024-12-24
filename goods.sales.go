@@ -50,7 +50,7 @@ func (m GoodsSalesQueryParams) validate() error {
 }
 
 // Query 销售管理数据查询接口
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#8sCZQ8
+// https://seller.kuajingmaihuo.com/sop/view/078755754290460420#D6SACs
 func (s goodsSalesService) Query(ctx context.Context, params GoodsSalesQueryParams) (items []entity.GoodsSales, err error) {
 	params.TidyPager()
 	if err = params.validate(); err != nil {
