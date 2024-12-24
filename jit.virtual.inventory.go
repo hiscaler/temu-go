@@ -38,7 +38,7 @@ func (s jitVirtualInventoryService) Query(ctx context.Context, productSkcId int6
 
 type SkuVirtualStockChangeRequest struct {
 	ProductSkuId     int64 `json:"productSkuId"`     // 货品 SKU ID
-	VirtualStockDiff int   `json:"virtualStockDiff"` // 虚拟库存(含商家自管库存)变更，大于0代表增加，小于0代表减少
+	VirtualStockDiff int   `json:"virtualStockDiff"` // 虚拟库存(含商家自管库存)变更，大于 0 代表增加，小于 0 代表减少
 }
 
 func (m SkuVirtualStockChangeRequest) validate() error {

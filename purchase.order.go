@@ -396,16 +396,17 @@ func (m PurchaseOrderEditRequest) validate() error {
 			validation.By(is.PurchaseOrderNumber()),
 		),
 		validation.Field(&m.PurchaseDetailList,
-			validation.Required.Error("待修改备货单详情不能为空"),
+			validation.Required.Error("待修改备货单 SKU 下单数据不能为空"),
 			validation.Each(validation.WithContext(func(ctx context.Context, value interface{}) error {
 				item, ok := value.(PurchaseOrderEditItem)
 				if !ok {
-					return errors.New("无效的备货单详情")
+					return errors.New("无效的待修改备货单 SKU 下单数据")
 				}
+
 				return validation.ValidateStruct(&item,
 					validation.Field(&item.ProductSkuId, validation.Required.Error("SKU 不能为空")),
 					validation.Field(&item.ProductSkuPurchaseQuantity,
-						validation.Min(1).Error("修改数量不能小于 {.min}"),
+						validation.Min(1).Error("SKU 下单数量不能小于 {.min}"),
 					),
 				)
 			})),
