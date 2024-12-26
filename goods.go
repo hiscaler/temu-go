@@ -47,7 +47,7 @@ type GoodsQueryParams struct {
 	BindSiteIds            []int    `json:"bindSiteIds,omitempty"`            // 经营站点
 	ProductName            string   `json:"productName,omitempty"`            // 货品名称
 	ProductSkcIds          []int64  `json:"productSkcIds,omitempty"`          // SKC 列表
-	SkuExtCodes            []string `json:"skuExtCodes,omitempty"`            // SKU 列表(货号)
+	SkuExtCodes            []string `json:"skuExtCodes,omitempty"`            // SKU 货号列表
 	QuickSellAgtSignStatus null.Int `json:"quickSellAgtSignStatus,omitempty"` // 快速售卖协议签署状态 0-未签署 1-已签署
 	MatchJitMode           null.Int `json:"matchJitMode,omitempty"`           // 是否命中 JIT 模式
 	SkcSiteStatus          null.Int `json:"skcSiteStatus,omitempty"`          // skc 加站点状态 (0: 未加入站点, 1: 已加入站点)
