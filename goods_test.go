@@ -9,7 +9,8 @@ import (
 
 func Test_goodsService_Query(t *testing.T) {
 	params := GoodsQueryParams{
-		ProductSkcIds: []int64{6119773827},
+		//ProductSkcIds: []int64{2646847407},
+		SkuExtCodes: []string{"8502937482"},
 	}
 	params.PageSize = 2
 	items, _, _, _, err := temuClient.Services.Goods.Query(ctx, params)

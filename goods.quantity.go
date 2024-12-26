@@ -70,12 +70,6 @@ func (p GoodsQuantityUpdateParams) validate() error {
 			validation.Field(&p.SkuStockChangeList, validation.Required.Error("虚拟库存调整信息不能为空")),
 		)
 	} else if p.QuantityChangeMode == 2 {
-		warehouseIds := make([]string, 0)
-		for _, item := range p.SkuStockChangeList {
-			if item.WarehouseId.Valid {
-				warehouseIds = append(warehouseIds, item.WarehouseId.String)
-			}
-		}
 		return validation.ValidateStruct(&p,
 			validation.Field(&p.QuantityChangeMode, validation.Required.Error("更新库存数量方式不能为空")),
 			validation.Field(&p.SkuStockChangeList, validation.Required.Error("虚拟库存调整信息不能为空")),
