@@ -289,6 +289,7 @@ func NewClient(config config.Config) *Client {
 			SizeChartTemplate: (goodsSizeChartTemplateService)(xService),
 			TopSelling:        (goodsTopSellingService)(xService),
 			Warehouse:         (goodsWarehouseService)(xService),
+			Quantity:          (goodsQuantityService)(xService),
 		},
 		Logistics:               (logisticsService)(xService),
 		ShipOrderReceiveAddress: (shipOrderReceiveAddressService)(xService),
