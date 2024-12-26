@@ -58,39 +58,44 @@ type StockChangeItem struct {
 }
 
 type GoodsQuantityUpdateRequest struct {
-	QuantityChangeMode int               `json:"quantityChangeMode,omitempty"` // 更新库存数量方式（1-增减变更 2-覆盖变更，默认为1）
-	ProductSkcId       null.Int          `json:"productSkcId,omitempty"`       // 货品SKC ID
-	SkuStockChangeList []StockChangeItem `json:"skuStockChangeList"`           // 虚拟库存调整信息
+	QuantityChangeMode int               `json:"quantityChangeMode"`     // 更新库存数量方式（1-增减变更 2-覆盖变更，默认为1）
+	ProductSkcId       null.Int          `json:"productSkcId,omitempty"` // 货品 SKC ID
+	SkuStockChangeList []StockChangeItem `json:"skuStockChangeList"`     // 虚拟库存调整信息
 }
 
 func (m GoodsQuantityUpdateRequest) validate() error {
-	if m.QuantityChangeMode == 1 {
-		return validation.ValidateStruct(&m,
-			validation.Field(&m.QuantityChangeMode, validation.Required.Error("更新库存数量方式不能为空")),
-			validation.Field(&m.SkuStockChangeList, validation.Required.Error("虚拟库存调整信息不能为空")),
-		)
-	} else if m.QuantityChangeMode == 2 {
-		return validation.ValidateStruct(&m,
-			validation.Field(&m.QuantityChangeMode, validation.Required.Error("更新库存数量方式不能为空")),
-			validation.Field(&m.SkuStockChangeList, validation.Required.Error("虚拟库存调整信息不能为空")),
-			validation.Field(&m.SkuStockChangeList, validation.Required.Error("库存变更数量不能为空"),
-				validation.Each(validation.By(func(value interface{}) error {
-					v, ok := value.(StockChangeItem)
-					if !ok {
-						return errors.New("无效的虚拟库存变更数据")
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.QuantityChangeMode,
+			validation.Required.Error("更新库存数量方式不能为空"),
+			validation.In(entity.QuantityChangeModeInDecrease, entity.QuantityChangeModeReplace).Error("无效的更新库存数量方式"),
+		),
+		validation.Field(&m.SkuStockChangeList,
+			validation.Required.Error("虚拟库存调整信息不能为空"),
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(StockChangeItem)
+				if !ok {
+					return errors.New("无效的虚拟库存调整数据")
+				}
+
+				if !v.WarehouseId.Valid || len(v.WarehouseId.String) == 0 {
+					return errors.New("虚拟库存调整仓库 ID 不能为空")
+				}
+
+				switch m.QuantityChangeMode {
+				case entity.QuantityChangeModeInDecrease:
+					if !v.StockDiff.Valid || v.StockDiff.Int64 == 0 {
+						return errors.New("虚拟库存变更值不能为空或者零值")
 					}
-					if !v.WarehouseId.Valid || len(v.WarehouseId.String) == 0 {
-						return errors.New("仓库 ID 不能为空")
-					}
+				case entity.QuantityChangeModeReplace:
 					if !v.TargetStockAvailable.Valid || v.TargetStockAvailable.Int64 < 0 {
 						return errors.New("目标库存值不能为空或者负数")
 					}
-					return nil
-				})),
-			),
-		)
-	}
-	return nil
+				}
+
+				return nil
+			})),
+		),
+	)
 }
 
 // Update 更新虚拟库存
