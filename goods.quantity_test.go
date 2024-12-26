@@ -17,7 +17,7 @@ func Test_goodsQuantityGet(t *testing.T) {
 }
 
 func Test_goodsQuantityUpdate(t *testing.T) {
-	params := GoodsQuantityUpdateParams{
+	params := GoodsQuantityUpdateRequest{
 		QuantityChangeMode: 2,
 		SkuStockChangeList: []StockChangeItem{
 			{

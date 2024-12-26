@@ -165,7 +165,16 @@ type ShipOrderStagingAddRequest struct {
 
 func (m ShipOrderStagingAddRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.JoinInfoList, validation.Required.Error("发货数据不能为空")),
+		validation.Field(&m.JoinInfoList,
+			validation.Required.Error("发货数据不能为空"),
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(ShipOrderStagingAddInfo)
+				if !ok {
+					return errors.New("无效的发货数据")
+				}
+				return v.validate()
+			})),
+		),
 	)
 }
 

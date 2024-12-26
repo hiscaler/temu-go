@@ -320,7 +320,7 @@ func (m PurchaseOrderApplyRequest) validate() error {
 					tStr2 := m.ExpectLatestArrivalTime // 最晚送达时间
 					err := validation.Date(time.DateTime).Validate(tStr2)
 					if err != nil {
-						return fmt.Errorf("无效的最晚送达时间：%s", tStr2)
+						return fmt.Errorf("无效的最晚送达时间 %s", tStr2)
 					}
 					t1, _ := time.ParseInLocation(time.DateTime, tStr1, time.Local)
 					t2, _ := time.ParseInLocation(time.DateTime, tStr2, time.Local)
@@ -340,7 +340,7 @@ func (m PurchaseOrderApplyRequest) validate() error {
 					tStr2 := m.ExpectLatestArrivalTime // 最晚送达时间
 					err := validation.Date(time.DateTime).Validate(tStr1)
 					if err != nil {
-						return fmt.Errorf("无效的最晚送达时间：%s", tStr1)
+						return fmt.Errorf("无效的最晚送达时间 %s", tStr1)
 					}
 					t1, _ := time.ParseInLocation(time.DateTime, tStr1, time.Local)
 					t2, _ := time.ParseInLocation(time.DateTime, tStr2, time.Local)

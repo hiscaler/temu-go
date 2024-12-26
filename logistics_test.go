@@ -23,8 +23,8 @@ func Test_logisticsService_Match(t *testing.T) {
 	purchaseOrder, err := temuClient.Services.PurchaseOrder.One(ctx, "WB2410011321611")
 	assert.Equal(t, nil, err, "PurchaseOrder.One")
 	var receiveAddress entity.ShipOrderReceiveAddress
-	receiveAddress, err = temuClient.Services.ShipOrderReceiveAddress.One(ctx, purchaseOrder.SubPurchaseOrderSn)
-	assert.Equal(t, nil, err, "ShipOrderReceiveAddress.One")
+	receiveAddress, err = temuClient.Services.ShipOrder.ReceiveAddress.One(ctx, purchaseOrder.SubPurchaseOrderSn)
+	assert.Equal(t, nil, err, "ShipOrder.ReceiveAddress.One")
 	shipOrders, _, _, _, err := temuClient.Services.ShipOrder.Query(ctx, ShipOrderQueryParams{
 		SubPurchaseOrderSnList: []string{purchaseOrder.SubPurchaseOrderSn},
 	})

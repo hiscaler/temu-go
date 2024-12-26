@@ -31,16 +31,16 @@ func TestShipOrderService_Create(t *testing.T) {
 	assert.Nil(t, err, "Query mall deliveryAddress")
 
 	subPurchaseOrderSn := "WB2408182975602"
-	addr, err := temuClient.Services.ShipOrderReceiveAddress.One(ctx, subPurchaseOrderSn)
-	assert.Nilf(t, err, "Services.ShipOrderReceiveAddress.One(ctx, %s)", subPurchaseOrderSn)
+	addr, err := temuClient.Services.ShipOrder.ReceiveAddress.One(ctx, subPurchaseOrderSn)
+	assert.Nilf(t, err, "Services.ShipOrder.ReceiveAddress.One(ctx, %s)", subPurchaseOrderSn)
 	receiveAddress := addr.ReceiveAddressInfo
 
-	shipOrderStaging, err := temuClient.Services.ShipOrderStaging.One(ctx, subPurchaseOrderSn)
+	shipOrderStaging, err := temuClient.Services.ShipOrder.Staging.One(ctx, subPurchaseOrderSn)
 	assert.Nil(t, err, "Query shop order staging")
 
 	shipOrderCreateRequestDeliveryOrder := ShipOrderCreateRequestDeliveryOrder{
 		DeliveryOrderCreateInfos: make([]ShipOrderCreateRequestOrderInfo, 0),
-		ReceiveAddressInfo: entity.ReceiveAddress{
+		ReceiveAddressInfo: &entity.ReceiveAddress{
 			ProvinceName:  receiveAddress.ProvinceName,
 			ProvinceCode:  receiveAddress.ProvinceCode,
 			CityName:      receiveAddress.CityName,
@@ -51,7 +51,7 @@ func TestShipOrderService_Create(t *testing.T) {
 			DetailAddress: receiveAddress.DetailAddress,
 			Phone:         receiveAddress.Phone,
 		},
-		SubWarehouseId: shipOrderStaging.SubPurchaseOrderBasicVO.SubWarehouseId,
+		SubWarehouseId: null.IntFrom(shipOrderStaging.SubPurchaseOrderBasicVO.SubWarehouseId),
 	}
 
 	deliveryOrderCreateInfo := ShipOrderCreateRequestOrderInfo{
@@ -80,6 +80,30 @@ func TestShipOrderService_Create(t *testing.T) {
 		DeliveryOrderCreateGroupList: []ShipOrderCreateRequestDeliveryOrder{
 			shipOrderCreateRequestDeliveryOrder,
 		},
+	}
+	_, err = temuClient.Services.ShipOrder.Create(ctx, req)
+	assert.Nilf(t, err, "temuClient.Services.ShipOrder.Create(ctx, %s)", jsonx.ToJson(req, "{}"))
+	if err != nil {
+		t.Logf("error: %s", err.Error())
+	}
+}
+
+// TestShipOrderService_SimpleCreate 只上传部分基础数据（备货单号、发货地址 ID），其他部分系统自动填充
+func TestShipOrderService_SimpleCreate(t *testing.T) {
+	deliveryAddress, err := temuClient.Services.Mall.Address.One(ctx, 5441063557369)
+	assert.Nil(t, err, "Query mall deliveryAddress")
+	req := ShipOrderCreateRequest{
+		DeliveryOrderCreateGroupList: []ShipOrderCreateRequestDeliveryOrder{},
+	}
+	for _, purchaseOrderNumber := range []string{"WB2408182975602"} {
+		req.DeliveryOrderCreateGroupList = append(req.DeliveryOrderCreateGroupList, ShipOrderCreateRequestDeliveryOrder{
+			DeliveryOrderCreateInfos: []ShipOrderCreateRequestOrderInfo{
+				{
+					SubPurchaseOrderSn: purchaseOrderNumber,
+					DeliveryAddressId:  deliveryAddress.ID,
+				},
+			},
+		})
 	}
 	_, err = temuClient.Services.ShipOrder.Create(ctx, req)
 	assert.Nilf(t, err, "temuClient.Services.ShipOrder.Create(ctx, %s)", jsonx.ToJson(req, "{}"))

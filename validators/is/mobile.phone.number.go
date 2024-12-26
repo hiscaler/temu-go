@@ -12,7 +12,7 @@ func MobilePhoneNumber() validation.RuleFunc {
 	return func(value interface{}) error {
 		s, ok := value.(string)
 		if !ok {
-			return fmt.Errorf("无效的手机号码：%v", value)
+			return fmt.Errorf("无效的手机号码 %v", value)
 		}
 
 		if strings.TrimSpace(s) == "" {
@@ -20,7 +20,7 @@ func MobilePhoneNumber() validation.RuleFunc {
 		}
 
 		if !mobilePhoneNumberPattern.MatchString(s) {
-			return fmt.Errorf("无效的手机号码：%s", s)
+			return fmt.Errorf("无效的手机号码 %s", s)
 		}
 
 		return nil

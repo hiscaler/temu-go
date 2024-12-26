@@ -3,17 +3,28 @@ package temu
 import (
 	"context"
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/inx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
+	"maps"
+	"slices"
+	"strings"
 	"time"
 )
 
 // 发货单服务
-type shipOrderService service
+type shipOrderService struct {
+	service
+	Package        shipOrderPackageService        // 包裹
+	Packing        shipOrderPackingService        // 装箱发货
+	ReceiveAddress shipOrderReceiveAddressService // 收货地址
+	Staging        shipOrderStagingService        // 发货台
+}
 
 type ShipOrderQueryParams struct {
 	normal.ParameterWithPager
@@ -146,8 +157,8 @@ func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#HqGnA0
 
 type ShipOrderCreateRequestOrderDetailInfo struct {
-	DeliverSkuNum int   `json:"deliverSkuNum"` // 发货sku数目
 	ProductSkuId  int64 `json:"productSkuId"`  // 定制品，传定制品id；非定制品，传货品 skuId
+	DeliverSkuNum int   `json:"deliverSkuNum"` // 发货sku数目
 }
 
 // ShipOrderCreateRequestOrderPackage 包裹信息
@@ -156,21 +167,182 @@ type ShipOrderCreateRequestOrderPackage struct {
 }
 
 type ShipOrderCreateRequestPackageInfo struct {
-	SkuNum       int   `json:"skuNum"`       // 发货 sku 数目
 	ProductSkuId int64 `json:"productSkuId"` // skuId
+	SkuNum       int   `json:"skuNum"`       // 发货 sku 数目
 }
 
 type ShipOrderCreateRequestOrderInfo struct {
-	DeliverOrderDetailInfos []ShipOrderCreateRequestOrderDetailInfo `json:"deliverOrderDetailInfos"` // 采购单创建信息列表
 	SubPurchaseOrderSn      string                                  `json:"subPurchaseOrderSn"`      // 采购子单号
+	DeliverOrderDetailInfos []ShipOrderCreateRequestOrderDetailInfo `json:"deliverOrderDetailInfos"` // 采购单创建信息列表
 	PackageInfos            []ShipOrderCreateRequestOrderPackage    `json:"packageInfos"`            //	包裹信息列表
 	DeliveryAddressId       int64                                   `json:"deliveryAddressId"`       // 发货地址 ID
 }
 
+func (m ShipOrderCreateRequestOrderInfo) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SubPurchaseOrderSn, validation.By(is.PurchaseOrderNumber())),
+		validation.Field(&m.DeliveryAddressId, validation.Required.Error("发货地址不能为空")),
+	)
+}
+
 type ShipOrderCreateRequestDeliveryOrder struct {
-	DeliveryOrderCreateInfos []ShipOrderCreateRequestOrderInfo `json:"deliveryOrderCreateInfos"` // 发货单创建组列表
-	ReceiveAddressInfo       entity.ReceiveAddress             `json:"receiveAddressInfo"`       // 收货地址
-	SubWarehouseId           int64                             `json:"subWarehouseId"`           // 子仓 ID
+	DeliveryOrderCreateInfos []ShipOrderCreateRequestOrderInfo `json:"deliveryOrderCreateInfos"`     // 发货单创建组列表
+	ReceiveAddressInfo       *entity.ReceiveAddress            `json:"receiveAddressInfo,omitempty"` // 收货地址
+	SubWarehouseId           null.Int                          `json:"subWarehouseId,omitempty"`     // 子仓 ID
+}
+
+func (m ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shipOrderService) error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.DeliveryOrderCreateInfos,
+			validation.Required.Error("发货单创建组列表不能为空"),
+			validation.By(func(value interface{}) error {
+				errorMessages := make([]string, 0)
+				requests, ok := value.([]ShipOrderCreateRequestOrderInfo)
+				if !ok {
+					return errors.New("无效的发货单创建组列表")
+				}
+				purchaseOrderNumbers := make([]string, 0)
+				for _, request := range requests {
+					err := request.validate()
+					if err != nil {
+						errorMessages = append(errorMessages, err.Error())
+						continue
+					}
+
+					if inx.StringIn(request.SubPurchaseOrderSn, purchaseOrderNumbers...) {
+						errorMessages = append(errorMessages, fmt.Sprintf("备货单 %s 重复", request.SubPurchaseOrderSn))
+						continue
+					}
+					purchaseOrderNumbers = append(purchaseOrderNumbers, request.SubPurchaseOrderSn)
+				}
+				if len(errorMessages) != 0 {
+					return errors.New(strings.Join(errorMessages, "; "))
+				}
+
+				stagingOrders := make([]entity.ShipOrderStaging, 0, len(purchaseOrderNumbers))
+				pageSize := 20
+				for chunkPurchaseOrderNumbers := range slices.Chunk(purchaseOrderNumbers, pageSize) {
+					shipOrderStagingQueryParams := ShipOrderStagingQueryParams{
+						SubPurchaseOrderSnList: chunkPurchaseOrderNumbers,
+					}
+					shipOrderStagingQueryParams.Page = 1
+					shipOrderStagingQueryParams.PageSize = pageSize
+					rawStagingOrders, _, _, _, err := s.Staging.Query(ctx, shipOrderStagingQueryParams)
+					if err != nil {
+						return err
+					} else if len(rawStagingOrders) != 0 {
+						stagingOrders = append(stagingOrders, rawStagingOrders...)
+					}
+				}
+
+				kvNumberStagingOrder := make(map[string]entity.ShipOrderStaging, len(stagingOrders))
+				if len(stagingOrders) != 0 {
+					warehouseIdName := make(map[int64]string)
+					for _, order := range stagingOrders {
+						purchaseOrder := order.SubPurchaseOrderBasicVO
+						if !m.SubWarehouseId.Valid {
+							m.SubWarehouseId = null.IntFrom(purchaseOrder.SubWarehouseId)
+						}
+						m.ReceiveAddressInfo = &purchaseOrder.ReceiveAddressInfo
+						warehouseIdName[purchaseOrder.SubWarehouseId] = purchaseOrder.SubWarehouseName
+						kvNumberStagingOrder[strings.ToLower(purchaseOrder.SubPurchaseOrderSn)] = order
+					}
+					switch len(warehouseIdName) {
+					case 0:
+						errorMessages = append(errorMessages, "无法获取收货仓库")
+					case 1:
+						actualWarehouseId := slices.Collect(maps.Keys(warehouseIdName))[0]
+						if m.SubWarehouseId.Int64 != actualWarehouseId {
+							errorMessages = append(errorMessages, fmt.Sprintf("设定收货仓库和数据实际收货仓库（%s）不一致", warehouseIdName[actualWarehouseId]))
+						}
+					default:
+						names := slices.Collect(maps.Values(warehouseIdName))
+						errorMessages = append(errorMessages, fmt.Sprintf("存在多个收货仓库: %s", strings.Join(names, ", ")))
+					}
+				}
+				// 验证 DeliverOrderDetailInfos, PackageInfos 数据
+				// DeliverOrderDetailInfos, PackageInfos 为空表示全部数据创建发货单，如果指定的话则只有指定的数据会创建发货单
+				for i, request := range requests {
+					purchaseOrderNumber := request.SubPurchaseOrderSn
+					shipOrderStaging, exists := kvNumberStagingOrder[strings.ToLower(purchaseOrderNumber)]
+					if !exists {
+						errorMessages = append(errorMessages, fmt.Sprintf("%s 在发货台中不存在", purchaseOrderNumber))
+						continue
+					}
+
+					kvSkuIdQuantity := make(map[int64]int, len(shipOrderStaging.OrderDetailVOList)) // 默认发货的 sku 和最大数量（skuId: quantity）
+					for _, v := range shipOrderStaging.OrderDetailVOList {
+						skuId := v.ProductOriginalSkuId
+						if shipOrderStaging.SubPurchaseOrderBasicVO.IsCustomProduct {
+							skuId = v.ProductSkuId // 定制 SKU Id
+						}
+						kvSkuIdQuantity[skuId] = v.SkuDeliveryQuantityMaxLimit
+					}
+					if len(request.DeliverOrderDetailInfos) == 0 && len(request.PackageInfos) == 0 {
+						// 用户未主动添加发货信息，默认将所有可发货的数据加进来
+						// 用户要不全部提供，要不全部不提供由系统自行处理，不能只添加部分发货信息
+						for skuId, quantity := range kvSkuIdQuantity {
+							request.DeliverOrderDetailInfos = append(request.DeliverOrderDetailInfos, ShipOrderCreateRequestOrderDetailInfo{
+								ProductSkuId:  skuId,
+								DeliverSkuNum: quantity,
+							})
+							request.PackageInfos = append(request.PackageInfos, ShipOrderCreateRequestOrderPackage{
+								PackageDetailSaveInfos: []ShipOrderCreateRequestPackageInfo{
+									{
+										ProductSkuId: skuId,
+										SkuNum:       quantity,
+									},
+								},
+							})
+						}
+						m.DeliveryOrderCreateInfos[i] = request // 补充发货单创建组列表数据
+					} else {
+						// 验证用户主动提交的信息
+						if len(request.DeliverOrderDetailInfos) == 0 {
+							errorMessages = append(errorMessages, fmt.Sprintf("%s 采购单创建信息不能为空", purchaseOrderNumber))
+						}
+						for _, v := range request.DeliverOrderDetailInfos {
+							var qty int
+							if qty, exists = kvSkuIdQuantity[v.ProductSkuId]; !exists {
+								errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 不存在", purchaseOrderNumber, v.ProductSkuId))
+								continue
+							}
+							deliveryQty := v.DeliverSkuNum
+							if deliveryQty <= 0 {
+								errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 发货数量不能小于零", purchaseOrderNumber, v.ProductSkuId))
+							} else if deliveryQty > qty {
+								errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 发货数量不能超过 %d", purchaseOrderNumber, v.ProductSkuId, qty))
+							}
+						}
+
+						if len(request.PackageInfos) == 0 {
+							errorMessages = append(errorMessages, fmt.Sprintf("%s 包裹信息列表不能为空", purchaseOrderNumber))
+						}
+						for _, packageInfo := range request.PackageInfos {
+							for _, v := range packageInfo.PackageDetailSaveInfos {
+								var qty int
+								if qty, exists = kvSkuIdQuantity[v.ProductSkuId]; !exists {
+									errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 不存在", purchaseOrderNumber, v.ProductSkuId))
+									continue
+								}
+								deliveryQty := v.SkuNum
+								if deliveryQty <= 0 {
+									errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 包裹发货数量不能小于零", purchaseOrderNumber, v.ProductSkuId))
+								} else if deliveryQty > qty {
+									errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 包裹发货数量不能超过 %d", purchaseOrderNumber, v.ProductSkuId, qty))
+								}
+							}
+						}
+					}
+				}
+
+				if len(errorMessages) != 0 {
+					return errors.New(strings.Join(errorMessages, "; "))
+				}
+				return nil
+			})),
+		// validation.Field(&m.SubWarehouseId, validation.Required.Error("收货仓库不能为空")),
+	)
 }
 
 type ShipOrderCreateRequest struct {
@@ -178,15 +350,27 @@ type ShipOrderCreateRequest struct {
 	DeliveryOrderCreateGroupList []ShipOrderCreateRequestDeliveryOrder `json:"deliveryOrderCreateGroupList"` // 发货单创建组列表
 }
 
-func (m ShipOrderCreateRequest) validate() error {
+func (m ShipOrderCreateRequest) validate(ctx context.Context, s shipOrderService) error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.DeliveryOrderCreateGroupList, validation.Required.Error("发货单创建组列表不能为空")),
+		validation.Field(&m.DeliveryOrderCreateGroupList,
+			validation.Required.Error("发货单创建组列表不能为空"),
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(ShipOrderCreateRequestDeliveryOrder)
+				if !ok {
+					return errors.New("无效的发货单创建数据")
+				}
+				return v.validate(ctx, s)
+			})),
+		),
 	)
 }
 
 // Create 创建发货单接口 V3
+// DeliveryOrderCreateGroupList[].DeliveryOrderCreateInfos[] 下的 DeliverOrderDetailInfos, PackageInfos 为空表示用该备货单的全部数据来创建发货单，如果指定的话则只有指定的数据会创建发货单
+// 用户未主动添加发货信息，默认将所有可发货的数据加进来
+// 注意：用户要不全部提供，要不全部不提供由系统自行处理，不能只添加部分发货信息
 func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest) (ok bool, err error) {
-	if err = req.validate(); err != nil {
+	if err = req.validate(ctx, s); err != nil {
 		return false, invalidInput(err)
 	}
 
