@@ -358,10 +358,9 @@ func (m PurchaseOrderApplyRequest) validate() error {
 
 // Apply 申请备货
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#nsjLx8
-func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderApplyRequest) (ok bool, err error) {
-	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderApplyRequest) (bool, error) {
+	if err := request.validate(); err != nil {
+		return false, invalidInput(err)
 	}
 
 	if request.ExpectLatestDeliverTime != "" {
@@ -385,7 +384,7 @@ func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderAp
 		SetResult(&result).
 		Post("bg.purchaseorder.apply")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return false, err
 	}
 
 	return true, nil
@@ -429,8 +428,8 @@ func (m PurchaseOrderEditRequest) validate() error {
 	)
 }
 
-func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEditRequest) (ok bool, err error) {
-	if err = request.validate(); err != nil {
+func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEditRequest) (bool, error) {
+	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
 	}
 
@@ -444,7 +443,7 @@ func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEdi
 		SetResult(&result).
 		Post("bg.purchaseorder.edit")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return false, err
 	}
 
 	return true, nil
