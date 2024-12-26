@@ -57,13 +57,13 @@ type StockChangeItem struct {
 	CurrentStockAvailable null.Int    `json:"currentStockAvailable,omitempty"` // 当前库存件数
 }
 
-type GoodsQuantityUpdateParams struct {
+type GoodsQuantityUpdateRequest struct {
 	QuantityChangeMode int               `json:"quantityChangeMode,omitempty"` // 更新库存数量方式（1-增减变更 2-覆盖变更，默认为1）
 	ProductSkcId       null.Int          `json:"productSkcId,omitempty"`       // 货品SKC ID
 	SkuStockChangeList []StockChangeItem `json:"skuStockChangeList"`           // 虚拟库存调整信息
 }
 
-func (m GoodsQuantityUpdateParams) validate() error {
+func (m GoodsQuantityUpdateRequest) validate() error {
 	if m.QuantityChangeMode == 1 {
 		return validation.ValidateStruct(&m,
 			validation.Field(&m.QuantityChangeMode, validation.Required.Error("更新库存数量方式不能为空")),
@@ -101,7 +101,7 @@ func (m GoodsQuantityUpdateParams) validate() error {
 
 // Update 更新虚拟库存
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#DMwO8O
-func (s *goodsQuantityService) Update(ctx context.Context, params GoodsQuantityUpdateParams) (bool, error) {
+func (s *goodsQuantityService) Update(ctx context.Context, params GoodsQuantityUpdateRequest) (bool, error) {
 	if err := params.validate(); err != nil {
 		return false, err
 	}
