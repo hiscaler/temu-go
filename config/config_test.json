@@ -1,8 +1,0 @@
-{
-  "debug": true,
-  "app_key": "72bc9e4143e960b2134e1cdf22fec651",
-  "app_secret": "c54100b5b15d69d5cf0db9e8a653333a60f73c23",
-  "access_token": "5gg1pz2xufijdvjbo6jh0d6hti17zk5acj1ysa4cqy9lys93n0x6ditl",
-  "timeout": 10,
-  "verify_ssl": true
-}
