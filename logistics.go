@@ -76,7 +76,7 @@ func (m LogisticsMatchRequest) validate() error {
 		validation.Field(&m.ReceiveAddressInfo,
 			validation.Required.Error("收货信息不能为空"),
 			validation.By(func(value interface{}) error {
-				v, _ := value.(entity.ReceiveAddress)
+				v, _ := value.(*entity.ReceiveAddress)
 				return v.Validate()
 			}),
 		),
