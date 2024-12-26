@@ -9,6 +9,8 @@ import (
 
 func Test_goodsService_Query(t *testing.T) {
 	params := GoodsQueryParams{
+		// ProductSkcIds: []int64{2646847407},
+		SkuExtCodes: []string{"8502937482"},
 		ProductSkcIds:  []int64{7469668867},
 		CreatedAtStart: "2024-11-18 12:00:00",
 		CreatedAtEnd:   "2024-11-18 23:59:59",
