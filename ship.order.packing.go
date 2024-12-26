@@ -57,7 +57,6 @@ func (m ShipOrderPackingSendPlatformRecommendationDeliveryInformation) validate(
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ExpressCompanyId, validation.Required.Error("快递公司 Id 不能为空")),
 		validation.Field(&m.ExpressCompanyName, validation.Required.Error("快递公司名称不能为空")),
-		validation.Field(&m.ExpressDeliverySn, validation.Required.Error("快递单号不能为空")),
 		validation.Field(&m.PredictTotalPackageWeight,
 			validation.Min(1).Error("预估总包裹重量不能小于 {.min} 克"),
 			validation.By(func(value interface{}) error {
@@ -106,7 +105,6 @@ func (m ShipOrderPackingSendThirdPartyDeliveryInformation) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ExpressCompanyId, validation.Required.Error("快递公司 Id 不能为空")),
 		validation.Field(&m.ExpressCompanyName, validation.Required.Error("快递公司名称不能为空")),
-		validation.Field(&m.ExpressDeliverySn, validation.Required.Error("快递单号不能为空")),
 		validation.Field(&m.ExpressPackageNum, validation.Min(1).Error("发货总箱数不能小于 {.min}")),
 	)
 }

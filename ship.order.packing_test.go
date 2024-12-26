@@ -13,8 +13,8 @@ func TestShipOrderPackingService_Match(t *testing.T) {
 	req := ShipOrderPackingMatchRequest{
 		DeliveryOrderSnList: []string{"FH2408231977953"},
 	}
-	_, err := temuClient.Services.ShipOrderPacking.Match(ctx, req)
-	assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Match(ctx, %s)", jsonx.ToJson(req, "{}"))
+	_, err := temuClient.Services.ShipOrder.Packing.Match(ctx, req)
+	assert.Nilf(t, err, "temuClient.Services.ShipOrder.Packing.Match(ctx, %s)", jsonx.ToJson(req, "{}"))
 }
 
 // TestShipOrderPackingService_SendForSelf 自送发货
@@ -56,8 +56,8 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 				ExpressPackageNum: len(shipOrder.PackageList),
 			},
 		}
-		_, err = temuClient.Services.ShipOrderPacking.Send(ctx, req)
-		assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Send(ctx, %s)", jsonx.ToJson(req, "{}"))
+		_, err = temuClient.Services.ShipOrder.Packing.Send(ctx, req)
+		assert.Nilf(t, err, "temuClient.Services.ShipOrder.Packing.Send(ctx, %s)", jsonx.ToJson(req, "{}"))
 	} else {
 		t.Logf("not found waitingPackage status purchase order")
 	}
@@ -113,8 +113,8 @@ func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 		if req.ThirdPartyDeliveryInfo.PredictTotalPackageWeight < 1000 {
 			req.ThirdPartyDeliveryInfo.PredictTotalPackageWeight = 1000
 		}
-		_, err = temuClient.Services.ShipOrderPacking.Send(ctx, req)
-		assert.Nilf(t, err, "temuClient.Services.ShipOrderPacking.Send(ctx, %s)", jsonx.ToJson(req, "{}"))
+		_, err = temuClient.Services.ShipOrder.Packing.Send(ctx, req)
+		assert.Nilf(t, err, "temuClient.Services.ShipOrder.Packing.Send(ctx, %s)", jsonx.ToJson(req, "{}"))
 	} else {
 		t.Logf("not found waitingPackage status purchase order")
 	}

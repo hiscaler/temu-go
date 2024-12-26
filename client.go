@@ -50,16 +50,12 @@ type service struct {
 }
 
 type services struct {
-	ShipOrder               shipOrderService
-	ShipOrderStaging        shipOrderStagingService
-	ShipOrderPacking        shipOrderPackingService
-	ShipOrderPackage        shipOrderPackageService
-	PurchaseOrder           purchaseOrderService
-	Logistics               logisticsService
-	ShipOrderReceiveAddress shipOrderReceiveAddressService
-	Goods                   goodsService
-	Mall                    mallService
-	Jit                     jitService
+	PurchaseOrder purchaseOrderService
+	ShipOrder     shipOrderService
+	Logistics     logisticsService
+	Goods         goodsService
+	Mall          mallService
+	Jit           jitService
 }
 
 type Client struct {
@@ -270,6 +266,7 @@ func NewClient(config config.Config) *Client {
 		httpClient: httpClient,
 	}
 	client.Services = services{
+		PurchaseOrder: (purchaseOrderService)(xService),
 		ShipOrder: shipOrderService{
 			service:        xService,
 			Package:        (shipOrderPackageService)(xService),
@@ -277,10 +274,7 @@ func NewClient(config config.Config) *Client {
 			ReceiveAddress: (shipOrderReceiveAddressService)(xService),
 			Staging:        (shipOrderStagingService)(xService),
 		},
-		ShipOrderStaging: (shipOrderStagingService)(xService),
-		ShipOrderPacking: (shipOrderPackingService)(xService),
-		ShipOrderPackage: (shipOrderPackageService)(xService),
-		PurchaseOrder:    (purchaseOrderService)(xService),
+		Logistics: (logisticsService)(xService),
 		Goods: goodsService{
 			service:           xService,
 			Barcode:           (goodsBarcodeService)(xService),
@@ -296,8 +290,6 @@ func NewClient(config config.Config) *Client {
 			TopSelling:        (goodsTopSellingService)(xService),
 			Warehouse:         (goodsWarehouseService)(xService),
 		},
-		Logistics:               (logisticsService)(xService),
-		ShipOrderReceiveAddress: (shipOrderReceiveAddressService)(xService),
 		Mall: mallService{
 			service: xService,
 			Address: (mallAddressService)(xService),
