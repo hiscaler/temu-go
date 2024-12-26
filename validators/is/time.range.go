@@ -12,21 +12,21 @@ func TimeRange(startTime, endTime, timeLayout any) validation.RuleFunc {
 	return func(value any) error {
 		start, ok := startTime.(string)
 		if !ok || start == "" {
-			return fmt.Errorf("无效的开始时间：%v", startTime)
+			return fmt.Errorf("无效的开始时间 %v", startTime)
 		}
 
 		end, ok := endTime.(string)
 		if !ok || end == "" {
-			return fmt.Errorf("无效的结束时间：%v", endTime)
+			return fmt.Errorf("无效的结束时间 %v", endTime)
 		}
 
 		layout, ok := timeLayout.(string)
 		if !ok {
-			return fmt.Errorf("无效的时间格式：%v", timeLayout)
+			return fmt.Errorf("无效的时间格式 %v", timeLayout)
 		}
 
 		if layout != time.DateTime && layout != time.DateOnly && layout != time.TimeOnly {
-			return fmt.Errorf("无效的时间格式：%s", layout)
+			return fmt.Errorf("无效的时间格式 %s", layout)
 		}
 
 		friendlyLayout := ""
@@ -39,12 +39,12 @@ func TimeRange(startTime, endTime, timeLayout any) validation.RuleFunc {
 			friendlyLayout = "HH:MM:SS"
 		}
 
-		err := validation.Validate(start, validation.Date(layout).Error(fmt.Sprintf("无效的开始时间（%s）格式，有效格式为：%s", start, friendlyLayout)))
+		err := validation.Validate(start, validation.Date(layout).Error(fmt.Sprintf("无效的开始时间（%s）格式，有效格式为 %s", start, friendlyLayout)))
 		if err != nil {
 			return err
 		}
 
-		err = validation.Validate(end, validation.Date(layout).Error(fmt.Sprintf("无效的结束时间（%s）格式，有效格式为：%s", end, friendlyLayout)))
+		err = validation.Validate(end, validation.Date(layout).Error(fmt.Sprintf("无效的结束时间（%s）格式，有效格式为 %s", end, friendlyLayout)))
 		if err != nil {
 			return err
 		}

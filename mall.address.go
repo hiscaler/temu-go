@@ -84,7 +84,7 @@ func (m CreateDeliveryAddressRequest) validate() error {
 			validation.By(func(value interface{}) error {
 				s, ok := value.(string)
 				if !ok {
-					return fmt.Errorf("无效的联系人电话：%v", s)
+					return fmt.Errorf("无效的联系人电话 %v", s)
 				}
 
 				var err error
@@ -92,7 +92,7 @@ func (m CreateDeliveryAddressRequest) validate() error {
 					err = validation.Validate(s, validation.By(is.TelNumber()))
 				}
 				if err != nil {
-					return fmt.Errorf("无效的联系人电话：%s", s)
+					return fmt.Errorf("无效的联系人电话 %s", s)
 				}
 
 				return nil

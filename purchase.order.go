@@ -80,6 +80,11 @@ func (m PurchaseOrderQueryParams) validate() error {
 				}),
 			),
 		),
+		validation.Field(&m.SubPurchaseOrderSnList,
+			validation.When(len(m.SubPurchaseOrderSnList) != 0,
+				validation.Each(validation.By(is.PurchaseOrderNumber())),
+			),
+		),
 		validation.Field(&m.StatusList,
 			validation.When(
 				len(m.StatusList) != 0,
@@ -102,11 +107,21 @@ func (m PurchaseOrderQueryParams) validate() error {
 		validation.Field(&m.PurchaseTimeFrom,
 			validation.When(m.PurchaseTimeFrom != "" || m.PurchaseTimeTo != "", validation.By(is.TimeRange(m.PurchaseTimeFrom, m.PurchaseTimeTo, time.DateTime))),
 		),
+		validation.Field(&m.DeliverOrderSnList,
+			validation.When(len(m.DeliverOrderSnList) != 0,
+				validation.Each(validation.By(is.ShipOrderNumber())),
+			),
+		),
 		validation.Field(&m.ExpectLatestDeliverTimeFrom,
 			validation.When(m.ExpectLatestDeliverTimeFrom != "" || m.ExpectLatestDeliverTimeTo != "", validation.By(is.TimeRange(m.ExpectLatestDeliverTimeFrom, m.ExpectLatestDeliverTimeTo, time.DateTime))),
 		),
 		validation.Field(&m.ExpectLatestArrivalTimeFrom,
 			validation.When(m.ExpectLatestArrivalTimeFrom != "" || m.ExpectLatestArrivalTimeTo != "", validation.By(is.TimeRange(m.ExpectLatestArrivalTimeFrom, m.ExpectLatestArrivalTimeTo, time.DateTime))),
+		),
+		validation.Field(&m.OriginalPurchaseOrderSnList,
+			validation.When(len(m.OriginalPurchaseOrderSnList) != 0,
+				validation.Each(validation.By(is.OriginalPurchaseOrderNumber())),
+			),
 		),
 		validation.Field(&m.PurchaseStockType,
 			validation.When(m.PurchaseStockType.Valid,
@@ -305,7 +320,7 @@ func (m PurchaseOrderApplyRequest) validate() error {
 					tStr2 := m.ExpectLatestArrivalTime // 最晚送达时间
 					err := validation.Date(time.DateTime).Validate(tStr2)
 					if err != nil {
-						return fmt.Errorf("无效的最晚送达时间：%s", tStr2)
+						return fmt.Errorf("无效的最晚送达时间 %s", tStr2)
 					}
 					t1, _ := time.ParseInLocation(time.DateTime, tStr1, time.Local)
 					t2, _ := time.ParseInLocation(time.DateTime, tStr2, time.Local)
@@ -325,7 +340,7 @@ func (m PurchaseOrderApplyRequest) validate() error {
 					tStr2 := m.ExpectLatestArrivalTime // 最晚送达时间
 					err := validation.Date(time.DateTime).Validate(tStr1)
 					if err != nil {
-						return fmt.Errorf("无效的最晚送达时间：%s", tStr1)
+						return fmt.Errorf("无效的最晚送达时间 %s", tStr1)
 					}
 					t1, _ := time.ParseInLocation(time.DateTime, tStr1, time.Local)
 					t2, _ := time.ParseInLocation(time.DateTime, tStr2, time.Local)
@@ -343,10 +358,9 @@ func (m PurchaseOrderApplyRequest) validate() error {
 
 // Apply 申请备货
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#nsjLx8
-func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderApplyRequest) (ok bool, err error) {
-	if err = request.validate(); err != nil {
-		err = invalidInput(err)
-		return
+func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderApplyRequest) (bool, error) {
+	if err := request.validate(); err != nil {
+		return false, invalidInput(err)
 	}
 
 	if request.ExpectLatestDeliverTime != "" {
@@ -370,7 +384,7 @@ func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderAp
 		SetResult(&result).
 		Post("bg.purchaseorder.apply")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return false, err
 	}
 
 	return true, nil
@@ -414,8 +428,8 @@ func (m PurchaseOrderEditRequest) validate() error {
 	)
 }
 
-func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEditRequest) (ok bool, err error) {
-	if err = request.validate(); err != nil {
+func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEditRequest) (bool, error) {
+	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
 	}
 
@@ -429,7 +443,7 @@ func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEdi
 		SetResult(&result).
 		Post("bg.purchaseorder.edit")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return false, err
 	}
 
 	return true, nil

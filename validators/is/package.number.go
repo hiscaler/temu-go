@@ -12,7 +12,7 @@ func PackageNumber() validation.RuleFunc {
 	return func(value interface{}) error {
 		s, ok := value.(string)
 		if !ok {
-			return fmt.Errorf("无效的包裹号：%v", value)
+			return fmt.Errorf("无效的包裹号 %v", value)
 		}
 
 		if strings.TrimSpace(s) == "" {
@@ -20,7 +20,7 @@ func PackageNumber() validation.RuleFunc {
 		}
 
 		if !packageNumberPattern.MatchString(s) {
-			return fmt.Errorf("无效的包裹号：%s", s)
+			return fmt.Errorf("无效的包裹号 %s", s)
 		}
 		return nil
 	}
