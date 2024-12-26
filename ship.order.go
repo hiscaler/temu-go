@@ -270,11 +270,11 @@ func (m ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shi
 						continue
 					}
 
-					kvSkuIdQuantity := make(map[int64]int, len(shipOrderStaging.OrderDetailVOList)) // 默认发货的 sku 和数量（skuId: quantity）
+					kvSkuIdQuantity := make(map[int64]int, len(shipOrderStaging.OrderDetailVOList)) // 默认发货的 sku 和最大数量（skuId: quantity）
 					for _, v := range shipOrderStaging.OrderDetailVOList {
 						skuId := v.ProductOriginalSkuId
 						if shipOrderStaging.SubPurchaseOrderBasicVO.IsCustomProduct {
-							skuId = v.ProductSkuId
+							skuId = v.ProductSkuId // 定制 SKU Id
 						}
 						kvSkuIdQuantity[skuId] = v.SkuDeliveryQuantityMaxLimit
 					}
@@ -310,8 +310,7 @@ func (m ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shi
 							deliveryQty := v.DeliverSkuNum
 							if deliveryQty <= 0 {
 								errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 发货数量不能小于零", purchaseOrderNumber, v.ProductSkuId))
-							}
-							if deliveryQty > qty {
+							} else if deliveryQty > qty {
 								errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 发货数量不能超过 %d", purchaseOrderNumber, v.ProductSkuId, qty))
 							}
 						}
@@ -329,8 +328,7 @@ func (m ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shi
 								deliveryQty := v.SkuNum
 								if deliveryQty <= 0 {
 									errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 包裹发货数量不能小于零", purchaseOrderNumber, v.ProductSkuId))
-								}
-								if deliveryQty > qty {
+								} else if deliveryQty > qty {
 									errorMessages = append(errorMessages, fmt.Sprintf("%s SKU %d 包裹发货数量不能超过 %d", purchaseOrderNumber, v.ProductSkuId, qty))
 								}
 							}
