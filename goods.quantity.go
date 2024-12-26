@@ -14,17 +14,17 @@ import (
 type goodsQuantityService service
 
 type GoodsQuantityQueryParams struct {
-	ProductSkcId int64 `json:"productSkcId"` //货品SKC ID
+	ProductSkcId int64 `json:"productSkcId"` // 货品 SKC ID
 }
 
-func (p GoodsQuantityQueryParams) validate() error {
-	return validation.ValidateStruct(&p, validation.Field(&p.ProductSkcId, validation.Required.Error("货品SKC ID 不能为空")))
+func (m GoodsQuantityQueryParams) validate() error {
+	return validation.ValidateStruct(&m, validation.Field(&m.ProductSkcId, validation.Required.Error("货品 SKC ID 不能为空")))
 }
 
 // Query 查询商品虚拟库存
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#hm9Qgt
 func (s *goodsQuantityService) Query(ctx context.Context, params GoodsQuantityQueryParams) (items []entity.GoodsQuantity, err error) {
-	if err := params.validate(); err != nil {
+	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return nil, err
 	}
@@ -63,37 +63,38 @@ type GoodsQuantityUpdateParams struct {
 	SkuStockChangeList []StockChangeItem `json:"skuStockChangeList"`           // 虚拟库存调整信息
 }
 
-func (p GoodsQuantityUpdateParams) validate() error {
-	if p.QuantityChangeMode == 1 {
-		return validation.ValidateStruct(&p,
-			validation.Field(&p.QuantityChangeMode, validation.Required.Error("更新库存数量方式不能为空")),
-			validation.Field(&p.SkuStockChangeList, validation.Required.Error("虚拟库存调整信息不能为空")),
+func (m GoodsQuantityUpdateParams) validate() error {
+	if m.QuantityChangeMode == 1 {
+		return validation.ValidateStruct(&m,
+			validation.Field(&m.QuantityChangeMode, validation.Required.Error("更新库存数量方式不能为空")),
+			validation.Field(&m.SkuStockChangeList, validation.Required.Error("虚拟库存调整信息不能为空")),
 		)
-	} else if p.QuantityChangeMode == 2 {
+	} else if m.QuantityChangeMode == 2 {
 		warehouseIds := make([]string, 0)
-		for _, item := range p.SkuStockChangeList {
+		for _, item := range m.SkuStockChangeList {
 			if item.WarehouseId.Valid {
 				warehouseIds = append(warehouseIds, item.WarehouseId.String)
 			}
 		}
-		return validation.ValidateStruct(&p,
-			validation.Field(&p.QuantityChangeMode, validation.Required.Error("更新库存数量方式不能为空")),
-			validation.Field(&p.SkuStockChangeList, validation.Required.Error("虚拟库存调整信息不能为空")),
-			validation.Field(&p.SkuStockChangeList, validation.Required.Error("库存变更数量不能为空"),
+		return validation.ValidateStruct(&m,
+			validation.Field(&m.QuantityChangeMode, validation.Required.Error("更新库存数量方式不能为空")),
+			validation.Field(&m.SkuStockChangeList, validation.Required.Error("虚拟库存调整信息不能为空")),
+			validation.Field(&m.SkuStockChangeList, validation.Required.Error("库存变更数量不能为空"),
 				validation.Each(validation.By(func(value interface{}) error {
 					m, ok := value.(StockChangeItem)
 					if !ok {
 						return errors.New("无效的虚拟库存变更数据")
 					}
 					if !m.WarehouseId.Valid || len(m.WarehouseId.String) == 0 {
-						return errors.New("仓库ID不能为空")
+						return errors.New("仓库 ID 不能为空")
 					}
 					if !m.TargetStockAvailable.Valid || m.TargetStockAvailable.Int64 < 0 {
 						return errors.New("目标库存值不能为空或者负数")
 					}
 					return nil
-				}))))
-
+				})),
+			),
+		)
 	}
 	return nil
 }
