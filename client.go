@@ -80,6 +80,7 @@ func generateSign(values map[string]any, appSecret string) map[string]any {
 	sb.WriteString(appSecret)
 	for _, key := range keys {
 		value := stringx.String(values[key])
+		value = strings.TrimSpace(value)
 		if value == "" {
 			delete(values, key)
 			continue

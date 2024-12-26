@@ -9,8 +9,11 @@ import (
 
 func Test_goodsService_Query(t *testing.T) {
 	params := GoodsQueryParams{
-		ProductSkcIds: []int64{6119773827},
+		ProductSkcIds:  []int64{7469668867},
+		CreatedAtStart: "2024-11-18 12:00:00",
+		CreatedAtEnd:   "2024-11-18 23:59:59",
 	}
+	params.Page = 1
 	params.PageSize = 2
 	items, _, _, _, err := temuClient.Services.Goods.Query(ctx, params)
 	assert.Equalf(t, nil, err, "Services.Goods.Query(ctx, %s)", jsonx.ToPrettyJson(params))
