@@ -272,9 +272,9 @@ func (m ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shi
 
 					kvSkuIdQuantity := make(map[int64]int, len(shipOrderStaging.OrderDetailVOList)) // 默认发货的 sku 和数量（skuId: quantity）
 					for _, v := range shipOrderStaging.OrderDetailVOList {
-						skuId := v.ProductSkuId
+						skuId := v.ProductOriginalSkuId
 						if shipOrderStaging.SubPurchaseOrderBasicVO.IsCustomProduct {
-							skuId = v.ProductOriginalSkuId
+							skuId = v.ProductSkuId
 						}
 						kvSkuIdQuantity[skuId] = v.SkuDeliveryQuantityMaxLimit
 					}
