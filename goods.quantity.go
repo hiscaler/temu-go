@@ -81,14 +81,14 @@ func (m GoodsQuantityUpdateParams) validate() error {
 			validation.Field(&m.SkuStockChangeList, validation.Required.Error("虚拟库存调整信息不能为空")),
 			validation.Field(&m.SkuStockChangeList, validation.Required.Error("库存变更数量不能为空"),
 				validation.Each(validation.By(func(value interface{}) error {
-					m, ok := value.(StockChangeItem)
+					v, ok := value.(StockChangeItem)
 					if !ok {
 						return errors.New("无效的虚拟库存变更数据")
 					}
-					if !m.WarehouseId.Valid || len(m.WarehouseId.String) == 0 {
+					if !v.WarehouseId.Valid || len(v.WarehouseId.String) == 0 {
 						return errors.New("仓库 ID 不能为空")
 					}
-					if !m.TargetStockAvailable.Valid || m.TargetStockAvailable.Int64 < 0 {
+					if !v.TargetStockAvailable.Valid || v.TargetStockAvailable.Int64 < 0 {
 						return errors.New("目标库存值不能为空或者负数")
 					}
 					return nil
