@@ -63,12 +63,12 @@ func (m ShipOrderPackingSendPlatformRecommendationDeliveryInformation) validate(
 			validation.By(func(value interface{}) error {
 				weight, ok := value.(int64)
 				if !ok {
-					return fmt.Errorf("无效的预估总包裹重量：%v 克", value)
+					return fmt.Errorf("无效的预估总包裹重量 %v 克", value)
 				}
 
 				// 传入值为克，需要转换为整数克值，比如 123 克 需要调整为 1000, 1001 需要调整为 2000
 				if weight != helpers.TruncateWeightValue(weight) {
-					return fmt.Errorf("无效的预估总包裹重量：%d 克", weight)
+					return fmt.Errorf("无效的预估总包裹重量 %d 克", weight)
 				}
 				return nil
 			}),
@@ -78,12 +78,12 @@ func (m ShipOrderPackingSendPlatformRecommendationDeliveryInformation) validate(
 			validation.By(func(value interface{}) error {
 				v, ok := value.(int64)
 				if !ok {
-					return fmt.Errorf("无效的预约取货时间：%v", value)
+					return fmt.Errorf("无效的预约取货时间 %v", value)
 				}
 
 				t := time.UnixMilli(v)
 				if t.IsZero() || t.Before(time.Now()) {
-					return fmt.Errorf("无效的预约取货时间：%v", value)
+					return fmt.Errorf("无效的预约取货时间 %v", value)
 				}
 
 				return nil

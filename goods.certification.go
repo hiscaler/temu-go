@@ -28,7 +28,7 @@ func (m GoodsCertificationQueryParams) validate() error {
 				}
 				for _, typ := range types {
 					if typ < 0 || typ > 303 {
-						return fmt.Errorf("无效的资质类型: %d", typ)
+						return fmt.Errorf("无效的资质类型 %d", typ)
 					}
 				}
 				return nil

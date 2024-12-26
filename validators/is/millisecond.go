@@ -16,7 +16,7 @@ func Millisecond() validation.RuleFunc {
 		}
 
 		if !millisecondPattern.MatchString(strconv.Itoa(int(s))) {
-			return fmt.Errorf("无效的毫秒值：%d", s)
+			return fmt.Errorf("无效的毫秒值 %d", s)
 		}
 
 		return nil
