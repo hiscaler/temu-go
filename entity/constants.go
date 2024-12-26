@@ -109,3 +109,9 @@ const (
 	LanguageZhCn = "zh" // 中文
 	LanguageEn   = "en" // 英文
 )
+
+// 数量增减模式
+const (
+	QuantityChangeModeInDecrease = 1 // 增减变量
+	QuantityChangeModeReplace    = 2 // 覆盖变更
+)
