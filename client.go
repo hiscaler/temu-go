@@ -339,10 +339,10 @@ func invalidInput(e error) error {
 	return errors.New(strings.Join(messages, ". "))
 }
 
-func recheckError(resp *resty.Response, result normal.Response, e error) (err error) {
+func recheckError(resp *resty.Response, result normal.Response, e error) error {
 	if e != nil {
 		if errors.Is(e, http.ErrHandlerTimeout) {
-			e = errors.New("接口请求超时")
+			return errors.New("接口请求超时")
 		}
 		return e
 	}
