@@ -24,6 +24,7 @@ type shipOrderService struct {
 	Packing        shipOrderPackingService        // 装箱发货
 	ReceiveAddress shipOrderReceiveAddressService // 收货地址
 	Staging        shipOrderStagingService        // 发货台
+	Logistics      shipOrderLogisticsService      // 发货物流
 }
 
 type ShipOrderQueryParams struct {

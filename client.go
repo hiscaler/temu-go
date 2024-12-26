@@ -274,6 +274,7 @@ func NewClient(config config.Config) *Client {
 			Packing:        (shipOrderPackingService)(xService),
 			ReceiveAddress: (shipOrderReceiveAddressService)(xService),
 			Staging:        (shipOrderStagingService)(xService),
+			Logistics:      (shipOrderLogisticsService)(xService),
 		},
 		Logistics: (logisticsService)(xService),
 		Goods: goodsService{
