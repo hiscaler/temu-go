@@ -8,7 +8,7 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
-func Test_goodsQuantityGet(t *testing.T) {
+func Test_goodsQuantityQuery(t *testing.T) {
 	params := GoodsQuantityQueryParams{
 		ProductSkcId: 2646847407,
 	}
