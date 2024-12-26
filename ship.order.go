@@ -280,7 +280,7 @@ func (m ShipOrderCreateRequestDeliveryOrder) validate(ctx context.Context, s shi
 					}
 					if len(request.DeliverOrderDetailInfos) == 0 && len(request.PackageInfos) == 0 {
 						// 用户未主动添加发货信息，默认将所有可发货的数据加进来
-						// 用户要不全部提供，要不全部不提供由系统处理，不能只添加部分信息
+						// 用户要不全部提供，要不全部不提供由系统自行处理，不能只添加部分发货信息
 						for skuId, quantity := range kvSkuIdQuantity {
 							request.DeliverOrderDetailInfos = append(request.DeliverOrderDetailInfos, ShipOrderCreateRequestOrderDetailInfo{
 								ProductSkuId:  skuId,
@@ -366,6 +366,9 @@ func (m ShipOrderCreateRequest) validate(ctx context.Context, s shipOrderService
 }
 
 // Create 创建发货单接口 V3
+// DeliveryOrderCreateGroupList[].DeliveryOrderCreateInfos[] 下的 DeliverOrderDetailInfos, PackageInfos 为空表示用该备货单的全部数据来创建发货单，如果指定的话则只有指定的数据会创建发货单
+// 用户未主动添加发货信息，默认将所有可发货的数据加进来
+// 注意：用户要不全部提供，要不全部不提供由系统自行处理，不能只添加部分发货信息
 func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest) (ok bool, err error) {
 	if err = req.validate(ctx, s); err != nil {
 		return false, invalidInput(err)
