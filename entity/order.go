@@ -32,11 +32,13 @@ type ChildOrder struct {
 	InventoryDeductionWarehouseName   string `json:"inventoryDeductionWarehouseName"`   // 库存扣减仓库名称
 	// 标签名称，具体枚举如下 customized_products：定制品标签	US_to_CA：美发加订单标签
 	OrderLabel      OrderLabel `json:"orderLabel"`      // 子订单O单标签，内部请求异常返回为空，返回为空时请重试
+	GoodsId         int64      `json:"goodsId"`         // 商品 id
+	GoodsName       string     `json:"goodsName"`       // 商品名称
+	SkuId           int64      `json:"skuId"`           // SKU id
 	Spec            string     `json:"spec"`            // 商品信息描述
 	ThumbUrl        string     `json:"thumbUrl"`        // 商品缩略图图片
 	OrderStatus     int        `json:"orderStatus"`     // 订单状态，3 是已取消
 	FulfillmentType string     `json:"fulfillmentType"` // 子订单履约类型 - 卖家履约订单值返回：fulfillBySeller 	- 合作仓履约订单返回：fulfillByCooperativeWarehouse
-	GoodsName       string     `json:"goodsName"`       // 商品名称
 	ProductList     []struct {
 		ProductSkuId int64  `json:"productSkuId"` // 货品 skuId
 		SoldFactor   int    `json:"soldFactor"`   // 商品和货品数量转换系数，商品数量(quantity)乘以转换系数，代表货品数量
