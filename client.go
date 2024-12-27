@@ -147,24 +147,24 @@ func NewClient(config config.Config) *Client {
 	}
 	urls := map[int]struct {
 		Prod string
-		Dev  string
+		Test string
 	}{
 		entity.ChinaRegionId: {
 			Prod: "https://openapi.kuajingmaihuo.com/openapi/router",
-			Dev:  "https://kj-openapi.temudemo.com/openapi/router",
+			Test: "https://kj-openapi.temudemo.com/openapi/router",
 		},
 		entity.AmericanRegionId: {
 			Prod: "https://openapi-b-us.temu.com/openapi/router",
-			Dev:  "http://openapi-b-us.temudemo.com/openapi/router",
+			Test: "http://openapi-b-us.temudemo.com/openapi/router",
 		},
 		entity.EuropeRegionId: {
 			Prod: "https://openapi-b-eu.temu.com/openapi/router",
-			Dev:  "http://openapi-b-eu.temudemo.com/openapi/router",
+			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
 		},
 	}
 	env := strings.ToLower(config.Env)
-	if env == "" || (env != devEnv && env != testEnv && env != prodEnv) {
-		env = devEnv
+	if env != prodEnv {
+		env = testEnv
 	}
 	regionId := parseRegionId(config.RegionId)
 	url := ""
@@ -172,7 +172,7 @@ func NewClient(config config.Config) *Client {
 		if env == prodEnv {
 			url = v.Prod
 		} else {
-			url = v.Dev
+			url = v.Test
 		}
 	}
 	client := &Client{
