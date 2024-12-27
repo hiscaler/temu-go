@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// 订单服务（半托管专属，必须在 US/EU 网关调用）
 type orderService service
 
 type OrderQueryParams struct {
