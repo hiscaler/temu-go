@@ -13,12 +13,12 @@ type semiLogisticsServiceProviderService service
 
 type SemiLogisticsServiceProviderQueryParams struct {
 	WarehouseId         string    `json:"warehouseId"`                   // 仓库 id
-	OrderSnList         []string  `json:"orderSnList"`                   // O单（orderSn 非parentOrderSn）列表（至少包含一个O单号）
-	Weight              string    `json:"weight"`                        // 重量（默认2位小数，美国lb，其他国家kg）
+	OrderSnList         []string  `json:"orderSnList"`                   // O单（orderSn 非 parentOrderSn）列表（至少包含一个O单号）
+	Weight              string    `json:"weight"`                        // 重量（默认 2 位小数，美国lb，其他国家kg）
 	WeightUnit          string    `json:"weightUnit"`                    // 重量单位
-	Length              string    `json:"length,omitempty"`              // 包裹长度（默认2位小数）
-	Width               string    `json:"width"`                         // 包裹宽度（默认2位小数）
-	Height              string    `json:"height"`                        // 包裹高度（默认2位小数）
+	Length              string    `json:"length,omitempty"`              // 包裹长度（默认 2 位小数）
+	Width               string    `json:"width"`                         // 包裹宽度（默认 2 位小数）
+	Height              string    `json:"height"`                        // 包裹高度（默认 2 位小数）
 	DimensionUnit       string    `json:"dimensionUnit"`                 // 尺寸单位（美国 in，其他国家 cm）
 	SignatureOnDelivery null.Bool `json:"signatureOnDelivery,omitempty"` // 是否需要签名签收服务
 }

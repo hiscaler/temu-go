@@ -162,8 +162,7 @@ func NewClient(config config.Config) *Client {
 		},
 	}
 	env := strings.ToLower(config.Env)
-	if env != prodEnv && env != devEnv {
-		env = devEnv
+	if env == "" || (env != prodEnv && env != devEnv) {
 	}
 	regionId := parseRegionId(config.RegionId)
 	url := ""
@@ -351,9 +350,9 @@ func NewClient(config config.Config) *Client {
 		SemiManaged: semiManagedService{
 			Order: (semiOrderService)(xService),
 			Logistics: semiLogisticsService{
-				Warehouse:       (semiLogisticsWarehouseService)(xService),
 				ServiceProvider: (semiLogisticsServiceProviderService)(xService),
 				Shipment:        (semiLogisticsShipmentService)(xService),
+				Warehouse:       (semiLogisticsWarehouseService)(xService),
 			},
 		},
 	}
