@@ -178,7 +178,7 @@ func NewClient(config config.Config) *Client {
 	client := &Client{
 		Env:          env,
 		Debug:        debug,
-		RegionId:     config.RegionId,
+		RegionId:     regionId,
 		Logger:       l,
 		TimeLocation: loc,
 	}
