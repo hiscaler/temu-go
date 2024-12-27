@@ -62,7 +62,7 @@ type services struct {
 	Goods         goodsService
 	Mall          mallService
 	Jit           jitService
-	Order         orderService
+	SemiManaged   semiManagedService
 }
 
 type Client struct {
@@ -348,7 +348,9 @@ func NewClient(config config.Config) *Client {
 			PresaleRule:      (jitPresaleRuleService)(xService),
 			VirtualInventory: (jitVirtualInventoryService)(xService),
 		},
-		Order: (orderService)(xService),
+		SemiManaged: semiManagedService{
+			Order: (semiOrderService)(xService),
+		},
 	}
 
 	return client

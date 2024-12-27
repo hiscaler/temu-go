@@ -11,7 +11,7 @@ import (
 )
 
 // 订单服务（半托管专属，必须在 US/EU 网关调用）
-type orderService service
+type semiOrderService service
 
 type OrderQueryParams struct {
 	normal.ParameterWithPager
@@ -60,7 +60,7 @@ func (m OrderQueryParams) validate() error {
 
 // Query 订单列表查询接口
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#r2WKrz
-func (s orderService) Query(ctx context.Context, params OrderQueryParams) (items []entity.Order, total, totalPages int, isLastPage bool, err error) {
+func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (items []entity.Order, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	params.PageNumber = params.Pager.Page
 	if err = params.validate(); err != nil {

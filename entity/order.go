@@ -44,7 +44,7 @@ type ChildOrder struct {
 		SoldFactor   int    `json:"soldFactor"`   // 商品和货品数量转换系数，商品数量(quantity)乘以转换系数，代表货品数量
 		ProductId    int64  `json:"productId"`    // 货品 Id
 		ExtCode      string `json:"extCode"`      // 货品编码
-	} `json:"productList"`         // 货品信息
+	} `json:"productList"` // 货品信息
 	RegionId int `json:"regionId"` // 区域 ID
 	SiteId   int `json:"siteId"`   // 站点 ID
 }
