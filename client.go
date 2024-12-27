@@ -354,6 +354,7 @@ func NewClient(config config.Config) *Client {
 				Shipment:        (semiLogisticsShipmentService)(xService),
 				Warehouse:       (semiLogisticsWarehouseService)(xService),
 			},
+			PlatformLogistics: (semiPlatformLogisticsService)(xService),
 		},
 	}
 
