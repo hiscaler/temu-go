@@ -115,3 +115,18 @@ const (
 	QuantityChangeModeInDecrease = 1 // 增减变量
 	QuantityChangeModeReplace    = 2 // 覆盖变更
 )
+
+// 区域 Id
+const (
+	ChinaRegionId    = 0   // 中国区
+	AmericanRegionId = 211 // 美区
+	EuropeRegionId   = 311 // 欧区
+)
+
+// 站点 Id
+const (
+	AmericanSiteId      = 100 // 美国站
+	CanadaSiteId        = 101 // 加拿大站
+	UnitedKingdomSiteId = 102 // 英国站
+	AustraliaSiteId     = 103 // 澳大利亚站
+)

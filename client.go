@@ -10,6 +10,7 @@ import (
 	"github.com/goccy/go-json"
 	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/temu-go/config"
+	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"log/slog"
 	"net"
@@ -23,6 +24,11 @@ import (
 const (
 	Version   = "0.0.1"
 	UserAgent = "Temu API Client-Golang/" + Version
+)
+
+const (
+	prodEnv = "prod"
+	devEnv  = "env"
 )
 
 const (
@@ -59,7 +65,9 @@ type services struct {
 }
 
 type Client struct {
-	Debug        bool           // Is debug mode
+	Env          string         // 环境
+	Debug        bool           // 是否为 Debug 模式
+	RegionId     int            // 区域 Id
 	Logger       *slog.Logger   // Log
 	Services     services       // API services
 	TimeLocation *time.Location // 时区
@@ -115,6 +123,14 @@ func (r simpleResponse) retry() bool {
 	return !r.Success && r.ErrorCode == 4000000 && strings.ToLower(r.ErrorMsg) == "system_exception"
 }
 
+// 默认中国区
+func parseRegionId(regionId int) int {
+	if regionId != entity.ChinaRegionId && regionId != entity.AmericanRegionId && regionId != entity.EuropeRegionId {
+		regionId = entity.ChinaRegionId
+	}
+	return regionId
+}
+
 func NewClient(config config.Config) *Client {
 	var l *slog.Logger
 	debug := config.Debug
@@ -127,15 +143,47 @@ func NewClient(config config.Config) *Client {
 			l = slog.New(slog.NewJSONHandler(os.Stdout, nil))
 		}
 	}
+	urls := map[int]struct {
+		Prod string
+		Dev  string
+	}{
+		entity.ChinaRegionId: {
+			Prod: "https://openapi.kuajingmaihuo.com/openapi/router",
+			Dev:  "https://kj-openapi.temudemo.com/openapi/router",
+		},
+		entity.AmericanRegionId: {
+			Prod: "https://openapi-b-us.temu.com/openapi/router",
+			Dev:  "http://openapi-b-us.temudemo.com/openapi/router",
+		},
+		entity.EuropeRegionId: {
+			Prod: "https://openapi-b-eu.temu.com/openapi/router",
+			Dev:  "http://openapi-b-eu.temudemo.com/openapi/router",
+		},
+	}
+	env := strings.ToLower(config.Env)
+	if env != prodEnv && env != devEnv {
+		env = devEnv
+	}
+	regionId := parseRegionId(config.RegionId)
+	url := ""
+	if v, ok := urls[regionId]; ok {
+		if env == prodEnv {
+			url = v.Prod
+		} else {
+			url = v.Dev
+		}
+	}
 	client := &Client{
+		Env:          env,
 		Debug:        debug,
+		RegionId:     config.RegionId,
 		Logger:       l,
 		TimeLocation: loc,
 	}
 	httpClient := resty.New().
 		SetDebug(debug).
 		EnableTrace().
-		SetBaseURL("https://openapi.kuajingmaihuo.com/openapi/router").
+		SetBaseURL(url).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
@@ -256,9 +304,6 @@ func NewClient(config config.Config) *Client {
 			l.Debug(fmt.Sprintf("Retry waiting %d milliseconds...", milliseconds))
 			return time.Duration(milliseconds) * time.Millisecond, nil
 		})
-	if debug {
-		httpClient.SetBaseURL("https://openapi.kuajingmaihuo.com/openapi/router")
-	}
 	httpClient.JSONMarshal = json.Marshal
 	httpClient.JSONUnmarshal = json.Unmarshal
 	xService := service{
@@ -305,6 +350,11 @@ func NewClient(config config.Config) *Client {
 	}
 
 	return client
+}
+
+func (c *Client) SetRegionId(regionId int) *Client {
+	c.RegionId = parseRegionId(regionId)
+	return c
 }
 
 func parseResponseTotal(currentPage, pageSize, total int) (n, totalPages int, isLastPage bool) {
