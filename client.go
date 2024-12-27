@@ -27,8 +27,9 @@ const (
 )
 
 const (
-	prodEnv = "prod"
-	devEnv  = "env"
+	devEnv  = "dev"  // 开发环境
+	testEnv = "test" // 测试环境
+	prodEnv = "prod" // 生产环境
 )
 
 const (
@@ -162,7 +163,8 @@ func NewClient(config config.Config) *Client {
 		},
 	}
 	env := strings.ToLower(config.Env)
-	if env == "" || (env != prodEnv && env != devEnv) {
+	if env == "" || (env != devEnv && env != testEnv && env != prodEnv) {
+		env = devEnv
 	}
 	regionId := parseRegionId(config.RegionId)
 	url := ""
