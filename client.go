@@ -350,6 +350,11 @@ func NewClient(config config.Config) *Client {
 		},
 		SemiManaged: semiManagedService{
 			Order: (semiOrderService)(xService),
+			Logistics: semiLogisticsService{
+				Warehouse:       (semiLogisticsWarehouseService)(xService),
+				ServiceProvider: (semiLogisticsServiceProviderService)(xService),
+				Shipment:        (semiLogisticsShipmentService)(xService),
+			},
 		},
 	}
 

@@ -8,5 +8,7 @@ type semiManagedService struct {
 
 // 物流服务
 type semiLogisticsService struct {
-	Warehouse semiLogisticsWarehouseService
+	Warehouse       semiLogisticsWarehouseService       // 仓库
+	ServiceProvider semiLogisticsServiceProviderService // 服务商
+	Shipment        semiLogisticsShipmentService        // 发货
 }
