@@ -6,7 +6,7 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
-// 发货仓库服务（半托管专属）
+// 发货仓库服务
 type semiLogisticsWarehouseService service
 
 // Query 查询卖家发货仓库基础信息接口（bg.logistics.warehouse.list.get）
