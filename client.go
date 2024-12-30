@@ -5,13 +5,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-resty/resty/v2"
-	"github.com/goccy/go-json"
-	"github.com/hiscaler/gox/stringx"
-	"github.com/hiscaler/temu-go/config"
-	"github.com/hiscaler/temu-go/entity"
-	"github.com/hiscaler/temu-go/normal"
 	"log/slog"
 	"net"
 	"net/http"
@@ -19,6 +12,14 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-resty/resty/v2"
+	"github.com/goccy/go-json"
+	"github.com/hiscaler/gox/stringx"
+	"github.com/hiscaler/temu-go/config"
+	"github.com/hiscaler/temu-go/entity"
+	"github.com/hiscaler/temu-go/normal"
 )
 
 const (
@@ -162,6 +163,26 @@ func NewClient(config config.Config) *Client {
 			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
 		},
 	}
+
+	if config.OverwriteUrls != nil {
+		for regionId, overwriteURL := range config.OverwriteUrls {
+			if _, exists := urls[regionId]; exists {
+				if overwriteURL.Prod != "" {
+					urls[regionId] = struct {
+						Prod string
+						Test string
+					}{Prod: overwriteURL.Prod, Test: urls[regionId].Test}
+				}
+				if overwriteURL.Test != "" {
+					urls[regionId] = struct {
+						Prod string
+						Test string
+					}{Prod: urls[regionId].Prod, Test: overwriteURL.Test}
+				}
+			}
+		}
+	}
+
 	env := strings.ToLower(config.Env)
 	if env != prodEnv {
 		env = testEnv
