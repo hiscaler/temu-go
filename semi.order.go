@@ -102,7 +102,7 @@ func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (i
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.list.get")
+		Post("bg.order.list.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
