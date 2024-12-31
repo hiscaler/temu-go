@@ -90,9 +90,12 @@ func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (i
 		}
 	}
 	var result = struct {
-		normal.Response
 		Result struct {
-			Result struct {
+			Success    bool   `json:"success"`
+			ErrorCode  int    `json:"errorCode"`
+			ErrorMsg   string `json:"errorMsg"`
+			ServerTime int64  `json:"serverTime"`
+			Result     struct {
 				TotalItemNum int `json:"totalItemNum"`
 				PageItems    []struct {
 					ParentOrderMap entity.ParentOrder  `json:"parentOrderMap"`
