@@ -90,6 +90,7 @@ func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (i
 		}
 	}
 	var result = struct {
+		normal.Response
 		Result struct {
 			Success    bool   `json:"success"`
 			ErrorCode  int    `json:"errorCode"`
