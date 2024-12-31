@@ -61,7 +61,7 @@ func (m OrderQueryParams) validate() error {
 
 // Query 订单列表查询接口
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#r2WKrz
-func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (items []entity.Order, total, totalPages int, isLastPage bool, err error) {
+func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (items []entity.PageItem, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	params.PageNumber = params.Pager.Page
 	if err = params.validate(); err != nil {
@@ -89,22 +89,14 @@ func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (i
 			params.UpdateAtEnd = end
 		}
 	}
+
 	var result = struct {
 		normal.Response
 		Result struct {
-			Success    bool   `json:"success"`
-			ErrorCode  int    `json:"errorCode"`
-			ErrorMsg   string `json:"errorMsg"`
-			ServerTime int64  `json:"serverTime"`
-			Result     struct {
-				TotalItemNum int `json:"totalItemNum"`
-				PageItems    []struct {
-					ParentOrderMap entity.ParentOrder  `json:"parentOrderMap"`
-					OrderList      []entity.ChildOrder `json:"orderList"`
-				} `json:"pageItems"`
-			} `json:"result"`
+			Result entity.OrderResult `json:"result"`
 		} `json:"result"`
 	}{}
+
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetBody(params).
@@ -114,10 +106,8 @@ func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (i
 		return
 	}
 
-	items = make([]entity.Order, len(result.Result.Result.PageItems))
-	for k, v := range result.Result.Result.PageItems {
-		items[k] = entity.Order{ParentOrder: v.ParentOrderMap, Items: v.OrderList}
-	}
+	items = result.Result.Result.PageItems
+	 
 	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Result.TotalItemNum)
 	return
 }

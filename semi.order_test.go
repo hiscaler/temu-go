@@ -1,13 +1,16 @@
 package temu
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestOrder(t *testing.T) {
 	params := OrderQueryParams{
-		ParentOrderStatus: 2,
+		// ParentOrderStatus: 2,
+		RegionId:          211,
+		ParentOrderSnList: []string{"PO-211-05430492122150798"},
 	}
 	params.Page = 1
 	params.PageSize = 10
