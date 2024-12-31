@@ -48,5 +48,5 @@ type Product struct {
 	ProductSkuId int    `json:"productSkuId"`
 	SoldFactor   int    `json:"soldFactor"`
 	ProductId    int64  `json:"productId"`
-	ExtCode      string `json:"extCode update"`
+	ExtCode      string `json:"extCode"`
 }
