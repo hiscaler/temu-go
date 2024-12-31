@@ -2,12 +2,13 @@ package temu
 
 import (
 	"context"
+	"time"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
-	"time"
 )
 
 // 订单服务（半托管专属，必须在 US/EU 网关调用）
@@ -91,11 +92,13 @@ func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (i
 	var result = struct {
 		normal.Response
 		Result struct {
-			TotalItemNum int `json:"totalItemNum"`
-			PageItems    []struct {
-				ParentOrderMap entity.ParentOrder  `json:"parentOrderMap"`
-				OrderList      []entity.ChildOrder `json:"orderList"`
-			} `json:"pageItems"`
+			Result struct {
+				TotalItemNum int `json:"totalItemNum"`
+				PageItems    []struct {
+					ParentOrderMap entity.ParentOrder  `json:"parentOrderMap"`
+					OrderList      []entity.ChildOrder `json:"orderList"`
+				} `json:"pageItems"`
+			} `json:"result"`
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
@@ -107,10 +110,10 @@ func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (i
 		return
 	}
 
-	items = make([]entity.Order, len(result.Result.PageItems))
-	for k, v := range result.Result.PageItems {
+	items = make([]entity.Order, len(result.Result.Result.PageItems))
+	for k, v := range result.Result.Result.PageItems {
 		items[k] = entity.Order{ParentOrder: v.ParentOrderMap, Items: v.OrderList}
 	}
-	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.TotalItemNum)
+	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Result.TotalItemNum)
 	return
 }
