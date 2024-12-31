@@ -226,7 +226,6 @@ func NewClient(cfg config.Config) *Client {
 				}
 			}
 			values["app_key"] = cfg.AppKey
-			values["app_secret"] = cfg.AppSecret
 			values["access_token"] = cfg.AccessToken
 			values["data_type"] = "JSON"
 			values["version"] = "V1"
