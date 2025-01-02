@@ -1,6 +1,6 @@
 package entity
 
-// SemiOnlineOrderLogisticsShipmentPackage 发货结果
+// SemiOnlineOrderLogisticsShipmentPackage 发货包裹
 type SemiOnlineOrderLogisticsShipmentPackage struct {
 	PackageSn string `json:"packageSn"` // 包裹号
 	// 包裹主子类型，对应枚举如下：
