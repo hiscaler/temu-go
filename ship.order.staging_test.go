@@ -1,7 +1,6 @@
 package temu
 
 import (
-	"fmt"
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +23,6 @@ func TestShipOrderStagingService_Add(t *testing.T) {
 	}
 	reqJson := jsonx.ToJson(req, "{}")
 	ok, results, err := temuClient.Services.ShipOrder.Staging.Add(ctx, req)
-	fmt.Println(err.Error())
 	assert.Equalf(t, len(req.JoinInfoList), len(results), "Services.ShipOrder.Staging.Add(%s)", reqJson)
 	assert.Equalf(t, err == nil, ok, "Services.ShipOrder.Staging.Add(ctx, %s) ok", reqJson)
 }
