@@ -2,12 +2,13 @@ package temu
 
 import (
 	"context"
+	"time"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
-	"time"
 )
 
 // 订单服务（半托管专属，必须在 US/EU 网关调用）
@@ -60,7 +61,7 @@ func (m OrderQueryParams) validate() error {
 
 // Query 订单列表查询接口
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#r2WKrz
-func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (items []entity.Order, total, totalPages int, isLastPage bool, err error) {
+func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (items []entity.PageItem, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	params.PageNumber = params.Pager.Page
 	if err = params.validate(); err != nil {
@@ -88,29 +89,25 @@ func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (i
 			params.UpdateAtEnd = end
 		}
 	}
+
 	var result = struct {
 		normal.Response
 		Result struct {
-			TotalItemNum int `json:"totalItemNum"`
-			PageItems    []struct {
-				ParentOrderMap entity.ParentOrder  `json:"parentOrderMap"`
-				OrderList      []entity.ChildOrder `json:"orderList"`
-			} `json:"pageItems"`
+			Result entity.OrderResult `json:"result"`
 		} `json:"result"`
 	}{}
+
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.list.get")
+		Post("bg.order.list.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
-	items = make([]entity.Order, len(result.Result.PageItems))
-	for k, v := range result.Result.PageItems {
-		items[k] = entity.Order{ParentOrder: v.ParentOrderMap, Items: v.OrderList}
-	}
-	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.TotalItemNum)
+	items = result.Result.Result.PageItems
+	 
+	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Result.TotalItemNum)
 	return
 }

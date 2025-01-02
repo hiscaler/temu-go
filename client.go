@@ -5,13 +5,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-resty/resty/v2"
-	"github.com/goccy/go-json"
-	"github.com/hiscaler/gox/stringx"
-	"github.com/hiscaler/temu-go/config"
-	"github.com/hiscaler/temu-go/entity"
-	"github.com/hiscaler/temu-go/normal"
 	"log/slog"
 	"net"
 	"net/http"
@@ -19,6 +12,14 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-resty/resty/v2"
+	"github.com/goccy/go-json"
+	"github.com/hiscaler/gox/stringx"
+	"github.com/hiscaler/temu-go/config"
+	"github.com/hiscaler/temu-go/entity"
+	"github.com/hiscaler/temu-go/normal"
 )
 
 const (
@@ -133,11 +134,11 @@ func parseRegionId(regionId int) int {
 	return regionId
 }
 
-func NewClient(config config.Config) *Client {
+func NewClient(cfg config.Config) *Client {
 	var l *slog.Logger
-	debug := config.Debug
-	if config.Logger != nil {
-		l = config.Logger
+	debug := cfg.Debug
+	if cfg.Logger != nil {
+		l = cfg.Logger
 	} else {
 		if debug {
 			l = slog.New(slog.NewTextHandler(os.Stdout, nil))
@@ -145,10 +146,8 @@ func NewClient(config config.Config) *Client {
 			l = slog.New(slog.NewJSONHandler(os.Stdout, nil))
 		}
 	}
-	urls := map[int]struct {
-		Prod string
-		Test string
-	}{
+
+	urls := map[int]config.URLPair{
 		entity.ChinaRegionId: {
 			Prod: "https://openapi.kuajingmaihuo.com/openapi/router",
 			Test: "https://kj-openapi.temudemo.com/openapi/router",
@@ -162,12 +161,25 @@ func NewClient(config config.Config) *Client {
 			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
 		},
 	}
-	env := strings.ToLower(config.Env)
-	if env == "" {
-		// Default is production environment
-		env = prodEnv
+
+	if cfg.OverwriteUrls != nil {
+		for regionId, overwriteURL := range cfg.OverwriteUrls {
+			if _, exists := urls[regionId]; exists {
+				if overwriteURL.Prod != "" {
+					urls[regionId] = config.URLPair{Prod: overwriteURL.Prod, Test: urls[regionId].Test}
+				}
+				if overwriteURL.Test != "" {
+					urls[regionId] = config.URLPair{Prod: urls[regionId].Prod, Test: overwriteURL.Test}
+				}
+			}
+		}
 	}
-	regionId := parseRegionId(config.RegionId)
+
+	env := strings.ToLower(cfg.Env)
+	if env != prodEnv {
+		env = testEnv
+	}
+	regionId := parseRegionId(cfg.RegionId)
 	url := ""
 	if v, ok := urls[regionId]; ok {
 		if env == prodEnv {
@@ -193,11 +205,11 @@ func NewClient(config config.Config) *Client {
 			"User-Agent":   UserAgent,
 		}).
 		SetAllowGetMethodPayload(true).
-		SetTimeout(config.Timeout * time.Second).
+		SetTimeout(cfg.Timeout * time.Second).
 		SetTransport(&http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: !config.VerifySSL},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: !cfg.VerifySSL},
 			DialContext: (&net.Dialer{
-				Timeout: config.Timeout * time.Second,
+				Timeout: cfg.Timeout * time.Second,
 			}).DialContext,
 		}).
 		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
@@ -213,15 +225,14 @@ func NewClient(config config.Config) *Client {
 					return e
 				}
 			}
-			values["app_key"] = config.AppKey
-			values["app_secret"] = config.AppSecret
-			values["access_token"] = config.AccessToken
+			values["app_key"] = cfg.AppKey
+			values["access_token"] = cfg.AccessToken
 			values["data_type"] = "JSON"
 			values["version"] = "V1"
 			values["timestamp"] = time.Now().Unix()
 			values["type"] = request.URL
 			request.URL = ""
-			request.SetBody(generateSign(values, config.AppSecret))
+			request.SetBody(generateSign(values, cfg.AppSecret))
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
@@ -273,7 +284,7 @@ func NewClient(config config.Config) *Client {
 							if v, ok := values["type"]; ok {
 								endpoint = v.(string)
 							}
-							response.Request.SetBody(generateSign(values, config.AppSecret))
+							response.Request.SetBody(generateSign(values, cfg.AppSecret))
 						}
 					}
 					retry = e == nil
