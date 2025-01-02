@@ -163,8 +163,9 @@ func NewClient(config config.Config) *Client {
 		},
 	}
 	env := strings.ToLower(config.Env)
-	if env != prodEnv {
-		env = testEnv
+	if env == "" {
+		// Default is production environment
+		env = prodEnv
 	}
 	regionId := parseRegionId(config.RegionId)
 	url := ""
