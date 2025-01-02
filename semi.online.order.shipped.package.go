@@ -6,23 +6,23 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
-// 平台物流服务
-type semiPlatformLogisticsService service
+// 已发货包裹服务
+type semiOnlineOrderShippedPackageService service
 
-type SemiPlatformLogisticsUnshippedPackageQueryParams struct {
+type SemiPlatformLogisticsShippedPackageQueryParams struct {
 	normal.ParameterWithPager
 	PageNumber        int      `json:"pageNumber"`        // 第几页
 	ParentOrderSnList []string `json:"parentOrderSnList"` // PO 单号列表
 	OrderSnList       []string `json:"orderSnList"`       // O 单号列表
 }
 
-func (m SemiPlatformLogisticsUnshippedPackageQueryParams) validate() error {
+func (m SemiPlatformLogisticsShippedPackageQueryParams) validate() error {
 	return nil
 }
 
-// UnshippedPackages 下 Call 成功待发货包裹列表查询接口（bg.order.unshipped.package.get）
-// https://seller.kuajingmaihuo.com/sop/view/144659541206936016#9QfRAV
-func (s semiPlatformLogisticsService) UnshippedPackages(ctx context.Context, params SemiPlatformLogisticsUnshippedPackageQueryParams) (items []entity.SemiPlatformLogisticsUnshippedPackage, total, totalPages int, isLastPage bool, err error) {
+// Confirm 确认包裹发货接口（bg.logistics.shipped.package.confirm）
+// https://seller.kuajingmaihuo.com/sop/view/144659541206936016#92SpUJ
+func (s semiOnlineOrderShippedPackageService) Confirm(ctx context.Context, params SemiPlatformLogisticsShippedPackageQueryParams) (items []entity.SemiPlatformLogisticsUnshippedPackage, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	params.PageNumber = params.Pager.Page
 	if err = params.validate(); err != nil {
@@ -41,7 +41,7 @@ func (s semiPlatformLogisticsService) UnshippedPackages(ctx context.Context, par
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.order.unshipped.package.get")
+		Post("bg.logistics.shipped.package.confirm")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
