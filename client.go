@@ -176,7 +176,9 @@ func NewClient(cfg config.Config) *Client {
 	}
 
 	env := strings.ToLower(cfg.Env)
-	if env != prodEnv {
+	if env == "" {
+		env = prodEnv
+	} else if env != prodEnv {
 		env = testEnv
 	}
 	regionId := parseRegionId(cfg.RegionId)
