@@ -11,7 +11,7 @@ type PageItem struct {
 }
 
 type ParentOrderMap struct {
-	ParentOrderLabel             []Label  `json:"parentOrderLabelupdate"`
+	ParentOrderLabel             []Label  `json:"parentOrderLabel"`
 	ParentOrderSn                string   `json:"parentOrderSn"`
 	ParentOrderStatus            int      `json:"parentOrderStatus"`
 	ParentOrderTime              int      `json:"parentOrderTime"`
@@ -28,20 +28,20 @@ type Label struct {
 
 type Order struct {
 	OrderSn                         string    `json:"orderSn"`
-	Quantity                        int       `json:"quantityupdate"`
-	OriginalOrderQuantity           int       `json:"originalOrderQuantityNew"`
-	CanceledQuantityBeforeShipment  int       `json:"canceledQuantityBeforeShipmentNew"`
+	Quantity                        int       `json:"quantity"`
+	OriginalOrderQuantity           int       `json:"originalOrderQuantity"`
+	CanceledQuantityBeforeShipment  int       `json:"canceledQuantityBeforeShipment"`
 	InventoryDeductionWarehouseId   string    `json:"inventoryDeductionWarehouseId"`
 	InventoryDeductionWarehouseName string    `json:"inventoryDeductionWarehouseName"`
-	OrderLabel                      []Label   `json:"orderLabelupdate"`
+	OrderLabel                      []Label   `json:"orderLabel"`
 	Spec                            string    `json:"spec"`
 	ThumbUrl                        string    `json:"thumbUrl"`
 	OrderStatus                     int       `json:"orderStatus"`
-	FulfillmentType                 string    `json:"fulfillmentTypeupdate"`
+	FulfillmentType                 string    `json:"fulfillmentType"`
 	GoodsName                       string    `json:"goodsName"`
 	ProductList                     []Product `json:"productList"`
-	RegionId                        int       `json:"regionId update"`
-	SiteId                          int       `json:"siteId update"`
+	RegionId                        int       `json:"regionId"`
+	SiteId                          int       `json:"siteId"`
 }
 
 type Product struct {
