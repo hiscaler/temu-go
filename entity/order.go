@@ -22,8 +22,8 @@ type ParentOrderMap struct {
 }
 
 type Label struct {
-	Name  string `json:"nameupdate"`
-	Value int    `json:"valueupdate"`
+	Name  string `json:"name"`
+	Value int    `json:"value"`
 }
 
 type Order struct {
