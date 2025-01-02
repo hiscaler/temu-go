@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 )
@@ -9,32 +10,36 @@ import (
 // 已发货包裹服务
 type semiOnlineOrderShippedPackageService service
 
-type SemiPlatformLogisticsShippedPackageQueryParams struct {
-	normal.ParameterWithPager
-	PageNumber        int      `json:"pageNumber"`        // 第几页
-	ParentOrderSnList []string `json:"parentOrderSnList"` // PO 单号列表
-	OrderSnList       []string `json:"orderSnList"`       // O 单号列表
+type SemiPlatformLogisticsShippedPackageRequest struct {
+	PackageSendInfoList []struct {
+		PackageSn      string `json:"packageSn"`      // 包裹号
+		TrackingNumber string `json:"trackingNumber"` // 运单号
+		PackageDetail  []struct {
+			ParentOrderSn string `json:"parentOrderSn"` // 父单号
+			OrderSn       string `json:"orderSn"`       // 子单号
+			Quantity      int    `json:"quantity"`      // 发货件数
+		} `json:"packageDetail"` // 发货包裹详情
+	} `json:"packageSendInfoList"` // 确认发货包裹列表
 }
 
-func (m SemiPlatformLogisticsShippedPackageQueryParams) validate() error {
-	return nil
+func (m SemiPlatformLogisticsShippedPackageRequest) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.PackageSendInfoList, validation.Required.Error("确认发货包裹列表不能为空")),
+		// todo 更多的数据验证
+	)
 }
 
 // Confirm 确认包裹发货接口（bg.logistics.shipped.package.confirm）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#92SpUJ
-func (s semiOnlineOrderShippedPackageService) Confirm(ctx context.Context, params SemiPlatformLogisticsShippedPackageQueryParams) (items []entity.SemiPlatformLogisticsUnshippedPackage, total, totalPages int, isLastPage bool, err error) {
-	params.TidyPager()
-	params.PageNumber = params.Pager.Page
+func (s semiOnlineOrderShippedPackageService) Confirm(ctx context.Context, params SemiPlatformLogisticsShippedPackageRequest) (items []entity.SemiOnlineOrderShippedPackageConfirmResult, err error) {
 	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+		return items, invalidInput(err)
 	}
 
 	var result = struct {
 		normal.Response
 		Result struct {
-			TotalItemNum     int                                            `json:"totalItemNum"`
-			UnshippedPackage []entity.SemiPlatformLogisticsUnshippedPackage `json:"unshippedPackage"` // 待确认包裹
+			WarningMessage []entity.SemiOnlineOrderShippedPackageConfirmResult `json:"warningMessage"` // 提醒信息列表
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
@@ -46,7 +51,5 @@ func (s semiOnlineOrderShippedPackageService) Confirm(ctx context.Context, param
 		return
 	}
 
-	items = result.Result.UnshippedPackage
-	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.TotalItemNum)
-	return
+	return result.Result.WarningMessage, nil
 }
