@@ -26,7 +26,7 @@ type SemiOnlineOrderLogisticsShipmentCreateRequest struct {
 			GoodsId       string `json:"goodsId"`       // 商品 goodsId
 			SkuId         int64  `json:"skuId"`         // 商品 skuId
 			Quantity      int    `json:"quantity"`      // 发货数量
-		} `json:"orderSendInfoList"` // 发货商品信息
+		} `json:"orderSendInfoList"`                       // 发货商品信息
 		WarehouseId        int64  `json:"warehouseId"`     // 仓库id
 		Weight             string `json:"weight"`          // 重量（默认2位小数）
 		WeightUnit         string `json:"weightUnit"`      // 重量单位，美国为lb（磅），其他国家为kg（千克）
@@ -175,9 +175,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Update(ctx context.Context, req
 
 	var result = struct {
 		normal.Response
-		Result struct {
-			PackageInfoResultList []entity.SemiOnlineOrderLogisticsShipmentPackage `json:"packageInfoResultList"` // 包裹下单结果
-		} `json:"result"`
+		Result bool `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
@@ -188,5 +186,43 @@ func (s semiOnlineOrderLogisticsShipmentService) Update(ctx context.Context, req
 		return
 	}
 
-	return result.Success, nil
+	return result.Result, nil
+}
+
+// 物流在线发货修改物流接口
+
+type SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest struct {
+	EditPackageRequestList []struct {
+		PackageSn      string `json:"packageSn"`      // 包裹号
+		TrackingNumber string `json:"trackingNumber"` // 运单号
+		ShipCompanyId  int64  `json:"shipCompanyId"`  // 物流公司id
+	} `json:"editPackageRequestList"` // 编辑请求列表
+}
+
+func (m SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest) validate() error {
+	return nil
+}
+
+//	UpdateShippingType
+//
+// 物流在线发货修改物流接口（bg.logistics.shipment.shippingtype.update）
+func (s semiOnlineOrderLogisticsShipmentService) UpdateShippingType(ctx context.Context, request SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest) (ok bool, err error) {
+	if err = request.validate(); err != nil {
+		return false, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result bool `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.logistics.shipment.shippingtype.update")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
+	}
+
+	return result.Result, nil
 }
