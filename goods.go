@@ -57,12 +57,12 @@ type GoodsQueryParams struct {
 
 func (m GoodsQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.BindSiteIds, validation.In(
+		validation.Field(&m.BindSiteIds, validation.Each(validation.In(
 			entity.AmericanSiteId,
 			entity.CanadaSiteId,
 			entity.UnitedKingdomSiteId,
 			entity.AustraliaSiteId,
-		).Error("无效的站点")),
+		).Error("无效的站点"))),
 		validation.Field(&m.CreatedAtStart,
 			validation.When(m.CreatedAtStart != "" || m.CreatedAtEnd != "", validation.By(is.TimeRange(m.CreatedAtStart, m.CreatedAtEnd, time.DateTime))),
 		),

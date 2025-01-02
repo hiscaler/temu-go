@@ -16,7 +16,15 @@ type GoodsWarehouseQueryParams struct {
 
 func (m GoodsWarehouseQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.SiteIdList, validation.Required.Error("站点列表不能为空")),
+		validation.Field(&m.SiteIdList,
+			validation.Required.Error("站点列表不能为空"),
+			validation.Each(validation.In(
+				entity.AmericanSiteId,
+				entity.CanadaSiteId,
+				entity.UnitedKingdomSiteId,
+				entity.AustraliaSiteId,
+			).Error("无效的站点")),
+		),
 	)
 }
 
