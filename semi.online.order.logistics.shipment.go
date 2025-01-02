@@ -168,8 +168,8 @@ func (m SemiOnlineOrderLogisticsShipmentUpdateRequest) validate() error {
 
 // Update 物流在线发货重新下单接口
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#Ff9JoY
-func (s semiOnlineOrderLogisticsShipmentService) Update(ctx context.Context, request SemiOnlineOrderLogisticsShipmentUpdateRequest) (ok bool, err error) {
-	if err = request.validate(); err != nil {
+func (s semiOnlineOrderLogisticsShipmentService) Update(ctx context.Context, request SemiOnlineOrderLogisticsShipmentUpdateRequest) (bool, error) {
+	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
 	}
 
@@ -183,7 +183,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Update(ctx context.Context, req
 		SetResult(&result).
 		Post("bg.logistics.shipment.result.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return false, err
 	}
 
 	return result.Result, nil
@@ -206,8 +206,8 @@ func (m SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest) validate() er
 //	UpdateShippingType
 //
 // 物流在线发货修改物流接口（bg.logistics.shipment.shippingtype.update）
-func (s semiOnlineOrderLogisticsShipmentService) UpdateShippingType(ctx context.Context, request SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest) (ok bool, err error) {
-	if err = request.validate(); err != nil {
+func (s semiOnlineOrderLogisticsShipmentService) UpdateShippingType(ctx context.Context, request SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest) (bool, error) {
+	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
 	}
 
@@ -221,7 +221,7 @@ func (s semiOnlineOrderLogisticsShipmentService) UpdateShippingType(ctx context.
 		SetResult(&result).
 		Post("bg.logistics.shipment.shippingtype.update")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return false, err
 	}
 
 	return result.Result, nil
