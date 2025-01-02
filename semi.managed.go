@@ -2,14 +2,25 @@ package temu
 
 // 半托管专属服务
 type semiManagedService struct {
-	Order             semiOrderService             // 订单
-	Logistics         semiLogisticsService         // 物流
-	PlatformLogistics semiPlatformLogisticsService // 平台物流
+	Order       semiOrderService       // 订单
+	OnlineOrder semiOnlineOrderService // 在线下单
 }
 
-// 物流服务
-type semiLogisticsService struct {
-	ServiceProvider semiLogisticsServiceProviderService // 服务商渠道
-	Shipment        semiLogisticsShipmentService        // 发货
-	Warehouse       semiLogisticsWarehouseService       // 仓库
+// 在线下单服务
+type semiOnlineOrderService struct {
+	Logistics semiOnlineOrderLogisticsService // 物流服务
+	Package   semiOnlineOrderPackageService   // 包裹服务
+}
+
+// 在线下单物流服务
+type semiOnlineOrderLogisticsService struct {
+	ServiceProvider semiOnlineOrderLogisticsServiceProviderService // 服务商
+	Shipment        semiOnlineOrderLogisticsShipmentService        // 发货
+	Warehouse       semiOnlineOrderLogisticsWarehouseService       // 仓库
+}
+
+// 包裹服务
+type semiOnlineOrderPackageService struct {
+	Unshipped semiOnlineOrderUnshippedPackageService // 未发货
+	Shipped   semiOnlineOrderShippedPackageService   // 已发货
 }

@@ -9,7 +9,7 @@ import (
 )
 
 // 物流服务提供商服务
-type semiLogisticsServiceProviderService service
+type semiOnlineOrderLogisticsServiceProviderService service
 
 type SemiLogisticsServiceProviderQueryParams struct {
 	WarehouseId         string    `json:"warehouseId"`                   // 仓库 id
@@ -43,7 +43,7 @@ func (m SemiLogisticsServiceProviderQueryParams) validate() error {
 
 // Query 查询可用物流服务接口（bg.logistics.shippingservices.get）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#d0sexY
-func (s semiLogisticsServiceProviderService) Query(ctx context.Context, params SemiLogisticsServiceProviderQueryParams) (items []entity.SemiLogisticsChannel, err error) {
+func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Context, params SemiLogisticsServiceProviderQueryParams) (items []entity.SemiLogisticsChannel, err error) {
 	if err = params.validate(); err != nil {
 		return
 	}

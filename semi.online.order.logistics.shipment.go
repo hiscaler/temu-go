@@ -7,7 +7,7 @@ import (
 )
 
 // 物流发货服务
-type semiLogisticsShipmentService service
+type semiOnlineOrderLogisticsShipmentService service
 
 type SemiLogisticsShipmentCreateRequest struct {
 	SendType int `json:"sendType"` // 发货类型：0-单个运单发货 1-拆成多个运单发货 2-合并发货
@@ -21,8 +21,8 @@ type SemiLogisticsShipmentCreateRequest struct {
 		OrderSendInfoList []struct {
 			OrderSn       string `json:"orderSn"`       // 订单号
 			ParentOrderSn string `json:"parentOrderSn"` // 父订单号
-			GoodsId       string `json:"goodsId"`       // 商品goodsId
-			SkuId         int64  `json:"skuId"`         // 商品skuId
+			GoodsId       string `json:"goodsId"`       // 商品 goodsId
+			SkuId         int64  `json:"skuId"`         // 商品 skuId
 			Quantity      int    `json:"quantity"`      // 发货数量
 		} `json:"orderSendInfoList"` // 发货商品信息
 		WarehouseId        int64  `json:"warehouseId"`     // 仓库id
@@ -58,7 +58,7 @@ func (m SemiLogisticsShipmentCreateRequest) validate() error {
 
 // Create 物流在线发货下单接口（bg.logistics.shipment.create）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#Tf6UNY
-func (s semiLogisticsShipmentService) Create(ctx context.Context, request SemiLogisticsShipmentCreateRequest) (items []string, limitTime null.String, err error) {
+func (s semiOnlineOrderLogisticsShipmentService) Create(ctx context.Context, request SemiLogisticsShipmentCreateRequest) (items []string, limitTime null.String, err error) {
 	if err = request.validate(); err != nil {
 		return
 	}

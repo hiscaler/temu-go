@@ -363,12 +363,17 @@ func NewClient(cfg config.Config) *Client {
 		},
 		SemiManaged: semiManagedService{
 			Order: (semiOrderService)(xService),
-			Logistics: semiLogisticsService{
-				ServiceProvider: (semiLogisticsServiceProviderService)(xService),
-				Shipment:        (semiLogisticsShipmentService)(xService),
-				Warehouse:       (semiLogisticsWarehouseService)(xService),
+			OnlineOrder: semiOnlineOrderService{
+				Logistics: semiOnlineOrderLogisticsService{
+					ServiceProvider: (semiOnlineOrderLogisticsServiceProviderService)(xService),
+					Shipment:        (semiOnlineOrderLogisticsShipmentService)(xService),
+					Warehouse:       (semiOnlineOrderLogisticsWarehouseService)(xService),
+				},
+				Package: semiOnlineOrderPackageService{
+					Unshipped: (semiOnlineOrderUnshippedPackageService)(xService),
+					Shipped:   (semiOnlineOrderShippedPackageService)(xService),
+				},
 			},
-			PlatformLogistics: (semiPlatformLogisticsService)(xService),
 		},
 	}
 

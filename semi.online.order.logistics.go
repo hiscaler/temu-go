@@ -6,12 +6,12 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
-// 发货仓库服务
-type semiLogisticsWarehouseService service
+// 卖家发货仓库服务
+type semiOnlineOrderLogisticsWarehouseService service
 
 // Query 查询卖家发货仓库基础信息接口（bg.logistics.warehouse.list.get）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#MdjB3d
-func (s semiLogisticsWarehouseService) Query(ctx context.Context) (items []entity.SemiLogisticsWarehouse, err error) {
+func (s semiOnlineOrderLogisticsWarehouseService) Query(ctx context.Context) (items []entity.SemiLogisticsWarehouse, err error) {
 	var result = struct {
 		normal.Response
 		Result struct {
