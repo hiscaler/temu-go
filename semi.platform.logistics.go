@@ -12,8 +12,8 @@ type semiPlatformLogisticsService service
 type SemiPlatformLogisticsUnshippedPackageQueryParams struct {
 	normal.ParameterWithPager
 	PageNumber        int      `json:"pageNumber"`        // 第几页
-	ParentOrderSnList []string `json:"parentOrderSnList"` // PO单号列表
-	OrderSnList       []string `json:"orderSnList"`       // O单号列表
+	ParentOrderSnList []string `json:"parentOrderSnList"` // PO 单号列表
+	OrderSnList       []string `json:"orderSnList"`       // O 单号列表
 }
 
 func (m SemiPlatformLogisticsUnshippedPackageQueryParams) validate() error {

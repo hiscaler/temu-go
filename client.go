@@ -351,13 +351,15 @@ func NewClient(config config.Config) *Client {
 			VirtualInventory: (jitVirtualInventoryService)(xService),
 		},
 		SemiManaged: semiManagedService{
-			Order: (semiOrderService)(xService),
-			Logistics: semiLogisticsService{
-				ServiceProvider: (semiLogisticsServiceProviderService)(xService),
-				Shipment:        (semiLogisticsShipmentService)(xService),
-				Warehouse:       (semiLogisticsWarehouseService)(xService),
-			},
+			Order:             (semiOrderService)(xService),
 			PlatformLogistics: (semiPlatformLogisticsService)(xService),
+			OnlineOrder: semiOnlineOrderService{
+				Logistics: semiOnlineOrderLogisticsService{
+					ServiceProvider: (semiOnlineOrderLogisticsServiceProviderService)(xService),
+					Shipment:        (semiOnlineOrderLogisticsShipmentService)(xService),
+					Warehouse:       (semiOnlineOrderLogisticsWarehouseService)(xService),
+				},
+			},
 		},
 	}
 
