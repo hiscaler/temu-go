@@ -1,6 +1,6 @@
 package entity
 
-type SemiLogisticsWarehouse struct {
+type SemiOnlineOrderLogisticsWarehouse struct {
 	WarehouseId      int64  `json:"warehouseId"`      // 仓库 Id
 	WarehouseName    string `json:"warehouseName"`    // 仓库名称
 	RegionId         int    `json:"regionId"`         // 所属经营站点

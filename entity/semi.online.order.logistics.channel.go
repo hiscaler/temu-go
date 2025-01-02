@@ -1,7 +1,7 @@
 package entity
 
-// SemiLogisticsChannel 物流供应商渠道
-type SemiLogisticsChannel struct {
+// SemiOnlineOrderLogisticsChannel 物流供应商渠道
+type SemiOnlineOrderLogisticsChannel struct {
 	ChannelId             int    `json:"channelId"`             // 渠道 id
 	ShipLogisticsType     int    `json:"shipLogisticsType"`     // 物流产品类型
 	ShipCompanyId         int    `json:"shipCompanyId"`         // 物流公司 id

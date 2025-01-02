@@ -11,11 +11,11 @@ type semiOnlineOrderLogisticsWarehouseService service
 
 // Query 查询卖家发货仓库基础信息接口（bg.logistics.warehouse.list.get）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#MdjB3d
-func (s semiOnlineOrderLogisticsWarehouseService) Query(ctx context.Context) (items []entity.SemiLogisticsWarehouse, err error) {
+func (s semiOnlineOrderLogisticsWarehouseService) Query(ctx context.Context) (items []entity.SemiOnlineOrderLogisticsWarehouse, err error) {
 	var result = struct {
 		normal.Response
 		Result struct {
-			WarehouseList []entity.SemiLogisticsWarehouse `json:"warehouseList"`
+			WarehouseList []entity.SemiOnlineOrderLogisticsWarehouse `json:"warehouseList"`
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().

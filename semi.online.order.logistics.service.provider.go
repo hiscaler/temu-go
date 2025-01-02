@@ -43,7 +43,7 @@ func (m SemiLogisticsServiceProviderQueryParams) validate() error {
 
 // Query 查询可用物流服务接口（bg.logistics.shippingservices.get）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#d0sexY
-func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Context, params SemiLogisticsServiceProviderQueryParams) (items []entity.SemiLogisticsChannel, err error) {
+func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Context, params SemiLogisticsServiceProviderQueryParams) (items []entity.SemiOnlineOrderLogisticsChannel, err error) {
 	if err = params.validate(); err != nil {
 		return
 	}
@@ -51,7 +51,7 @@ func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Contex
 	var result = struct {
 		normal.Response
 		Result struct {
-			OnlineChannelDtoList []entity.SemiLogisticsChannel `json:"onlineChannelDtoList"` // 可使用的渠道列表
+			OnlineChannelDtoList []entity.SemiOnlineOrderLogisticsChannel `json:"onlineChannelDtoList"` // 可使用的渠道列表
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
