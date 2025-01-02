@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"gopkg.in/guregu/null.v4"
@@ -10,7 +11,7 @@ import (
 // 物流发货服务
 type semiOnlineOrderLogisticsShipmentService service
 
-type SemiLogisticsShipmentCreateRequest struct {
+type SemiOnlineOrderLogisticsShipmentCreateRequest struct {
 	SendType int `json:"sendType"` // 发货类型：0-单个运单发货 1-拆成多个运单发货 2-合并发货
 	// TRUE：下call成功之后延迟发货
 	// FALSE/不填：下call成功订单自动流转为已发货
@@ -53,13 +54,13 @@ type SemiLogisticsShipmentCreateRequest struct {
 	} `json:"sendRequestList"` // 包裹信息
 }
 
-func (m SemiLogisticsShipmentCreateRequest) validate() error {
+func (m SemiOnlineOrderLogisticsShipmentCreateRequest) validate() error {
 	return nil
 }
 
 // Create 物流在线发货下单接口（bg.logistics.shipment.create）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#Tf6UNY
-func (s semiOnlineOrderLogisticsShipmentService) Create(ctx context.Context, request SemiLogisticsShipmentCreateRequest) (items []string, limitTime null.String, err error) {
+func (s semiOnlineOrderLogisticsShipmentService) Create(ctx context.Context, request SemiOnlineOrderLogisticsShipmentCreateRequest) (items []string, limitTime null.String, err error) {
 	if err = request.validate(); err != nil {
 		return
 	}
@@ -105,4 +106,87 @@ func (s semiOnlineOrderLogisticsShipmentService) Query(ctx context.Context, pack
 	}
 
 	return result.Result.PackageInfoResultList, nil
+}
+
+// 重新下单
+
+type SemiOnlineOrderLogisticsShipmentUpdateRequest struct {
+	RetrySendPackageRequestList []struct {
+		PackageSn         string `json:"packageSn"`       // 包裹号
+		PickupStartTime   int64  `json:"pickupStartTime"` // 预约上门取件的开始时间 秒级时间戳
+		PickupEndTime     int64  `json:"pickupEndTime"`   // 预约上门取件的结束时间 秒级时间戳
+		SignServiceId     int64  `json:"signServiceId"`   // 签收服务ID
+		ChannelId         int64  `json:"channelId"`       // 渠道id
+		ShipCompanyId     string `json:"shipCompanyId"`   // 物流公司id
+		OrderSendInfoList []struct {
+			OrderSn       string `json:"orderSn"`
+			ParentOrderSn string `json:"parentOrderSn"`
+			GoodsId       int64  `json:"goodsId"`
+			SkuId         int64  `json:"skuId"`
+			Quantity      int    `json:"quantity"`
+		} `json:"orderSendInfoList"` // 发货商品信息
+		// TRUE：是单件SKU多包裹场景
+		// FALSE/不填：不是单件SKU多包裹场景
+		SplitSubPackage    bool `json:"splitSubPackage"` // 是否为单件SKU拆多包裹
+		SendSubRequestList []struct {
+			ExtendWeightUnit string `json:"extendWeightUnit"` // 扩展重量单位
+			ExtendWeight     string `json:"extendWeight"`     // 扩展重量
+			WeightUnit       string `json:"weightUnit"`       // 重量单位
+			DimensionUnit    string `json:"dimensionUnit"`    // 尺寸单位
+			Weight           string `json:"weight"`           // 包裹重量（默认2位小数）
+			Height           string `json:"height"`           // 包包裹高度（默认2位小数）
+			Length           string `json:"length"`           // 包裹长度（默认2位小数）
+			Width            string `json:"width"`            // 包裹宽度（默认2位小数）
+			WarehouseId      string `json:"warehouseId"`      // 仓库id
+			ChannelId        int64  `json:"channelId"`        // 渠道id
+			ShipCompanyId    int64  `json:"shipCompanyId"`    // 物流公司ID
+			SignServiceId    int64  `json:"signServiceId"`    // 签收服务ID
+		} `json:"sendSubRequestList"` // 单件sku多包裹场景，附属包裹入参
+		// 具体确认场景，目前存在枚举为：
+		// SUCCESSFUL_RETRY//确认是下call成功之后再次call
+		// NO_DELIVERY_ON_SATURDAY//确认允许周六不上门派送】强制发货
+		// DENY_CANCELLATION//确认驳回取消待确认请求，强制发货
+		// DENY_ADDRESS_CHANGE://确认驳回改地址待确认请求，强制发货
+		// DENY_PARENT_RISK_WARNING//确认驳回风控，强制发货
+		ConfirmAcceptance []string `json:"confirmAcceptance"` // 确认场景
+		WarehouseId       int64    `json:"warehouseId"`       // 仓库id
+		Weight            string   `json:"weight"`            // 包裹重量（默认2位小数）
+		WeightUnit        string   `json:"weightUnit"`        // 重量单位
+		Height            string   `json:"height"`            // 包包裹高度（默认2位小数）
+		Length            string   `json:"length"`            // 包裹长度（默认2位小数）
+		Width             string   `json:"width"`             // 包裹宽度（默认2位小数）
+		DimensionUnit     string   `json:"dimensionUnit"`     // 尺寸单位高度
+	} `json:"retrySendPackageRequestList"` // 包裹信息
+}
+
+func (m SemiOnlineOrderLogisticsShipmentUpdateRequest) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.RetrySendPackageRequestList, validation.Required.Error("包裹列表不能为空")),
+		// todo 更多的数据验证
+	)
+}
+
+// Update 物流在线发货重新下单接口
+// https://seller.kuajingmaihuo.com/sop/view/144659541206936016#Ff9JoY
+func (s semiOnlineOrderLogisticsShipmentService) Update(ctx context.Context, request SemiOnlineOrderLogisticsShipmentUpdateRequest) (ok bool, err error) {
+	if err = request.validate(); err != nil {
+		return false, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result struct {
+			PackageInfoResultList []entity.SemiOnlineOrderLogisticsShipmentPackage `json:"packageInfoResultList"` // 包裹下单结果
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.logistics.shipment.result.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
+	}
+
+	return result.Success, nil
 }

@@ -1,6 +1,6 @@
 package entity
 
-type SemiPlatformLogisticsUnshippedPackage struct {
+type SemiOnlineOrderPlatformLogisticsUnshippedPackage struct {
 	CarrierId      int64  `json:"carrierId"`      // 物流公司 ID
 	CarrierName    string `json:"carrierName"`    // 物流公司名称
 	TrackingNumber string `json:"trackingNumber"` // 运单号

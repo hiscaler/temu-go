@@ -10,7 +10,7 @@ import (
 // 已发货包裹服务
 type semiOnlineOrderShippedPackageService service
 
-type SemiPlatformLogisticsShippedPackageRequest struct {
+type SemiOnlineOrderPlatformLogisticsShippedPackageRequest struct {
 	PackageSendInfoList []struct {
 		PackageSn      string `json:"packageSn"`      // 包裹号
 		TrackingNumber string `json:"trackingNumber"` // 运单号
@@ -22,7 +22,7 @@ type SemiPlatformLogisticsShippedPackageRequest struct {
 	} `json:"packageSendInfoList"` // 确认发货包裹列表
 }
 
-func (m SemiPlatformLogisticsShippedPackageRequest) validate() error {
+func (m SemiOnlineOrderPlatformLogisticsShippedPackageRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.PackageSendInfoList, validation.Required.Error("确认发货包裹列表不能为空")),
 		// todo 更多的数据验证
@@ -31,7 +31,7 @@ func (m SemiPlatformLogisticsShippedPackageRequest) validate() error {
 
 // Confirm 确认包裹发货接口（bg.logistics.shipped.package.confirm）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#92SpUJ
-func (s semiOnlineOrderShippedPackageService) Confirm(ctx context.Context, params SemiPlatformLogisticsShippedPackageRequest) (items []entity.SemiOnlineOrderShippedPackageConfirmResult, err error) {
+func (s semiOnlineOrderShippedPackageService) Confirm(ctx context.Context, params SemiOnlineOrderPlatformLogisticsShippedPackageRequest) (items []entity.SemiOnlineOrderShippedPackageConfirmResult, err error) {
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)
 	}

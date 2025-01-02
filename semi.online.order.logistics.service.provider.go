@@ -11,7 +11,7 @@ import (
 // 物流服务提供商服务
 type semiOnlineOrderLogisticsServiceProviderService service
 
-type SemiLogisticsServiceProviderQueryParams struct {
+type SemiOnlineOrderLogisticsServiceProviderQueryParams struct {
 	WarehouseId         string    `json:"warehouseId"`                   // 仓库 id
 	OrderSnList         []string  `json:"orderSnList"`                   // O单（orderSn 非 parentOrderSn）列表（至少包含一个O单号）
 	Weight              string    `json:"weight"`                        // 重量（默认 2 位小数，美国lb，其他国家kg）
@@ -23,7 +23,7 @@ type SemiLogisticsServiceProviderQueryParams struct {
 	SignatureOnDelivery null.Bool `json:"signatureOnDelivery,omitempty"` // 是否需要签名签收服务
 }
 
-func (m SemiLogisticsServiceProviderQueryParams) validate() error {
+func (m SemiOnlineOrderLogisticsServiceProviderQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.WarehouseId, validation.Required.Error("仓库不能为空")),
 		validation.Field(&m.OrderSnList, validation.Required.Error("订单号列表不能为空")),
@@ -43,7 +43,7 @@ func (m SemiLogisticsServiceProviderQueryParams) validate() error {
 
 // Query 查询可用物流服务接口（bg.logistics.shippingservices.get）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#d0sexY
-func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Context, params SemiLogisticsServiceProviderQueryParams) (items []entity.SemiOnlineOrderLogisticsChannel, err error) {
+func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Context, params SemiOnlineOrderLogisticsServiceProviderQueryParams) (items []entity.SemiOnlineOrderLogisticsChannel, err error) {
 	if err = params.validate(); err != nil {
 		return
 	}
