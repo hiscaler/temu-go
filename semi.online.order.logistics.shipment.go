@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"gopkg.in/guregu/null.v4"
 )
@@ -79,4 +80,29 @@ func (s semiOnlineOrderLogisticsShipmentService) Create(ctx context.Context, req
 	}
 
 	return result.Result.PackageSnList, result.Result.ShipLaterLimitTime, nil
+}
+
+// Query 物流在线发货下单查询接口
+// https://seller.kuajingmaihuo.com/sop/view/144659541206936016#S8m7N3
+func (s semiOnlineOrderLogisticsShipmentService) Query(ctx context.Context, packageNumbers ...string) (items []entity.SemiOnlineOrderLogisticsShipmentPackage, err error) {
+	if len(packageNumbers) == 0 {
+		return nil, ErrInvalidParameters
+	}
+
+	var result = struct {
+		normal.Response
+		Result struct {
+			PackageInfoResultList []entity.SemiOnlineOrderLogisticsShipmentPackage `json:"packageInfoResultList"` // 包裹下单结果
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(map[string][]string{"packageSnList": packageNumbers}).
+		SetResult(&result).
+		Post("bg.logistics.shipment.result.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
+	}
+
+	return result.Result.PackageInfoResultList, nil
 }
