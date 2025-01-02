@@ -57,6 +57,12 @@ type GoodsQueryParams struct {
 
 func (m GoodsQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.BindSiteIds, validation.In(
+			entity.AmericanSiteId,
+			entity.CanadaSiteId,
+			entity.UnitedKingdomSiteId,
+			entity.AustraliaSiteId,
+		).Error("无效的站点")),
 		validation.Field(&m.CreatedAtStart,
 			validation.When(m.CreatedAtStart != "" || m.CreatedAtEnd != "", validation.By(is.TimeRange(m.CreatedAtStart, m.CreatedAtEnd, time.DateTime))),
 		),
@@ -426,7 +432,7 @@ type GoodsCreateRequest struct {
 	} `json:"goodsLayerDecorationReqs"` // 商详装饰
 	PersonalizationSwitch int `json:"personalizationSwitch"` // 是否定制品，API发品标记定制品后，请及时在卖家中心配置定制模版信息，否则无法正常加站点售卖 0：非定制品、1：定制品
 	ProductSemiManagedReq struct {
-		BindSiteIds []int64 `json:"bindSiteIds"` // 绑定站点列表
+		BindSiteIds []int `json:"bindSiteIds"` // 绑定站点列表
 		// 半托管-素材语种策略，不传默认2
 		// 1：仅站点本地语种素材，允许只上传站点本地语种的素材（多语言素材节点上传本地素材，英语素材也可使用本地语种素材填充）
 		// 关联节点如下：

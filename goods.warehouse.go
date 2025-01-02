@@ -11,7 +11,7 @@ import (
 type goodsWarehouseService service
 
 type GoodsWarehouseQueryParams struct {
-	SiteIdList []int64 `json:"siteIdList"` // 站点列表
+	SiteIdList []int `json:"siteIdList"` // 站点列表
 }
 
 func (m GoodsWarehouseQueryParams) validate() error {
