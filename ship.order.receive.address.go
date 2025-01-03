@@ -41,7 +41,7 @@ func (s shipOrderReceiveAddressService) Query(ctx context.Context, purchaseOrder
 	return result.Result.SubPurchaseReceiveAddressGroups, nil
 }
 
-// One [WIP] 查询单个备货单收货地址
+// One 查询单个备货单收货地址
 func (s shipOrderReceiveAddressService) One(ctx context.Context, purchaseOrderNumber string) (item entity.ShipOrderReceiveAddress, err error) {
 	items, err := s.Query(ctx, purchaseOrderNumber)
 	if err != nil {
