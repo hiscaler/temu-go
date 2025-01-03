@@ -128,7 +128,7 @@ func (r simpleResponse) retry() bool {
 
 // 默认中国区
 func parseRegionId(regionId int) int {
-	if regionId != entity.ChinaRegionId && regionId != entity.AmericanRegionId && regionId != entity.EuropeRegionId {
+	if regionId != entity.ChinaRegionId && regionId != entity.AmericanRegionId && regionId != entity.UnitedArabEmiratesRegionId {
 		regionId = entity.ChinaRegionId
 	}
 	return regionId
@@ -156,7 +156,7 @@ func NewClient(cfg config.Config) *Client {
 			Prod: "https://openapi-b-us.temu.com/openapi/router",
 			Test: "http://openapi-b-us.temudemo.com/openapi/router",
 		},
-		entity.EuropeRegionId: {
+		entity.UnitedArabEmiratesRegionId: {
 			Prod: "https://openapi-b-eu.temu.com/openapi/router",
 			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
 		},

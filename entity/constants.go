@@ -116,13 +116,15 @@ const (
 	QuantityChangeModeReplace    = 2 // 覆盖变更
 )
 
+// https://seller.kuajingmaihuo.com/sop/view/231998342274104483#6mTvhA
 // 区域 Id
 const (
-	ChinaRegionId    = 0   // 中国区
-	AmericanRegionId = 211 // 美区
-	EuropeRegionId   = 311 // 欧区
+	ChinaRegionId              = 43  // 中国区
+	AmericanRegionId           = 211 // 美区
+	UnitedArabEmiratesRegionId = 209 // 阿联酋
 )
 
+// https://seller.kuajingmaihuo.com/sop/view/231998342274104483#d78RUG
 // 站点 Id
 const (
 	AmericanSiteId      = 100 // 美国站
