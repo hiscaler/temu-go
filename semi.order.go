@@ -14,7 +14,7 @@ import (
 // 订单服务（半托管专属，必须在 US/EU 网关调用）
 type semiOrderService service
 
-type OrderQueryParams struct {
+type SemiOrderQueryParams struct {
 	normal.ParameterWithPager
 	PageNumber int `json:"pageNumber"` // 第几页
 	// 父单状态，默认查全部枚举值如下
@@ -45,7 +45,7 @@ type OrderQueryParams struct {
 	FulfillmentTypeList []string `json:"fulfillmentTypeList"` // 子订单履约类型
 }
 
-func (m OrderQueryParams) validate() error {
+func (m SemiOrderQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.CreateBefore,
 			validation.When(m.CreateBefore != "" || m.CreateAfter != "", validation.By(is.TimeRange(m.CreateBefore, m.CreateAfter, time.DateTime))),
@@ -61,7 +61,7 @@ func (m OrderQueryParams) validate() error {
 
 // Query 订单列表查询接口
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#r2WKrz
-func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (items []entity.PageItem, total, totalPages int, isLastPage bool, err error) {
+func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams) (items []entity.PageItem, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	params.PageNumber = params.Pager.Page
 	if err = params.validate(); err != nil {
@@ -107,7 +107,6 @@ func (s semiOrderService) Query(ctx context.Context, params OrderQueryParams) (i
 	}
 
 	items = result.Result.Result.PageItems
-	 
 	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Result.TotalItemNum)
 	return
 }

@@ -7,7 +7,7 @@ import (
 )
 
 func TestOrder(t *testing.T) {
-	params := OrderQueryParams{
+	params := SemiOrderQueryParams{
 		// ParentOrderStatus: 2,
 		RegionId:          211,
 		ParentOrderSnList: []string{"PO-211-05430492122150798"},
