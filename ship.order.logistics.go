@@ -63,7 +63,7 @@ func (s shipOrderLogisticsService) Match(ctx context.Context, request LogisticsM
 		normal.Response
 		Result struct {
 			MostUsedExpressCompany *entity.MostUsedExpressCompany `json:"mostUsedExpressCompany"` // 常用物流（可能为空）
-			UsePricePrivileges     bool                           `json:"usePricePrivileges"`     //  是否使用供价侧权益
+			UsePricePrivileges     bool                           `json:"usePricePrivileges"`     // 是否使用供价侧权益
 			List                   []entity.LogisticsMatch        `json:"list"`                   // 平台推荐物流列表
 		} `json:"result"`
 	}{}
