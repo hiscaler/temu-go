@@ -265,7 +265,7 @@ func (m SemiOnlineOrderLogisticsShipmentDocumentRequest) validate() error {
 			validation.Required.Error("面单文件类型不能为空"),
 			validation.In("SHIPPING_LABEL_PDF").Error("无效的面单文件类型"),
 		),
-		validation.Field(&m.PackageSnList, validation.Required.Error(" 需要打印面单的包裹号列表不能为空")),
+		validation.Field(&m.PackageSnList, validation.Required.Error("需要打印面单的包裹号列表不能为空")),
 	)
 }
 
