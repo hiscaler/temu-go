@@ -226,3 +226,46 @@ func (s semiOnlineOrderLogisticsShipmentService) UpdateShippingType(ctx context.
 
 	return result.Result, nil
 }
+
+// 物流在线发货打印面单接口（bg.logistics.shipment.document.get）
+
+type SemiOnlineOrderLogisticsShipmentDocumentRequest struct {
+	// - SHIPPING_LABEL_PDF:入参此参数,返回的URL加签后只返回PDF格式的面单文件
+	// - 不入参，按照旧有逻辑返回面单文件，即按物流商的面单文件返回确定图片格式或PDF格式；
+	// - 入不合法的参数值：接口报错，报错文案：Document type is invalid.
+	DocumentType  string   `json:"documentType"`  // 文件类型
+	PackageSnList []string `json:"packageSnList"` // 需要打印面单的包裹号列表
+}
+
+func (m SemiOnlineOrderLogisticsShipmentDocumentRequest) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.DocumentType,
+			validation.Required.Error("面单文件类型不能为空"),
+			validation.In("SHIPPING_LABEL_PDF").Error("无效的面单文件类型"),
+		),
+		validation.Field(&m.PackageSnList, validation.Required.Error(" 需要打印面单的包裹号列表不能为空")),
+	)
+}
+
+func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, request SemiOnlineOrderLogisticsShipmentDocumentRequest) (items []entity.SemiOnlineOrderLogisticsShipmentDocument, err error) {
+	if err = request.validate(); err != nil {
+		return nil, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result struct {
+			ShippingLabelUrlList []entity.SemiOnlineOrderLogisticsShipmentDocument `json:"shippingLabelUrlList"` // 包裹对应的面单文件url，pdf或图片
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.logistics.shipment.document.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return nil, err
+	}
+
+	return result.Result.ShippingLabelUrlList, nil
+}
