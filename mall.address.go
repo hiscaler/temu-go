@@ -87,11 +87,7 @@ func (m CreateDeliveryAddressRequest) validate() error {
 					return fmt.Errorf("无效的联系人电话 %v", s)
 				}
 
-				var err error
-				if err = validation.Validate(s, validation.By(is.MobilePhoneNumber())); err != nil {
-					err = validation.Validate(s, validation.By(is.TelNumber()))
-				}
-				if err != nil {
+				if err := validation.Validate(s, validation.By(is.MobilePhoneOrTelNumber())); err != nil {
 					return fmt.Errorf("无效的联系人电话 %s", s)
 				}
 
