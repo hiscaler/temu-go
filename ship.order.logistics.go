@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -13,17 +14,16 @@ import (
 type shipOrderLogisticsService service
 
 // 平台推荐物流商匹配接口
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#16WiXI
+// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#fsycCS
 
 type LogisticsMatchRequest struct {
-	DeliveryAddressId         int64                  `json:"deliveryAddressId,omitempty"`   // 发货地址
-	PredictTotalPackageWeight int                    `json:"predictTotalPackageWeight"`     // 预估总包裹重量，单位g
-	UrgencyType               null.Int               `json:"urgencyType,omitempty"`         // 是否是紧急发货单，0-普通 1-急采
-	SubWarehouseId            int64                  `json:"subWarehouseId"`                // 收货子仓 ID
-	QueryStandbyExpress       null.Bool              `json:"queryStandbyExpress,omitempty"` // 是否查询备用快递服务商, false-不查询 true-查询
-	TotalPackageNum           int                    `json:"totalPackageNum"`               // 包裹件数
-	ReceiveAddressInfo        *entity.ReceiveAddress `json:"receiveAddressInfo,omitempty"`  // 收货地址
-	DeliveryOrderSns          []string               `json:"deliveryOrderSns,omitempty"`    // 发货单列表
+	DeliveryAddressId         int64                  `json:"deliveryAddressId,omitempty"`  // 发货地址
+	PredictTotalPackageWeight int                    `json:"predictTotalPackageWeight"`    // 预估总包裹重量，单位g
+	UrgencyType               null.Int               `json:"urgencyType,omitempty"`        // 是否是紧急发货单，0-普通 1-急采
+	SubWarehouseId            int64                  `json:"subWarehouseId"`               // 收货子仓 ID
+	TotalPackageNum           int                    `json:"totalPackageNum"`              // 包裹件数
+	ReceiveAddressInfo        *entity.ReceiveAddress `json:"receiveAddressInfo,omitempty"` // 收货地址
+	DeliveryOrderSns          []string               `json:"deliveryOrderSns,omitempty"`   // 发货单列表
 }
 
 func (m LogisticsMatchRequest) validate() error {
@@ -40,7 +40,10 @@ func (m LogisticsMatchRequest) validate() error {
 		validation.Field(&m.ReceiveAddressInfo,
 			validation.Required.Error("收货信息不能为空"),
 			validation.By(func(value interface{}) error {
-				v, _ := value.(*entity.ReceiveAddress)
+				v, ok := value.(*entity.ReceiveAddress)
+				if !ok {
+					return errors.New("无效的收货信息")
+				}
 				return v.Validate()
 			}),
 		),
@@ -58,18 +61,22 @@ func (s shipOrderLogisticsService) Match(ctx context.Context, request LogisticsM
 
 	var result = struct {
 		normal.Response
-		Result []entity.LogisticsMatch `json:"result"`
+		Result struct {
+			MostUsedExpressCompany *entity.MostUsedExpressCompany `json:"mostUsedExpressCompany"` // 常用物流（可能为空）
+			UsePricePrivileges     bool                           `json:"usePricePrivileges"`     //  是否使用供价侧权益
+			List                   []entity.LogisticsMatch        `json:"list"`                   // 平台推荐物流列表
+		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.shiporderv2.logisticsmatch.get")
+		Post("bg.shiporderv3.logisticsmatch.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return items, err
 	}
 
-	return result.Result, nil
+	return result.Result.List, nil
 }
 
 // 物流单号与物流商校验（bg.shiporder.logisticsorder.match）

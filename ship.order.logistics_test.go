@@ -26,7 +26,6 @@ func Test_shipOrderLogisticsService_Match(t *testing.T) {
 		PredictTotalPackageWeight: 1000,
 		UrgencyType:               null.IntFrom(1),
 		SubWarehouseId:            shipOrder.SubWarehouseId,
-		QueryStandbyExpress:       null.BoolFrom(false),
 		TotalPackageNum:           2,
 		ReceiveAddressInfo:        &receiveAddress.ReceiveAddressInfo,
 		DeliveryOrderSns:          []string{shipOrder.DeliveryOrderSn},

@@ -37,17 +37,16 @@ func (st LogisticsMatchChannelScheduleTime) Range() (t LogisticsChannelAppointme
 
 // LogisticsMatch 推荐物流商匹配
 type LogisticsMatch struct {
-	ExpressCompanyId        int64                               `json:"expressCompanyId"`        // 快递公司 ID
-	ExpressCompanyName      string                              `json:"expressCompanyName"`      // 快递公司名称
-	StandbyExpress          bool                                `json:"standbyExpress"`          // 是否是备用快递公司
-	TmsChannelId            int                                 `json:"tmsChannelId"`            // TMS 快递产品类型 ID
-	MinSupplierChargeAmount float64                             `json:"minSupplierChargeAmount"` // 最小预估商家承担运费（单位元）
-	MaxSupplierChargeAmount float64                             `json:"maxSupplierChargeAmount"` // 最大预估商家承担运费（单位元）
-	MinChargeAmount         float64                             `json:"minChargeAmount"`         // 最小预估运费（单位元）
-	MaxChargeAmount         float64                             `json:"maxChargeAmount"`         // 最小预估运费（单位元）
-	ChannelScheduleTimeList []LogisticsMatchChannelScheduleTime `json:"channelScheduleTimeList"` // 可预约揽收时间
-	LatestAppointmentTime   int64                               `json:"latestAppointmentTime"`   // 最迟预约时间
-	PredictId               int64                               `json:"predictId"`               // 预测 ID
+	MinSupplierChargeAmount  float64                             `json:"minSupplierChargeAmount"`  // 最小预估商家承担运费（单位元）
+	MaxSupplierChargeAmount  float64                             `json:"maxSupplierChargeAmount"`  // 最大预估商家承担运费（单位元）
+	ChannelScheduleTimeList  []LogisticsMatchChannelScheduleTime `json:"channelScheduleTimeList"`  // 可预约揽收时间
+	AdvantageDescList        []string                            `json:"advantageDescList"`        // 该物流相比常用物流的优势点 可能为空
+	HasUsedThisLogistics     bool                                `json:"hasUsedThisLogistics"`     // 供应商是否使用过该物流
+	CarrierAttention         string                              `json:"carrierAttention"`         // 承运注意事项
+	ExpressCompanyId         int64                               `json:"expressCompanyId"`         // 快递公司 ID
+	ExpressCompanyName       string                              `json:"expressCompanyName"`       // 快递公司名称
+	PromisedDeliveryHourTime float64                             `json:"promisedDeliveryHourTime"` // 承诺送达时间
+	PredictId                int64                               `json:"predictId"`                // 预测 ID
 }
 
 // LatestScheduleTime 获取最近可用的时间

@@ -181,7 +181,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Update(ctx context.Context, req
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.logistics.shipment.result.get")
+		Post("bg.logistics.shipment.update")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}
