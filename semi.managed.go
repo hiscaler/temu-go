@@ -19,7 +19,7 @@ type semiOnlineOrderLogisticsService struct {
 	Warehouse       semiOnlineOrderLogisticsWarehouseService       // 仓库
 }
 
-// 包裹服务
+// 在线下单包裹服务
 type semiOnlineOrderPackageService struct {
 	Unshipped semiOnlineOrderUnshippedPackageService // 未发货
 	Shipped   semiOnlineOrderShippedPackageService   // 已发货

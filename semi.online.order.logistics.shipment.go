@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
@@ -191,16 +192,37 @@ func (s semiOnlineOrderLogisticsShipmentService) Update(ctx context.Context, req
 
 // 物流在线发货修改物流接口
 
+type EditPackageRequestItem struct {
+	PackageSn      string `json:"packageSn"`      // 包裹号
+	TrackingNumber string `json:"trackingNumber"` // 运单号
+	ShipCompanyId  int64  `json:"shipCompanyId"`  // 物流公司 id
+}
+
+func (m EditPackageRequestItem) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.PackageSn, validation.Required.Error("包裹号不能为空")),
+		validation.Field(&m.TrackingNumber, validation.Required.Error("运单号不能为空")),
+		validation.Field(&m.ShipCompanyId, validation.Required.Error("物流公司不能为空")),
+	)
+}
+
 type SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest struct {
-	EditPackageRequestList []struct {
-		PackageSn      string `json:"packageSn"`      // 包裹号
-		TrackingNumber string `json:"trackingNumber"` // 运单号
-		ShipCompanyId  int64  `json:"shipCompanyId"`  // 物流公司id
-	} `json:"editPackageRequestList"` // 编辑请求列表
+	EditPackageRequestList []EditPackageRequestItem `json:"editPackageRequestList"` // 编辑请求列表
 }
 
 func (m SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.EditPackageRequestList,
+			validation.Required.Error("编辑请求列表不能为空"),
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(EditPackageRequestItem)
+				if !ok {
+					return errors.New("无效的编辑请求项")
+				}
+				return v.validate()
+			})),
+		),
+	)
 }
 
 //	UpdateShippingType
