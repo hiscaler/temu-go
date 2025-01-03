@@ -29,9 +29,9 @@ func (m ShipOrderPackageQueryParams) validate() error {
 
 // One 发货包裹查询
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#eprtWq
-func (s shipOrderPackageService) One(ctx context.Context, shipOrderNumber string) (items []entity.ShipOrderPackage, err error) {
+func (s shipOrderPackageService) One(ctx context.Context, shipOrderNumber string) ([]entity.ShipOrderPackage, error) {
 	params := ShipOrderPackageQueryParams{DeliveryOrderSn: shipOrderNumber}
-	if err = params.validate(); err != nil {
+	if err := params.validate(); err != nil {
 		return nil, invalidInput(err)
 	}
 
@@ -140,10 +140,9 @@ func (m ShipOrderPackageUpdateRequest) validate() error {
 
 // Update 发货包裹编辑
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#qSU56c
-func (s shipOrderPackageService) Update(ctx context.Context, req ShipOrderPackageUpdateRequest) (ok bool, err error) {
-	if err = req.validate(); err != nil {
-		err = invalidInput(err)
-		return
+func (s shipOrderPackageService) Update(ctx context.Context, req ShipOrderPackageUpdateRequest) (bool, error) {
+	if err := req.validate(); err != nil {
+		return false, invalidInput(err)
 	}
 
 	var result = struct {
@@ -156,7 +155,7 @@ func (s shipOrderPackageService) Update(ctx context.Context, req ShipOrderPackag
 		SetResult(&result).
 		Post("bg.shiporder.package.edit")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return false, err
 	}
 
 	return true, nil
