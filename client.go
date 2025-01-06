@@ -134,7 +134,7 @@ func parseRegion(region string) string {
 	if !slices.Contains([]string{
 		entity.ChinaRegion,
 		entity.AmericanRegion,
-		entity.EuropeanRegion,
+		entity.EuropeanUnionRegion,
 	}, region) {
 		region = entity.ChinaRegion
 	}
@@ -163,7 +163,7 @@ func NewClient(cfg config.Config) *Client {
 			Prod: "https://openapi-b-us.temu.com/openapi/router",
 			Test: "http://openapi-b-us.temudemo.com/openapi/router",
 		},
-		entity.EuropeanRegion: {
+		entity.EuropeanUnionRegion: {
 			Prod: "https://openapi-b-eu.temu.com/openapi/router",
 			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
 		},

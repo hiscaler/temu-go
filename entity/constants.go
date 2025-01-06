@@ -118,9 +118,9 @@ const (
 
 // https://seller.kuajingmaihuo.com/sop/view/231998342274104483#6mTvhA
 const (
-	ChinaRegion    = "CN" // 中国区
-	AmericanRegion = "US" // 美区
-	EuropeanRegion = "EU" // 欧区
+	ChinaRegion         = "CN" // 中国区
+	AmericanRegion      = "US" // 美区
+	EuropeanUnionRegion = "EU" // 欧盟区
 )
 
 // https://seller.kuajingmaihuo.com/sop/view/231998342274104483#d78RUG

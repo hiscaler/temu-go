@@ -9,7 +9,7 @@ func GetRegionByRegionId(regionId int) string {
 	case 211, 219:
 		return entity.AmericanRegion
 	case 210, 76, 98, 13, 20, 32, 50, 52, 53, 54, 64, 68, 69, 72, 79, 90, 96, 108, 113, 114, 122, 141, 162, 163, 167, 180, 181, 186, 191, 91, 112, 151:
-		return entity.EuropeanRegion
+		return entity.EuropeanUnionRegion
 	default:
 		return entity.ChinaRegion
 	}
@@ -22,7 +22,7 @@ func GetRegionBySiteId(siteId int) string {
 	case 100, 101, 103, 104, 118, 110, 187:
 		return entity.AmericanRegion
 	case 105, 106, 107, 109, 102, 112, 137, 138, 111, 108, 142, 113, 143, 140, 139, 145, 116, 146, 141, 115, 144, 150, 148, 147, 149, 151, 117, 152:
-		return entity.EuropeanRegion
+		return entity.EuropeanUnionRegion
 	default:
 		return entity.ChinaRegion
 	}
