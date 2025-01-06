@@ -11,7 +11,7 @@ type semiOnlineOrderLogisticsWarehouseService service
 
 // Query 查询卖家发货仓库基础信息接口（bg.logistics.warehouse.list.get）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#MdjB3d
-func (s semiOnlineOrderLogisticsWarehouseService) Query(ctx context.Context) (items []entity.SemiOnlineOrderLogisticsWarehouse, err error) {
+func (s semiOnlineOrderLogisticsWarehouseService) Query(ctx context.Context) ([]entity.SemiOnlineOrderLogisticsWarehouse, error) {
 	var result = struct {
 		normal.Response
 		Result struct {
@@ -23,9 +23,8 @@ func (s semiOnlineOrderLogisticsWarehouseService) Query(ctx context.Context) (it
 		SetResult(&result).
 		Post("bg.logistics.warehouse.list.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return nil, err
 	}
 
-	items = result.Result.WarehouseList
-	return
+	return result.Result.WarehouseList, nil
 }

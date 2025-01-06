@@ -31,9 +31,9 @@ func (m SemiOnlineOrderPlatformLogisticsShippedPackageRequest) validate() error 
 
 // Confirm 确认包裹发货接口（bg.logistics.shipped.package.confirm）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#92SpUJ
-func (s semiOnlineOrderShippedPackageService) Confirm(ctx context.Context, params SemiOnlineOrderPlatformLogisticsShippedPackageRequest) (items []entity.SemiOnlineOrderShippedPackageConfirmResult, err error) {
-	if err = params.validate(); err != nil {
-		return items, invalidInput(err)
+func (s semiOnlineOrderShippedPackageService) Confirm(ctx context.Context, params SemiOnlineOrderPlatformLogisticsShippedPackageRequest) ([]entity.SemiOnlineOrderShippedPackageConfirmResult, error) {
+	if err := params.validate(); err != nil {
+		return nil, invalidInput(err)
 	}
 
 	var result = struct {
@@ -48,7 +48,7 @@ func (s semiOnlineOrderShippedPackageService) Confirm(ctx context.Context, param
 		SetResult(&result).
 		Post("bg.logistics.shipped.package.confirm")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return nil, err
 	}
 
 	return result.Result.WarningMessage, nil

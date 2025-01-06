@@ -43,9 +43,9 @@ func (m SemiOnlineOrderLogisticsServiceProviderQueryParams) validate() error {
 
 // Query 查询可用物流服务接口（bg.logistics.shippingservices.get）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#d0sexY
-func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Context, params SemiOnlineOrderLogisticsServiceProviderQueryParams) (items []entity.SemiOnlineOrderLogisticsChannel, err error) {
-	if err = params.validate(); err != nil {
-		return
+func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Context, params SemiOnlineOrderLogisticsServiceProviderQueryParams) ([]entity.SemiOnlineOrderLogisticsChannel, error) {
+	if err := params.validate(); err != nil {
+		return nil, invalidInput(err)
 	}
 
 	var result = struct {
@@ -59,9 +59,8 @@ func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Contex
 		SetResult(&result).
 		Post("bg.logistics.shippingservices.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return nil, err
 	}
 
-	items = result.Result.OnlineChannelDtoList
-	return
+	return result.Result.OnlineChannelDtoList, nil
 }
