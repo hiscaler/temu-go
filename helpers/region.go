@@ -1,6 +1,9 @@
 package helpers
 
-import "github.com/hiscaler/temu-go/entity"
+import (
+	"github.com/hiscaler/temu-go/entity"
+	"slices"
+)
 
 // GetRegionByRegionId 根据区域 ID 获取所在区域
 // https://seller.kuajingmaihuo.com/sop/view/231998342274104483#6mTvhA
@@ -18,12 +21,11 @@ func GetRegionByRegionId(regionId int) string {
 // GetRegionBySiteId 根据站点 ID 获取所在区域
 // https://seller.kuajingmaihuo.com/sop/view/231998342274104483#d78RUG
 func GetRegionBySiteId(siteId int) string {
-	switch siteId {
-	case 100, 101, 103, 104, 118, 110, 187:
+	if slices.Contains(entity.AmericanSiteIds, siteId) {
 		return entity.AmericanRegion
-	case 105, 106, 107, 109, 102, 112, 137, 138, 111, 108, 142, 113, 143, 140, 139, 145, 116, 146, 141, 115, 144, 150, 148, 147, 149, 151, 117, 152:
+	} else if slices.Contains(entity.EuropeanUnionSiteIds, siteId) {
 		return entity.EuropeanUnionRegion
-	default:
+	} else {
 		return entity.ChinaRegion
 	}
 }

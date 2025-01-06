@@ -5,6 +5,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/hiscaler/temu-go/validators/is"
 )
 
 // 商品仓库服务
@@ -18,12 +19,7 @@ func (m GoodsWarehouseQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.SiteIdList,
 			validation.Required.Error("站点列表不能为空"),
-			validation.Each(validation.In(
-				entity.AmericanSiteId,
-				entity.CanadaSiteId,
-				entity.UnitedKingdomSiteId,
-				entity.AustraliaSiteId,
-			).Error("无效的站点")),
+			validation.By(is.SiteIds(entity.SiteIds)),
 		),
 	)
 }
