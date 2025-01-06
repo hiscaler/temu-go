@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -34,17 +35,18 @@ const (
 )
 
 const (
-	BadRequestError           = 400     // 错误的请求
-	UnauthorizedError         = 401     // 身份验证或权限错误
-	NotFoundError             = 404     // 访问资源不存在
-	InternalServerError       = 500     // 服务器内部错误
-	MethodNotImplementedError = 501     // 方法未实现
-	SystemExceptionError      = 200000  // 系统异常
-	InvalidSignError          = 7000015 // 签名无效
-	NoAppKeyError             = 7000002 // 未设置 App Key
-	NoAccessTokenError        = 7000003 // 未设置 Access Token
-	InvalidAccessTokenError   = 7000018 // 无效的 Access Token
-	AccessTokenKeyUnmatched   = 7000006 // Access Token 和 Key 不匹配
+	BadRequestError              = 400     // 错误的请求
+	UnauthorizedError            = 401     // 身份验证或权限错误
+	NotFoundError                = 404     // 访问资源不存在
+	InternalServerError          = 500     // 服务器内部错误
+	MethodNotImplementedError    = 501     // 方法未实现
+	SystemExceptionError         = 200000  // 系统异常
+	InvalidSignError             = 7000015 // 签名无效
+	NoAppKeyError                = 7000002 // 未设置 App Key
+	NoAccessTokenError           = 7000003 // 未设置 Access Token
+	InvalidAccessTokenError      = 7000018 // 无效的 Access Token
+	AccessTokenKeyUnmatchedError = 7000006 // Access Token 和 Key 不匹配
+	TypIsNotExistsError          = 3000003 // 接口不存在
 )
 
 var ErrNotFound = errors.New("数据不存在")
@@ -70,7 +72,7 @@ type services struct {
 type Client struct {
 	Env          string         // 环境
 	Debug        bool           // 是否为 Debug 模式
-	RegionId     int            // 区域 Id
+	Region       string         // 接口所在区域
 	Logger       *slog.Logger   // Log
 	Services     services       // API services
 	TimeLocation *time.Location // 时区
@@ -127,11 +129,16 @@ func (r simpleResponse) retry() bool {
 }
 
 // 默认中国区
-func parseRegionId(regionId int) int {
-	if regionId != entity.ChinaRegionId && regionId != entity.AmericanRegionId && regionId != entity.UnitedArabEmiratesRegionId {
-		regionId = entity.ChinaRegionId
+func parseRegion(region string) string {
+	region = strings.ToUpper(region)
+	if !slices.Contains([]string{
+		entity.ChinaRegion,
+		entity.AmericanRegion,
+		entity.EuropeanRegion,
+	}, region) {
+		region = entity.ChinaRegion
 	}
-	return regionId
+	return region
 }
 
 func NewClient(cfg config.Config) *Client {
@@ -147,29 +154,29 @@ func NewClient(cfg config.Config) *Client {
 		}
 	}
 
-	urls := map[int]config.URLPair{
-		entity.ChinaRegionId: {
+	urls := map[string]config.URLPair{
+		entity.ChinaRegion: {
 			Prod: "https://openapi.kuajingmaihuo.com/openapi/router",
 			Test: "https://kj-openapi.temudemo.com/openapi/router",
 		},
-		entity.AmericanRegionId: {
+		entity.AmericanRegion: {
 			Prod: "https://openapi-b-us.temu.com/openapi/router",
 			Test: "http://openapi-b-us.temudemo.com/openapi/router",
 		},
-		entity.UnitedArabEmiratesRegionId: {
+		entity.EuropeanRegion: {
 			Prod: "https://openapi-b-eu.temu.com/openapi/router",
 			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
 		},
 	}
 
 	if cfg.OverwriteUrls != nil {
-		for regionId, overwriteURL := range cfg.OverwriteUrls {
-			if _, exists := urls[regionId]; exists {
+		for region, overwriteURL := range cfg.OverwriteUrls {
+			if _, exists := urls[region]; exists {
 				if overwriteURL.Prod != "" {
-					urls[regionId] = config.URLPair{Prod: overwriteURL.Prod, Test: urls[regionId].Test}
+					urls[region] = config.URLPair{Prod: overwriteURL.Prod, Test: urls[region].Test}
 				}
 				if overwriteURL.Test != "" {
-					urls[regionId] = config.URLPair{Prod: urls[regionId].Prod, Test: overwriteURL.Test}
+					urls[region] = config.URLPair{Prod: urls[region].Prod, Test: overwriteURL.Test}
 				}
 			}
 		}
@@ -181,9 +188,9 @@ func NewClient(cfg config.Config) *Client {
 	} else if env != prodEnv {
 		env = testEnv
 	}
-	regionId := parseRegionId(cfg.RegionId)
+	region := parseRegion(cfg.Region)
 	url := ""
-	if v, ok := urls[regionId]; ok {
+	if v, ok := urls[region]; ok {
 		if env == prodEnv {
 			url = v.Prod
 		} else {
@@ -193,7 +200,7 @@ func NewClient(cfg config.Config) *Client {
 	client := &Client{
 		Env:          env,
 		Debug:        debug,
-		RegionId:     regionId,
+		Region:       region,
 		Logger:       l,
 		TimeLocation: loc,
 	}
@@ -382,8 +389,8 @@ func NewClient(cfg config.Config) *Client {
 	return client
 }
 
-func (c *Client) SetRegionId(regionId int) *Client {
-	c.RegionId = parseRegionId(regionId)
+func (c *Client) SetRegion(region string) *Client {
+	c.Region = parseRegion(region)
 	return c
 }
 
@@ -478,8 +485,10 @@ func errorWrap(code int, message string) error {
 		message = "未设置 Access Token"
 	case InvalidAccessTokenError, 7000020:
 		message = "无效的 Access Token"
-	case AccessTokenKeyUnmatched:
+	case AccessTokenKeyUnmatchedError:
 		message = "Access Token 和 Key 不匹配"
+	case TypIsNotExistsError:
+		return errors.New("接口不存在")
 	case 7000016:
 		return errors.New("无效的请求地址")
 	case 2000000, 2000090, 3000000:

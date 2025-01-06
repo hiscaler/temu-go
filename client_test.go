@@ -30,17 +30,17 @@ func TestMain(m *testing.M) {
 	m.Run()
 }
 
-func TestClient_SetRegionId(t *testing.T) {
+func TestClient_SetRegion(t *testing.T) {
 	tests := []struct {
-		name           string
-		regionId       int
-		expectRegionId int
+		name         string
+		region       string
+		expectRegion string
 	}{
-		{"t1", 1, 0},
-		{"t2", entity.AmericanRegionId, entity.AmericanRegionId},
+		{"t1", entity.ChinaRegion, entity.ChinaRegion},
+		{"t2", entity.AmericanRegion, entity.AmericanRegion},
 	}
 	for _, tt := range tests {
-		temuClient.SetRegionId(tt.regionId)
-		assert.Equalf(t, tt.expectRegionId, temuClient.RegionId, tt.name)
+		temuClient.SetRegion(tt.region)
+		assert.Equalf(t, tt.expectRegion, temuClient.Region, tt.name)
 	}
 }

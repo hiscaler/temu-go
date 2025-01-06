@@ -117,11 +117,10 @@ const (
 )
 
 // https://seller.kuajingmaihuo.com/sop/view/231998342274104483#6mTvhA
-// 区域 Id
 const (
-	ChinaRegionId              = 43  // 中国区
-	AmericanRegionId           = 211 // 美区
-	UnitedArabEmiratesRegionId = 209 // 阿联酋
+	ChinaRegion    = "CN" // 中国区
+	AmericanRegion = "US" // 美区
+	EuropeanRegion = "EU" // 欧区
 )
 
 // https://seller.kuajingmaihuo.com/sop/view/231998342274104483#d78RUG
