@@ -46,7 +46,7 @@ const (
 	NoAccessTokenError           = 7000003 // 未设置 Access Token
 	InvalidAccessTokenError      = 7000018 // 无效的 Access Token
 	AccessTokenKeyUnmatchedError = 7000006 // Access Token 和 Key 不匹配
-	TypIsNotExistsError          = 3000003 // 接口不存在
+	TypeIsNotExistsError         = 3000003 // 接口不存在
 )
 
 var ErrNotFound = errors.New("数据不存在")
@@ -487,7 +487,7 @@ func errorWrap(code int, message string) error {
 		message = "无效的 Access Token"
 	case AccessTokenKeyUnmatchedError:
 		message = "Access Token 和 Key 不匹配"
-	case TypIsNotExistsError:
+	case TypeIsNotExistsError:
 		return errors.New("接口不存在")
 	case 7000016:
 		return errors.New("无效的请求地址")
