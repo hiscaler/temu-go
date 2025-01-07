@@ -364,6 +364,7 @@ func NewClient(cfg config.Config) *Client {
 			Warehouse:           (goodsWarehouseService)(xService),
 			Quantity:            (goodsQuantityService)(xService),
 			ParentSpecification: (goodsParentSpecificationService)(xService),
+			Specification:       (goodsSpecificationService)(xService),
 		},
 		Mall: mallService{
 			service: xService,
