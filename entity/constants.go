@@ -110,6 +110,12 @@ const (
 	LanguageEn   = "en" // 英文
 )
 
+// 物流面单文件类型
+const (
+	LogisticsShipmentDocumentPdfFile   = "SHIPPING_LABEL_PDF"
+	LogisticsShipmentDocumentImageFile = "SHIPPING_LABEL_IMAGE"
+)
+
 // 数量增减模式
 const (
 	QuantityChangeModeInDecrease = 1 // 增减变量
