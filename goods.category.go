@@ -8,7 +8,10 @@ import (
 )
 
 // 商品分类服务
-type goodsCategoryService service
+type goodsCategoryService struct {
+	service
+	Attribute goodsCategoryAttributeService
+}
 
 type GoodsCategoryQueryParams struct {
 	ParentCatId null.Int `json:"parentCatId,omitempty"` // 上级分类 ID

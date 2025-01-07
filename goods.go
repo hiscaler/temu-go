@@ -28,7 +28,6 @@ type goodsService struct {
 	Warehouse           goodsWarehouseService           // 仓库数据
 	Quantity            goodsQuantityService            // 虚拟库存
 	ParentSpecification goodsParentSpecificationService // 父规格
-	CategoryAttribute   goodsCategoryAttributeService   // 分类属性
 }
 
 type GoodsQueryParams struct {

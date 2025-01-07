@@ -346,10 +346,13 @@ func NewClient(cfg config.Config) *Client {
 		},
 		Logistics: (logisticsService)(xService),
 		Goods: goodsService{
-			service:             xService,
-			Barcode:             (goodsBarcodeService)(xService),
-			Brand:               (goodsBrandService)(xService),
-			Category:            (goodsCategoryService)(xService),
+			service: xService,
+			Barcode: (goodsBarcodeService)(xService),
+			Brand:   (goodsBrandService)(xService),
+			Category: goodsCategoryService{
+				service:   xService,
+				Attribute: (goodsCategoryAttributeService)(xService),
+			},
 			Certification:       (goodsCertificationService)(xService),
 			LifeCycle:           (goodsLifeCycleService)(xService),
 			Sales:               (goodsSalesService)(xService),
@@ -361,7 +364,6 @@ func NewClient(cfg config.Config) *Client {
 			Warehouse:           (goodsWarehouseService)(xService),
 			Quantity:            (goodsQuantityService)(xService),
 			ParentSpecification: (goodsParentSpecificationService)(xService),
-			CategoryAttribute:   (goodsCategoryAttributeService)(xService),
 		},
 		Mall: mallService{
 			service: xService,
