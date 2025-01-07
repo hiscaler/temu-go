@@ -14,19 +14,21 @@ import (
 // 商品数据服务
 type goodsService struct {
 	service
-	Barcode           goodsBarcodeService           // 条码数据
-	Brand             goodsBrandService             // 商品品牌数据
-	Category          goodsCategoryService          // 商品分类
-	Certification     goodsCertificationService     // 资质
-	LifeCycle         goodsLifeCycleService         // 商品生命周期数据
-	Sales             goodsSalesService             // 销售数据
-	SizeChartClass    goodsSizeChartClassService    // 尺码类
-	SizeChart         goodsSizeChartService         // 尺码表
-	SizeChartSetting  goodsSizeChartSettingService  // 尺码表设置
-	SizeChartTemplate goodsSizeChartTemplateService // 尺码表模板
-	TopSelling        goodsTopSellingService        // 畅销商品数据
-	Warehouse         goodsWarehouseService         // 仓库数据
-	Quantity          goodsQuantityService          // 虚拟库存
+	Barcode             goodsBarcodeService             // 条码数据
+	Brand               goodsBrandService               // 商品品牌数据
+	Category            goodsCategoryService            // 商品分类
+	Certification       goodsCertificationService       // 资质
+	LifeCycle           goodsLifeCycleService           // 商品生命周期数据
+	Sales               goodsSalesService               // 销售数据
+	SizeChartClass      goodsSizeChartClassService      // 尺码类
+	SizeChart           goodsSizeChartService           // 尺码表
+	SizeChartSetting    goodsSizeChartSettingService    // 尺码表设置
+	SizeChartTemplate   goodsSizeChartTemplateService   // 尺码表模板
+	TopSelling          goodsTopSellingService          // 畅销商品数据
+	Warehouse           goodsWarehouseService           // 仓库数据
+	Quantity            goodsQuantityService            // 虚拟库存
+	ParentSpecification goodsParentSpecificationService // 父规格
+	CategoryAttribute   goodsCategoryAttributeService   // 分类属性
 }
 
 type GoodsQueryParams struct {
