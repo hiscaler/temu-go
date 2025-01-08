@@ -16,8 +16,8 @@ type SemiOnlineOrderLogisticsShipmentCreateRequest struct {
 	SendType int `json:"sendType"` // 发货类型：0-单个运单发货 1-拆成多个运单发货 2-合并发货
 	// TRUE：下call成功之后延迟发货
 	// FALSE/不填：下call成功订单自动流转为已发货
-	ShipLater          bool   `json:"shipLater,omitempty"`          // 下 call 成功后是否延迟发货
-	ShipLaterLimitTime string `json:"shipLaterLimitTime,omitempty"` // 稍后发货兜底配置时间（单位:h），枚举：24, 48, 72, 96
+	ShipLater          bool `json:"shipLater"`                    // 下 call 成功后是否延迟发货
+	ShipLaterLimitTime int  `json:"shipLaterLimitTime,omitempty"` // 稍后发货兜底配置时间（单位:h），枚举：24, 48, 72, 96
 	SendRequestList    []struct {
 		ShipCompanyId     int64  `json:"shipCompanyId"`  // 物流公司 id
 		TrackingNumber    string `json:"trackingNumber"` // 运单号
@@ -56,7 +56,10 @@ type SemiOnlineOrderLogisticsShipmentCreateRequest struct {
 }
 
 func (m SemiOnlineOrderLogisticsShipmentCreateRequest) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SendType, validation.In(0, 1, 2).Error("无效的发货类型")),
+		validation.Field(&m.SendRequestList, validation.Required.Error("包裹信息不能为空")),
+	)
 }
 
 // Create 物流在线发货下单接口（bg.logistics.shipment.create）
