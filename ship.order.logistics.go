@@ -117,13 +117,44 @@ func (s shipOrderLogisticsService) Verify(ctx context.Context, request Logistics
 }
 
 // 修改物流
-// bg.shiporder.logistics.change
+// TODO
 
 type LogisticsChangeRequest struct {
-	ShippingId int64  `json:"shippingId"` // 物流公司 id
-	ExpressNo  string `json:"expressNo"`  // 物流单号
+	ExpressBatchSn                  string                                                         `json:"expressBatchSn"`                            // 发货批次
+	SelfDeliveryInfo                *ShipOrderPackingSendSelfDeliveryInformation                   `json:"selfDeliveryInfo,omitempty"`                // 自送信息
+	ThirdPartyDeliveryInfo          *ShipOrderPackingSendPlatformRecommendationDeliveryInformation `json:"thirdPartyDeliveryInfo,omitempty"`          // 公司指定物流
+	ThirdPartyExpressDeliveryInfoVO *ShipOrderPackingSendThirdPartyDeliveryInformation             `json:"thirdPartyExpressDeliveryInfoVO,omitempty"` // 第三方配送
 }
 
 func (m LogisticsChangeRequest) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ExpressBatchSn, validation.Required.Error("发货批次不能为空")),
+	)
+}
+
+func (s shipOrderLogisticsService) Change(ctx context.Context, request LogisticsChangeRequest) (bool, error) {
+	if err := request.validate(); err != nil {
+		return false, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result struct {
+			CreateExpressErrorRequestList []struct {
+				DeliveryOrderCreateInfos []struct {
+					SubPurchaseOrderSn string `json:"subPurchaseOrderSn"` // 采购子单号
+				} `json:"deliveryOrderCreateInfos"` // 采购单创建信息列表
+			} `json:"createExpressErrorRequestList"` // 创建快递运单失败的请求列表
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.shiporder.logistics.change")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return false, err
+	}
+
+	return len(result.Result.CreateExpressErrorRequestList) == 0, nil
 }
