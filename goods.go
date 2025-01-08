@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
@@ -62,6 +63,15 @@ func (m GoodsQueryParams) validate() error {
 		validation.Field(&m.BindSiteIds, validation.By(is.SiteIds(entity.SiteIds))),
 		validation.Field(&m.CreatedAtStart,
 			validation.When(m.CreatedAtStart != "" || m.CreatedAtEnd != "", validation.By(is.TimeRange(m.CreatedAtStart, m.CreatedAtEnd, time.DateTime))),
+		),
+		validation.Field(&m.QuickSellAgtSignStatus,
+			validation.When(m.QuickSellAgtSignStatus.Valid, validation.By(func(value interface{}) error {
+				v, ok := value.(null.Int)
+				if !ok {
+					return errors.New("无效的快速售卖协议签署状态")
+				}
+				return validation.Validate(int(v.Int64), validation.In(entity.TrueNumber, entity.FalseNumber).Error("无效的快速售卖协议签署状态"))
+			})),
 		),
 	)
 }

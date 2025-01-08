@@ -157,7 +157,7 @@ func NewClient(cfg config.Config) *Client {
 	urls := map[string]config.URLPair{
 		entity.ChinaRegion: {
 			Prod: "https://openapi.kuajingmaihuo.com/openapi/router",
-			Test: "https://kj-openapi.temudemo.com/openapi/router",
+			Test: "https://openapi.kuajingmaihuo.com/openapi/router",
 		},
 		entity.AmericanRegion: {
 			Prod: "https://openapi-b-us.temu.com/openapi/router",
