@@ -63,6 +63,7 @@ type ShipOrderPackageUpdateRequestDeliverOrderDetail struct {
 
 func (m ShipOrderPackageUpdateRequestDeliverOrderDetail) validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductSkuId, validation.Required.Error("SKU 不能为空")),
 		validation.Field(&m.DeliverSkuNum, validation.Min(1).Error("发货数量不能小于 {.min}")),
 	)
 }
@@ -75,6 +76,7 @@ type ShipOrderPackageUpdateRequestPackageDetail struct {
 
 func (m ShipOrderPackageUpdateRequestPackageDetail) validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductSkuId, validation.Required.Error("SKU 不能为空")),
 		validation.Field(&m.SkuNum, validation.Min(1).Error("发货数量不能小于 {.min}")),
 	)
 }
