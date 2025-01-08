@@ -89,3 +89,43 @@ type Goods struct {
 	MatchSkcJitMode bool   `json:"matchSkcJitMode"`
 	MainImageUrl    string `json:"mainImageUrl"`
 }
+
+// GoodsDetail 商品详情
+type GoodsDetail struct {
+	ProductId   int64  `json:"productId"`   // 商品 ID
+	ProductName string `json:"productName"` // 商品名称
+	Categories  struct {
+		CatType null.Int       `json:"catType"` // 类目类型 (0: 未分类, 1: 服饰)
+		Cat1    SimpleCategory `json:"cat1"`
+		Cat2    SimpleCategory `json:"cat2"`
+		Cat3    SimpleCategory `json:"cat3"`
+		Cat4    SimpleCategory `json:"cat4"`
+		Cat5    SimpleCategory `json:"cat5"`
+		Cat6    SimpleCategory `json:"cat6"`
+		Cat7    SimpleCategory `json:"cat7"`
+		Cat8    SimpleCategory `json:"cat8"`
+		Cat9    SimpleCategory `json:"cat9"`
+		Cat10   SimpleCategory `json:"cat10"`
+		LeafCat SimpleCategory `json:"leafCat"` // 叶子类目
+	} `json:"categories"` // 货品类目
+	GoodsLayerDecorationList []struct {
+		FloorId     null.Int `json:"floorId"`  // 楼层 id（null:新增，否则为更新）
+		Type        string   `json:"type"`     // 组件类型 type
+		Priority    int      `json:"priority"` // 楼层排序
+		Lang        string   `json:"lang"`     // 语言类型
+		Key         string   `json:"key"`      // 楼层类型的 key
+		ContentList []struct {
+			ImgUrl            string `json:"imgUrl"` // 图片地址--通用
+			Width             string `json:"width"`  // 图片宽度--通用
+			Height            int    `json:"height"` // 图片高度--通用
+			Text              string `json:"text"`   // 文字信息--文字模块
+			TextModuleDetails struct {
+				BackgroundColor string `json:"backgroundColor"` // 背景颜色
+				FontFamily      int    `json:"fontFamily"`      // 字体类型
+				FontSize        int    `json:"fontSize"`        // 文字模块字体大小
+				FontColor       string `json:"fontColor"`       // 文字颜色
+				Align           string `json:"align"`           // 文字对齐方式，left--左对齐；right--右对齐；center--居中；justify--两端对齐
+			} `json:"textModuleDetails"` // 文字模块详情
+		} `json:"contentList"` // 楼层内容
+	} `json:"goodsLayerDecorationList"`
+}

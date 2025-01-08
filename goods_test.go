@@ -29,3 +29,10 @@ func Test_goodsService_Query(t *testing.T) {
 		assert.Equalf(t, item, sales, "Services.Goods.One(ctx, %d)", item.ProductSkcId)
 	}
 }
+
+func Test_goodsService_Detail(t *testing.T) {
+	var productId int64 = 141911679
+	detail, err := temuClient.Services.Goods.Detail(ctx, productId)
+	assert.Equalf(t, nil, err, "Services.Goods.One(ctx, %d)", productId)
+	assert.Equalf(t, detail.ProductId, productId, "Services.Goods.One(ctx, %d)", productId)
+}
