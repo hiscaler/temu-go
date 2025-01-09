@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"slices"
 	"strings"
 	"time"
 )
@@ -19,12 +20,9 @@ func (m MallPermission) Accessible(api string) bool {
 		return false
 	}
 
-	for _, v := range m.APIScopeList {
-		if strings.EqualFold(v, api) {
-			return true
-		}
-	}
-	return false
+	return slices.ContainsFunc(m.APIScopeList, func(v string) bool {
+		return strings.EqualFold(api, v)
+	})
 }
 
 // Expired Token 是否过期

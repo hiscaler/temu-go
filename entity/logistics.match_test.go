@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 func TestLogisticsMatch_LatestScheduleTime(t *testing.T) {
+	tomorrow := time.Now().AddDate(0, 0, 1).Format(time.DateOnly)
 	tests := []struct {
 		name      string
 		schedules []LogisticsMatchChannelScheduleTime
@@ -16,7 +18,7 @@ func TestLogisticsMatch_LatestScheduleTime(t *testing.T) {
 			name: "test1",
 			schedules: []LogisticsMatchChannelScheduleTime{
 				{
-					BjDate:      "2024-01-01",
+					BjDate:      tomorrow,
 					BjStartTime: "09:00",
 					BjEndTime:   "12:00",
 				},
@@ -37,7 +39,7 @@ func TestLogisticsMatch_LatestScheduleTime(t *testing.T) {
 			name: "test2",
 			schedules: []LogisticsMatchChannelScheduleTime{
 				{
-					BjDate:      "2026-01-01",
+					BjDate:      tomorrow,
 					BjStartTime: "09:00",
 					BjEndTime:   "12:00",
 				},

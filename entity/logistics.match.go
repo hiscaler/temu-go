@@ -3,6 +3,7 @@ package entity
 import (
 	"errors"
 	"fmt"
+	"gopkg.in/guregu/null.v4"
 	"sort"
 	"time"
 )
@@ -42,7 +43,7 @@ type LogisticsMatch struct {
 	ChannelScheduleTimeList  []LogisticsMatchChannelScheduleTime `json:"channelScheduleTimeList"`  // 可预约揽收时间
 	AdvantageDescList        []string                            `json:"advantageDescList"`        // 该物流相比常用物流的优势点 可能为空
 	HasUsedThisLogistics     bool                                `json:"hasUsedThisLogistics"`     // 供应商是否使用过该物流
-	CarrierAttention         string                              `json:"carrierAttention"`         // 承运注意事项
+	CarrierAttention         null.String                         `json:"carrierAttention"`         // 承运注意事项
 	ExpressCompanyId         int64                               `json:"expressCompanyId"`         // 快递公司 ID
 	ExpressCompanyName       string                              `json:"expressCompanyName"`       // 快递公司名称
 	PromisedDeliveryHourTime float64                             `json:"promisedDeliveryHourTime"` // 承诺送达时间
