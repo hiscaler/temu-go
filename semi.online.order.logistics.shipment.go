@@ -255,7 +255,7 @@ func (s semiOnlineOrderLogisticsShipmentService) UpdateShippingType(ctx context.
 // 物流在线发货打印面单接口（bg.logistics.shipment.document.get）
 
 type SemiOnlineOrderLogisticsShipmentDocumentRequest struct {
-	// - SHIPPING_LABEL_PDF:入参此参数,返回的 URL 加签后只返回 PDF 格式的面单文件
+	// - SHIPPING_LABEL_PDF:入参此参数，返回的 URL 加签后只返回 PDF 格式的面单文件
 	// - 不入参，按照旧有逻辑返回面单文件，即按物流商的面单文件返回确定图片格式或 PDF 格式；
 	// - 入不合法的参数值：接口报错，报错文案：Document type is invalid.
 	DocumentType  string   `json:"documentType"`  // 文件类型
@@ -280,7 +280,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 	var result = struct {
 		normal.Response
 		Result struct {
-			ShippingLabelUrlList []entity.SemiOnlineOrderLogisticsShipmentDocument `json:"shippingLabelUrlList"` // 包裹对应的面单文件 url（pdf或图片）
+			ShippingLabelUrlList []entity.SemiOnlineOrderLogisticsShipmentDocument `json:"shippingLabelUrlList"` // 包裹对应的面单文件 url（PDF 或图片）
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
