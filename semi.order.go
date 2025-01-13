@@ -37,7 +37,7 @@ type SemiOrderQueryParams struct {
 	ExpectShipLatestTimeEnd   string   `json:"expectShipLatestTimeEnd,omitempty"`   // 期望最晚发货时间结束查询时间，格式是秒时间戳。查询时间需要同时入参开始和结束时间才生效
 	UpdateAtStart             string   `json:"updateAtStart,omitempty"`             // 订单更新时间开始查询时间，格式是秒时间戳
 	UpdateAtEnd               string   `json:"updateAtEnd,omitempty"`               // 订单更新时间结束查询时间，格式是秒时间戳。查询时间需要同时入参开始和结束时间才生效
-	RegionId                  int      `json:"regionId,omitempty"`                  // 区域ID，美国-211
+	RegionId                  int      `json:"regionId"`                            // 区域 ID，美国-211
 	// 子订单履约类型，具体枚举值如下：
 	// 1. 数组只传入 fulfillBySeller，只返回卖家履约子订单列表
 	// 2. 数组只传入 fulfillByCooperativeWarehouse，只返回合作仓履约子订单列表
@@ -75,6 +75,7 @@ func (m SemiOrderQueryParams) validate() error {
 		validation.Field(&m.UpdateAtStart,
 			validation.When(m.UpdateAtStart != "" || m.UpdateAtEnd != "", validation.By(is.TimeRange(m.UpdateAtStart, m.UpdateAtEnd, time.DateTime))),
 		),
+		validation.Field(&m.RegionId, validation.By(is.RegionId(entity.RegionIds))),
 		validation.Field(&m.FulfillmentTypeList, validation.Each(validation.By(func(value interface{}) error {
 			v, ok := value.(string)
 			if !ok {
