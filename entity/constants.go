@@ -122,6 +122,38 @@ const (
 	QuantityChangeModeReplace    = 2 // 覆盖变更
 )
 
+// 半托管父单状态
+const (
+	SemiParentOrderStatusAll              = 0  // 全部
+	SemiParentOrderStatusPending          = 1  // 挂起中
+	SemiParentOrderStatusUnShipping       = 2  // 待发货
+	SemiParentOrderStatusCanceled         = 3  // 已取消
+	SemiParentOrderStatusShipped          = 4  // 已发货
+	SemiParentOrderStatusReceipted        = 5  // 已签收
+	SemiParentOrderStatusPartialCanceled  = 41 // 部分取消
+	SemiParentOrderStatusPartialReceipted = 51 // 部分签收
+)
+
+// 半托管订单排序
+const (
+	SemiOrderOrderByCreateTime = "createTime"
+	SemiOrderOrderByUpdateTime = "updateTime"
+)
+
+// 子订单履约类型
+const (
+	SemiOrderFulfillmentTypeBySeller               = "fulfillBySeller"               // 只返回卖家履约子订单列表
+	SemiOrderFulfillmentTypeByCooperativeWarehouse = "fulfillByCooperativeWarehouse" // 只返回合作仓履约子订单列表
+)
+
+// 半托管 PO 单标签
+const (
+	SemiParentOrderLabelSoonToBeOverdue           = "soon_to_be_overdue"           // 即将逾期
+	SemiParentOrderLabelPastDue                   = "past_due"                     // 已逾期
+	SemiParentOrderLabelPendingBuyerCancellation  = "pending_buyer_cancellation"   // 买家取消待确认订单
+	SemiParentOrderLabelPendingBuyerAddressChange = "pending_buyer_address_change" // 买家改地址待确认订单
+)
+
 // https://seller.kuajingmaihuo.com/sop/view/231998342274104483#6mTvhA
 const (
 	ChinaRegion         = "CN" // 中国区

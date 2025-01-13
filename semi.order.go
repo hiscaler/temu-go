@@ -2,13 +2,14 @@ package temu
 
 import (
 	"context"
-	"time"
-
+	"errors"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
+	"gopkg.in/guregu/null.v4"
+	"time"
 )
 
 // 订单服务（半托管专属，必须在 US/EU 网关调用）
@@ -28,25 +29,43 @@ type SemiOrderQueryParams struct {
 	// 本本订单还存在如下状态
 	// 41-部分取消
 	// 51-部分签收
-	ParentOrderStatus         int      `json:"parentOrderStatus"`         // 父单状态
-	CreateBefore              string   `json:"createBefore"`              // 父单创建时间结束查询时间，格式是秒时间戳。查询时间需要同时入参开始和结束时间才生效
-	CreateAfter               string   `json:"createAfter"`               // 父单创建时间开始查询时间，格式是秒时间戳
-	ParentOrderSnList         []string `json:"parentOrderSnList"`         // 父单号列表，单次请求最多 20 个
-	ExpectShipLatestTimeStart string   `json:"expectShipLatestTimeStart"` // 期望最晚发货时间开始查询时间，格式是秒时间戳
-	ExpectShipLatestTimeEnd   string   `json:"expectShipLatestTimeEnd"`   // 期望最晚发货时间结束查询时间，格式是秒时间戳。查询时间需要同时入参开始和结束时间才生效
-	UpdateAtStart             string   `json:"updateAtStart"`             // 订单更新时间开始查询时间，格式是秒时间戳
-	UpdateAtEnd               string   `json:"updateAtEnd"`               // 订单更新时间结束查询时间，格式是秒时间戳。查询时间需要同时入参开始和结束时间才生效
-	RegionId                  int      `json:"regionId"`                  // 区域ID，美国-211
+	ParentOrderStatus         null.Int `json:"parentOrderStatus,omitempty"`         // 父单状态
+	CreateBefore              string   `json:"createBefore,omitempty"`              // 父单创建时间结束查询时间，格式是秒时间戳。查询时间需要同时入参开始和结束时间才生效
+	CreateAfter               string   `json:"createAfter,omitempty"`               // 父单创建时间开始查询时间，格式是秒时间戳
+	ParentOrderSnList         []string `json:"parentOrderSnList,omitempty"`         // 父单号列表，单次请求最多 20 个
+	ExpectShipLatestTimeStart string   `json:"expectShipLatestTimeStart,omitempty"` // 期望最晚发货时间开始查询时间，格式是秒时间戳
+	ExpectShipLatestTimeEnd   string   `json:"expectShipLatestTimeEnd,omitempty"`   // 期望最晚发货时间结束查询时间，格式是秒时间戳。查询时间需要同时入参开始和结束时间才生效
+	UpdateAtStart             string   `json:"updateAtStart,omitempty"`             // 订单更新时间开始查询时间，格式是秒时间戳
+	UpdateAtEnd               string   `json:"updateAtEnd,omitempty"`               // 订单更新时间结束查询时间，格式是秒时间戳。查询时间需要同时入参开始和结束时间才生效
+	RegionId                  int      `json:"regionId,omitempty"`                  // 区域ID，美国-211
 	// 子订单履约类型，具体枚举值如下：
-	// 1. 数组只传入fulfillBySeller，只返回卖家履约子订单列表
-	// 2. 数组只传入fulfillByCooperativeWarehouse，只返回合作仓履约子订单列表
-	// 3. 数组传入fulfillBySeller和fulfillByCooperativeWarehouse，返回卖家履约子订单列表+合作仓履约子订单列表
+	// 1. 数组只传入 fulfillBySeller，只返回卖家履约子订单列表
+	// 2. 数组只传入 fulfillByCooperativeWarehouse，只返回合作仓履约子订单列表
+	// 3. 数组传入 fulfillBySeller 和 fulfillByCooperativeWarehouse，返回卖家履约子订单列表+合作仓履约子订单列表
 	// 4. fulfillmentTypeList不传或者传了为空，默认返回卖家履约子订单列表
-	FulfillmentTypeList []string `json:"fulfillmentTypeList"` // 子订单履约类型
+	FulfillmentTypeList []string    `json:"fulfillmentTypeList,omitempty"` // 子订单履约类型
+	ParentOrderLabel    []string    `json:"parentOrderLabel,omitempty"`    // PO 单订单状态标签
+	SortBy              null.String `json:"sortby,omitempty"`              // 排序依据，倒序输出。默认按照订单创建时间，对应枚举为：updateTime、createTime
 }
 
 func (m SemiOrderQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.ParentOrderStatus, validation.When(m.ParentOrderStatus.Valid, validation.By(func(value interface{}) error {
+			v, ok := value.(null.Int)
+			if !ok {
+				return errors.New("无效的父单状态")
+			}
+			return validation.Validate(int(v.Int64), validation.In(
+				entity.SemiParentOrderStatusAll,
+				entity.SemiParentOrderStatusPending,
+				entity.SemiParentOrderStatusUnShipping,
+				entity.SemiParentOrderStatusCanceled,
+				entity.SemiParentOrderStatusShipped,
+				entity.SemiParentOrderStatusReceipted,
+				entity.SemiParentOrderStatusPartialCanceled,
+				entity.SemiParentOrderStatusPartialReceipted,
+			).Error("无效的父订单状态"))
+		}))),
 		validation.Field(&m.CreateBefore,
 			validation.When(m.CreateBefore != "" || m.CreateAfter != "", validation.By(is.TimeRange(m.CreateBefore, m.CreateAfter, time.DateTime))),
 		),
@@ -56,6 +75,38 @@ func (m SemiOrderQueryParams) validate() error {
 		validation.Field(&m.UpdateAtStart,
 			validation.When(m.UpdateAtStart != "" || m.UpdateAtEnd != "", validation.By(is.TimeRange(m.UpdateAtStart, m.UpdateAtEnd, time.DateTime))),
 		),
+		validation.Field(&m.FulfillmentTypeList, validation.Each(validation.By(func(value interface{}) error {
+			v, ok := value.(string)
+			if !ok {
+				return errors.New("无效的子订单履约类型")
+			}
+			return validation.Validate(v, validation.In(
+				entity.SemiOrderFulfillmentTypeBySeller,
+				entity.SemiOrderFulfillmentTypeByCooperativeWarehouse,
+			).Error("无效的子订单履约类型"))
+		}))),
+		validation.Field(&m.ParentOrderLabel, validation.Each(validation.By(func(value interface{}) error {
+			v, ok := value.(string)
+			if !ok {
+				return errors.New("无效的 PO 单订单状态标签")
+			}
+			return validation.Validate(v, validation.In(
+				entity.SemiParentOrderLabelSoonToBeOverdue,
+				entity.SemiParentOrderLabelPastDue,
+				entity.SemiParentOrderLabelPendingBuyerCancellation,
+				entity.SemiParentOrderLabelPendingBuyerAddressChange,
+			).Error("无效的 PO 单订单状态标签"))
+		}))),
+		validation.Field(&m.SortBy, validation.When(m.SortBy.Valid, validation.By(func(value interface{}) error {
+			v, ok := value.(null.String)
+			if !ok {
+				return errors.New("无效的排序依据")
+			}
+			return validation.Validate(v.String, validation.In(
+				entity.SemiOrderOrderByCreateTime,
+				entity.SemiOrderOrderByUpdateTime,
+			).Error("无效的排序依据"))
+		}))),
 	)
 }
 
