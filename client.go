@@ -495,9 +495,10 @@ func errorWrap(code int, message string) error {
 	case TypeIsNotExistsError:
 		return errors.New("接口不存在")
 	case 7000016:
-		return errors.New("无效的请求地址")
+		message = "无效的请求地址"
 	case 2000000, 2000090, 3000000:
-		return errors.New(message)
+	case 7000007:
+		message = "Access Token 已过期，请联系卖家重新授权并与您共享新的 Access Token"
 	default:
 		message = fmt.Sprintf("%d: %s", code, message)
 	}
