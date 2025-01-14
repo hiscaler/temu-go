@@ -13,7 +13,7 @@ type semiOnlineOrderLogisticsServiceProviderService service
 
 type SemiOnlineOrderLogisticsServiceProviderQueryParams struct {
 	WarehouseId         string    `json:"warehouseId"`                   // 仓库 id
-	OrderSnList         []string  `json:"orderSnList"`                   // O单（orderSn 非 parentOrderSn）列表（至少包含一个O单号）
+	OrderSnList         []string  `json:"orderSnList"`                   // O 单（orderSn 非 parentOrderSn）列表（至少包含一个 O 单号）
 	Weight              string    `json:"weight"`                        // 重量（默认 2 位小数，美国lb，其他国家kg）
 	WeightUnit          string    `json:"weightUnit"`                    // 重量单位
 	Length              string    `json:"length,omitempty"`              // 包裹长度（默认 2 位小数）
