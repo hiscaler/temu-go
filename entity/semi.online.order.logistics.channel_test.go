@@ -21,7 +21,7 @@ func TestSemiOnlineOrderLogisticsChannel_Amount(t *testing.T) {
 	}
 }
 
-func TestSemiOnlineOrderLogisticsChannel_Timeline(t *testing.T) {
+func TestSemiOnlineOrderLogisticsChannel_DeliveryDays(t *testing.T) {
 	tests := map[string][]int{
 		"1-1":                              {1, 1},
 		"1  -2":                            {1, 2},
@@ -30,8 +30,8 @@ func TestSemiOnlineOrderLogisticsChannel_Timeline(t *testing.T) {
 	}
 	for amount, value := range tests {
 		d := SemiOnlineOrderLogisticsChannel{EstimatedText: amount}
-		minDays, maxDays, _ := d.Timeline()
-		assert.Equalf(t, value[0], minDays, "Amount(%s)", amount)
-		assert.Equalf(t, value[1], maxDays, "Amount(%s)", amount)
+		minDays, maxDays, _ := d.DeliveryDays()
+		assert.Equalf(t, value[0], minDays, "DeliveryDay(%s)", amount)
+		assert.Equalf(t, value[1], maxDays, "DeliveryDay(%s)", amount)
 	}
 }
