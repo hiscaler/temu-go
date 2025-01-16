@@ -10,8 +10,6 @@ import (
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"gopkg.in/guregu/null.v4"
-	"io"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -267,10 +265,10 @@ type SemiOnlineOrderLogisticsShipmentDocumentRequest struct {
 	// - SHIPPING_LABEL_PDF:入参此参数，返回的 URL 加签后只返回 PDF 格式的面单文件
 	// - 不入参，按照旧有逻辑返回面单文件，即按物流商的面单文件返回确定图片格式或 PDF 格式；
 	// - 入不合法的参数值：接口报错，报错文案：Document type is invalid.
-	DocumentType     string      `json:"documentType"`       // 文件类型
-	PackageSnList    []string    `json:"packageSnList"`      // 需要打印面单的包裹号列表
-	Download         bool        `json:"download"`           // 是否下载
-	DownloadSavePath null.String `json:"download_save_path"` // 下载保存地址
+	DocumentType    string      `json:"documentType"`       // 文件类型
+	PackageSnList   []string    `json:"packageSnList"`      // 需要打印面单的包裹号列表
+	Download        bool        `json:"download"`           // 是否下载
+	DownloadSaveDir null.String `json:"download_save_path"` // 下载保存目录
 }
 
 func (m SemiOnlineOrderLogisticsShipmentDocumentRequest) validate() error {
@@ -316,55 +314,38 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 				continue
 			}
 
-			savePath := request.DownloadSavePath.String
-			if savePath == "" {
-				savePath = "./download"
+			dir := strings.TrimSpace(request.DownloadSaveDir.String)
+			if dir == "" {
+				dir = "./download"
 			}
-			savePath = filepath.Join(savePath, fmt.Sprintf("%s.%s", strings.ToLower(document.PackageSn), filepath.Ext(url)))
-			var out *os.File
-			out, err = os.Create(savePath)
+			filename := fmt.Sprintf("%s.%s", strings.ToLower(document.PackageSn), filepath.Ext(url))
+			headers := map[string]string{
+				"toa-app-key":      s.config.AppKey,
+				"toa-access-token": s.config.AccessToken,
+				"toa-random":       randx.Letter(32, true),
+				"toa-timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
+			}
+			sb := strings.Builder{}
+			sb.WriteString(s.config.AppSecret)
+			for _, key := range keys {
+				sb.WriteString(key)
+				sb.WriteString(headers[key])
+			}
+			sb.WriteString(s.config.AppSecret)
+			headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
+			resp, err = s.httpClient.SetOutputDirectory(dir).R().
+				SetHeaders(headers).
+				SetOutput(filename).
+				Get(url)
 			if err != nil {
 				result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(err.Error())
-				continue
+			} else {
+				if resp.IsError() {
+					result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(resp.String())
+				} else if resp.IsSuccess() {
+					result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(filepath.Join(dir, filename))
+				}
 			}
-
-			func() {
-				defer func(out *os.File) {
-					err = out.Close()
-					return
-				}(out)
-
-				headers := map[string]string{
-					"toa-app-key":      s.config.AppKey,
-					"toa-access-token": s.config.AccessToken,
-					"toa-random":       randx.Letter(32, true),
-					"toa-timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
-				}
-				sb := strings.Builder{}
-				sb.WriteString(s.config.AppSecret)
-				for _, key := range keys {
-					sb.WriteString(key)
-					sb.WriteString(headers[key])
-				}
-				sb.WriteString(s.config.AppSecret)
-				headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
-
-				resp, err = s.httpClient.R().SetHeaders(headers).Get(url)
-				if err != nil {
-					result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(err.Error())
-				} else {
-					if resp.IsError() {
-						result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(resp.String())
-					} else if resp.IsSuccess() {
-						_, err = io.Copy(out, resp.RawBody())
-						if err != nil {
-							result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(err.Error())
-						} else {
-							result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(savePath)
-						}
-					}
-				}
-			}()
 		}
 	}
 
