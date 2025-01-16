@@ -55,7 +55,8 @@ var ErrInvalidParameters = errors.New("无效的参数")
 
 type service struct {
 	debug      bool          // Is debug mode
-	logger     *slog.Logger  // Log
+	logger     *slog.Logger  // Logger
+	config     config.Config // Config
 	httpClient *resty.Client // HTTP client
 }
 
@@ -333,6 +334,7 @@ func NewClient(cfg config.Config) *Client {
 		debug:      debug,
 		logger:     l,
 		httpClient: httpClient,
+		config:     cfg,
 	}
 	client.Services = services{
 		PurchaseOrder: (purchaseOrderService)(xService),

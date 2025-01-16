@@ -2,11 +2,20 @@ package temu
 
 import (
 	"context"
+	"crypto/md5"
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/randx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"gopkg.in/guregu/null.v4"
+	"io"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
 )
 
 // 物流发货服务
@@ -27,7 +36,7 @@ type SemiOnlineOrderLogisticsShipmentCreateRequest struct {
 			GoodsId       string `json:"goodsId"`       // 商品 goodsId
 			SkuId         int64  `json:"skuId"`         // 商品 skuId
 			Quantity      int    `json:"quantity"`      // 发货数量
-		} `json:"orderSendInfoList"` // 发货商品信息
+		} `json:"orderSendInfoList"`                       // 发货商品信息
 		WarehouseId        int64  `json:"warehouseId"`     // 仓库id
 		Weight             string `json:"weight"`          // 重量（默认 2 位小数）
 		WeightUnit         string `json:"weightUnit"`      // 重量单位，美国为 lb（磅），其他国家为 kg（千克）
@@ -258,8 +267,10 @@ type SemiOnlineOrderLogisticsShipmentDocumentRequest struct {
 	// - SHIPPING_LABEL_PDF:入参此参数，返回的 URL 加签后只返回 PDF 格式的面单文件
 	// - 不入参，按照旧有逻辑返回面单文件，即按物流商的面单文件返回确定图片格式或 PDF 格式；
 	// - 入不合法的参数值：接口报错，报错文案：Document type is invalid.
-	DocumentType  string   `json:"documentType"`  // 文件类型
-	PackageSnList []string `json:"packageSnList"` // 需要打印面单的包裹号列表
+	DocumentType     string      `json:"documentType"`       // 文件类型
+	PackageSnList    []string    `json:"packageSnList"`      // 需要打印面单的包裹号列表
+	Download         bool        `json:"download"`           // 是否下载
+	DownloadSavePath null.String `json:"download_save_path"` // 下载保存地址
 }
 
 func (m SemiOnlineOrderLogisticsShipmentDocumentRequest) validate() error {
@@ -290,6 +301,71 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		Post("bg.logistics.shipment.document.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return nil, err
+	}
+
+	if request.Download {
+		keys := []string{
+			"toa-access-token",
+			"toa-app-key",
+			"toa-random",
+			"toa-timestamp",
+		}
+		for i, document := range result.Result.ShippingLabelUrlList {
+			url := document.Url
+			if url == "" {
+				continue
+			}
+
+			savePath := request.DownloadSavePath.String
+			if savePath == "" {
+				savePath = "./download"
+			}
+			savePath = filepath.Join(savePath, fmt.Sprintf("%s.%s", strings.ToLower(document.PackageSn), filepath.Ext(url)))
+			var out *os.File
+			out, err = os.Create(savePath)
+			if err != nil {
+				result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(err.Error())
+				continue
+			}
+
+			func() {
+				defer func(out *os.File) {
+					err = out.Close()
+					return
+				}(out)
+
+				headers := map[string]string{
+					"toa-app-key":      s.config.AppKey,
+					"toa-access-token": s.config.AccessToken,
+					"toa-random":       randx.Letter(32, true),
+					"toa-timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
+				}
+				sb := strings.Builder{}
+				sb.WriteString(s.config.AppSecret)
+				for _, key := range keys {
+					sb.WriteString(key)
+					sb.WriteString(headers[key])
+				}
+				sb.WriteString(s.config.AppSecret)
+				headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
+
+				resp, err = s.httpClient.R().SetHeaders(headers).Get(url)
+				if err != nil {
+					result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(err.Error())
+				} else {
+					if resp.IsError() {
+						result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(resp.String())
+					} else if resp.IsSuccess() {
+						_, err = io.Copy(out, resp.RawBody())
+						if err != nil {
+							result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(err.Error())
+						} else {
+							result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(savePath)
+						}
+					}
+				}
+			}()
+		}
 	}
 
 	return result.Result.ShippingLabelUrlList, nil

@@ -1,5 +1,9 @@
 package entity
 
+import (
+	"gopkg.in/guregu/null.v4"
+)
+
 // SemiOnlineOrderLogisticsShipmentDocument 打印面单
 type SemiOnlineOrderLogisticsShipmentDocument struct {
 	PackageSn string `json:"packageSn"` // 包裹号
@@ -22,5 +26,7 @@ type SemiOnlineOrderLogisticsShipmentDocument struct {
 	// - 拼接完成的字符串做进一步拼接成 1 个字符串（包含所有kv字符串的长串），并在该长串的头部及尾部分别拼接 app_secret，完成签名字符串的组装
 	// - 最后对签名字符串，使用 MD5 算法加密后，得到的 MD5 加密密文后转为大写，即为 toa-sign 值
 	// 接口返回文件流。
-	Url string `json:"url"` // 返回 url 是加签资源
+	Url   string      `json:"url"`   // 返回 url 是加签资源
+	Path  null.String `json:"path"`  // 本地保存路径
+	Error null.String `json:"error"` // 保存失败的原因
 }
