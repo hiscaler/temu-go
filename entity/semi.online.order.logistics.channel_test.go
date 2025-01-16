@@ -14,24 +14,24 @@ func TestSemiOnlineOrderLogisticsChannel_Amount(t *testing.T) {
 		"$ .01":   0.01,
 		"$ 1.234": 1.234,
 	}
-	for amount, value := range tests {
-		d := SemiOnlineOrderLogisticsChannel{EstimatedAmount: amount}
+	for text, amount := range tests {
+		d := SemiOnlineOrderLogisticsChannel{EstimatedAmount: text}
 		v, _ := d.Amount()
-		assert.Equalf(t, value, v, "Amount(%s)", amount)
+		assert.Equalf(t, amount, v, "Amount(%s)", text)
 	}
 }
 
 func TestSemiOnlineOrderLogisticsChannel_DeliveryDays(t *testing.T) {
 	tests := map[string][]int{
-		"1-1":                     {1, 1},
-		"1  -2":                   {1, 2},
-		"预估$91.21; USD; 1-2工作日送达": {1, 2},
+		"1-1":                              {1, 1},
+		"1  -2":                            {1, 2},
+		"预估$91.21; USD; 1-2工作日送达":   {1, 2},
 		"预估$91.21; USD; 1 - 2工作日送达": {1, 2},
 	}
-	for amount, value := range tests {
-		d := SemiOnlineOrderLogisticsChannel{EstimatedText: amount}
+	for text, days := range tests {
+		d := SemiOnlineOrderLogisticsChannel{EstimatedText: text}
 		minDays, maxDays, _ := d.DeliveryDays()
-		assert.Equalf(t, value[0], minDays, "DeliveryDay(%s)", amount)
-		assert.Equalf(t, value[1], maxDays, "DeliveryDay(%s)", amount)
+		assert.Equalf(t, days[0], minDays, "DeliveryDays(%s)", text)
+		assert.Equalf(t, days[1], maxDays, "DeliveryDays(%s)", text)
 	}
 }
