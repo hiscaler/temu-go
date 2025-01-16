@@ -301,53 +301,56 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		return nil, err
 	}
 
-	if request.Download {
-		keys := []string{
-			"toa-access-token",
-			"toa-app-key",
-			"toa-random",
-			"toa-timestamp",
-		}
-		for i, document := range result.Result.ShippingLabelUrlList {
-			url := document.Url
-			if url == "" {
-				continue
-			}
+	documents := result.Result.ShippingLabelUrlList
+	if !request.Download || len(documents) == 0 {
+		return documents, nil
+	}
 
-			dir := strings.TrimSpace(request.DownloadSaveDir.String)
-			if dir == "" {
-				dir = "./download"
-			}
-			filename := fmt.Sprintf("%s.%s", strings.ToLower(document.PackageSn), filepath.Ext(url))
-			headers := map[string]string{
-				"toa-app-key":      s.config.AppKey,
-				"toa-access-token": s.config.AccessToken,
-				"toa-random":       randx.Letter(32, true),
-				"toa-timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
-			}
-			sb := strings.Builder{}
-			sb.WriteString(s.config.AppSecret)
-			for _, key := range keys {
-				sb.WriteString(key)
-				sb.WriteString(headers[key])
-			}
-			sb.WriteString(s.config.AppSecret)
-			headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
-			resp, err = s.httpClient.SetOutputDirectory(dir).R().
-				SetHeaders(headers).
-				SetOutput(filename).
-				Get(url)
-			if err != nil {
-				result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(err.Error())
-			} else {
-				if resp.IsError() {
-					result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(resp.String())
-				} else if resp.IsSuccess() {
-					result.Result.ShippingLabelUrlList[i].Error = null.StringFrom(filepath.Join(dir, filename))
-				}
+	keys := []string{
+		"toa-access-token",
+		"toa-app-key",
+		"toa-random",
+		"toa-timestamp",
+	}
+	dir := strings.TrimSpace(request.DownloadSaveDir.String)
+	if dir == "" {
+		dir = "./download"
+	}
+	for i, doc := range documents {
+		url := doc.Url
+		if url == "" {
+			continue
+		}
+
+		filename := fmt.Sprintf("%s.%s", strings.ToLower(doc.PackageSn), filepath.Ext(url))
+		headers := map[string]string{
+			"toa-app-key":      s.config.AppKey,
+			"toa-access-token": s.config.AccessToken,
+			"toa-random":       randx.Letter(32, true),
+			"toa-timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
+		}
+		sb := strings.Builder{}
+		sb.WriteString(s.config.AppSecret)
+		for _, key := range keys {
+			sb.WriteString(key)
+			sb.WriteString(headers[key])
+		}
+		sb.WriteString(s.config.AppSecret)
+		headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
+		resp, err = s.httpClient.SetOutputDirectory(dir).R().
+			SetHeaders(headers).
+			SetOutput(filename).
+			Get(url)
+		if err != nil {
+			documents[i].Error = null.StringFrom(err.Error())
+		} else {
+			if resp.IsError() {
+				documents[i].Error = null.StringFrom(resp.String())
+			} else if resp.IsSuccess() {
+				documents[i].Path = null.StringFrom(filepath.Join(dir, filename))
 			}
 		}
 	}
 
-	return result.Result.ShippingLabelUrlList, nil
+	return documents, nil
 }
