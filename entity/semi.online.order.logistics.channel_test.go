@@ -23,9 +23,9 @@ func TestSemiOnlineOrderLogisticsChannel_Amount(t *testing.T) {
 
 func TestSemiOnlineOrderLogisticsChannel_DeliveryDays(t *testing.T) {
 	tests := map[string][]int{
-		"1-1":                              {1, 1},
-		"1  -2":                            {1, 2},
-		"预估$91.21; USD; 1-2工作日送达":   {1, 2},
+		"1-1":                     {1, 1},
+		"1  -2":                   {1, 2},
+		"预估$91.21; USD; 1-2工作日送达": {1, 2},
 		"预估$91.21; USD; 1 - 2工作日送达": {1, 2},
 	}
 	for amount, value := range tests {

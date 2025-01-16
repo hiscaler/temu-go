@@ -41,7 +41,7 @@ func (m ShipOrderPackingSendSelfDeliveryInformation) validate() error {
 // ShipOrderPackingSendPlatformRecommendationDeliveryInformation 平台推荐服务商配送信息
 type ShipOrderPackingSendPlatformRecommendationDeliveryInformation struct {
 	ExpressCompanyId          int64   `json:"expressCompanyId,omitempty"`          // 快递公司 Id
-	TmsChannelId              int     `json:"tmsChannelId,omitempty"`              // TMS 快递产品类型 Id
+	TmsChannelId              int64   `json:"tmsChannelId,omitempty"`              // TMS 快递产品类型 Id
 	ExpressCompanyName        string  `json:"expressCompanyName,omitempty"`        // 快递公司名称
 	StandbyExpress            bool    `json:"standbyExpress"`                      // 是否是备用快递公司
 	ExpressDeliverySn         string  `json:"expressDeliverySn,omitempty"`         // 快递单号

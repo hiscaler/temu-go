@@ -27,31 +27,31 @@ type SemiOnlineOrderLogisticsShipmentCreateRequest struct {
 			GoodsId       string `json:"goodsId"`       // 商品 goodsId
 			SkuId         int64  `json:"skuId"`         // 商品 skuId
 			Quantity      int    `json:"quantity"`      // 发货数量
-		} `json:"orderSendInfoList"`                       // 发货商品信息
+		} `json:"orderSendInfoList"` // 发货商品信息
 		WarehouseId        int64  `json:"warehouseId"`     // 仓库id
-		Weight             string `json:"weight"`          // 重量（默认2位小数）
-		WeightUnit         string `json:"weightUnit"`      // 重量单位，美国为lb（磅），其他国家为kg（千克）
-		Length             string `json:"length"`          // 包裹长度（默认2位小数）
-		Width              string `json:"width"`           // 包裹宽度（默认2位小数）
-		Height             string `json:"height"`          // 包裹高度（默认2位小数）
+		Weight             string `json:"weight"`          // 重量（默认 2 位小数）
+		WeightUnit         string `json:"weightUnit"`      // 重量单位，美国为 lb（磅），其他国家为 kg（千克）
+		Length             string `json:"length"`          // 包裹长度（默认 2 位小数）
+		Width              string `json:"width"`           // 包裹宽度（默认 2 位小数）
+		Height             string `json:"height"`          // 包裹高度（默认 2 位小数）
 		DimensionUnit      string `json:"dimensionUnit"`   // 尺寸单位高度 ，美国为in（英寸）其他国家为cm（厘米）
-		ChannelId          int    `json:"channelId"`       // 渠道id，取自shipservice.get
-		PickupStartTime    int64  `json:"pickupStartTime"` // 预约上门取件开始时间（当渠道为需要下call同时入参预约时间渠道时，需入参。剩余渠道无需入参。）
-		PickupEndTime      int64  `json:"pickupEndTime"`   // 预约上门取件结束时间（当渠道为需要下call同时入参预约时间渠道时，需入参。剩余渠道无需入参。）
-		SignServiceId      int64  `json:"signServiceId"`   // 想使用的签收服务ID
-		SplitSubPackage    bool   `json:"splitSubPackage"` // 是否为单件SKU拆多包裹（TRUE：是单件SKU多包裹场景 FALSE/不填：不是单件SKU多包裹场景）
+		ChannelId          int64  `json:"channelId"`       // 渠道id，取自 shipservice.get
+		PickupStartTime    int64  `json:"pickupStartTime"` // 预约上门取件开始时间（当渠道为需要下 call 同时入参预约时间渠道时，需入参。剩余渠道无需入参。）
+		PickupEndTime      int64  `json:"pickupEndTime"`   // 预约上门取件结束时间（当渠道为需要下 call 同时入参预约时间渠道时，需入参。剩余渠道无需入参。）
+		SignServiceId      int64  `json:"signServiceId"`   // 想使用的签收服务 ID
+		SplitSubPackage    bool   `json:"splitSubPackage"` // 是否为单件 SKU 拆多包裹（TRUE：是单件SKU多包裹场景 FALSE/不填：不是单件SKU多包裹场景）
 		SendSubRequestList []struct {
 			ExtendWeightUnit string `json:"extendWeightUnit"` // 扩展重量单位
 			ExtendWeight     string `json:"extendWeight"`     // 扩展重量
 			WeightUnit       string `json:"weightUnit"`       // 重量单位
 			DimensionUnit    string `json:"dimensionUnit"`    // 尺寸单位
-			Length           string `json:"length"`           // 包裹长度（默认2位小数）
-			Weight           string `json:"weight"`           // 包裹重量（默认2位小数）
-			Height           string `json:"height"`           // 包裹宽度（默认2位小数）
-			WarehouseId      string `json:"warehouseId"`      // 仓库id
-			ShipCompanyId    string `json:"shipCompanyId"`    // 物流公司ID
-			SignServiceId    int64  `json:"signServiceId"`    // 想使用的签收服务ID
-		} `json:"sendSubRequestList"` // 单件sku多包裹场景，附属包裹入参
+			Length           string `json:"length"`           // 包裹长度（默认 2 位小数）
+			Weight           string `json:"weight"`           // 包裹重量（默认 2 位小数）
+			Height           string `json:"height"`           // 包裹宽度（默认 2 位小数）
+			WarehouseId      string `json:"warehouseId"`      // 仓库 ID
+			ShipCompanyId    string `json:"shipCompanyId"`    // 物流公司 ID
+			SignServiceId    int64  `json:"signServiceId"`    // 想使用的签收服务 ID
+		} `json:"sendSubRequestList"` // 单件 sku 多包裹场景，附属包裹入参
 	} `json:"sendRequestList"` // 包裹信息
 }
 
