@@ -96,7 +96,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Create(ctx context.Context, req
 
 // Query 物流在线发货下单查询接口
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#S8m7N3
-func (s semiOnlineOrderLogisticsShipmentService) Query(ctx context.Context, packageNumbers ...string) (items []entity.SemiOnlineOrderLogisticsShipmentPackage, err error) {
+func (s semiOnlineOrderLogisticsShipmentService) Query(ctx context.Context, packageNumbers ...string) ([]entity.SemiOnlineOrderLogisticsShipmentPackage, error) {
 	if len(packageNumbers) == 0 {
 		return nil, ErrInvalidParameters
 	}
@@ -113,7 +113,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Query(ctx context.Context, pack
 		SetResult(&result).
 		Post("bg.logistics.shipment.result.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return nil, err
 	}
 
 	return result.Result.PackageInfoResultList, nil
@@ -126,9 +126,9 @@ type SemiOnlineOrderLogisticsShipmentUpdateRequest struct {
 		PackageSn         string `json:"packageSn"`       // 包裹号
 		PickupStartTime   int64  `json:"pickupStartTime"` // 预约上门取件的开始时间 秒级时间戳
 		PickupEndTime     int64  `json:"pickupEndTime"`   // 预约上门取件的结束时间 秒级时间戳
-		SignServiceId     int64  `json:"signServiceId"`   // 签收服务ID
-		ChannelId         int64  `json:"channelId"`       // 渠道id
-		ShipCompanyId     string `json:"shipCompanyId"`   // 物流公司id
+		SignServiceId     int64  `json:"signServiceId"`   // 签收服务 ID
+		ChannelId         int64  `json:"channelId"`       // 渠道 ID
+		ShipCompanyId     int64  `json:"shipCompanyId"`   // 物流公司 ID
 		OrderSendInfoList []struct {
 			OrderSn       string `json:"orderSn"`
 			ParentOrderSn string `json:"parentOrderSn"`
