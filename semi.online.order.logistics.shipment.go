@@ -312,11 +312,13 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		"toa-random",
 		"toa-timestamp",
 	}
+	expireTime := time.Now().Add(10 * time.Minute).Unix() // 10 分钟后过期
 	dir := strings.TrimSpace(request.DownloadSaveDir.String)
 	if dir == "" {
 		dir = "./download"
 	}
 	for i, doc := range documents {
+		doc.ExpireTime = expireTime
 		url := doc.Url
 		if url == "" {
 			continue
