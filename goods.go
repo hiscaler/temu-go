@@ -34,28 +34,28 @@ type goodsService struct {
 
 type GoodsQueryParams struct {
 	normal.ParameterWithPager
-	Page                   int      `json:"page"`                             // 页码
-	Cat1Id                 int64    `json:"cat1Id,omitempty"`                 // 一级分类 ID
-	Cat2Id                 int64    `json:"cat2Id,omitempty"`                 // 二级分类 ID
-	Cat3Id                 int64    `json:"cat3Id,omitempty"`                 // 三级分类 ID
-	Cat4Id                 int64    `json:"cat4Id,omitempty"`                 // 四级分类 ID
-	Cat5Id                 int64    `json:"cat5Id,omitempty"`                 // 五级分类 ID
-	Cat6Id                 int64    `json:"cat6Id,omitempty"`                 // 六级分类 ID
-	Cat7Id                 int64    `json:"cat7Id,omitempty"`                 // 七级分类 ID
-	Cat8Id                 int64    `json:"cat8Id,omitempty"`                 // 八级分类 ID
-	Cat9Id                 int64    `json:"cat9Id,omitempty"`                 // 九级分类 ID
-	Cat10Id                int64    `json:"cat10Id,omitempty"`                // 十级分类 ID
-	SkcExtCode             string   `json:"skcExtCode,omitempty"`             // 货品 SKC 外部编码
-	SupportPersonalization int      `json:"supportPersonalization,omitempty"` // 是否支持定制品模板
-	BindSiteIds            []int    `json:"bindSiteIds,omitempty"`            // 经营站点
-	ProductName            string   `json:"productName,omitempty"`            // 货品名称
-	ProductSkcIds          []int64  `json:"productSkcIds,omitempty"`          // SKC 列表
-	SkuExtCodes            []string `json:"skuExtCodes,omitempty"`            // SKU 货号列表
-	QuickSellAgtSignStatus null.Int `json:"quickSellAgtSignStatus,omitempty"` // 快速售卖协议签署状态 0-未签署 1-已签署
-	MatchJitMode           null.Int `json:"matchJitMode,omitempty"`           // 是否命中 JIT 模式
-	SkcSiteStatus          null.Int `json:"skcSiteStatus,omitempty"`          // skc 加站点状态 (0: 未加入站点, 1: 已加入站点)
-	CreatedAtStart         string   `json:"createdAtStart,omitempty"`         // 创建时间开始，毫秒级时间戳
-	CreatedAtEnd           string   `json:"createdAtEnd,omitempty"`           // 创建时间结束，毫秒级时间戳
+	Page                   int       `json:"page"`                             // 页码
+	Cat1Id                 int64     `json:"cat1Id,omitempty"`                 // 一级分类 ID
+	Cat2Id                 int64     `json:"cat2Id,omitempty"`                 // 二级分类 ID
+	Cat3Id                 int64     `json:"cat3Id,omitempty"`                 // 三级分类 ID
+	Cat4Id                 int64     `json:"cat4Id,omitempty"`                 // 四级分类 ID
+	Cat5Id                 int64     `json:"cat5Id,omitempty"`                 // 五级分类 ID
+	Cat6Id                 int64     `json:"cat6Id,omitempty"`                 // 六级分类 ID
+	Cat7Id                 int64     `json:"cat7Id,omitempty"`                 // 七级分类 ID
+	Cat8Id                 int64     `json:"cat8Id,omitempty"`                 // 八级分类 ID
+	Cat9Id                 int64     `json:"cat9Id,omitempty"`                 // 九级分类 ID
+	Cat10Id                int64     `json:"cat10Id,omitempty"`                // 十级分类 ID
+	SkcExtCode             string    `json:"skcExtCode,omitempty"`             // 货品 SKC 外部编码
+	SupportPersonalization int       `json:"supportPersonalization,omitempty"` // 是否支持定制品模板
+	BindSiteIds            []int     `json:"bindSiteIds,omitempty"`            // 经营站点
+	ProductName            string    `json:"productName,omitempty"`            // 货品名称
+	ProductSkcIds          []int64   `json:"productSkcIds,omitempty"`          // SKC 列表
+	SkuExtCodes            []string  `json:"skuExtCodes,omitempty"`            // SKU 货号列表
+	QuickSellAgtSignStatus null.Int  `json:"quickSellAgtSignStatus,omitempty"` // 快速售卖协议签署状态 0-未签署 1-已签署
+	MatchJitMode           null.Bool `json:"matchJitMode,omitempty"`           // 是否命中 JIT 模式
+	SkcSiteStatus          null.Int  `json:"skcSiteStatus,omitempty"`          // skc 加站点状态 (0: 未加入站点, 1: 已加入站点)
+	CreatedAtStart         string    `json:"createdAtStart,omitempty"`         // 创建时间开始（年-月-日 时:分:秒）
+	CreatedAtEnd           string    `json:"createdAtEnd,omitempty"`           // 创建时间结束（年-月-日 时:分:秒）
 }
 
 func (m GoodsQueryParams) validate() error {
@@ -63,6 +63,15 @@ func (m GoodsQueryParams) validate() error {
 		validation.Field(&m.BindSiteIds, validation.By(is.SiteIds(entity.SiteIds))),
 		validation.Field(&m.CreatedAtStart,
 			validation.When(m.CreatedAtStart != "" || m.CreatedAtEnd != "", validation.By(is.TimeRange(m.CreatedAtStart, m.CreatedAtEnd, time.DateTime))),
+		),
+		validation.Field(&m.SkcSiteStatus,
+			validation.When(m.SkcSiteStatus.Valid, validation.By(func(value interface{}) error {
+				v, ok := value.(null.Int)
+				if !ok {
+					return errors.New("无效的 SKC 加站点状态")
+				}
+				return validation.Validate(int(v.Int64), validation.In(entity.TrueNumber, entity.FalseNumber).Error("无效的 SKC 加站点状态"))
+			})),
 		),
 		validation.Field(&m.QuickSellAgtSignStatus,
 			validation.When(m.QuickSellAgtSignStatus.Valid, validation.By(func(value interface{}) error {
@@ -179,7 +188,7 @@ type GoodsCreateRequest struct {
 	ProductI18nReqs struct {
 		Language    string `json:"language"`    // 语言编码，en-美国
 		ProductName string `json:"productName"` // 对应语言的商品标题
-	} `json:"productI18nReqs"` // 多语言标题设置
+	} `json:"productI18nReqs"`                              // 多语言标题设置
 	ProductName                string `json:"productName "` // 货品名称
 	ProductCarouseVideoReqList []struct {
 		Vid      string `json:"vid"`      // 视频 VID
@@ -191,12 +200,12 @@ type GoodsCreateRequest struct {
 	ProductCustomReq struct {
 		GoodsLabelName   string `json:"goodsLabelName"`   // 货品关务标签名称
 		IsRecommendedTag bool   `json:"isRecommendedTag"` // 是否使用推荐标签
-	} `json:"productCustomReq"` // 货品关务标签
+	} `json:"productCustomReq"`                                                   // 货品关务标签
 	CarouselImageUrls            []string          `json:"carouselImageUrls"`     // 货品轮播图
 	CarouselImageI18nReqs        []ProductImageUrl `json:"carouselImageI18nReqs"` // 货品 SPU 多语言轮播图，服饰类不传，非服饰必传
 	ProductOuterPackageImageReqs []struct {
 		ImageUrl string `json:"imageUrl"` // 图片链接，通过图片上传接口，imageBizType=1获取
-	} `json:"productOuterPackageImageReqs"` // 外包装图片
+	} `json:"productOuterPackageImageReqs"`            // 外包装图片
 	MaterialImgUrl      string `json:"materialImgUrl"` // 素材图
 	ProductPropertyReqs []struct {
 		TemplatePid      int64  `json:"templatePid"`      // 模板属性id
@@ -259,7 +268,7 @@ type GoodsCreateRequest struct {
 				ProductSkuNetContentReq struct {
 					NetContentUnitCode int `json:"netContentUnitCode"` // 净含量单位，1：液体盎司，2：毫升，3：加仑，4：升，5：克，6：千克，7：常衡盎司，8：磅
 					NetContentNumber   int `json:"netContentNumber"`   // 净含量数值
-				} `json:"productSkuNetContentReq"` // 净含量请求，传空对象表示空，指定类目灰度管控
+				} `json:"productSkuNetContentReq"`               // 净含量请求，传空对象表示空，指定类目灰度管控
 				SkuClassification int `json:"skuClassification"` // sku分类，1：单品，2：组合装，3：混合套装
 				PieceUnitCode     int `json:"pieceUnitCode"`     // 单件单位，1：件，2：双，3：包
 			} `json:"productSkuMultiPackReq"` // 货品多包规请求
@@ -405,9 +414,9 @@ type GoodsCreateRequest struct {
 				} `json:"productSkuBarCodeReqs"`
 				ExtCode string `json:"extCode"` // sku货号，没有的场景传空字符串
 			} `json:"productSkuWhExtAttrReq"` // 同款参考
-			ExtCode string `json:"extCode"` // 货品 skc 外部编码，没有的场景传空字符串
+			ExtCode string `json:"extCode"`   // 货品 skc 外部编码，没有的场景传空字符串
 		} `json:"productSkuReqs"` // 货品 sku 列表
-	} `json:"productSkcReqs"` // 货品 skc 列表
+	} `json:"productSkcReqs"`                      // 货品 skc 列表
 	SizeTemplateIds []int `json:"sizeTemplateIds"` // 尺码表模板id（从sizecharts.template.create获取），无尺码表时传空数组[]
 	GoodsModelReqs  []struct {
 		ModelProfileUrl string `json:"modelProfileUrl"` // 模特头像
@@ -424,7 +433,7 @@ type GoodsCreateRequest struct {
 		ModelFootLength string `json:"modelFootLength"` // 模特脚长文本modelType=1传空值
 		TryOnResult     int    `json:"tryOnResult"`     // 试穿心得 TRUE_TO_SIZE(1, "舒适"),    TOO_SMALL(2, "紧身"),    TOO_LARGE(3, "宽松"),
 		ModelHip        string `json:"modelHip"`        // 模特臀围文本modelType=2传空值
-	} `json:"goodsModelReqs"` // 商品模特列表请求
+	} `json:"goodsModelReqs"`                                   // 商品模特列表请求
 	ShowSizeTemplateIds    []int64 `json:"showSizeTemplateIds"` // 套装尺码表展示，至多2个尺码表模板id入参
 	ProductOuterPackageReq struct {
 		PackageShape int `json:"packageShape"` // 外包装形状0:不规则形状 1:长方体 2:圆柱体
@@ -455,7 +464,7 @@ type GoodsCreateRequest struct {
 				FontColor       string `json:"fontColor"`       // 文字颜色文本-text必填，六位值，例#333333
 			} `json:"textModuleDetails"` // 文字模块详情文本-text必填
 		} `json:"contentList"` // 楼层内容
-	} `json:"goodsLayerDecorationReqs"` // 商详装饰
+	} `json:"goodsLayerDecorationReqs"`                      // 商详装饰
 	PersonalizationSwitch int `json:"personalizationSwitch"` // 是否定制品，API发品标记定制品后，请及时在卖家中心配置定制模版信息，否则无法正常加站点售卖 0：非定制品、1：定制品
 	ProductSemiManagedReq struct {
 		BindSiteIds []int `json:"bindSiteIds"` // 绑定站点列表
@@ -475,7 +484,7 @@ type GoodsCreateRequest struct {
 	ProductShipmentReq struct {
 		FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板id，使用bg.logistics.template.get查询，详见：https://seller.kuajingmaihuo.com/sop/view/867739977041685428
 		ShipmentLimitSecond int    `json:"shipmentLimitSecond"` // 承诺发货时间(单位:s)，可选值：86400，172800，259200（仅定制品可用）
-	} `json:"productShipmentReq"` // 半托管货品配送信息请求
+	} `json:"productShipmentReq"`                                   // 半托管货品配送信息请求
 	AddProductChannelType  int      `json:"addProductChannelType"`  // 发品渠道
 	MaterialMultiLanguages []string `json:"materialMultiLanguages"` // 图片多语言列表
 }
