@@ -62,5 +62,23 @@ func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Contex
 		return nil, err
 	}
 
-	return result.Result.OnlineChannelDtoList, nil
+	items := result.Result.OnlineChannelDtoList
+	for i, item := range items {
+		v, e := item.ParseEstimatedAmount()
+		if e != nil {
+			item.AmountError = null.StringFrom(e.Error())
+		} else {
+			item.Amount = null.FloatFrom(v)
+		}
+
+		d1, d2, e := item.DeliveryDays()
+		if e != nil {
+			item.DeliveryDaysError = null.StringFrom(e.Error())
+		} else {
+			item.DeliveryMinDays = null.IntFrom(int64(d1))
+			item.DeliveryMaxDays = null.IntFrom(int64(d2))
+		}
+		items[i] = item
+	}
+	return items, nil
 }

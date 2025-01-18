@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"gopkg.in/guregu/null.v4"
 	"regexp"
 	"strconv"
 	"strings"
@@ -19,10 +20,16 @@ type SemiOnlineOrderLogisticsChannel struct {
 	InfoNeeded            []any  `json:"infoNeeded"`            // 渠道提示信息，提示这个渠道下 call 时候的依赖项目
 	SignServiceName       string `json:"signServiceName"`       // 签收服务类型
 	SignServiceId         string `json:"signServiceId"`         // 签收服务 ID
+	// 获取数据后系统解析得到的数据
+	Amount            null.Float  `json:"amount"`              // 预估金额（数字）
+	AmountError       null.String `json:"amount_error"`        // 预估金额解析错误信息
+	DeliveryMinDays   null.Int    `json:"delivery_min_days"`   // 发货最少天数
+	DeliveryMaxDays   null.Int    `json:"delivery_max_days"`   // 发货最多天数
+	DeliveryDaysError null.String `json:"delivery_days_error"` // 发货时间解析错误信息
 }
 
-// Amount 获取预估金额
-func (c SemiOnlineOrderLogisticsChannel) Amount() (float64, error) {
+// ParseEstimatedAmount 解析预估金额
+func (c SemiOnlineOrderLogisticsChannel) ParseEstimatedAmount() (float64, error) {
 	s := strings.TrimSpace(c.EstimatedAmount)
 	if s == "" {
 		return 0, errors.New("预估金额待解析文本不能为空")
@@ -43,7 +50,7 @@ func (c SemiOnlineOrderLogisticsChannel) Amount() (float64, error) {
 	return v, nil
 }
 
-// DeliveryDays 获取交货天数
+// DeliveryDays 解析并获取交货天数
 func (c SemiOnlineOrderLogisticsChannel) DeliveryDays() (int, int, error) {
 	s := strings.TrimSpace(c.EstimatedText)
 	if s == "" {

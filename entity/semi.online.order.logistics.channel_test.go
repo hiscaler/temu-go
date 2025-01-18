@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestSemiOnlineOrderLogisticsChannel_Amount(t *testing.T) {
+func TestSemiOnlineOrderLogisticsChannel_ParseEstimatedAmount(t *testing.T) {
 	tests := map[string]float64{
 		"1-1":     0,
 		"$91.21":  91.21,
@@ -16,7 +16,7 @@ func TestSemiOnlineOrderLogisticsChannel_Amount(t *testing.T) {
 	}
 	for text, amount := range tests {
 		d := SemiOnlineOrderLogisticsChannel{EstimatedAmount: text}
-		v, _ := d.Amount()
+		v, _ := d.ParseEstimatedAmount()
 		assert.Equalf(t, amount, v, "Amount(%s)", text)
 	}
 }
