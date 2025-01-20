@@ -113,7 +113,7 @@ func (m SemiOrderQueryParams) validate() error {
 
 // Query 订单列表查询接口
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#r2WKrz
-func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams) (items []entity.PageItem, total, totalPages int, isLastPage bool, err error) {
+func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams) (items []entity.ParentOrder, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	params.PageNumber = params.Pager.Page
 	if err = params.validate(); err != nil {
@@ -145,7 +145,10 @@ func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams
 	var result = struct {
 		normal.Response
 		Result struct {
-			Result entity.OrderResult `json:"result"`
+			Result struct {
+				TotalItemNum int                  `json:"totalItemNum"`
+				PageItems    []entity.ParentOrder `json:"pageItems"`
+			} `json:"result"`
 		} `json:"result"`
 	}{}
 
