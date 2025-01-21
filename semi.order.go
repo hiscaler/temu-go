@@ -64,7 +64,7 @@ func (m SemiOrderQueryParams) validate() error {
 				entity.SemiParentOrderStatusReceipted,
 				entity.SemiParentOrderStatusPartialCanceled,
 				entity.SemiParentOrderStatusPartialReceipted,
-			).Error("无效的父订单状态"))
+			).Error("无效的父单状态"))
 		}))),
 		validation.Field(&m.CreateBefore,
 			validation.When(m.CreateBefore != "" || m.CreateAfter != "", validation.By(is.TimeRange(m.CreateBefore, m.CreateAfter, time.DateTime))),

@@ -100,13 +100,13 @@ func (s shipOrderStagingService) Query(ctx context.Context, params ShipOrderStag
 
 	items = result.Result.List
 	for i, item := range items {
-		orderType := 0 // Unknown
+		orderType := null.NewInt(0, false) // Unknown
 		if item.SubPurchaseOrderBasicVO.IsCustomProduct {
-			orderType = entity.OrderTypeCustomized
+			orderType = null.IntFrom(int64(entity.OrderTypeCustomized))
 		} else if item.SubPurchaseOrderBasicVO.PurchaseStockType == entity.PurchaseStockTypeJIT {
-			orderType = entity.OrderTypeJIT
+			orderType = null.IntFrom(int64(entity.OrderTypeJIT))
 		} else {
-			orderType = entity.OrderTypeNormal
+			orderType = null.IntFrom(int64(entity.OrderTypeNormal))
 		}
 		items[i].OrderType = orderType
 	}

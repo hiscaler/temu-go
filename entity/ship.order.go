@@ -76,10 +76,10 @@ type ShipOrder struct {
 		PurchaseTime       int64       `json:"purchaseTime"`
 		SubPurchaseOrderSn string      `json:"subPurchaseOrderSn"`
 	} `json:"subPurchaseOrderBasicVO"`
-	SubWarehouseName        string `json:"subWarehouseName"`
-	PurchaseTime            int64  `json:"purchaseTime"`
-	SkcPurchaseNum          int    `json:"skcPurchaseNum"`
-	DeliverSkcNum           int    `json:"deliverSkcNum"`
-	DeliveryOrderCreateTime int64  `json:"deliveryOrderCreateTime"`
-	OrderType               int    `json:"orderType"` // 自处理后的发货单类型（1：普通、2：JIT、3：定制）
+	SubWarehouseName        string   `json:"subWarehouseName"`
+	PurchaseTime            int64    `json:"purchaseTime"`
+	SkcPurchaseNum          int      `json:"skcPurchaseNum"`
+	DeliverSkcNum           int      `json:"deliverSkcNum"`
+	DeliveryOrderCreateTime int64    `json:"deliveryOrderCreateTime"`
+	OrderType               null.Int `json:"orderType"` // 自处理后的发货单类型（1：普通、2：JIT、3：定制）
 }
