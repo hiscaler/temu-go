@@ -139,7 +139,7 @@ func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams
 
 	items = result.Result.List
 	for i, item := range items {
-		orderType := null.NewInt(0, false) // Unknown
+		var orderType null.Int
 		if item.IsCustomProduct {
 			orderType = null.IntFrom(int64(entity.OrderTypeCustomized))
 		} else if item.PurchaseStockType == entity.PurchaseStockTypeJIT {

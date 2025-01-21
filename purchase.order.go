@@ -233,13 +233,13 @@ func (s purchaseOrderService) Query(ctx context.Context, params PurchaseOrderQue
 
 	items = result.Result.SubOrderForSupplierList
 	for i, item := range items {
-		orderType := 0 // Unknown
+		var orderType null.Int
 		if item.IsCustomProduct {
-			orderType = entity.OrderTypeCustomized
+			orderType = null.IntFrom(int64(entity.OrderTypeCustomized))
 		} else if item.PurchaseStockType == entity.PurchaseStockTypeJIT {
-			orderType = entity.OrderTypeJIT
+			orderType = null.IntFrom(int64(entity.OrderTypeJIT))
 		} else {
-			orderType = entity.OrderTypeNormal
+			orderType = null.IntFrom(int64(entity.OrderTypeNormal))
 		}
 		items[i].OrderType = orderType
 	}
