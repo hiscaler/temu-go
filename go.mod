@@ -4,7 +4,7 @@ go 1.23
 
 require (
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
-	github.com/go-resty/resty/v2 v2.16.3
+	github.com/go-resty/resty/v2 v2.16.4
 	github.com/goccy/go-json v0.10.4
 	github.com/hiscaler/gox v0.0.0-20240824093629-11ab6f7acd0b
 	github.com/stretchr/testify v1.10.0
