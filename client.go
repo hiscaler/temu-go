@@ -52,14 +52,15 @@ const (
 	TypeIsNotExistsError         = 3000003 // 接口不存在
 )
 
-var ErrNotFound = errors.New("数据不存在")
-var ErrInvalidSign = errors.New("无效的签名")
-var ErrInvalidParameters = errors.New("无效的参数")
+var ErrNotFound = validation.ErrorObject{}.SetCode("NotFound").SetMessage("数据不存在")
+var ErrInvalidSign = validation.ErrorObject{}.SetCode("InvalidSign").SetMessage("无效的签名")
+var ErrInvalidParameters = validation.ErrorObject{}.SetCode("InvalidParameters").SetMessage("无效的参数")
 
 type service struct {
 	debug      bool          // Is debug mode
 	logger     *slog.Logger  // Logger
 	config     config.Config // Config
+	language   *string       // Language
 	httpClient *resty.Client // HTTP client
 }
 
@@ -78,7 +79,6 @@ type Client struct {
 	Env          string         // 环境
 	Debug        bool           // 是否为 Debug 模式
 	Region       string         // 接口所在区域
-	Language     string         // 消息语种
 	Logger       *slog.Logger   // Log
 	Services     services       // API services
 	TimeLocation *time.Location // 时区
@@ -113,7 +113,7 @@ func generateSign(values map[string]any, appSecret string) map[string]any {
 }
 
 var loc *time.Location
-var lang string = "zh-Hans"
+var lang *string
 var i18nBundle *i18n.Bundle
 var i18nLocalizer *i18n.Localizer
 
@@ -127,8 +127,10 @@ func init() {
 
 	i18nBundle = i18n.NewBundle(language.SimplifiedChinese)
 	i18nBundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
-	_, _ = i18nBundle.LoadMessageFile(fmt.Sprintf("./locales/%s.toml", lang))
-	i18nLocalizer = i18n.NewLocalizer(i18nBundle, lang)
+	l := language.SimplifiedChinese.String()
+	lang = &l
+	_, _ = i18nBundle.LoadMessageFile(fmt.Sprintf("./locales/%s.toml", l))
+	i18nLocalizer = i18n.NewLocalizer(i18nBundle, l)
 }
 
 type simpleResponse struct {
@@ -212,7 +214,7 @@ func NewClient(cfg config.Config) *Client {
 		}
 	}
 	client := &Client{
-		language:     lang,
+		language:     *lang,
 		Env:          env,
 		Debug:        debug,
 		Region:       region,
@@ -348,6 +350,7 @@ func NewClient(cfg config.Config) *Client {
 		debug:      debug,
 		logger:     l,
 		httpClient: httpClient,
+		language:   lang,
 		config:     cfg,
 	}
 	client.Services = services{
@@ -425,7 +428,7 @@ func (c *Client) SetLanguage(l string) *Client {
 		}
 	}
 	c.language = l
-	lang = l
+	lang = &l
 	return c
 }
 
