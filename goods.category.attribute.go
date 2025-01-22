@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"fmt"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 )
@@ -11,6 +12,10 @@ type goodsCategoryAttributeService service
 
 // Query 按类目查询货品属性
 func (s goodsCategoryAttributeService) Query(ctx context.Context, categoryId int64) ([]entity.GoodsCategoryAttribute, error) {
+	if categoryId <= 0 {
+		return nil, fmt.Errorf("无效的分类：%d", categoryId)
+	}
+
 	var result = struct {
 		normal.Response
 		Result struct {

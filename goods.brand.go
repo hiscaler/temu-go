@@ -14,7 +14,7 @@ type goodsBrandService service
 type GoodsBrandQueryParams struct {
 	normal.ParameterWithPager
 	Page      int    `json:"page"`                // 页码
-	Vid       int64  `json:"vid,omitempty"`       // 搜索的属性id
+	Vid       int64  `json:"vid,omitempty"`       // 搜索的属性 ID
 	BrandName string `json:"BrandName,omitempty"` // 搜索的品牌名称
 }
 
