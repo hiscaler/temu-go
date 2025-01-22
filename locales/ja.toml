@@ -1,0 +1,7 @@
+[InvalidPurchaseOrder]
+description = "无效的备货单号"
+other = "無効な入庫注文番号です {{.Number}}"
+
+[PurchaseOrderNumberIsEmpty]
+description = "备货单号不能为空"
+other = "仕入れ注文番号を空にすることはできません"

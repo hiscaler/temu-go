@@ -7,6 +7,7 @@ import (
 	"github.com/hiscaler/temu-go/config"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/text/language"
 	"os"
 	"testing"
 )
@@ -26,6 +27,7 @@ func TestMain(m *testing.M) {
 	}
 
 	temuClient = NewClient(cfg)
+	temuClient.SetLanguage(language.SimplifiedChinese.String())
 	ctx = context.Background()
 	m.Run()
 }

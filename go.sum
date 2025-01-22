@@ -1,3 +1,5 @@
+github.com/BurntSushi/toml v1.4.0 h1:kuoIxZQy2WRRk1pttg9asf+WVv6tWQuBNVmK8+nqPr0=
+github.com/BurntSushi/toml v1.4.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
 github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496/go.mod h1:oGkLhpf+kjZl6xBf758TQhh5XrAeiJv/7FRz/2spLIg=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
@@ -12,6 +14,8 @@ github.com/goccy/go-json v0.10.4 h1:JSwxQzIqKfmFX1swYPpUThQZp/Ka4wzJdK0LWVytLPM=
 github.com/goccy/go-json v0.10.4/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
 github.com/hiscaler/gox v0.0.0-20240824093629-11ab6f7acd0b h1:0SPT4chgh2oEMwfZTEo7QMuZYKD8mRlYn+xc7A7vpE8=
 github.com/hiscaler/gox v0.0.0-20240824093629-11ab6f7acd0b/go.mod h1:sAVb9YHa+WeOtPRvVeugAhvTlDXNwIwgsGqv9Q2vZWI=
+github.com/nicksnyder/go-i18n/v2 v2.4.1 h1:zwzjtX4uYyiaU02K5Ia3zSkpJZrByARkRB4V3YPrr0g=
+github.com/nicksnyder/go-i18n/v2 v2.4.1/go.mod h1:++Pl70FR6Cki7hdzZRnEEqdc2dJt+SAGotyFg/SvZMk=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

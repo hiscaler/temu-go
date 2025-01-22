@@ -5,6 +5,9 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"github.com/BurntSushi/toml"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"golang.org/x/text/language"
 	"log/slog"
 	"net"
 	"net/http"
@@ -71,9 +74,11 @@ type services struct {
 }
 
 type Client struct {
+	language     string         // 消息语种
 	Env          string         // 环境
 	Debug        bool           // 是否为 Debug 模式
 	Region       string         // 接口所在区域
+	Language     string         // 消息语种
 	Logger       *slog.Logger   // Log
 	Services     services       // API services
 	TimeLocation *time.Location // 时区
@@ -108,6 +113,9 @@ func generateSign(values map[string]any, appSecret string) map[string]any {
 }
 
 var loc *time.Location
+var lang string = "zh-Hans"
+var i18nBundle *i18n.Bundle
+var i18nLocalizer *i18n.Localizer
 
 func init() {
 	var err error
@@ -116,6 +124,11 @@ func init() {
 		loc = time.FixedZone("CST", 8*3600)
 	}
 	time.Local = loc
+
+	i18nBundle = i18n.NewBundle(language.SimplifiedChinese)
+	i18nBundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
+	_, _ = i18nBundle.LoadMessageFile(fmt.Sprintf("./locales/%s.toml", lang))
+	i18nLocalizer = i18n.NewLocalizer(i18nBundle, lang)
 }
 
 type simpleResponse struct {
@@ -199,6 +212,7 @@ func NewClient(cfg config.Config) *Client {
 		}
 	}
 	client := &Client{
+		language:     lang,
 		Env:          env,
 		Debug:        debug,
 		Region:       region,
@@ -401,6 +415,20 @@ func (c *Client) SetRegion(region string) *Client {
 	return c
 }
 
+func (c *Client) SetLanguage(l string) *Client {
+	if c.language != l {
+		_, err := i18nBundle.LoadMessageFile(fmt.Sprintf("./locales/%s.toml", l))
+		if err != nil {
+			slog.Error(fmt.Sprintf(`SetLanguage("%s") error: %s`, l, err.Error()), slog.String("lang", l))
+		} else {
+			i18nLocalizer = i18n.NewLocalizer(i18nBundle, l)
+		}
+	}
+	c.language = l
+	lang = l
+	return c
+}
+
 func parseResponseTotal(currentPage, pageSize, total int) (n, totalPages int, isLastPage bool) {
 	if currentPage == 0 {
 		currentPage = 1
@@ -432,13 +460,28 @@ func invalidInput(e error) error {
 			continue
 		}
 
-		var errs1 validation.Errors
-		if errors.As(e1, &errs1) {
-			e1 = invalidInput(errs1)
-			if e1 == nil {
-				continue
+		var errObj validation.ErrorObject
+		if errors.As(e1, &errObj) {
+			e1 = errors.New(errObj.Code())
+			msg, err := i18nLocalizer.Localize(&i18n.LocalizeConfig{
+				MessageID:    errObj.Code(),
+				TemplateData: errObj.Params(),
+			})
+			if err != nil {
+				e1 = errors.New(errObj.Error())
+			} else {
+				e1 = errors.New(msg)
+			}
+		} else {
+			var errs1 validation.Errors
+			if errors.As(e1, &errs1) {
+				e1 = invalidInput(errs1)
+				if e1 == nil {
+					continue
+				}
 			}
 		}
+
 		messages = append(messages, e1.Error())
 	}
 	return errors.New(strings.Join(messages, "; "))
