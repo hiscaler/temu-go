@@ -1,3 +1,12 @@
+[NotFound]
+other = "Data does not exist"
+
+[InvalidSign]
+other = "Invalid signature"
+
+[InvalidParameters]
+other = "Invalid parameters"
+
 [InvalidPurchaseOrder]
 description = "无效的备货单号"
 other = "invalid purchase order {{.Number}}"
