@@ -14,6 +14,7 @@ import (
 	"os"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -457,6 +458,8 @@ func invalidInput(e error) error {
 		fields = append(fields, field)
 	}
 	sort.Strings(fields)
+
+	localizeConfig := &i18n.LocalizeConfig{}
 	for _, field := range fields {
 		e1 := errs[field]
 		if e1 == nil {
@@ -466,10 +469,9 @@ func invalidInput(e error) error {
 		var errObj validation.ErrorObject
 		if errors.As(e1, &errObj) {
 			e1 = errors.New(errObj.Code())
-			msg, err := i18nLocalizer.Localize(&i18n.LocalizeConfig{
-				MessageID:    errObj.Code(),
-				TemplateData: errObj.Params(),
-			})
+			localizeConfig.MessageID = errObj.Code()
+			localizeConfig.TemplateData = errObj.Params()
+			msg, err := i18nLocalizer.Localize(localizeConfig)
 			if err != nil {
 				e1 = errors.New(errObj.Error())
 			} else {
@@ -493,7 +495,7 @@ func invalidInput(e error) error {
 func recheckError(resp *resty.Response, result normal.Response, e error) error {
 	if e != nil {
 		if errors.Is(e, http.ErrHandlerTimeout) {
-			return errors.New("接口请求超时")
+			return errorWrap(http.StatusRequestTimeout, e.Error())
 		}
 		return e
 	}
@@ -549,6 +551,14 @@ func errorWrap(code int, message string) error {
 		message = "Access Token 已过期，请联系卖家重新授权并与您共享新的 Access Token"
 	default:
 		message = fmt.Sprintf("%d: %s", code, message)
+	}
+
+	// msg not found in translate file if err not equal nil
+	msg, err := i18nLocalizer.Localize(&i18n.LocalizeConfig{
+		MessageID: strconv.Itoa(code),
+	})
+	if err == nil {
+		message = msg
 	}
 
 	return errors.New(message)
