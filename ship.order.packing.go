@@ -115,7 +115,7 @@ type ShipOrderPackingSendRequest struct {
 	DeliveryAddressId               int64                                                          `json:"deliveryAddressId"`                         // 发货地址 ID
 	DeliveryOrderSnList             []string                                                       `json:"deliveryOrderSnList"`                       // 发货单号
 	SelfDeliveryInfo                *ShipOrderPackingSendSelfDeliveryInformation                   `json:"selfDeliveryInfo,omitempty"`                // 自送信息
-	ThirdPartyDeliveryInfo          *ShipOrderPackingSendPlatformRecommendationDeliveryInformation `json:"thirdPartyDeliveryInfo,omitempty"`          // 公司指定物流
+	ThirdPartyDeliveryInfo          *ShipOrderPackingSendPlatformRecommendationDeliveryInformation `json:"thirdPartyDeliveryInfo,omitempty"`          // 平台指定物流
 	ThirdPartyExpressDeliveryInfoVO *ShipOrderPackingSendThirdPartyDeliveryInformation             `json:"thirdPartyExpressDeliveryInfoVO,omitempty"` // 第三方配送
 }
 
@@ -141,21 +141,18 @@ func (m ShipOrderPackingSendRequest) validate() error {
 				case entity.DeliveryMethodSelf:
 					if m.SelfDeliveryInfo == nil {
 						return errors.New("装箱发货自送信息不能为空")
-					} else {
-						return m.SelfDeliveryInfo.validate()
 					}
+					return m.SelfDeliveryInfo.validate()
 				case entity.DeliveryMethodPlatformRecommendation:
 					if m.ThirdPartyDeliveryInfo == nil {
-						return errors.New("装箱发货物流信息不能为空")
-					} else {
-						return m.ThirdPartyDeliveryInfo.validate()
+						return errors.New("装箱发货平台指定物流信息不能为空")
 					}
+					return m.ThirdPartyDeliveryInfo.validate()
 				case entity.DeliveryMethodThirdParty:
 					if m.ThirdPartyExpressDeliveryInfoVO == nil {
 						return errors.New("装箱发货第三方配送信息不能为空")
-					} else {
-						return m.ThirdPartyExpressDeliveryInfoVO.validate()
 					}
+					return m.ThirdPartyExpressDeliveryInfoVO.validate()
 				}
 				return nil
 			}),
