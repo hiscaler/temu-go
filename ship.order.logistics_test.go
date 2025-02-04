@@ -10,6 +10,16 @@ import (
 func Test_shipOrderLogisticsService_Match(t *testing.T) {
 	purchaseOrder, err := temuClient.Services.PurchaseOrder.One(ctx, "WB2501082789597")
 	assert.Equal(t, nil, err, "PurchaseOrder.One")
+
+	// 发货地址
+	var deliveryAddress entity.DeliveryAddress
+	deliveryAddresses, err := temuClient.Services.Mall.DeliveryAddress.Query(ctx)
+	assert.Equal(t, nil, err, "Mall.DeliveryAddress.One")
+	if len(deliveryAddresses) != 0 {
+		deliveryAddress = deliveryAddresses[0]
+	}
+
+	// 收货地址
 	var receiveAddress entity.ShipOrderReceiveAddress
 	receiveAddress, err = temuClient.Services.ShipOrder.ReceiveAddress.One(ctx, purchaseOrder.SubPurchaseOrderSn)
 	assert.Equal(t, nil, err, "ShipOrder.ReceiveAddress.One")
@@ -22,7 +32,7 @@ func Test_shipOrderLogisticsService_Match(t *testing.T) {
 	if len(shipOrders) != 0 {
 		shipOrder := shipOrders[0]
 		req := LogisticsMatchRequest{
-			DeliveryAddressId:         20172531361454,
+			DeliveryAddressId:         deliveryAddress.ID,
 			PredictTotalPackageWeight: 1000,
 			// UrgencyType:               null.IntFrom(1),
 			SubWarehouseId:     shipOrder.SubWarehouseId,

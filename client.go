@@ -387,8 +387,8 @@ func NewClient(cfg config.Config) *Client {
 			Specification:       (goodsSpecificationService)(xService),
 		},
 		Mall: mallService{
-			service: xService,
-			Address: (mallAddressService)(xService),
+			service:         xService,
+			DeliveryAddress: (mallDeliveryAddressService)(xService),
 		},
 		Jit: jitService{
 			service:          xService,

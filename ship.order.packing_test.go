@@ -20,9 +20,9 @@ func TestShipOrderPackingService_Match(t *testing.T) {
 // TestShipOrderPackingService_SendForSelf 自送发货
 func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 	// 发货地址
-	addresses, err := temuClient.Services.Mall.Address.Query(ctx)
-	assert.Nilf(t, err, "temuClient.Services.Mall.Address.Query(ctx): error")
-	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.Mall.Address.Query(ctx): results")
+	addresses, err := temuClient.Services.Mall.DeliveryAddress.Query(ctx)
+	assert.Nilf(t, err, "temuClient.Services.Mall.DeliveryAddress.Query(ctx): error")
+	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.Mall.DeliveryAddress.Query(ctx): results")
 	address := addresses[0]
 
 	params := ShipOrderQueryParams{
@@ -66,9 +66,9 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 // TestShipOrderPackingService_SendForPlatformRecommendation 平台推荐物流发货
 func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 	// 发货地址
-	addresses, err := temuClient.Services.Mall.Address.Query(ctx)
-	assert.Nilf(t, err, "temuClient.Services.Mall.Address.Query(ctx): error")
-	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.Mall.Address.Query(ctx): results")
+	addresses, err := temuClient.Services.Mall.DeliveryAddress.Query(ctx)
+	assert.Nilf(t, err, "temuClient.Services.Mall.DeliveryAddress.Query(ctx): error")
+	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.Mall.DeliveryAddress.Query(ctx): results")
 	address := addresses[0]
 
 	// 快递公司

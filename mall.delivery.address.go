@@ -11,14 +11,14 @@ import (
 
 // 卖家发货地址服务
 
-type mallAddressService service
+type mallDeliveryAddressService service
 
 // Query 卖家发货地址查询
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#1qow2K
-func (s mallAddressService) Query(ctx context.Context) (items []entity.MallAddress, err error) {
+func (s mallDeliveryAddressService) Query(ctx context.Context) (items []entity.DeliveryAddress, err error) {
 	var result = struct {
 		normal.Response
-		Result []entity.MallAddress `json:"result"`
+		Result []entity.DeliveryAddress `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
@@ -31,16 +31,16 @@ func (s mallAddressService) Query(ctx context.Context) (items []entity.MallAddre
 	return result.Result, nil
 }
 
-// One 根据 ID 查询单个卖家发货地址
-func (s mallAddressService) One(ctx context.Context, id int64) (address entity.MallAddress, err error) {
-	items, err := s.Query(ctx)
+// One 根据发货地址 ID 查询单个卖家发货地址详情
+func (s mallDeliveryAddressService) One(ctx context.Context, addressId int64) (address entity.DeliveryAddress, err error) {
+	addresses, err := s.Query(ctx)
 	if err != nil {
 		return
 	}
 
-	for _, item := range items {
-		if item.ID == id {
-			return item, nil
+	for _, addr := range addresses {
+		if addr.ID == addressId {
+			return addr, nil
 		}
 	}
 
@@ -99,7 +99,7 @@ func (m CreateDeliveryAddressRequest) validate() error {
 	)
 }
 
-func (s mallAddressService) Create(ctx context.Context, request CreateDeliveryAddressRequest) (addressId int64, err error) {
+func (s mallDeliveryAddressService) Create(ctx context.Context, request CreateDeliveryAddressRequest) (addressId int64, err error) {
 	if err = request.validate(); err != nil {
 		err = invalidInput(err)
 		return

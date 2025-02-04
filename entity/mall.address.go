@@ -1,7 +1,7 @@
 package entity
 
-// MallAddress 卖家发货地址
-type MallAddress struct {
+// DeliveryAddress 卖家发货地址
+type DeliveryAddress struct {
 	ID            int64  `json:"id"`
 	MallId        int64  `json:"mallId"`
 	ProvinceCode  int64  `json:"provinceCode"`

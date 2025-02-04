@@ -8,7 +8,7 @@ import (
 
 type mallService struct {
 	service
-	Address mallAddressService
+	DeliveryAddress mallDeliveryAddressService
 }
 
 // IsSemiManaged 是否为半托管店铺
