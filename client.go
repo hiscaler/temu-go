@@ -61,7 +61,7 @@ type service struct {
 	debug      bool          // Is debug mode
 	logger     *slog.Logger  // Logger
 	config     config.Config // Config
-	language   *string       // Language
+	language   *string       // Message language
 	httpClient *resty.Client // HTTP client
 }
 
