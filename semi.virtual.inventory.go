@@ -66,13 +66,13 @@ type SemiVirtualInventoryUpdateRequest struct {
 func (m SemiVirtualInventoryUpdateRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.QuantityChangeMode,
-			validation.Required.Error("更新库存数量方式不能为空"),
+			validation.Required.Error("更新虚拟库存数量方式不能为空"),
 			validation.In(entity.QuantityChangeModeInDecrease, entity.QuantityChangeModeReplace).Error("无效的更新库存数量方式"),
 		),
 		validation.Field(&m.SkuStockChangeList,
 			validation.Required.Error("虚拟库存调整信息不能为空"),
 			validation.Each(validation.By(func(value interface{}) error {
-				v, ok := value.(StockChangeItem)
+				v, ok := value.(SemiVirtualInventoryChangeItem)
 				if !ok {
 					return errors.New("无效的虚拟库存调整数据")
 				}
