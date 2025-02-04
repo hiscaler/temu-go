@@ -31,7 +31,7 @@ type ShipOrderPackingMatchResult struct {
 		DeliverPackageNum           int    `json:"deliverPackageNum"`
 		SubPurchaseOrderSn          string `json:"subPurchaseOrderSn"`
 		DriverName                  string `json:"driverName"`
-		ExpressCompanyID            int    `json:"expressCompanyId"`
+		ExpressCompanyID            int64  `json:"expressCompanyId"`
 		DefectiveSkcNum             int    `json:"defectiveSkcNum"`
 		Status                      int    `json:"status"`
 		ExpectPickUpGoodsTime       int    `json:"expectPickUpGoodsTime"`
