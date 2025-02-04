@@ -9,9 +9,9 @@ type GoodsMeta struct {
 
 // GoodsSizeChart 商品尺码
 type GoodsSizeChart struct {
-	BusinessId int       `json:"businessId"` // 模板 ID
+	BusinessId int64     `json:"businessId"` // 模板 ID
 	Name       string    `json:"name"`       // 模板名称
-	ClassId    int       `json:"classId"`    // 尺码分类 ID
+	ClassId    int64     `json:"classId"`    // 尺码分类 ID
 	Reusable   null.Bool `json:"reusable"`   // 是否可重复使用
 	ContentVO  struct {
 		Meta struct {

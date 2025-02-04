@@ -9,20 +9,20 @@ type ShipOrderPackingMatchResult struct {
 		ExpressPackageNum           int    `json:"expressPackageNum"`
 		LatestFeedbackStatus        int    `json:"latestFeedbackStatus"`
 		ExpressDeliverySn           string `json:"expressDeliverySn"`
-		DeliveryOrderCancelLeftTime int    `json:"deliveryOrderCancelLeftTime"`
+		DeliveryOrderCancelLeftTime int64  `json:"deliveryOrderCancelLeftTime"`
 		DeliveryAddressID           int    `json:"deliveryAddressId"`
 		ExpressWeightFeedbackStatus int    `json:"expressWeightFeedbackStatus"`
 		ExpressRejectStatus         int    `json:"expressRejectStatus"`
 		PackageReceiveInfoVOList    []struct {
-			ReceiveTime int    `json:"receiveTime"`
+			ReceiveTime int64  `json:"receiveTime"`
 			PackageSn   string `json:"packageSn"`
 		} `json:"packageReceiveInfoVOList"`
 		TaxWarehouseApplyOperateType int    `json:"taxWarehouseApplyOperateType"` // 入保税仓申请操作类型 0-不可操作 1-可申请 2-可查看
-		ProductSkcID                 int    `json:"productSkcId"`
+		ProductSkcID                 int64  `json:"productSkcId"`
 		DeliveryContactAreaNo        string `json:"deliveryContactAreaNo"`
 		SkcExtCode                   string `json:"skcExtCode"`
-		InboundTime                  int    `json:"inboundTime"`
-		SubWarehouseID               int    `json:"subWarehouseId"`
+		InboundTime                  int64  `json:"inboundTime"`
+		SubWarehouseID               int64  `json:"subWarehouseId"`
 		PackageList                  []struct {
 			SkcNum    int    `json:"skcNum"`
 			PackageSn string `json:"packageSn"`
@@ -51,7 +51,7 @@ type ShipOrderPackingMatchResult struct {
 		ExpressCompany              string `json:"expressCompany"`
 		IsClothCategory             bool   `json:"isClothCategory"`
 		DeliveryOrderSn             string `json:"deliveryOrderSn"`
-		DeliverTime                 int    `json:"deliverTime"`
+		DeliverTime                 int64  `json:"deliverTime"`
 		UrgencyType                 int    `json:"urgencyType"`
 		ExpressBatchSn              string `json:"expressBatchSn"`
 		ReceiveAddressInfo          struct {
@@ -66,10 +66,10 @@ type ShipOrderPackingMatchResult struct {
 			ProvinceName  string `json:"provinceName"`
 		} `json:"receiveAddressInfo"`
 		PlateNumber       string `json:"plateNumber"`
-		ReceiveTime       int    `json:"receiveTime"`
+		ReceiveTime       int64  `json:"receiveTime"`
 		PackageDetailList []struct {
-			ProductSkuID         int    `json:"productSkuId"`
-			ProductOriginalSkuID int    `json:"productOriginalSkuId"`
+			ProductSkuID         int64  `json:"productSkuId"`
+			ProductOriginalSkuId int64  `json:"productOriginalSkuId"`
 			PersonalText         string `json:"personalText"`
 			SkuNum               int    `json:"skuNum"`
 		} `json:"packageDetailList"`
@@ -117,9 +117,9 @@ type ShipOrderPackingMatchResult struct {
 				DetailAddress string `json:"detailAddress"`
 				ProvinceName  string `json:"provinceName"`
 			} `json:"receiveAddressInfo"` // 需要勾选的相同收货地址的目标收货地址详情
-			ArrivalUpcomingDelayTimeMillis     int    `json:"arrivalUpcomingDelayTimeMillis"`
-			AutoRemoveFromDeliveryPlatformTime int    `json:"autoRemoveFromDeliveryPlatformTime"`
-			ArrivalDisplayCountdownMillis      int    `json:"arrivalDisplayCountdownMillis"`
+			ArrivalUpcomingDelayTimeMillis     int64  `json:"arrivalUpcomingDelayTimeMillis"`
+			AutoRemoveFromDeliveryPlatformTime int64  `json:"autoRemoveFromDeliveryPlatformTime"`
+			ArrivalDisplayCountdownMillis      int64  `json:"arrivalDisplayCountdownMillis"`
 			FragileTag                         bool   `json:"fragileTag"`
 			PurchaseQuantity                   int    `json:"purchaseQuantity"`
 			SubWarehouseName                   string `json:"subWarehouseName"`
@@ -130,7 +130,7 @@ type ShipOrderPackingMatchResult struct {
 		PurchaseTime            int    `json:"purchaseTime"`
 		SkcPurchaseNum          int    `json:"skcPurchaseNum"`
 		DeliverSkcNum           int    `json:"deliverSkcNum"`
-		DeliveryOrderCreateTime int    `json:"deliveryOrderCreateTime"`
+		DeliveryOrderCreateTime int64  `json:"deliveryOrderCreateTime"`
 	} `json:"shouldAddDeliveryOrderInfoList"` // 需要勾选的相同发货地址的发货单列表（最多展示 50 个）
 	AbleIgnorePlatformExpressForeMergeDelivery bool     `json:"ableIgnorePlatformExpressForeMergeDelivery"`
 	TargetDeliveryAddress                      string   `json:"targetDeliveryAddress"`

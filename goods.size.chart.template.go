@@ -10,16 +10,16 @@ type goodsSizeChartTemplateService service
 
 // Create 生成尺码表模板
 // https://seller.kuajingmaihuo.com/sop/view/415794628056821162#n0Wlda
-func (s *goodsSizeChartTemplateService) Create(ctx context.Context, businessId int) (tempBusinessId int, err error) {
+func (s *goodsSizeChartTemplateService) Create(ctx context.Context, businessId int64) (tempBusinessId int64, err error) {
 	var result = struct {
 		normal.Response
 		Result struct {
-			TempBusinessId int `json:"tempBusinessId"` // 临时模板 Id
+			TempBusinessId int64 `json:"tempBusinessId"` // 临时模板 Id
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
-		SetBody(map[string]int{"tempBusinessId": businessId}).
+		SetBody(map[string]int64{"tempBusinessId": businessId}).
 		SetResult(&result).
 		Post("bg.goods.sizecharts.template.create")
 	if err = recheckError(resp, result.Response, err); err != nil {
