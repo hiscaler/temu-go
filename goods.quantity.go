@@ -104,10 +104,10 @@ func (s *goodsQuantityService) Update(ctx context.Context, params GoodsQuantityU
 	if err := params.validate(); err != nil {
 		return false, err
 	}
+
 	var result = struct {
 		normal.Response
 	}{}
-
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetBody(params).
