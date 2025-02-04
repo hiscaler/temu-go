@@ -74,6 +74,7 @@ type ShipOrderPackingMatchResult struct {
 			SkuNum               int    `json:"skuNum"`
 		} `json:"packageDetailList"`
 		DeliveryAddressInfo struct {
+			ID            int    `json:"id"`
 			TownName      string `json:"townName"`
 			DistrictCode  int    `json:"districtCode"`
 			DistrictName  string `json:"districtName"`
@@ -84,7 +85,6 @@ type ShipOrderPackingMatchResult struct {
 			IsDefault     bool   `json:"isDefault"`
 			AddressDetail string `json:"addressDetail"`
 			CityName      string `json:"cityName"`
-			ID            int    `json:"id"`
 			ProvinceName  string `json:"provinceName"`
 			WarehouseType int    `json:"warehouseType"`
 		} `json:"deliveryAddressInfo"` // 需要勾选的相同发货地址的目标发货地址详情
@@ -96,12 +96,12 @@ type ShipOrderPackingMatchResult struct {
 			ProductName                      string `json:"productName"`
 			IsFirst                          bool   `json:"isFirst"`
 			PurchaseStockType                int    `json:"purchaseStockType"`
-			DeliverUpcomingDelayTimeMillis   int    `json:"deliverUpcomingDelayTimeMillis"`
+			DeliverUpcomingDelayTimeMillis   int64  `json:"deliverUpcomingDelayTimeMillis"`
 			IsClothCategory                  bool   `json:"isClothCategory"`
-			ProductSkcID                     int    `json:"productSkcId"`
+			ProductSkcID                     int64  `json:"productSkcId"`
 			SettlementType                   int    `json:"settlementType"`
 			SkcExtCode                       string `json:"skcExtCode"`
-			DeliverDisplayCountdownMillis    int    `json:"deliverDisplayCountdownMillis"`
+			DeliverDisplayCountdownMillis    int64  `json:"deliverDisplayCountdownMillis"`
 			UrgencyType                      int    `json:"urgencyType"`
 			SubWarehouseID                   int    `json:"subWarehouseId"`
 			ProductInventoryRegion           int    `json:"productInventoryRegion"`
