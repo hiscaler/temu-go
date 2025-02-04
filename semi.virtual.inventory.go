@@ -10,21 +10,20 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
-// 商品虚拟库存服务
-type goodsQuantityService service
+// 半托管虚拟库存服务
+type semiVirtualInventoryService service
 
-type GoodsQuantityQueryParams struct {
+type SemiVirtualInventoryQueryParams struct {
 	ProductSkcId int64 `json:"productSkcId"` // 货品 SKC ID
 }
 
-func (m GoodsQuantityQueryParams) validate() error {
+func (m SemiVirtualInventoryQueryParams) validate() error {
 	return validation.ValidateStruct(&m, validation.Field(&m.ProductSkcId, validation.Required.Error("货品 SKC ID 不能为空")))
 }
 
 // Query 查询商品虚拟库存
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#hm9Qgt
-// Deprecated: 使用 semiVirtualInventory.Query 代替
-func (s *goodsQuantityService) Query(ctx context.Context, params GoodsQuantityQueryParams) (items []entity.GoodsQuantity, err error) {
+func (s *semiVirtualInventoryService) Query(ctx context.Context, params SemiVirtualInventoryQueryParams) (items []entity.SemiVirtualInventory, err error) {
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return nil, err
@@ -33,8 +32,8 @@ func (s *goodsQuantityService) Query(ctx context.Context, params GoodsQuantityQu
 	var result = struct {
 		normal.Response
 		Result struct {
-			Total               int                    `json:"total"`
-			ProductSkuStockList []entity.GoodsQuantity `json:"productSkuStockList"`
+			Total               int                           `json:"total"`
+			ProductSkuStockList []entity.SemiVirtualInventory `json:"productSkuStockList"`
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
@@ -49,7 +48,7 @@ func (s *goodsQuantityService) Query(ctx context.Context, params GoodsQuantityQu
 	return result.Result.ProductSkuStockList, nil
 }
 
-type StockChangeItem struct {
+type SemiVirtualInventoryChangeItem struct {
 	ProductSkuId          int64       `json:"productSkuId"`                    // 货品 SKU ID
 	StockDiff             null.Int    `json:"stockDiff,omitempty"`             // 虚拟库存变更(通过1-增减变更时：虚拟库存(含商家自管库存)变更，大于0代表在现有库存基础上增加，小于0代表在现有库存基础上减少)
 	TargetStockAvailable  null.Int    `json:"targetStockAvailable,omitempty"`  // 覆盖变更目标库存值(通过2-覆盖变更时：覆盖变更目标库存值（填多少，则变更后库存则为多少，不能为负数))
@@ -58,13 +57,13 @@ type StockChangeItem struct {
 	CurrentStockAvailable null.Int    `json:"currentStockAvailable,omitempty"` // 当前库存件数
 }
 
-type GoodsQuantityUpdateRequest struct {
-	QuantityChangeMode int               `json:"quantityChangeMode"`     // 更新库存数量方式（1-增减变更 2-覆盖变更，默认为1）
-	ProductSkcId       null.Int          `json:"productSkcId,omitempty"` // 货品 SKC ID
-	SkuStockChangeList []StockChangeItem `json:"skuStockChangeList"`     // 虚拟库存调整信息
+type SemiVirtualInventoryUpdateRequest struct {
+	QuantityChangeMode int                              `json:"quantityChangeMode"`     // 更新库存数量方式（1-增减变更 2-覆盖变更，默认为1）
+	ProductSkcId       null.Int                         `json:"productSkcId,omitempty"` // 货品 SKC ID
+	SkuStockChangeList []SemiVirtualInventoryChangeItem `json:"skuStockChangeList"`     // 虚拟库存调整信息
 }
 
-func (m GoodsQuantityUpdateRequest) validate() error {
+func (m SemiVirtualInventoryUpdateRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.QuantityChangeMode,
 			validation.Required.Error("更新库存数量方式不能为空"),
@@ -101,9 +100,7 @@ func (m GoodsQuantityUpdateRequest) validate() error {
 
 // Update 更新虚拟库存
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#DMwO8O
-//
-//	Deprecated: 使用 semiVirtualInventory.Update 代替
-func (s *goodsQuantityService) Update(ctx context.Context, params GoodsQuantityUpdateRequest) (bool, error) {
+func (s *semiVirtualInventoryService) Update(ctx context.Context, params SemiVirtualInventoryUpdateRequest) (bool, error) {
 	if err := params.validate(); err != nil {
 		return false, err
 	}

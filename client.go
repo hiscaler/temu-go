@@ -408,6 +408,7 @@ func NewClient(cfg config.Config) *Client {
 					Shipped:   (semiOnlineOrderShippedPackageService)(xService),
 				},
 			},
+			VirtualInventory: (semiVirtualInventoryService)(xService),
 		},
 	}
 
