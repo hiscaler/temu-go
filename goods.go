@@ -494,7 +494,10 @@ func (m GoodsCreateRequest) validate() error {
 		validation.Field(&m.Cat1Id, validation.Required.Error("一级类目不能为空")),
 		validation.Field(&m.Cat2Id, validation.Required.Error("二级类目不能为空")),
 		validation.Field(&m.Cat3Id, validation.Required.Error("三级类目不能为空")),
-		validation.Field(&m.ProductName, validation.Required.Error("商品名称不能为空")),
+		validation.Field(&m.ProductName,
+			validation.Required.Error("商品名称不能为空"),
+			validation.Length(1, 60).Error("商品名称最多 {{.max}} 个字符"),
+		),
 		validation.Field(&m.AddProductChannelType, validation.Required.Error("发品渠道不能为空")),
 	)
 }
