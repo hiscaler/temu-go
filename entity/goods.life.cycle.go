@@ -26,7 +26,7 @@ type GoodsLifeCycle struct {
 		SelectStatus int `json:"selectStatus"` // 选品状态
 		SkuList      []struct {
 			SkuId int64 `json:"skuId"` // SKU ID
-		} `json:"skuList"`                            // sku 列表
+		} `json:"skuList"` // sku 列表
 		ApplyJitStatus  int  `json:"applyJitStatus"`  // 申诉 JIT 的状态(1：可申请、3：不可申请)
 		SuggestCloseJit bool `json:"suggestCloseJit"` // 是否建议关闭 JIT 按钮
 	} `json:"skcList"` // SKC 列表

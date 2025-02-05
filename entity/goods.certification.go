@@ -36,6 +36,6 @@ type GoodsCertificationNeedUploadItem struct {
 	// - 1：不固定方式：失效日期不为null
 	// - 2：固定日期方式：失效日期不为null
 	// - 3：固定时长方式：失效日期不为null且生效日期不为null
-	ExpireTime       int `json:"expireTime"`       // 固定失效日期
-	ExpireNoticeDays int `json:"expireNoticeDays"` // 提前预警天数
+	ExpireTime       int64 `json:"expireTime"`       // 固定失效日期
+	ExpireNoticeDays int   `json:"expireNoticeDays"` // 提前预警天数
 }

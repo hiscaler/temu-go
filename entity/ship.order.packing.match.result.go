@@ -10,7 +10,7 @@ type ShipOrderPackingMatchResult struct {
 		LatestFeedbackStatus        int    `json:"latestFeedbackStatus"`
 		ExpressDeliverySn           string `json:"expressDeliverySn"`
 		DeliveryOrderCancelLeftTime int64  `json:"deliveryOrderCancelLeftTime"`
-		DeliveryAddressID           int    `json:"deliveryAddressId"`
+		DeliveryAddressId           int64  `json:"deliveryAddressId"`
 		ExpressWeightFeedbackStatus int    `json:"expressWeightFeedbackStatus"`
 		ExpressRejectStatus         int    `json:"expressRejectStatus"`
 		PackageReceiveInfoVOList    []struct {
@@ -34,9 +34,9 @@ type ShipOrderPackingMatchResult struct {
 		ExpressCompanyID            int64  `json:"expressCompanyId"`
 		DefectiveSkcNum             int    `json:"defectiveSkcNum"`
 		Status                      int    `json:"status"`
-		ExpectPickUpGoodsTime       int    `json:"expectPickUpGoodsTime"`
+		ExpectPickUpGoodsTime       int64  `json:"expectPickUpGoodsTime"`
 		PredictTotalPackageWeight   int    `json:"predictTotalPackageWeight"`
-		SupplierID                  int    `json:"supplierId"`
+		SupplierId                  int    `json:"supplierId"`
 		IsDisplayCourier            bool   `json:"isDisplayCourier"`
 		DeliveryMethod              int    `json:"deliveryMethod"`
 		IsCustomProduct             bool   `json:"isCustomProduct"`
@@ -89,9 +89,9 @@ type ShipOrderPackingMatchResult struct {
 			WarehouseType int    `json:"warehouseType"`
 		} `json:"deliveryAddressInfo"` // 需要勾选的相同发货地址的目标发货地址详情
 		SubPurchaseOrderBasicVO struct {
-			SupplierID                       int    `json:"supplierId"`
+			SupplierId                       int    `json:"supplierId"`
 			IsCustomProduct                  bool   `json:"isCustomProduct"`
-			ExpectLatestArrivalTimeOrDefault int    `json:"expectLatestArrivalTimeOrDefault"`
+			ExpectLatestArrivalTimeOrDefault int64  `json:"expectLatestArrivalTimeOrDefault"`
 			ProductSkcPicture                string `json:"productSkcPicture"`
 			ProductName                      string `json:"productName"`
 			IsFirst                          bool   `json:"isFirst"`
@@ -103,9 +103,9 @@ type ShipOrderPackingMatchResult struct {
 			SkcExtCode                       string `json:"skcExtCode"`
 			DeliverDisplayCountdownMillis    int64  `json:"deliverDisplayCountdownMillis"`
 			UrgencyType                      int    `json:"urgencyType"`
-			SubWarehouseID                   int    `json:"subWarehouseId"`
+			SubWarehouseId                   int    `json:"subWarehouseId"`
 			ProductInventoryRegion           int    `json:"productInventoryRegion"`
-			ExpectLatestDeliverTimeOrDefault int    `json:"expectLatestDeliverTimeOrDefault"`
+			ExpectLatestDeliverTimeOrDefault int64  `json:"expectLatestDeliverTimeOrDefault"`
 			ReceiveAddressInfo               struct {
 				DistrictCode  int    `json:"districtCode"`
 				CityName      string `json:"cityName"`
@@ -124,10 +124,10 @@ type ShipOrderPackingMatchResult struct {
 			PurchaseQuantity                   int    `json:"purchaseQuantity"`
 			SubWarehouseName                   string `json:"subWarehouseName"`
 			SubPurchaseOrderSn                 string `json:"subPurchaseOrderSn"`
-			PurchaseTime                       int    `json:"purchaseTime"`
+			PurchaseTime                       int64  `json:"purchaseTime"`
 		} `json:"subPurchaseOrderBasicVO"`
 		SubWarehouseName        string `json:"subWarehouseName"`
-		PurchaseTime            int    `json:"purchaseTime"`
+		PurchaseTime            int64  `json:"purchaseTime"`
 		SkcPurchaseNum          int    `json:"skcPurchaseNum"`
 		DeliverSkcNum           int    `json:"deliverSkcNum"`
 		DeliveryOrderCreateTime int64  `json:"deliveryOrderCreateTime"`

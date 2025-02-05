@@ -3,7 +3,7 @@ package entity
 import "gopkg.in/guregu/null.v4"
 
 type GoodsMeta struct {
-	Id   int    `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 

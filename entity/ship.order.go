@@ -30,7 +30,7 @@ type ShipOrder struct {
 	ExpressCompanyId            int64          `json:"expressCompanyId"`
 	DefectiveSkcNum             int            `json:"defectiveSkcNum"`
 	Status                      int            `json:"status"`
-	ExpectPickUpGoodsTime       int            `json:"expectPickUpGoodsTime"`
+	ExpectPickUpGoodsTime       int64          `json:"expectPickUpGoodsTime"`
 	PredictTotalPackageWeight   int64          `json:"predictTotalPackageWeight"`
 	SupplierId                  int64          `json:"supplierId"`
 	IsDisplayCourier            bool           `json:"isDisplayCourier"`

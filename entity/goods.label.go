@@ -95,7 +95,7 @@ type CustomGoodsLabel struct {
 	ProductSkuLabelCodeDTO struct {
 		ProductSkuId int64 `json:"productSkuId"`
 		ProductId    int64 `json:"productId"`
-		CreateTimeTs int   `json:"createTimeTs"`
+		CreateTimeTs int64 `json:"createTimeTs"`
 		ProductSkcId int64 `json:"productSkcId"`
 		LabelCode    int   `json:"labelCode"`
 	} `json:"productSkuLabelCodeDTO"`
