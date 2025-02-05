@@ -209,7 +209,7 @@ type GoodsCreateRequest struct {
 	MaterialImgUrl      string `json:"materialImgUrl"` // 素材图
 	ProductPropertyReqs []struct {
 		TemplatePid      int64  `json:"templatePid"`      // 模板属性id
-		PID              int64  `json:"pid"`              // 属性 id
+		Pid              int64  `json:"pid"`              // 属性 id
 		RefPid           int64  `json:"refPid"`           // 引用属性 id
 		PropName         string `json:"propName"`         // 引用属性名
 		Vid              int64  `json:"vid"`              // 基础属性值id，没有的情况传0
@@ -220,7 +220,7 @@ type GoodsCreateRequest struct {
 	} `json:"productPropertyReqs"` // 货品属性
 	ProductSpecPropertyReqs []struct {
 		TemplatePid      int64  `json:"templatePid"`      // 模板属性id
-		PID              int64  `json:"pid"`              // 属性 id
+		Pid              int64  `json:"pid"`              // 属性 id
 		RefPid           int64  `json:"refPid"`           // 引用属性 id
 		PropName         string `json:"propName"`         // 引用属性名
 		Vid              int64  `json:"vid"`              // 基础属性值id，没有的情况传0

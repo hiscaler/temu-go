@@ -18,11 +18,11 @@ type ShipOrderPackingMatchResult struct {
 			PackageSn   string `json:"packageSn"`
 		} `json:"packageReceiveInfoVOList"`
 		TaxWarehouseApplyOperateType int    `json:"taxWarehouseApplyOperateType"` // 入保税仓申请操作类型 0-不可操作 1-可申请 2-可查看
-		ProductSkcID                 int64  `json:"productSkcId"`
+		ProductSkcId                 int64  `json:"productSkcId"`
 		DeliveryContactAreaNo        string `json:"deliveryContactAreaNo"`
 		SkcExtCode                   string `json:"skcExtCode"`
 		InboundTime                  int64  `json:"inboundTime"`
-		SubWarehouseID               int64  `json:"subWarehouseId"`
+		SubWarehouseId               int64  `json:"subWarehouseId"`
 		PackageList                  []struct {
 			SkcNum    int    `json:"skcNum"`
 			PackageSn string `json:"packageSn"`
@@ -31,7 +31,7 @@ type ShipOrderPackingMatchResult struct {
 		DeliverPackageNum           int    `json:"deliverPackageNum"`
 		SubPurchaseOrderSn          string `json:"subPurchaseOrderSn"`
 		DriverName                  string `json:"driverName"`
-		ExpressCompanyID            int64  `json:"expressCompanyId"`
+		ExpressCompanyId            int64  `json:"expressCompanyId"`
 		DefectiveSkcNum             int    `json:"defectiveSkcNum"`
 		Status                      int    `json:"status"`
 		ExpectPickUpGoodsTime       int64  `json:"expectPickUpGoodsTime"`
@@ -68,7 +68,7 @@ type ShipOrderPackingMatchResult struct {
 		PlateNumber       string `json:"plateNumber"`
 		ReceiveTime       int64  `json:"receiveTime"`
 		PackageDetailList []struct {
-			ProductSkuID         int64  `json:"productSkuId"`
+			ProductSkuId         int64  `json:"productSkuId"`
 			ProductOriginalSkuId int64  `json:"productOriginalSkuId"`
 			PersonalText         string `json:"personalText"`
 			SkuNum               int    `json:"skuNum"`
@@ -98,7 +98,7 @@ type ShipOrderPackingMatchResult struct {
 			PurchaseStockType                int    `json:"purchaseStockType"`
 			DeliverUpcomingDelayTimeMillis   int64  `json:"deliverUpcomingDelayTimeMillis"`
 			IsClothCategory                  bool   `json:"isClothCategory"`
-			ProductSkcID                     int64  `json:"productSkcId"`
+			ProductSkcId                     int64  `json:"productSkcId"`
 			SettlementType                   int    `json:"settlementType"`
 			SkcExtCode                       string `json:"skcExtCode"`
 			DeliverDisplayCountdownMillis    int64  `json:"deliverDisplayCountdownMillis"`
