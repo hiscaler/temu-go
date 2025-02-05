@@ -1,0 +1,75 @@
+[NotFound]
+description = "데이터가 존재하지 않습니다"
+other = "데이터가 존재하지 않습니다"
+
+[InvalidSign]
+description = "유효하지 않은 서명"
+other = "유효하지 않은 서명"
+
+[InvalidParameters]
+description = "유효하지 않은 매개변수"
+other = "유효하지 않은 매개변수"
+
+[InvalidPurchaseOrderNumber]
+description = "유효하지 않은 구매 주문 번호"
+other = "유효하지 않은 구매 주문 번호 {{.Number}}"
+
+[PurchaseOrderNumberIsEmpty]
+description = "구매 주문 번호는 비워 둘 수 없습니다"
+other = "구매 주문 번호는 비워 둘 수 없습니다"
+
+[InvalidOriginalPurchaseOrderNumber]
+description = "유효하지 않은 원본 구매 주문 번호"
+other = "유효하지 않은 원본 구매 주문 번호 {{.Number}}"
+
+[OriginalPurchaseOrderNumberIsEmpty]
+description = "원본 구매 주문 번호는 비워 둘 수 없습니다"
+other = "원본 구매 주문 번호는 비워 둘 수 없습니다"
+
+[InvalidPackageNumber]
+description = "유효하지 않은 패키지 번호"
+other = "유효하지 않은 패키지 번호 {{.Number}}"
+
+[PackageNumberIsEmpty]
+description = "패키지 번호는 비워 둘 수 없습니다"
+other = "패키지 번호는 비워 둘 수 없습니다"
+
+[InvalidShipOrderNumber]
+description = "유효하지 않은 배송 주문 번호"
+other = "유효하지 않은 배송 주문 번호 {{.Number}}"
+
+[ShipOrderNumberIsEmpty]
+description = "배송 주문 번호는 비워 둘 수 없습니다"
+other = "배송 주문 번호는 비워 둘 수 없습니다"
+
+[InvalidMillisecondValue]
+description = "유효하지 않은 밀리초 값"
+other = "유효하지 않은 밀리초 값 {{.Value}}"
+
+[InvalidMobilePhoneNumber]
+description = "유효하지 않은 휴대폰 번호"
+other = "유효하지 않은 휴대폰 번호 {{.Number}}"
+
+[MobilePhoneNumberIsEmpty]
+description = "휴대폰 번호는 비워 둘 수 없습니다"
+other = "휴대폰 번호는 비워 둘 수 없습니다"
+
+[InvalidMobilePhoneOrTelNumber]
+description = "유효하지 않은 휴대폰/유선 전화 번호"
+other = "유효하지 않은 휴대폰/유선 전화 번호 {{.Number}}"
+
+[MobilePhoneOrTelNumberIsEmpty]
+description = "휴대폰/유선 전화 번호는 비워 둘 수 없습니다"
+other = "휴대폰/유선 전화 번호는 비워 둘 수 없습니다"
+
+[InvalidRegionId]
+description = "유효하지 않은 지역"
+other = "유효하지 않은 지역 {{.Value}}"
+
+[InvalidSiteId]
+description = "유효하지 않은 사이트"
+other = "유효하지 않은 사이트 {{.Value}}"
+
+[Http.400]
+description = "잘못된 요청"
+other = "잘못된 요청"

@@ -1,0 +1,75 @@
+[NotFound]
+description = "數據不存在"
+other = "數據不存在"
+
+[InvalidSign]
+description = "無效的簽名"
+other = "無效的簽名"
+
+[InvalidParameters]
+description = "無效的參數"
+other = "無效的參數"
+
+[InvalidPurchaseOrderNumber]
+description = "無效的備貨單號"
+other = "無效的備貨單號 {{.Number}}"
+
+[PurchaseOrderNumberIsEmpty]
+description = "備貨單號不能為空"
+other = "備貨單號不能為空"
+
+[InvalidOriginalPurchaseOrderNumber]
+description = "無效的母備貨單號"
+other = "無效的母備貨單號 {{.Number}}"
+
+[OriginalPurchaseOrderNumberIsEmpty]
+description = "母備貨單號不能為空"
+other = "母備貨單號不能為空"
+
+[InvalidPackageNumber]
+description = "無效的包裹號"
+other = "無效的包裹號 {{.Number}}"
+
+[PackageNumberIsEmpty]
+description = "包裹號不能為空"
+other = "包裹號不能為空"
+
+[InvalidShipOrderNumber]
+description = "無效的發貨單號"
+other = "無效的發貨單號 {{.Number}}"
+
+[ShipOrderNumberIsEmpty]
+description = "發貨單號不能為空"
+other = "發貨單號不能為空"
+
+[InvalidMillisecondValue]
+description = "無效的毫秒值"
+other = "無效的毫秒值 {{.Value}}"
+
+[InvalidMobilePhoneNumber]
+description = "無效的手機號碼"
+other = "無效的手機號碼 {{.Number}}"
+
+[MobilePhoneNumberIsEmpty]
+description = "手機號碼不能為空"
+other = "手機號碼不能為空"
+
+[InvalidMobilePhoneOrTelNumber]
+description = "無效的手機/座機號碼"
+other = "無效的手機/座機號碼 {{.Number}}"
+
+[MobilePhoneOrTelNumberIsEmpty]
+description = "手機/座機號碼不能為空"
+other = "手機/座機號碼不能為空"
+
+[InvalidRegionId]
+description = "無效的區域"
+other = "無效的區域 {{.Value}}"
+
+[InvalidSiteId]
+description = "無效的站點"
+other = "無效的站點 {{.Value}}"
+
+[Http.400]
+description = "Bad Request"
+other = "錯誤的請求"

@@ -7,10 +7,66 @@ other = "無効な署名"
 [InvalidParameters]
 other = "無効なパラメータ"
 
-[InvalidPurchaseOrder]
-description = "无效的备货单号"
-other = "無効な入庫注文番号です {{.Number}}"
+[InvalidPurchaseOrderNumber]
+description = "無効的な備蓄注文番号"
+other = "無効的な備蓄注文番号 {{.Number}}"
 
 [PurchaseOrderNumberIsEmpty]
-description = "备货单号不能为空"
-other = "仕入れ注文番号を空にすることはできません"
+description = "備蓄注文番号を空にすることはできません"
+other = "備蓄注文番号を空にすることはできません"
+
+[InvalidOriginalPurchaseOrderNumber]
+description = "無効的な母備蓄注文番号"
+other = "無効的な母備蓄注文番号 {{.Number}}"
+
+[OriginalPurchaseOrderNumberIsEmpty]
+description = "母備蓄注文番号を空にすることはできません"
+other = "母備蓄注文番号を空にすることはできません"
+
+[InvalidPackageNumber]
+description = "無効的なパッケージ番号"
+other = "無効的なパッケージ番号 {{.Number}}"
+
+[PackageNumberIsEmpty]
+description = "パッケージ番号を空にすることはできません"
+other = "パッケージ番号を空にすることはできません"
+
+[InvalidShipOrderNumber]
+description = "無効的な出荷注文番号"
+other = "無効的な出荷注文番号 {{.Number}}"
+
+[ShipOrderNumberIsEmpty]
+description = "出荷注文番号を空にすることはできません"
+other = "出荷注文番号を空にすることはできません"
+
+[InvalidMillisecondValue]
+description = "無効的なミリ秒値"
+other = "無効的なミリ秒値 {{.Value}}"
+
+[InvalidMobilePhoneNumber]
+description = "無効的な携帯電話番号"
+other = "無効的な携帯電話番号 {{.Number}}"
+
+[MobilePhoneNumberIsEmpty]
+description = "携帯電話番号を空にすることはできません"
+other = "携帯電話番号を空にすることはできません"
+
+[InvalidMobilePhoneOrTelNumber]
+description = "無効的な携帯/固定電話番号"
+other = "無効的な携帯/固定電話番号 {{.Number}}"
+
+[MobilePhoneOrTelNumberIsEmpty]
+description = "携帯/固定電話番号を空にすることはできません"
+other = "携帯/固定電話番号を空にすることはできません"
+
+[InvalidRegionId]
+description = "無効的な地域"
+other = "無効的な地域 {{.Value}}"
+
+[InvalidSiteId]
+description = "無効的なサイト"
+other = "無効的なサイト {{.Value}}"
+
+[Http.400]
+description = "Bad Request"
+other = "不正なリクエスト"

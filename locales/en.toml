@@ -1,16 +1,75 @@
 [NotFound]
-other = "Data does not exist"
+description = "Data not found"
+other = "Data not found"
 
 [InvalidSign]
+description = "Invalid signature"
 other = "Invalid signature"
 
 [InvalidParameters]
+description = "Invalid parameters"
 other = "Invalid parameters"
 
-[InvalidPurchaseOrder]
-description = "无效的备货单号"
-other = "invalid purchase order {{.Number}}"
+[InvalidPurchaseOrderNumber]
+description = "Invalid purchase order number"
+other = "Invalid purchase order number {{.Number}}"
 
 [PurchaseOrderNumberIsEmpty]
-description = "备货单号不能为空"
-other = "purchase order number is empty"
+description = "Purchase order number cannot be empty"
+other = "Purchase order number cannot be empty"
+
+[InvalidOriginalPurchaseOrderNumber]
+description = "Invalid original purchase order number"
+other = "Invalid original purchase order number {{.Number}}"
+
+[OriginalPurchaseOrderNumberIsEmpty]
+description = "Original purchase order number cannot be empty"
+other = "Original purchase order number cannot be empty"
+
+[InvalidPackageNumber]
+description = "Invalid package number"
+other = "Invalid package number {{.Number}}"
+
+[PackageNumberIsEmpty]
+description = "Package number cannot be empty"
+other = "Package number cannot be empty"
+
+[InvalidShipOrderNumber]
+description = "Invalid shipment order number"
+other = "Invalid shipment order number {{.Number}}"
+
+[ShipOrderNumberIsEmpty]
+description = "Shipment order number cannot be empty"
+other = "Shipment order number cannot be empty"
+
+[InvalidMillisecondValue]
+description = "Invalid millisecond value"
+other = "Invalid millisecond value {{.Value}}"
+
+[InvalidMobilePhoneNumber]
+description = "Invalid mobile phone number"
+other = "Invalid mobile phone number {{.Number}}"
+
+[MobilePhoneNumberIsEmpty]
+description = "Mobile phone number cannot be empty"
+other = "Mobile phone number cannot be empty"
+
+[InvalidMobilePhoneOrTelNumber]
+description = "Invalid mobile/landline number"
+other = "Invalid mobile/landline number {{.Number}}"
+
+[MobilePhoneOrTelNumberIsEmpty]
+description = "Mobile/landline number cannot be empty"
+other = "Mobile/landline number cannot be empty"
+
+[InvalidRegionId]
+description = "Invalid region"
+other = "Invalid region {{.Value}}"
+
+[InvalidSiteId]
+description = "Invalid site"
+other = "Invalid site {{.Value}}"
+
+[Http.400]
+description = "Bad Request"
+other = "Bad request"
