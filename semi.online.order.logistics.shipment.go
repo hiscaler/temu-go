@@ -318,6 +318,10 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		dir = "./download"
 	}
 	sb := strings.Builder{}
+	headers := map[string]string{
+		"toa-app-key":      s.config.AppKey,
+		"toa-access-token": s.config.AccessToken,
+	}
 	for i, doc := range documents {
 		doc.ExpireTime = expireTime
 		url := doc.Url
@@ -325,13 +329,8 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 			continue
 		}
 
-		filename := fmt.Sprintf("%s.%s", strings.ToLower(doc.PackageSn), filepath.Ext(url))
-		headers := map[string]string{
-			"toa-app-key":      s.config.AppKey,
-			"toa-access-token": s.config.AccessToken,
-			"toa-random":       randx.Letter(32, true),
-			"toa-timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
-		}
+		headers["toa-random"] = randx.Letter(32, true)
+		headers["toa-timestamp"] = strconv.FormatInt(time.Now().Unix(), 10)
 		sb.Reset()
 		sb.WriteString(s.config.AppSecret)
 		for _, key := range keys {
@@ -340,7 +339,10 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		}
 		sb.WriteString(s.config.AppSecret)
 		headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
-		resp, err = s.httpClient.SetOutputDirectory(dir).R().
+		filename := fmt.Sprintf("%s.%s", strings.ToLower(doc.PackageSn), filepath.Ext(url))
+		resp, err = s.httpClient.
+			SetOutputDirectory(dir).
+			R().
 			SetHeaders(headers).
 			SetOutput(filename).
 			Get(url)
