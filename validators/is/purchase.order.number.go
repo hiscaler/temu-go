@@ -12,21 +12,21 @@ func PurchaseOrderNumber() validation.RuleFunc {
 		s, ok := value.(string)
 		if !ok {
 			return err.
-				SetCode("InvalidPurchaseOrder").
-				SetParams(map[string]interface{}{"Number": value}).
+				SetCode("InvalidPurchaseOrderNumber").
+				SetParams(map[string]any{"Number": value}).
 				SetMessage("无效的备货单号 {{.Number}}")
 		}
 
 		if strings.TrimSpace(s) == "" {
 			return err.
 				SetCode("PurchaseOrderNumberIsEmpty").
-				SetMessage("备货单号为空")
+				SetMessage("备货单号不能为空")
 		}
 
 		if !purchaseOrderNumberPattern.MatchString(s) {
 			return err.
-				SetCode("InvalidPurchaseOrder").
-				SetParams(map[string]interface{}{"Number": s}).
+				SetCode("InvalidPurchaseOrderNumber").
+				SetParams(map[string]any{"Number": s}).
 				SetMessage("无效的备货单号 {{.Number}}")
 		}
 		return nil

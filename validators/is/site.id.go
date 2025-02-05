@@ -1,7 +1,6 @@
 package is
 
 import (
-	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"slices"
 )
@@ -9,13 +8,20 @@ import (
 // SiteId 站点 ID 验证
 func SiteId(siteIds []int) validation.RuleFunc {
 	return func(value interface{}) error {
+		var err validation.ErrorObject
 		v, ok := value.(int)
 		if !ok {
-			return fmt.Errorf("无效的站点 %v", value)
+			return err.
+				SetCode("InvalidSiteId").
+				SetParams(map[string]any{"Value": value}).
+				SetMessage("无效的站点 {{.Value}}")
 		}
 
 		if !slices.Contains(siteIds, v) {
-			return fmt.Errorf("无效的站点 %v", v)
+			return err.
+				SetCode("InvalidSiteId").
+				SetParams(map[string]any{"Value": v}).
+				SetMessage("无效的站点 {{.Value}}")
 		}
 
 		return nil

@@ -1,7 +1,6 @@
 package is
 
 import (
-	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"slices"
 )
@@ -9,9 +8,13 @@ import (
 // RegionIds 区域 ID 列表验证
 func RegionIds(regionIds []int) validation.RuleFunc {
 	return func(value interface{}) error {
+		var err validation.ErrorObject
 		ids, ok := value.([]int)
 		if !ok {
-			return fmt.Errorf("无效的区域 %v", value)
+			return err.
+				SetCode("InvalidRegionId").
+				SetParams(map[string]any{"Value": value}).
+				SetMessage("无效的区域 {{.Value}}")
 		}
 
 		invalidIds := make([]int, 0)
@@ -21,7 +24,10 @@ func RegionIds(regionIds []int) validation.RuleFunc {
 			}
 		}
 		if len(invalidIds) != 0 {
-			return fmt.Errorf("无效的区域 %v", invalidIds)
+			return err.
+				SetCode("InvalidRegionId").
+				SetParams(map[string]any{"Value": invalidIds}).
+				SetMessage("无效的区域 {{.Value}}")
 		}
 
 		return nil

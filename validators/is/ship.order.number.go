@@ -1,8 +1,6 @@
 package is
 
 import (
-	"errors"
-	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"strings"
 )
@@ -10,17 +8,25 @@ import (
 // ShipOrderNumber 发货单号数据验证
 func ShipOrderNumber() validation.RuleFunc {
 	return func(value interface{}) error {
+		var err validation.ErrorObject
 		s, ok := value.(string)
 		if !ok {
-			return fmt.Errorf("无效的发货单号 %v", value)
+			return err.
+				SetCode("InvalidShipOrderNumber").
+				SetParams(map[string]any{"Number": value}).
+				SetMessage("无效的发货单号 {{.Number}}")
 		}
 
 		if strings.TrimSpace(s) == "" {
-			return errors.New("发货单号为空")
+			return err.SetCode("ShipOrderNumberIsEmpty").
+				SetMessage("发货单号不能为空")
 		}
 
 		if !shipOrderNumberPattern.MatchString(s) {
-			return fmt.Errorf("无效的发货单号 %s", s)
+			return err.
+				SetCode("InvalidShipOrderNumber").
+				SetParams(map[string]any{"Number": value}).
+				SetMessage("无效的发货单号 {{.Number}}")
 		}
 		return nil
 	}

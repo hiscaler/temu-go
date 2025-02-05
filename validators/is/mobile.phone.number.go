@@ -1,8 +1,6 @@
 package is
 
 import (
-	"errors"
-	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"strings"
 )
@@ -10,17 +8,26 @@ import (
 // MobilePhoneNumber 判断是否为有效的手机号码
 func MobilePhoneNumber() validation.RuleFunc {
 	return func(value interface{}) error {
+		var err validation.ErrorObject
 		s, ok := value.(string)
 		if !ok {
-			return fmt.Errorf("无效的手机号码 %v", value)
+			return err.
+				SetCode("InvalidMobilePhoneNumber").
+				SetParams(map[string]any{"Number": value}).
+				SetMessage("无效的手机号码 {{.Number}}")
 		}
 
 		if strings.TrimSpace(s) == "" {
-			return errors.New("手机号码为空")
+			return err.
+				SetCode("MobilePhoneNumberIsEmpty").
+				SetMessage("手机号码不能为空")
 		}
 
 		if !mobilePhoneNumberPattern.MatchString(s) {
-			return fmt.Errorf("无效的手机号码 %s", s)
+			return err.
+				SetCode("InvalidMobilePhoneNumber").
+				SetParams(map[string]any{"Number": s}).
+				SetMessage("无效的手机号码 {{.Number}}")
 		}
 
 		return nil

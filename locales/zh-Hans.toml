@@ -7,13 +7,65 @@ other = "无效的签名"
 [InvalidParameters]
 other = "无效的参数"
 
-[InvalidPurchaseOrder]
+[InvalidPurchaseOrderNumber]
 description = "无效的备货单号"
 other = "无效的备货单号 {{.Number}}"
 
 [PurchaseOrderNumberIsEmpty]
 description = "备货单号不能为空"
 other = "备货单号不能为空"
+
+[InvalidOriginalPurchaseOrderNumber]
+description = "无效的母备货单号"
+other = "无效的母备货单号 {{.Number}}"
+
+[OriginalPurchaseOrderNumberIsEmpty]
+description = "母备货单号不能为空"
+other = "母备货单号不能为空"
+
+[InvalidPackageNumber]
+description = "无效的包裹号"
+other = "无效的包裹号 {{.Number}}"
+
+[PackageNumberIsEmpty]
+description = "包裹号不能为空"
+other = "包裹号不能为空"
+
+[InvalidShipOrderNumber]
+description = "无效的发货单号"
+other = "无效的发货单号 {{.Number}}"
+
+[ShipOrderNumberIsEmpty]
+description = "发货单号不能为空"
+other = "发货单号不能为空"
+
+[InvalidMillisecondValue]
+description = "无效的毫秒值"
+other = "无效的毫秒值 {{.Value}}"
+
+[InvalidMobilePhoneNumber]
+description = "无效的手机号码"
+other = "无效的手机号码 {{.Number}}"
+
+[MobilePhoneNumberIsEmpty]
+description = "手机号码不能为空"
+other = "手机号码不能为空"
+
+[InvalidMobilePhoneOrTelNumber]
+description = "无效的手机/座机号码"
+other = "无效的手机/座机号码 {{.Number}}"
+
+[MobilePhoneOrTelNumberIsEmpty]
+description = "手机/座机号码不能为空"
+other = "手机/座机号码不能为空"
+
+[InvalidRegionId]
+description = "无效的区域"
+other = "无效的区域 {{.Value}}"
+
+[InvalidSiteId]
+description = "无效的站点"
+other = "无效的站点 {{.Value}}"
 
 [Http.400]
 description = "Bad Request"

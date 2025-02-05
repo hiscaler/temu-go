@@ -11,7 +11,7 @@ func TestMobilePhoneNumber(t *testing.T) {
 		"13401234567":    true,
 		"13411234567":    true,
 		"8613411234567":  true,
-		" 8613411234567": true,
+		" 8613411234567": false,
 		"8713411234567":  false,
 	}
 	for str, ok := range tests {
