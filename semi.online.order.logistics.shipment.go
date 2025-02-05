@@ -317,6 +317,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 	if dir == "" {
 		dir = "./download"
 	}
+	sb := strings.Builder{}
 	for i, doc := range documents {
 		doc.ExpireTime = expireTime
 		url := doc.Url
@@ -331,7 +332,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 			"toa-random":       randx.Letter(32, true),
 			"toa-timestamp":    strconv.FormatInt(time.Now().Unix(), 10),
 		}
-		sb := strings.Builder{}
+		sb.Reset()
 		sb.WriteString(s.config.AppSecret)
 		for _, key := range keys {
 			sb.WriteString(key)
