@@ -339,7 +339,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		}
 		sb.WriteString(s.config.AppSecret)
 		headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
-		filename := fmt.Sprintf("%s.%s", strings.ToLower(doc.PackageSn), filepath.Ext(url))
+		filename := strings.ToLower(fmt.Sprintf("%s.%s", doc.PackageSn, filepath.Ext(url)))
 		resp, err = s.httpClient.
 			SetOutputDirectory(dir).
 			R().
