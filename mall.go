@@ -48,3 +48,22 @@ func (s mallService) Permission(ctx context.Context) (p entity.MallPermission, e
 
 	return result.Result, nil
 }
+
+// AccessToken 获取Access Token
+// https://seller.kuajingmaihuo.com/sop/view/634117628601810731#ov9GUf
+func (s mallService) AccessToken(ctx context.Context, currentAccessToken, code string) (at entity.AccessToken, err error) {
+	var result = struct {
+		normal.Response
+		Result entity.AccessToken `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(map[string]string{"accessToken": currentAccessToken, "code": code}).
+		SetResult(&result).
+		Post("")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return at, err
+	}
+
+	return result.Result, nil
+}
