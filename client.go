@@ -420,17 +420,19 @@ func (c *Client) SetRegion(region string) *Client {
 	return c
 }
 
-func (c *Client) SetLanguage(l string) *Client {
-	if c.language != l {
-		_, err := i18nBundle.LoadMessageFile(fmt.Sprintf("./locales/%s.toml", l))
+// SetLanguage 设置放回消息语种
+func (c *Client) SetLanguage(language language.Tag) *Client {
+	langString := language.String()
+	if c.language != langString {
+		_, err := i18nBundle.LoadMessageFile(fmt.Sprintf("./locales/%s.toml", langString))
 		if err != nil {
-			slog.Error(fmt.Sprintf(`SetLanguage("%s") error: %s`, l, err.Error()), slog.String("lang", l))
+			slog.Error(fmt.Sprintf(`SetLanguage("%s") error: %s`, langString, err.Error()), slog.String("lang", langString))
 		} else {
-			i18nLocalizer = i18n.NewLocalizer(i18nBundle, l)
+			i18nLocalizer = i18n.NewLocalizer(i18nBundle, langString)
 		}
 	}
-	c.language = l
-	lang = &l
+	c.language = langString
+	lang = &langString
 	return c
 }
 
@@ -521,7 +523,14 @@ func errorWrap(code int, message string) error {
 		return ErrNotFound
 	}
 
-	message = strings.TrimSpace(message)
+	// message not found in translate file if err not equal nil
+	message, err := i18nLocalizer.Localize(&i18n.LocalizeConfig{
+		MessageID: strconv.Itoa(code),
+	})
+	if err == nil {
+		return errors.New(message)
+	}
+
 	switch code {
 	case BadRequestError:
 		message = "请求错误"
@@ -551,15 +560,7 @@ func errorWrap(code int, message string) error {
 	case 7000007:
 		message = "Access Token 已过期，请联系卖家重新授权并与您共享新的 Access Token"
 	default:
-		message = fmt.Sprintf("%d: %s", code, message)
-	}
-
-	// msg not found in translate file if err not equal nil
-	msg, err := i18nLocalizer.Localize(&i18n.LocalizeConfig{
-		MessageID: strconv.Itoa(code),
-	})
-	if err == nil {
-		message = msg
+		message = fmt.Sprintf("%d: %s", code, strings.TrimSpace(message))
 	}
 
 	return errors.New(message)
