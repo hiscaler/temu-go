@@ -49,7 +49,7 @@ func (s mallService) Permission(ctx context.Context) (p entity.MallPermission, e
 	return result.Result, nil
 }
 
-// AccessToken 获取Access Token
+// AccessToken 获取 Access Token
 // https://seller.kuajingmaihuo.com/sop/view/634117628601810731#ov9GUf
 func (s mallService) AccessToken(ctx context.Context, currentAccessToken, code string) (at entity.AccessToken, err error) {
 	var result = struct {
