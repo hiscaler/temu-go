@@ -27,7 +27,7 @@ func TestMain(m *testing.M) {
 	}
 
 	temuClient = NewClient(cfg)
-	temuClient.SetLanguage(language.SimplifiedChinese)
+	temuClient.SetLanguage(language.Chinese)
 	ctx = context.Background()
 	m.Run()
 }

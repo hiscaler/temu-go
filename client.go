@@ -3,6 +3,7 @@ package temu
 import (
 	"crypto/md5"
 	"crypto/tls"
+	"embed"
 	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
@@ -118,6 +119,9 @@ var lang *string
 var i18nBundle *i18n.Bundle
 var i18nLocalizer *i18n.Localizer
 
+//go:embed locales/*.toml
+var localeFS embed.FS
+
 func init() {
 	var err error
 	loc, err = time.LoadLocation("Asia/Shanghai")
@@ -130,7 +134,7 @@ func init() {
 	i18nBundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	l := language.SimplifiedChinese.String()
 	lang = &l
-	_, _ = i18nBundle.LoadMessageFile(fmt.Sprintf("./locales/%s.toml", l))
+	_, _ = i18nBundle.LoadMessageFileFS(localeFS, fmt.Sprintf("locales/%s.toml", l))
 	i18nLocalizer = i18n.NewLocalizer(i18nBundle, l)
 }
 
@@ -420,16 +424,24 @@ func (c *Client) SetRegion(region string) *Client {
 	return c
 }
 
-// SetLanguage 设置放回消息语种
-func (c *Client) SetLanguage(language language.Tag) *Client {
-	langString := language.String()
-	if c.language != langString {
-		_, err := i18nBundle.LoadMessageFile(fmt.Sprintf("./locales/%s.toml", langString))
-		if err != nil {
-			slog.Error(fmt.Sprintf(`SetLanguage("%s") error: %s`, langString, err.Error()), slog.String("lang", langString))
-		} else {
-			i18nLocalizer = i18n.NewLocalizer(i18nBundle, langString)
+// SetLanguage 设置返回消息语种
+// 设置有误的情况下（比如语种文件不存在等）默认为英文
+func (c *Client) SetLanguage(l language.Tag) *Client {
+	if l == language.Chinese {
+		l = language.SimplifiedChinese
+	}
+	langString := l.String()
+	if c.language == langString {
+		return c
+	}
+
+	for _, v := range []language.Tag{l, language.English} {
+		_, err := i18nBundle.LoadMessageFileFS(localeFS, fmt.Sprintf("locales/%s.toml", v.String()))
+		if err == nil {
+			i18nLocalizer = i18n.NewLocalizer(i18nBundle, v.String())
+			break
 		}
+		slog.Error(fmt.Sprintf(`SetLanguage("%s") error: %s`, v.String(), err.Error()), slog.String("lang", v.String()))
 	}
 	c.language = langString
 	lang = &langString
