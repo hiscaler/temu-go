@@ -27,10 +27,10 @@ func (m MallPermission) Accessible(api string) bool {
 
 // Valid Token 是否有效
 // days 如果大于零，则表示几天后过期，为零或者小于零则表示当前是否过期
-func (m MallPermission) Valid(days int) bool {
+func (m MallPermission) Valid(days ...int) bool {
 	now := time.Now()
-	if days > 0 {
-		now = now.AddDate(0, 0, -days)
+	if len(days) != 0 && days[0] > 0 {
+		now = now.AddDate(0, 0, -days[0])
 	}
-	return m.ExpiredTime > now.UnixMilli()
+	return m.ExpiredTime > now.Unix()
 }
