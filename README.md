@@ -15,8 +15,8 @@ Temu SDK for Golang
 package main
 
 import (
-	"github.com/goccy/go-json"
 	"fmt"
+	"github.com/goccy/go-json"
 	"github.com/hiscaler/temu-go"
 	"github.com/hiscaler/temu-go/config"
 	"os"
@@ -55,6 +55,7 @@ func main() {
 1. [全托管系统对接指南 - 备货及V3发货](https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YSg2AE)
 
 ## 全托管备货单
+
 ### 流程
 
 1. 将备货单数据加入发货台；
@@ -72,10 +73,12 @@ func main() {
 ## 半托管
 
 ### 名词解释
+
 1. PO 单：Parent Order
 2. O 单：Order
 
 ### 半托官方物流下单发货处理
+
 1. 获取待发货订单
 2. 获取发货仓库
 3. 根据仓库、订单获取对应的物流服务商
@@ -87,4 +90,5 @@ func main() {
 ## 本本
 
 ### 什么是本本
+
 只要主体不是大陆/香港的，都是本本
