@@ -9,13 +9,13 @@ var deliveryOrderSnList = []string{"FH2411282498847"}
 
 func Test_goodsBarcodeService_BoxMarkPrintUrl(t *testing.T) {
 	url, err := temuClient.Services.Goods.Barcode.BoxMarkPrintUrl(ctx, deliveryOrderSnList...)
-	assert.Equal(t, nil, err, "Services.Goods.Barcode.BoxMarkPrintUrl(ctx, %#v)", deliveryOrderSnList)
+	assert.Equalf(t, nil, err, "Services.Goods.Barcode.BoxMarkPrintUrl(ctx, %#v)", deliveryOrderSnList)
 	assert.Contains(t, url, "https://openapi.kuajingmaihuo.com/tool/print?dataKey=")
 }
 
 func Test_goodsBarcodeService_BoxMark(t *testing.T) {
 	_, err := temuClient.Services.Goods.Barcode.BoxMark(ctx, deliveryOrderSnList...)
-	assert.Equal(t, nil, err, "Services.Goods.Barcode.BoxMark(ctx, %#v)", deliveryOrderSnList)
+	assert.Equalf(t, nil, err, "Services.Goods.Barcode.BoxMark(ctx, %#v)", deliveryOrderSnList)
 }
 
 func Test_goodsBarcodeService_NormalGoods(t *testing.T) {
@@ -32,5 +32,5 @@ func Test_goodsBarcodeService_CustomGoods(t *testing.T) {
 	}
 	items, err := temuClient.Services.Goods.Barcode.CustomGoods(ctx, params)
 	assert.Equalf(t, nil, err, "Services.Goods.Barcode.CustomGoods(ctx, %#v)", params)
-	assert.Equal(t, true, len(items) != 0, "Services.Goods.Barcode.CustomGoods(%#v)", params)
+	assert.Equalf(t, true, len(items) != 0, "Services.Goods.Barcode.CustomGoods(ctx, %#v)", params)
 }

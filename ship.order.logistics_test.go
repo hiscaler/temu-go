@@ -8,13 +8,14 @@ import (
 )
 
 func Test_shipOrderLogisticsService_Match(t *testing.T) {
-	purchaseOrder, err := temuClient.Services.PurchaseOrder.One(ctx, "WB2501082789597")
-	assert.Equal(t, nil, err, "PurchaseOrder.One")
+	number := "WB2501082789597"
+	purchaseOrder, err := temuClient.Services.PurchaseOrder.One(ctx, number)
+	assert.Equalf(t, nil, err, "PurchaseOrder.One(ctx, %s)", number)
 
 	// 发货地址
 	var deliveryAddress entity.DeliveryAddress
 	deliveryAddresses, err := temuClient.Services.Mall.DeliveryAddress.Query(ctx)
-	assert.Equal(t, nil, err, "Mall.DeliveryAddress.One")
+	assert.Equal(t, nil, err, "Mall.DeliveryAddress.One(ctx)")
 	if len(deliveryAddresses) != 0 {
 		deliveryAddress = deliveryAddresses[0]
 	}
@@ -23,11 +24,11 @@ func Test_shipOrderLogisticsService_Match(t *testing.T) {
 	var receiveAddress entity.ShipOrderReceiveAddress
 	receiveAddress, err = temuClient.Services.ShipOrder.ReceiveAddress.One(ctx, purchaseOrder.SubPurchaseOrderSn)
 	assert.Equal(t, nil, err, "ShipOrder.ReceiveAddress.One")
-	shipOrders, _, _, _, err := temuClient.Services.ShipOrder.Query(ctx, ShipOrderQueryParams{
+	params := ShipOrderQueryParams{
 		SubPurchaseOrderSnList: []string{purchaseOrder.SubPurchaseOrderSn},
-	})
-	assert.Equal(t, nil, err, "ShipOrder.Query")
-	// assert.Equal(t, 1, err, "ShipOrder.Query result")
+	}
+	shipOrders, _, _, _, err := temuClient.Services.ShipOrder.Query(ctx, params)
+	assert.Equalf(t, nil, err, "ShipOrder.Query(ctx, %#v)", params)
 
 	if len(shipOrders) != 0 {
 		shipOrder := shipOrders[0]
@@ -41,7 +42,7 @@ func Test_shipOrderLogisticsService_Match(t *testing.T) {
 			DeliveryOrderSns:   []string{shipOrder.DeliveryOrderSn},
 		}
 		items, err := temuClient.Services.ShipOrder.Logistics.Match(ctx, req)
-		assert.Equal(t, nil, err, "Services.Logistics.Match(ctx)")
+		assert.Equalf(t, nil, err, "Services.Logistics.Match(ctx, %#v)", req)
 		for _, item := range items {
 			fmt.Printf("%#v\n", item)
 		}

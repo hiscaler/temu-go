@@ -67,7 +67,7 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 	// 发货地址
 	addresses, err := temuClient.Services.Mall.DeliveryAddress.Query(ctx)
-	assert.Nilf(t, err, "temuClient.Services.Mall.DeliveryAddress.Query(ctx): error")
+	assert.Nil(t, err, "temuClient.Services.Mall.DeliveryAddress.Query(ctx): error")
 	assert.Equal(t, true, len(addresses) > 0, "temuClient.Services.Mall.DeliveryAddress.Query(ctx): results")
 	address := addresses[0]
 
