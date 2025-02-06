@@ -17,8 +17,8 @@ func TestShipOrderReceiveAddressService_Query(t *testing.T) {
 		var d entity.ShipOrderReceiveAddress
 		d, err = temuClient.Services.ShipOrder.ReceiveAddress.One(ctx, subPurchaseOrderSn)
 		assert.Nilf(t, err, "Services.ShipOrder.ReceiveAddress.One(ctx, %s)", subPurchaseOrderSn)
-		assert.Equalf(t, item.SubWarehouseId, d.SubWarehouseId, "Services.ShipOrder.ReceiveAddress.One(%s)", subPurchaseOrderSn)
-		assert.Equalf(t, item.ReceiveAddressInfo, d.ReceiveAddressInfo, "Services.ShipOrder.ReceiveAddress.One(%s)", subPurchaseOrderSn)
-		assert.Equalf(t, 1, len(d.SubPurchaseOrderSnList), "Services.ShipOrder.ReceiveAddress.One(%s)", subPurchaseOrderSn)
+		assert.Equalf(t, item.SubWarehouseId, d.SubWarehouseId, "Services.ShipOrder.ReceiveAddress.One(ctx, %s)", subPurchaseOrderSn)
+		assert.Equalf(t, item.ReceiveAddressInfo, d.ReceiveAddressInfo, "Services.ShipOrder.ReceiveAddress.One(ctx, %s)", subPurchaseOrderSn)
+		assert.Equalf(t, 1, len(d.SubPurchaseOrderSnList), "Services.ShipOrder.ReceiveAddress.One(ctx, %s)", subPurchaseOrderSn)
 	}
 }
