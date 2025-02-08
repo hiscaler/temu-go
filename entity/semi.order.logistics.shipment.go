@@ -3,12 +3,12 @@ package entity
 // ShipmentResult 包含物流发货信息的结果
 type ShipmentResult struct {
 	Result struct {
-		ShipmentInfoDTO []ShipmentInfoDTO `json:"shipmentInfoDTO"` // 发货信息列表
+		ShipmentInfoDTO []ShipmentInfo `json:"shipmentInfoDTO"` // 发货信息列表
 	} `json:"result"`
 }
 
 // ShipmentInfo 表示单个物流发货信息
-type ShipmentInfoDTO struct {
+type ShipmentInfo struct {
 	CarrierId            int64                `json:"carrierId"`                  // 物流公司ID
 	CarrierName          string               `json:"carrierName"`                // 物流公司名称
 	TrackingNumber       string               `json:"trackingNumber"`             // 运单号

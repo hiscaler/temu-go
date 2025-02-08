@@ -25,9 +25,9 @@ func (m SemiOrderLogisticsShipmentGetRequest) validate() error {
 
 // Query 订单发货信息查询接口
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#Y01V9e
-func (s *semiOrderLogisticsShipmentService) Query(ctx context.Context, params SemiOrderLogisticsShipmentGetRequest) ([]entity.ShipmentInfoDTO, error) {
+func (s *semiOrderLogisticsShipmentService) Query(ctx context.Context, params SemiOrderLogisticsShipmentGetRequest) ([]entity.ShipmentInfo, error) {
 	if err := params.validate(); err != nil {
-		return []entity.ShipmentInfoDTO{}, err
+		return []entity.ShipmentInfo{}, err
 	}
 
 	var result = struct {
@@ -41,7 +41,7 @@ func (s *semiOrderLogisticsShipmentService) Query(ctx context.Context, params Se
 		Post("bg.logistics.shipment.get")
 
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return []entity.ShipmentInfoDTO{}, err
+		return []entity.ShipmentInfo{}, err
 	}
 
 	return result.Result.Result.ShipmentInfoDTO, nil
