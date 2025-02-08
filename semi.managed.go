@@ -2,9 +2,10 @@ package temu
 
 // 半托管专属服务
 type semiManagedService struct {
-	Order            semiOrderService            // 订单
-	OnlineOrder      semiOnlineOrderService      // 在线下单
-	VirtualInventory semiVirtualInventoryService // 虚拟库存
+	Order                  semiOrderService                  // 订单
+	OnlineOrder            semiOnlineOrderService            // 在线下单
+	VirtualInventory       semiVirtualInventoryService       // 虚拟库存
+	OrderLogisticsShipment semiOrderLogisticsShipmentService // 订单物流信息
 }
 
 // 在线下单服务
