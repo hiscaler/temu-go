@@ -1,5 +1,7 @@
 package entity
 
+import "gopkg.in/guregu/null.v4"
+
 // ParentOrder PO 单
 type ParentOrder struct {
 	ParentOrderMap ParentOrderMap `json:"parentOrderMap"` // 父单信息
@@ -7,6 +9,7 @@ type ParentOrder struct {
 }
 
 type ParentOrderMap struct {
+	ParentOrderSn string `json:"parentOrderSn"` // 父订单号
 	// name: 具体枚举如下
 	// soon_to_be_overdue-即将逾期
 	// past_due-已逾期
@@ -14,15 +17,18 @@ type ParentOrderMap struct {
 	// pending_buyer_address_change-买家改地址待确认订单
 	// value:
 	// 是否有标签：0=无标签，1=有标签
-	ParentOrderLabel             []Label  `json:"parentOrderLabel"`             // 标签名称
-	ParentOrderSn                string   `json:"parentOrderSn"`                // 订单号
-	ParentOrderStatus            int      `json:"parentOrderStatus"`            // 订单状态
-	ParentOrderTime              int64    `json:"parentOrderTime"`              // 订单创建时间
-	ParentOrderPendingFinishTime int64    `json:"parentOrderPendingFinishTime"` // 订单结束pending转为自发货时间
-	ExpectShipLatestTime         int64    `json:"expectShipLatestTime"`         // 要求最晚发货时间
-	ParentShippingTime           int64    `json:"parentShippingTime"`           // 父单发货时间
-	UpdateTime                   int64    `json:"updateTime"`                   // 订单更新时间（秒级时间戳）
-	FulfillmentWarning           []string `json:"fulfillmentWarning"`           // 履约相关提醒: SUGGEST_SIGNATURE_ON_DELIVERY-建议发货时购买签名服务
+	ParentOrderLabel             []Label   `json:"parentOrderLabel"`             // 标签名称
+	ParentOrderStatus            int       `json:"parentOrderStatus"`            // 订单状态
+	ParentOrderTime              int64     `json:"parentOrderTime"`              // 订单创建时间
+	ParentOrderPendingFinishTime int64     `json:"parentOrderPendingFinishTime"` // 订单结束pending转为自发货时间
+	ExpectShipLatestTime         int64     `json:"expectShipLatestTime"`         // 要求最晚发货时间
+	ParentShippingTime           int64     `json:"parentShippingTime"`           // 父单发货时间
+	UpdateTime                   int64     `json:"updateTime"`                   // 订单更新时间（秒级时间戳）
+	LatestDeliveryTime           int64     `json:"latestDeliveryTime"`           // 最后发货时间
+	FulfillmentWarning           []string  `json:"fulfillmentWarning"`           // 履约相关提醒: SUGGEST_SIGNATURE_ON_DELIVERY-建议发货时购买签名服务
+	RegionId                     int       `json:"regionId"`                     // 区域 ID
+	SiteId                       int       `json:"siteId"`                       // 站点 ID
+	HasShippingFee               null.Bool `json:"hasShippingFee"`               // 有运费？
 }
 
 type Label struct {
@@ -31,7 +37,9 @@ type Label struct {
 }
 
 type Order struct {
-	OrderSn string `json:"orderSn"` // O 单号
+	OrderSn string `json:"orderSn"` // 子订单号
+	SkuId   int64  `json:"skuId"`   // SKU ID
+	GoodsId int64  `json:"goodsId"` // 商品 ID
 	// 备注：代表商家实际需要发货件数，在O单部分取消时：
 	// 应履约件数=下单件数-发货前售后件数
 	Quantity                        int    `json:"quantity"`                        // O 单应履约件数
@@ -50,11 +58,10 @@ type Order struct {
 	OrderStatus int     `json:"orderStatus"` // 订单状态（3 是已取消）
 	// 卖家履约订单值返回：fulfillBySeller
 	// 合作仓履约订单返回：fulfillByCooperativeWarehouse
-	FulfillmentType string    `json:"fulfillmentType"` // 子订单履约类型
-	GoodsName       string    `json:"goodsName"`       // 商品名称
-	ProductList     []Product `json:"productList"`     // 货品信息
-	RegionId        int       `json:"regionId"`        // 区域 ID
-	SiteId          int       `json:"siteId"`          // 站点 ID
+	FulfillmentType    string    `json:"fulfillmentType"`    // 子订单履约类型
+	GoodsName          string    `json:"goodsName"`          // 商品名称
+	ProductList        []Product `json:"productList"`        // 货品信息
+	FulfillmentWarning []string  `json:"fulfillmentWarning"` // 履约相关提醒: SUGGEST_SIGNATURE_ON_DELIVERY-建议发货时购买签名服务
 }
 
 type Product struct {
