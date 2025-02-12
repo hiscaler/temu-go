@@ -8,7 +8,7 @@ import (
 )
 
 func TestSemiOrderLogisticsShipmentQuery(t *testing.T) {
-	params := SemiOrderLogisticsShipmentGetRequest{
+	params := SemiOrderLogisticsShipmentQueryParams{
 		ParentOrderSn: "PO-211-02550200509992062",
 		OrderSn:       "211-02550219515432062",
 	}

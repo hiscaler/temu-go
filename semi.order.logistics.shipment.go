@@ -11,12 +11,12 @@ import (
 // 半托管订单发货信息
 type semiOrderLogisticsShipmentService service
 
-type SemiOrderLogisticsShipmentGetRequest struct {
+type SemiOrderLogisticsShipmentQueryParams struct {
 	ParentOrderSn string `json:"parentOrderSn"` // 父订单号
 	OrderSn       string `json:"orderSn"`       // 子订单号
 }
 
-func (m SemiOrderLogisticsShipmentGetRequest) validate() error {
+func (m SemiOrderLogisticsShipmentQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ParentOrderSn, validation.Required.Error("父订单号不能为空")),
 		validation.Field(&m.OrderSn, validation.Required.Error("子订单号不能为空")),
@@ -25,14 +25,16 @@ func (m SemiOrderLogisticsShipmentGetRequest) validate() error {
 
 // Query 订单发货信息查询接口
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#Y01V9e
-func (s *semiOrderLogisticsShipmentService) Query(ctx context.Context, params SemiOrderLogisticsShipmentGetRequest) ([]entity.ShipmentInfo, error) {
+func (s *semiOrderLogisticsShipmentService) Query(ctx context.Context, params SemiOrderLogisticsShipmentQueryParams) ([]entity.ShipmentInfo, error) {
 	if err := params.validate(); err != nil {
-		return []entity.ShipmentInfo{}, err
+		return nil, err
 	}
 
 	var result = struct {
 		normal.Response
-		Result entity.ShipmentResult `json:"result"`
+		Result struct {
+			ShipmentInfoDTO []entity.ShipmentInfo `json:"shipmentInfoDTO"` // 发货信息列表
+		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
@@ -41,8 +43,8 @@ func (s *semiOrderLogisticsShipmentService) Query(ctx context.Context, params Se
 		Post("bg.logistics.shipment.get")
 
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return []entity.ShipmentInfo{}, err
+		return nil, err
 	}
 
-	return result.Result.Result.ShipmentInfoDTO, nil
+	return result.Result.ShipmentInfoDTO, nil
 }
