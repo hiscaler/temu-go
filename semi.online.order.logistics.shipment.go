@@ -30,7 +30,7 @@ type SemiOnlineOrderLogisticsShipmentCreateSendItem struct {
 	ShipCompanyId      int64                                                 `json:"shipCompanyId"`     // 物流公司 id
 	TrackingNumber     string                                                `json:"trackingNumber"`    // 运单号
 	OrderSendInfoList  []SemiOnlineOrderLogisticsShipmentCreateSendItemOrder `json:"orderSendInfoList"` // 发货商品信息
-	WarehouseId        int64                                                 `json:"warehouseId"`       // 仓库id
+	WarehouseId        string                                                `json:"warehouseId"`       // 仓库id
 	Weight             string                                                `json:"weight"`            // 重量（默认 2 位小数）
 	WeightUnit         string                                                `json:"weightUnit"`        // 重量单位，美国为 lb（磅），其他国家为 kg（千克）
 	Length             string                                                `json:"length"`            // 包裹长度（默认 2 位小数）
