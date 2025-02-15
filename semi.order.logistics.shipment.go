@@ -33,7 +33,9 @@ func (s *semiOrderLogisticsShipmentService) Query(ctx context.Context, params Se
 	var result = struct {
 		normal.Response
 		Result struct {
-			ShipmentInfoDTO []entity.ShipmentInfo `json:"shipmentInfoDTO"` // 发货信息列表
+			Result struct {
+				ShipmentInfoDTO []entity.ShipmentInfo `json:"shipmentInfoDTO"` // 发货信息列表
+			} `json:"result"`
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
@@ -46,5 +48,5 @@ func (s *semiOrderLogisticsShipmentService) Query(ctx context.Context, params Se
 		return nil, err
 	}
 
-	return result.Result.ShipmentInfoDTO, nil
+	return result.Result.Result.ShipmentInfoDTO, nil
 }
