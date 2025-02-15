@@ -412,7 +412,7 @@ func NewClient(cfg config.Config) *Client {
 					Shipped:   (semiOnlineOrderShippedPackageService)(xService),
 				},
 			},
-			VirtualInventory: (semiVirtualInventoryService)(xService),
+			VirtualInventory:       (semiVirtualInventoryService)(xService),
 			OrderLogisticsShipment: (semiOrderLogisticsShipmentService)(xService),
 		},
 	}
@@ -538,7 +538,8 @@ func errorWrap(code int, message string) error {
 
 	// message not found in translate file if err not equal nil
 	message, err := i18nLocalizer.Localize(&i18n.LocalizeConfig{
-		MessageID: strconv.Itoa(code),
+		MessageID:      strconv.Itoa(code),
+		DefaultMessage: &i18n.Message{Other: message},
 	})
 	if err == nil {
 		return errors.New(message)
