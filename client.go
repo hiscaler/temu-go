@@ -537,12 +537,11 @@ func errorWrap(code int, message string) error {
 	}
 
 	// message not found in translate file if err not equal nil
-	message, err := i18nLocalizer.Localize(&i18n.LocalizeConfig{
-		MessageID:      strconv.Itoa(code),
-		DefaultMessage: &i18n.Message{Other: message},
+	msg, err := i18nLocalizer.Localize(&i18n.LocalizeConfig{
+		MessageID: strconv.Itoa(code),
 	})
 	if err == nil {
-		return errors.New(message)
+		return errors.New(msg)
 	}
 
 	switch code {
