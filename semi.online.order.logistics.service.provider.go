@@ -12,15 +12,15 @@ import (
 type semiOnlineOrderLogisticsServiceProviderService service
 
 type SemiOnlineOrderLogisticsServiceProviderQueryParams struct {
-	WarehouseId         string    `json:"warehouseId"`                   // 仓库 id
-	OrderSnList         []string  `json:"orderSnList"`                   // O 单（orderSn 非 parentOrderSn）列表（至少包含一个 O 单号）
-	Weight              string    `json:"weight"`                        // 重量（默认 2 位小数，美国lb，其他国家kg）
-	WeightUnit          string    `json:"weightUnit"`                    // 重量单位
-	Length              string    `json:"length,omitempty"`              // 包裹长度（默认 2 位小数）
-	Width               string    `json:"width"`                         // 包裹宽度（默认 2 位小数）
-	Height              string    `json:"height"`                        // 包裹高度（默认 2 位小数）
-	DimensionUnit       string    `json:"dimensionUnit"`                 // 尺寸单位（美国 in，其他国家 cm）
-	SignatureOnDelivery null.Bool `json:"signatureOnDelivery,omitempty"` // 是否需要签名签收服务
+	WarehouseId         string     `json:"warehouseId"`                   // 仓库 id
+	OrderSnList         []string   `json:"orderSnList"`                   // O 单（orderSn 非 parentOrderSn）列表（至少包含一个 O 单号）
+	Weight              float64    `json:"weight"`                        // 重量（默认 2 位小数，美国lb，其他国家kg）
+	WeightUnit          string     `json:"weightUnit"`                    // 重量单位
+	Length              null.Float `json:"length,omitempty"`              // 包裹长度（默认 2 位小数）
+	Width               float64    `json:"width"`                         // 包裹宽度（默认 2 位小数）
+	Height              float64    `json:"height"`                        // 包裹高度（默认 2 位小数）
+	DimensionUnit       string     `json:"dimensionUnit"`                 // 尺寸单位（美国 in，其他国家 cm）
+	SignatureOnDelivery null.Bool  `json:"signatureOnDelivery,omitempty"` // 是否需要签名签收服务
 }
 
 func (m SemiOnlineOrderLogisticsServiceProviderQueryParams) validate() error {
@@ -56,6 +56,7 @@ func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Contex
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
+		SetBody(params).
 		SetResult(&result).
 		Post("bg.logistics.shippingservices.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
@@ -66,17 +67,17 @@ func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Contex
 	for i, item := range items {
 		v, e := item.ParseEstimatedAmount()
 		if e != nil {
-			item.AmountError = null.StringFrom(e.Error())
+			item.AmountError = e.Error()
 		} else {
-			item.Amount = null.FloatFrom(v)
+			item.Amount = v
 		}
 
 		d1, d2, e := item.DeliveryDays()
 		if e != nil {
-			item.DeliveryDaysError = null.StringFrom(e.Error())
+			item.DeliveryDaysError = e.Error()
 		} else {
-			item.DeliveryMinDays = null.IntFrom(int64(d1))
-			item.DeliveryMaxDays = null.IntFrom(int64(d2))
+			item.DeliveryMinDays = d1
+			item.DeliveryMaxDays = d2
 		}
 		items[i] = item
 	}
