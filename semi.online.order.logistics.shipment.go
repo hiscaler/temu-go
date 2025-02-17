@@ -241,9 +241,8 @@ func (m SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest) validate() er
 	)
 }
 
-//	UpdateShippingType
-//
-// 物流在线发货修改物流接口（bg.logistics.shipment.shippingtype.update）
+//		UpdateShippingType 物流在线发货修改物流接口
+//	 https://seller.kuajingmaihuo.com/sop/view/144659541206936016#bYZCmU
 func (s semiOnlineOrderLogisticsShipmentService) UpdateShippingType(ctx context.Context, request SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
@@ -288,6 +287,8 @@ func (m SemiOnlineOrderLogisticsShipmentDocumentRequest) validate() error {
 	)
 }
 
+// Document 物流在线发货打印面单接口
+// https://seller.kuajingmaihuo.com/sop/view/144659541206936016#IYqSks
 func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, request SemiOnlineOrderLogisticsShipmentDocumentRequest) ([]entity.SemiOnlineOrderLogisticsShipmentDocument, error) {
 	if err := request.validate(); err != nil {
 		return nil, invalidInput(err)
