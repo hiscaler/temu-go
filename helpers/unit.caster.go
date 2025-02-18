@@ -47,6 +47,12 @@ func (uc *UnitCaster) G2Lb(g float64) *UnitCaster {
 	return uc
 }
 
+func (uc *UnitCaster) Lb2G(lb float64) *UnitCaster {
+	uc.BeforeValue = lb
+	uc.AfterValue = lb / 0.00220462262
+	return uc
+}
+
 func (uc *UnitCaster) Float(precision ...int) float64 {
 	p := uc.Precision
 	if len(precision) != 0 {
