@@ -326,8 +326,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		"toa-timestamp",
 	}
 	expireTime := time.Now().Add(10 * time.Minute).Unix() // 10 分钟后过期
-	dir := "./static_files"
-	savePathPrefix := "/temu/logistics-labels"
+	dir := "./static_files/temu/logistics-labels"
 	sb := strings.Builder{}
 	headers := map[string]string{
 		"toa-app-key":      s.config.AppKey,
@@ -364,9 +363,9 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 			filename = filename[0:index]
 		}
 		filename = strings.ToLower(fmt.Sprintf("%s%s", doc.PackageSn, path.Ext(filename)))
-		savePath := filepath.Join(dir, savePathPrefix, filename)
+		savePath := filepath.Join(dir, filename)
 		if !request.RetryDownload && filex.Exists(savePath) {
-			documents[i].Path = null.StringFrom(path.Join(s.config.StaticFileServer, strings.Replace(savePath, dir, "", -1)))
+			documents[i].Path = null.StringFrom(path.Join(s.config.StaticFileServer, savePath))
 			continue
 		}
 
@@ -393,7 +392,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 			if resp.IsError() {
 				documents[i].Error = null.StringFrom(resp.String())
 			} else if resp.IsSuccess() {
-				documents[i].Path = null.StringFrom(path.Join(s.config.StaticFileServer, savePathPrefix, filename))
+				documents[i].Path = null.StringFrom(path.Join(s.config.StaticFileServer, dir, filename))
 			}
 		}
 	}
