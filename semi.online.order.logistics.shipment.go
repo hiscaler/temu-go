@@ -3,13 +3,19 @@ package temu
 import (
 	"context"
 	"crypto/md5"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/gox/filex"
 	"github.com/hiscaler/gox/randx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"gopkg.in/guregu/null.v4"
+	"net"
+	"net/http"
+	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -272,8 +278,8 @@ type SemiOnlineOrderLogisticsShipmentDocumentRequest struct {
 	DocumentType  string   `json:"documentType"`  // 文件类型
 	PackageSnList []string `json:"packageSnList"` // 需要打印面单的包裹号列表
 	// 自行添加，非接口字段，用于下载面单文件
-	Download        bool        `json:"download"`           // 是否下载
-	DownloadSaveDir null.String `json:"download_save_path"` // 下载保存目录
+	Download      bool `json:"download"`      // 是否下载
+	RetryDownload bool `json:"retryDownload"` // 已经存在的情况下是否重新下载
 }
 
 func (m SemiOnlineOrderLogisticsShipmentDocumentRequest) validate() error {
@@ -320,19 +326,47 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		"toa-timestamp",
 	}
 	expireTime := time.Now().Add(10 * time.Minute).Unix() // 10 分钟后过期
-	dir := strings.TrimSpace(request.DownloadSaveDir.String)
-	if dir == "" {
-		dir = "./download"
-	}
+	dir := "./static_files"
+	savePathPrefix := "/temu/logistics-labels"
 	sb := strings.Builder{}
 	headers := map[string]string{
 		"toa-app-key":      s.config.AppKey,
 		"toa-access-token": s.config.AccessToken,
 	}
+	httpClient := resty.New().
+		SetDebug(s.debug).
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+			"Accept":       "application/json",
+			"User-Agent":   UserAgent,
+		}).
+		SetAllowGetMethodPayload(true).
+		SetTimeout(s.config.Timeout * time.Second).
+		SetTransport(&http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: !s.config.VerifySSL},
+			DialContext: (&net.Dialer{
+				Timeout: s.config.Timeout * time.Second,
+			}).DialContext,
+		})
+	if s.debug {
+		httpClient.EnableTrace()
+	}
 	for i, doc := range documents {
-		doc.ExpireTime = expireTime
+		documents[i].ExpireTime = expireTime
 		url := doc.Url
 		if url == "" {
+			continue
+		}
+
+		filename := path.Base(url)
+		index := strings.Index(filename, "?")
+		if index != -1 {
+			filename = filename[0:index]
+		}
+		filename = strings.ToLower(fmt.Sprintf("%s%s", doc.PackageSn, path.Ext(filename)))
+		savePath := filepath.Join(dir, savePathPrefix, filename)
+		if !request.RetryDownload && filex.Exists(savePath) {
+			documents[i].Path = null.StringFrom(path.Join(s.config.StaticFileServer, strings.Replace(savePath, dir, "", -1)))
 			continue
 		}
 
@@ -346,8 +380,8 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		}
 		sb.WriteString(s.config.AppSecret)
 		headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
-		filename := strings.ToLower(fmt.Sprintf("%s.%s", doc.PackageSn, filepath.Ext(url)))
-		resp, err = s.httpClient.
+		resp, err = httpClient.
+			SetBaseURL(url).
 			SetOutputDirectory(dir).
 			R().
 			SetHeaders(headers).
@@ -359,7 +393,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 			if resp.IsError() {
 				documents[i].Error = null.StringFrom(resp.String())
 			} else if resp.IsSuccess() {
-				documents[i].Path = null.StringFrom(filepath.Join(dir, filename))
+				documents[i].Path = null.StringFrom(path.Join(s.config.StaticFileServer, savePathPrefix, filename))
 			}
 		}
 	}
