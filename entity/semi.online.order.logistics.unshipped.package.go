@@ -1,8 +1,8 @@
 package entity
 
 type SemiOnlineOrderPlatformLogisticsUnshippedPackage struct {
-	CarrierId   int64  `json:"carrierId"`   // 物流渠道 ID
-	CarrierName string `json:"carrierName"` // 物流渠道名称
+	CarrierId   int64  `json:"carrierId"`   // 物流公司 ID
+	CarrierName string `json:"carrierName"` // 物流公司名称
 	// 对应枚举如下：
 	//	主包裹：MAIN
 	//	子包裹：SPLIT_LARGE_ITEM
