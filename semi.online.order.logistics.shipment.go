@@ -292,6 +292,20 @@ func (m SemiOnlineOrderLogisticsShipmentDocumentRequest) validate() error {
 	)
 }
 
+// urlJoin 拼接 URL 地址
+func urlJoin(prefix, path string) string {
+	if strings.HasSuffix(prefix, "/") {
+		prefix = prefix[0 : len(prefix)-1]
+	}
+	if strings.HasPrefix(path, ".") {
+		path = path[1:]
+	}
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	return prefix + path
+}
+
 // Document 物流在线发货打印面单接口
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#IYqSks
 func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, request SemiOnlineOrderLogisticsShipmentDocumentRequest) ([]entity.SemiOnlineOrderLogisticsShipmentDocument, error) {
@@ -352,20 +366,18 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 	}
 	for i, doc := range documents {
 		documents[i].ExpireTime = expireTime
-		url := doc.Url
-		if url == "" {
+		if doc.Url == "" {
 			continue
 		}
 
-		filename := path.Base(url)
-		index := strings.Index(filename, "?")
-		if index != -1 {
+		filename := path.Base(doc.Url)
+		if index := strings.Index(filename, "?"); index != -1 {
 			filename = filename[0:index]
 		}
 		filename = strings.ToLower(fmt.Sprintf("%s%s", doc.PackageSn, path.Ext(filename)))
 		savePath := filepath.Join(dir, filename)
 		if !request.RetryDownload && filex.Exists(savePath) {
-			documents[i].Path = null.StringFrom(path.Join(s.config.StaticFileServer, savePath))
+			documents[i].Path = null.StringFrom(urlJoin(s.config.StaticFileServer, savePath))
 			continue
 		}
 
@@ -380,19 +392,20 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		sb.WriteString(s.config.AppSecret)
 		headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
 		resp, err = httpClient.
-			SetBaseURL(url).
 			SetOutputDirectory(dir).
 			R().
 			SetHeaders(headers).
 			SetOutput(filename).
-			Get(url)
+			Get(doc.Url)
 		if err != nil {
 			documents[i].Error = null.StringFrom(err.Error())
 		} else {
 			if resp.IsError() {
 				documents[i].Error = null.StringFrom(resp.String())
 			} else if resp.IsSuccess() {
-				documents[i].Path = null.StringFrom(path.Join(s.config.StaticFileServer, dir, filename))
+				documents[i].Path = null.StringFrom(urlJoin(s.config.StaticFileServer, path.Join(dir, filename)))
+			} else {
+				documents[i].Error = null.StringFrom(resp.String())
 			}
 		}
 	}

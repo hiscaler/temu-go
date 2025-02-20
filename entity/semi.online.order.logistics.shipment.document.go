@@ -28,6 +28,6 @@ type SemiOnlineOrderLogisticsShipmentDocument struct {
 	// 接口返回文件流。
 	Url        string      `json:"url"`         // 返回 url 是加签资源
 	ExpireTime int64       `json:"expire_time"` // 过期时间
-	Path       null.String `json:"path"`        // 文件下载后本地的保存路径
+	Path       null.String `json:"path"`        // 文件下载后外网可下载的地址
 	Error      null.String `json:"error"`       // 文件下载保存失败的原因
 }
