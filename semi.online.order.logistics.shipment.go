@@ -293,16 +293,16 @@ func (m SemiOnlineOrderLogisticsShipmentDocumentRequest) validate() error {
 }
 
 // urlJoin 拼接 URL 地址
-func urlJoin(prefix, path string) string {
+func urlJoin(prefix, file string) string {
 	if strings.HasSuffix(prefix, "/") {
 		prefix = prefix[0 : len(prefix)-1]
 	}
 
-	path = filepath.Clean(path)
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
+	file = path.Clean(file)
+	if !strings.HasPrefix(file, "/") {
+		file = "/" + file
 	}
-	return prefix + path
+	return prefix + file
 }
 
 // Document 物流在线发货打印面单接口
