@@ -297,9 +297,8 @@ func urlJoin(prefix, path string) string {
 	if strings.HasSuffix(prefix, "/") {
 		prefix = prefix[0 : len(prefix)-1]
 	}
-	if strings.HasPrefix(path, ".") {
-		path = path[1:]
-	}
+
+	path = filepath.Clean(path)
 	if !strings.HasPrefix(path, "/") {
 		path = "/" + path
 	}
@@ -367,6 +366,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 	for i, doc := range documents {
 		documents[i].ExpireTime = expireTime
 		if doc.Url == "" {
+			documents[i].Error = null.StringFrom("URL is empty")
 			continue
 		}
 
