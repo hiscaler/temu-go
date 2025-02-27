@@ -86,6 +86,26 @@ type Client struct {
 	TimeLocation *time.Location // 时区
 }
 
+func isSemiUrl(typ string) bool {
+	types := []string{
+		"bg.logistics.shippingservices.get",
+		"bg.logistics.shipment.document.get",
+		"bg.logistics.shipment.create",
+		"bg.logistics.shipment.result.get",
+		"bg.logistics.shipment.update",
+		"bg.logistics.shipment.shippingtype.update",
+		"bg.logistics.shipment.document.get",
+		"bg.logistics.warehouse.list.get",
+		"bg.logistics.shipped.package.confirm",
+		"bg.order.unshipped.package.get",
+		"bg.order.list.get",
+		"bg.logistics.shipment.get",
+		"bg.goods.quantity.get",
+		"bg.goods.quantity.update",
+	}
+	return slices.Contains(types, typ)
+}
+
 // generate sign string
 func generateSign(values map[string]any, appSecret string) map[string]any {
 	delete(values, "sign")
@@ -210,12 +230,16 @@ func NewClient(cfg config.Config) *Client {
 		env = testEnv
 	}
 	region := parseRegion(cfg.Region)
-	url := ""
-	if v, ok := urls[region]; ok {
+	fnGetUrlByRegion := func(region string) string {
+		v, ok := urls[region]
+		if !ok {
+			return ""
+		}
+
 		if env == prodEnv {
-			url = v.Prod
+			return v.Prod
 		} else {
-			url = v.Test
+			return v.Test
 		}
 	}
 	client := &Client{
@@ -229,7 +253,7 @@ func NewClient(cfg config.Config) *Client {
 	httpClient := resty.New().
 		SetDebug(debug).
 		EnableTrace().
-		SetBaseURL(url).
+		SetBaseURL(fnGetUrlByRegion(region)).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
@@ -261,9 +285,14 @@ func NewClient(cfg config.Config) *Client {
 			values["data_type"] = "JSON"
 			values["version"] = "V1"
 			values["timestamp"] = time.Now().Unix()
-			values["type"] = request.URL
+			typ := request.URL
+			values["type"] = typ
 			request.URL = ""
 			request.SetBody(generateSign(values, cfg.AppSecret))
+			if !isSemiUrl(typ) {
+				// 非半托管请求全部走国内服务
+				client.SetBaseURL(fnGetUrlByRegion(entity.ChinaRegion))
+			}
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
