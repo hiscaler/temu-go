@@ -21,5 +21,5 @@ type Config struct {
 	VerifySSL        bool               `json:"verify_ssl"`         // 是否验证 SSL
 	Logger           *slog.Logger       `json:"-"`                  // 日志
 	OverwriteUrls    map[string]URLPair `json:"overwrite_urls"`     // 覆盖 URL
-	StaticFileServer string             `json:"static_file_server"` // 静态文件服务器地址
+	StaticFileServer string             `json:"static_file_server"` // 静态文件服务器地址（用于访问物流面单文件）
 }
