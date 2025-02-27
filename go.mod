@@ -1,6 +1,6 @@
-module github.com/hiscaler/temu-go
+module temu-go
 
-go 1.23
+go 1.24
 
 require (
 	github.com/BurntSushi/toml v1.4.0
@@ -8,6 +8,7 @@ require (
 	github.com/go-resty/resty/v2 v2.16.5
 	github.com/goccy/go-json v0.10.5
 	github.com/hiscaler/gox v0.0.0-20240824093629-11ab6f7acd0b
+	github.com/hiscaler/temu-go v0.0.0-20250227085735-cca5f4a68749
 	github.com/nicksnyder/go-i18n/v2 v2.5.1
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/text v0.22.0

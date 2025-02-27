@@ -86,7 +86,8 @@ type Client struct {
 	TimeLocation *time.Location // 时区
 }
 
-func isSemiUrl(typ string) bool {
+// isSemiEndpoint 是否为半托管接口
+func isSemiEndpoint(typ string) bool {
 	types := []string{
 		"bg.logistics.shippingservices.get",
 		"bg.logistics.shipment.document.get",
@@ -289,7 +290,7 @@ func NewClient(cfg config.Config) *Client {
 			values["type"] = typ
 			request.URL = ""
 			request.SetBody(generateSign(values, cfg.AppSecret))
-			if !isSemiUrl(typ) {
+			if !isSemiEndpoint(typ) {
 				// 非半托管请求全部走国内服务
 				client.SetBaseURL(fnGetUrlByRegion(entity.ChinaRegion))
 			}
