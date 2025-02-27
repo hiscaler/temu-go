@@ -37,8 +37,8 @@ type SemiOnlineOrderLogisticsShipmentPackage struct {
 	ShippingCompanyName   string `json:"shippingCompanyName"`   // 运单号
 	TrackingNumber        string `json:"trackingNumber"`        // 物流公司名称
 	OrderSendInfoList     []struct {
-		ParentOrderSn string `json:"parentOrderSn"` // PO单号
-		OrderSn       string `json:"orderSn"`       // O单号
+		ParentOrderSn string `json:"parentOrderSn"` // PO 单号
+		OrderSn       string `json:"orderSn"`       // O 单号
 		GoodsId       int64  `json:"goodsId"`       // goodsId
 		SkuId         int64  `json:"skuId"`         // skuId
 		Quantity      int    `json:"quantity"`      // 数量
