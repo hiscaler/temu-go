@@ -246,8 +246,8 @@ func (m SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest) validate() er
 	)
 }
 
-//		UpdateShippingType 物流在线发货修改物流接口
-//	 https://seller.kuajingmaihuo.com/sop/view/144659541206936016#bYZCmU
+// UpdateShippingType 物流在线发货修改物流接口
+// https://seller.kuajingmaihuo.com/sop/view/144659541206936016#bYZCmU
 func (s semiOnlineOrderLogisticsShipmentService) UpdateShippingType(ctx context.Context, request SemiOnlineOrderLogisticsShipmentUpdateShippingTypeRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
