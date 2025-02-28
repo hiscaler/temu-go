@@ -349,7 +349,6 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 		SetDebug(s.debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
-			"Accept":       "application/json",
 			"User-Agent":   UserAgent,
 		}).
 		SetAllowGetMethodPayload(true).
