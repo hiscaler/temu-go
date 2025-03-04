@@ -99,8 +99,8 @@ func isSemiEndpoint(typ string) bool {
 		"bg.logistics.warehouse.list.get",
 		"bg.logistics.shipped.package.confirm",
 		"bg.order.unshipped.package.get",
-		"bg.order.list.get",
-		"bg.logistics.shipment.get",
+		"bg.order.list.v2.get",
+		"bg.logistics.shipment.v2.get",
 		"bg.goods.quantity.get",
 		"bg.goods.quantity.update",
 	}

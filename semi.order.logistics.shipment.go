@@ -33,20 +33,18 @@ func (s *semiOrderLogisticsShipmentService) Query(ctx context.Context, params Se
 	var result = struct {
 		normal.Response
 		Result struct {
-			Result struct {
-				ShipmentInfoDTO []entity.ShipmentInfo `json:"shipmentInfoDTO"` // 发货信息列表
-			} `json:"result"`
+			ShipmentInfoDTO []entity.ShipmentInfo `json:"shipmentInfoDTO"` // 发货信息列表
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.logistics.shipment.get")
+		Post("bg.logistics.shipment.v2.get")
 
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return nil, err
 	}
 
-	return result.Result.Result.ShipmentInfoDTO, nil
+	return result.Result.ShipmentInfoDTO, nil
 }

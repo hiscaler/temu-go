@@ -145,10 +145,8 @@ func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams
 	var result = struct {
 		normal.Response
 		Result struct {
-			Result struct {
-				TotalItemNum int                  `json:"totalItemNum"`
-				PageItems    []entity.ParentOrder `json:"pageItems"`
-			} `json:"result"`
+			TotalItemNum int                  `json:"totalItemNum"`
+			PageItems    []entity.ParentOrder `json:"pageItems"`
 		} `json:"result"`
 	}{}
 
@@ -156,12 +154,12 @@ func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.order.list.get")
+		Post("bg.order.list.v2.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
 
-	items = result.Result.Result.PageItems
-	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Result.TotalItemNum)
+	items = result.Result.PageItems
+	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.TotalItemNum)
 	return
 }
