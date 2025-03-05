@@ -103,6 +103,7 @@ func isSemiEndpoint(typ string) bool {
 		"bg.logistics.shipment.v2.get",
 		"bg.goods.quantity.get",
 		"bg.goods.quantity.update",
+		"bg.logistics.companies.get",
 	}
 	return slices.Contains(types, typ)
 }
@@ -444,6 +445,7 @@ func NewClient(cfg config.Config) *Client {
 			},
 			VirtualInventory:       (semiVirtualInventoryService)(xService),
 			OrderLogisticsShipment: (semiOrderLogisticsShipmentService)(xService),
+			Logistics:              (semiLogisticsService)(xService),
 		},
 	}
 

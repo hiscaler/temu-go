@@ -6,6 +6,7 @@ type semiManagedService struct {
 	OnlineOrder            semiOnlineOrderService            // 在线下单
 	VirtualInventory       semiVirtualInventoryService       // 虚拟库存
 	OrderLogisticsShipment semiOrderLogisticsShipmentService // 订单物流信息
+	Logistics              semiLogisticsService              // 物流
 }
 
 // 在线下单服务
