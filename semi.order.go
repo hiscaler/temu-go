@@ -56,14 +56,14 @@ func (m SemiOrderQueryParams) validate() error {
 				return errors.New("无效的父单状态")
 			}
 			return validation.Validate(int(v.Int64), validation.In(
-				entity.SemiParentOrderStatusAll,
-				entity.SemiParentOrderStatusPending,
-				entity.SemiParentOrderStatusUnShipping,
-				entity.SemiParentOrderStatusCanceled,
-				entity.SemiParentOrderStatusShipped,
-				entity.SemiParentOrderStatusReceipted,
-				entity.SemiParentOrderStatusPartialCanceled,
-				entity.SemiParentOrderStatusPartialReceipted,
+				entity.SemiOrderStatusAll,
+				entity.SemiOrderStatusPending,
+				entity.SemiOrderStatusUnShipping,
+				entity.SemiOrderStatusCanceled,
+				entity.SemiOrderStatusShipped,
+				entity.SemiOrderStatusReceipted,
+				entity.SemiOrderStatusPartialCanceled,
+				entity.SemiOrderStatusPartialReceipted,
 			).Error("无效的父单状态"))
 		}))),
 		validation.Field(&m.CreateBefore,

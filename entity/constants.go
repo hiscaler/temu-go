@@ -122,18 +122,6 @@ const (
 	QuantityChangeModeReplace    = 2 // 覆盖变更
 )
 
-// 半托管父单状态
-const (
-	SemiParentOrderStatusAll              = 0  // 全部
-	SemiParentOrderStatusPending          = 1  // 挂起中
-	SemiParentOrderStatusUnShipping       = 2  // 待发货
-	SemiParentOrderStatusCanceled         = 3  // 已取消
-	SemiParentOrderStatusShipped          = 4  // 已发货
-	SemiParentOrderStatusReceipted        = 5  // 已签收
-	SemiParentOrderStatusPartialCanceled  = 41 // 部分取消
-	SemiParentOrderStatusPartialReceipted = 51 // 部分签收
-)
-
 // 半托管订单排序
 const (
 	SemiOrderOrderByCreateTime = "createTime"
@@ -152,6 +140,19 @@ const (
 	SemiParentOrderLabelPastDue                   = "past_due"                     // 已逾期
 	SemiParentOrderLabelPendingBuyerCancellation  = "pending_buyer_cancellation"   // 买家取消待确认订单
 	SemiParentOrderLabelPendingBuyerAddressChange = "pending_buyer_address_change" // 买家改地址待确认订单
+)
+
+// TEMU 半托管订单状态（orderStatus、parentOrderStatus）
+// https://seller.kuajingmaihuo.com/sop/view/867739977041685428#E10GkB
+const (
+	SemiOrderStatusAll              = 0  // 全部
+	SemiOrderStatusPending          = 1  // 订单挂起中，用户支付后PO单(parentOrder)进入pending状态，订单暂时被挂起，用户支付后存在一段时间下单冷静期，包含风控处置等订单处理时间
+	SemiOrderStatusUnShipping       = 2  // 订单待发货，待发货状态下用户依然可以取消订单，需要及时监听订单取消状态及时接单
+	SemiOrderStatusCanceled         = 3  // 订单已取消，用户已经取消订单
+	SemiOrderStatusShipped          = 4  // 订单已发货，订单已经发货完成
+	SemiOrderStatusReceipted        = 5  // 订单已签收
+	SemiOrderStatusPartialCanceled  = 41 // 部分取消（本本订单）
+	SemiOrderStatusPartialReceipted = 51 // 部分签收（本本订单）
 )
 
 // https://seller.kuajingmaihuo.com/sop/view/231998342274104483#6mTvhA
