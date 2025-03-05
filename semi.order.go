@@ -163,3 +163,24 @@ func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams
 	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.TotalItemNum)
 	return
 }
+
+// ShippingInformation 订单收货地址查询接口（bg.order.shippinginfo.get）
+// https://seller.kuajingmaihuo.com/sop/view/867739977041685428#AVEKr6
+func (s semiOrderService) ShippingInformation(ctx context.Context, parentOrderNumber string) (entity.SemiOrderShippingInformation, error) {
+	var result = struct {
+		normal.Response
+		Result entity.SemiOrderShippingInformation `json:"result"`
+	}{}
+
+	resp, err := s.httpClient.
+		R().
+		SetContext(ctx).
+		SetBody(map[string]string{"parentOrderSn": parentOrderNumber}).
+		SetResult(&result).
+		Post("bg.order.shippinginfo.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return entity.SemiOrderShippingInformation{}, err
+	}
+
+	return result.Result, nil
+}

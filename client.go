@@ -104,6 +104,7 @@ func isSemiEndpoint(typ string) bool {
 		"bg.goods.quantity.get",
 		"bg.goods.quantity.update",
 		"bg.logistics.companies.get",
+		"bg.order.shippinginfo.get",
 	}
 	return slices.Contains(types, typ)
 }
