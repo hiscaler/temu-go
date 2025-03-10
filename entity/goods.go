@@ -57,6 +57,7 @@ type GoodsSkuSummary struct {
 	} `json:"productSkuSaleExtAttr"` // 货品 sku 销售域扩展属性
 }
 
+// Goods 商品
 type Goods struct {
 	ProductProperties []GoodsProperty `json:"productProperties"` // 货品普通属性
 	ProductId         int64           `json:"productId"`         // 货品 ID
@@ -116,7 +117,7 @@ type GoodsDetail struct {
 		Key         string   `json:"key"`      // 楼层类型的 key
 		ContentList []struct {
 			ImgUrl            string `json:"imgUrl"` // 图片地址--通用
-			Width             string `json:"width"`  // 图片宽度--通用
+			Width             int    `json:"width"`  // 图片宽度--通用
 			Height            int    `json:"height"` // 图片高度--通用
 			Text              string `json:"text"`   // 文字信息--文字模块
 			TextModuleDetails struct {

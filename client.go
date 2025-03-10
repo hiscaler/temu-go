@@ -303,7 +303,8 @@ func NewClient(cfg config.Config) *Client {
 				params := response.Request.Body
 				endpoint := ""
 				if v, ok := params.(map[string]any); ok {
-					if vv, ok := v["type"]; ok {
+					var vv any
+					if vv, ok = v["type"]; ok {
 						endpoint = vv.(string)
 					}
 				}
