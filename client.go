@@ -86,27 +86,77 @@ type Client struct {
 	TimeLocation *time.Location // 时区
 }
 
-// isSemiEndpoint 是否为半托管接口
-func isSemiEndpoint(typ string) bool {
-	types := []string{
-		"bg.logistics.shippingservices.get",
-		"bg.logistics.shipment.document.get",
-		"bg.logistics.shipment.create",
-		"bg.logistics.shipment.result.get",
-		"bg.logistics.shipment.update",
-		"bg.logistics.shipment.shippingtype.update",
-		"bg.logistics.shipment.document.get",
-		"bg.logistics.warehouse.list.get",
-		"bg.logistics.shipped.package.confirm",
-		"bg.order.unshipped.package.get",
-		"bg.order.list.v2.get",
-		"bg.logistics.shipment.v2.get",
-		"bg.goods.quantity.get",
-		"bg.goods.quantity.update",
-		"bg.logistics.companies.get",
-		"bg.order.shippinginfo.get",
+// url 获取方法对应的 URL
+func url(typ, region, env string, proxies config.RegionEnvUrls) string {
+	// key 为 type 值，value 为对应的区域，为空表示根据 region 确定 baseUrl，
+	// 不为空的情况下表示无论传入的 region 为何值，均取 value 作为 region 值去获取 baseUrl
+	//
+	// 注意：以下列出的 type 均为半托请求，非半托请求不要添加进来
+	semiTypes := map[string]string{
+		"bg.logistics.shippingservices.get":         "",
+		"bg.logistics.shipment.document.get":        "",
+		"bg.logistics.shipment.create":              "",
+		"bg.logistics.shipment.result.get":          "",
+		"bg.logistics.shipment.update":              "",
+		"bg.logistics.shipment.shippingtype.update": "",
+		"bg.logistics.warehouse.list.get":           "",
+		"bg.logistics.shipped.package.confirm":      "",
+		"bg.order.unshipped.package.get":            "",
+		"bg.order.list.v2.get":                      "",
+		"bg.logistics.shipment.v2.get":              "",
+		"bg.goods.quantity.get":                     "",
+		"bg.goods.quantity.update":                  "",
+		"bg.logistics.companies.get":                "",
+		"bg.order.shippinginfo.get":                 "",
+		"bg.logistics.shipment.confirm":             entity.AmericanRegion,
 	}
-	return slices.Contains(types, typ)
+	if v, ok := semiTypes[typ]; ok {
+		if v != "" {
+			region = v
+		}
+	} else {
+		region = entity.ChinaRegion
+	}
+
+	urls := config.RegionEnvUrls{
+		entity.ChinaRegion: {
+			Prod: "https://openapi.kuajingmaihuo.com/openapi/router",
+			Test: "https://openapi.kuajingmaihuo.com/openapi/router",
+		},
+		entity.AmericanRegion: {
+			Prod: "https://openapi-b-us.temu.com/openapi/router",
+			Test: "http://openapi-b-us.temudemo.com/openapi/router",
+		},
+		entity.EuropeanUnionRegion: {
+			Prod: "https://openapi-b-eu.temu.com/openapi/router",
+			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
+		},
+	}
+
+	// 如果有设置请求代理的话，则使用代理的地址替换 Temu 平台地址
+	if proxies != nil {
+		for k, proxy := range proxies {
+			v, ok := urls[k]
+			if !ok || (v.Prod == "" && v.Test == "") {
+				continue
+			}
+
+			if proxy.Prod != "" {
+				v.Prod = proxy.Prod
+			}
+			if proxy.Test != "" {
+				v.Test = proxy.Test
+			}
+			urls[k] = v
+		}
+	}
+
+	envUrl, _ := urls[region]
+	if env == prodEnv {
+		return envUrl.Prod
+	} else {
+		return envUrl.Test
+	}
 }
 
 // generate sign string
@@ -175,11 +225,7 @@ func (r simpleResponse) retry() bool {
 // 默认中国区
 func parseRegion(region string) string {
 	region = strings.ToUpper(region)
-	if !slices.Contains([]string{
-		entity.ChinaRegion,
-		entity.AmericanRegion,
-		entity.EuropeanUnionRegion,
-	}, region) {
+	if !slices.Contains([]string{entity.ChinaRegion, entity.AmericanRegion, entity.EuropeanUnionRegion}, region) {
 		region = entity.ChinaRegion
 	}
 	return region
@@ -198,34 +244,6 @@ func NewClient(cfg config.Config) *Client {
 		}
 	}
 
-	urls := map[string]config.URLPair{
-		entity.ChinaRegion: {
-			Prod: "https://openapi.kuajingmaihuo.com/openapi/router",
-			Test: "https://openapi.kuajingmaihuo.com/openapi/router",
-		},
-		entity.AmericanRegion: {
-			Prod: "https://openapi-b-us.temu.com/openapi/router",
-			Test: "http://openapi-b-us.temudemo.com/openapi/router",
-		},
-		entity.EuropeanUnionRegion: {
-			Prod: "https://openapi-b-eu.temu.com/openapi/router",
-			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
-		},
-	}
-
-	if cfg.OverwriteUrls != nil {
-		for region, overwriteURL := range cfg.OverwriteUrls {
-			if _, exists := urls[region]; exists {
-				if overwriteURL.Prod != "" {
-					urls[region] = config.URLPair{Prod: overwriteURL.Prod, Test: urls[region].Test}
-				}
-				if overwriteURL.Test != "" {
-					urls[region] = config.URLPair{Prod: urls[region].Prod, Test: overwriteURL.Test}
-				}
-			}
-		}
-	}
-
 	env := strings.ToLower(cfg.Env)
 	if env == "" {
 		env = prodEnv
@@ -233,18 +251,6 @@ func NewClient(cfg config.Config) *Client {
 		env = testEnv
 	}
 	region := parseRegion(cfg.Region)
-	fnGetUrlByRegion := func(region string) string {
-		v, ok := urls[region]
-		if !ok {
-			return ""
-		}
-
-		if env == prodEnv {
-			return v.Prod
-		} else {
-			return v.Test
-		}
-	}
 	client := &Client{
 		language:     *lang,
 		Env:          env,
@@ -256,7 +262,6 @@ func NewClient(cfg config.Config) *Client {
 	httpClient := resty.New().
 		SetDebug(debug).
 		EnableTrace().
-		SetBaseURL(fnGetUrlByRegion(region)).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
@@ -270,7 +275,7 @@ func NewClient(cfg config.Config) *Client {
 				Timeout: cfg.Timeout * time.Second,
 			}).DialContext,
 		}).
-		OnBeforeRequest(func(client *resty.Client, request *resty.Request) error {
+		OnBeforeRequest(func(c *resty.Client, request *resty.Request) error {
 			values := make(map[string]any)
 			if request.Body != nil {
 				b, e := json.Marshal(request.Body)
@@ -292,10 +297,7 @@ func NewClient(cfg config.Config) *Client {
 			values["type"] = typ
 			request.URL = ""
 			request.SetBody(generateSign(values, cfg.AppSecret))
-			if !isSemiEndpoint(typ) {
-				// 非半托管请求全部走国内服务
-				client.SetBaseURL(fnGetUrlByRegion(entity.ChinaRegion))
-			}
+			c.SetBaseURL(url(typ, client.Region, client.Env, cfg.Proxies))
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
