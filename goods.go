@@ -88,8 +88,8 @@ func (m GoodsQueryParams) validate() error {
 // Query 货品列表查询
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#SjadVR
 func (s goodsService) Query(ctx context.Context, params GoodsQueryParams) (items []entity.Goods, total, totalPages int, isLastPage bool, err error) {
-	params.TidyPager()
-	params.Page = params.Pager.Page
+	params.Page = params.TidyPager().Page
+	params.OmitPage()
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return

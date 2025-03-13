@@ -23,8 +23,8 @@ func (m SemiOnlineOrderPlatformLogisticsUnshippedPackageQueryParams) validate() 
 // Query 下 Call 成功待发货包裹列表查询接口（bg.order.unshipped.package.get）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#9QfRAV
 func (s semiOnlineOrderUnshippedPackageService) Query(ctx context.Context, params SemiOnlineOrderPlatformLogisticsUnshippedPackageQueryParams) (items []entity.SemiOnlineOrderPlatformLogisticsUnshippedPackage, total, totalPages int, isLastPage bool, err error) {
-	params.TidyPager()
-	params.PageNumber = params.Pager.Page
+	params.PageNumber = params.TidyPager().Page
+	params.OmitPage()
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return
