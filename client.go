@@ -135,7 +135,6 @@ func url(typ, region, env string, proxies config.RegionEnvUrls) string {
 			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
 		},
 	}
-
 	// 如果有设置请求代理的话，则使用代理的地址替换 Temu 平台地址
 	if proxies != nil {
 		for k, proxy := range proxies {
@@ -176,8 +175,7 @@ func generateSign(values map[string]any, appSecret string) map[string]any {
 	sb := strings.Builder{}
 	sb.WriteString(appSecret)
 	for _, key := range keys {
-		value := stringx.String(values[key])
-		value = strings.TrimSpace(value)
+		value := strings.TrimSpace(stringx.String(values[key]))
 		if value == "" {
 			delete(values, key)
 			continue
