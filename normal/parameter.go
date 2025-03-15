@@ -42,6 +42,7 @@ func (p *Pager) TidyPager(options ...int) *Pager {
 	return p
 }
 
+// OmitPage 清理掉 page 参数
 func (p *Pager) OmitPage() *Pager {
 	p.Page = 0
 	return p
