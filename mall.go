@@ -11,24 +11,22 @@ type mallService struct {
 	DeliveryAddress mallDeliveryAddressService
 }
 
-// IsSemiManaged 是否为半托管店铺
+// Type 店铺类型
 // https://seller.kuajingmaihuo.com/sop/view/634117628601810731#uJ0fSb
-func (s mallService) IsSemiManaged(ctx context.Context) (bool, error) {
+func (s mallService) Type(ctx context.Context) (entity.MallType, error) {
 	var result = struct {
 		normal.Response
-		Result struct {
-			SemiManagedMall bool `json:"semiManagedMall"`
-		} `json:"result"`
+		Result entity.MallType `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetResult(&result).
 		Post("bg.mall.info.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return false, err
+		return entity.MallType{}, err
 	}
 
-	return result.Result.SemiManagedMall, nil
+	return result.Result, nil
 }
 
 // Permission 查询店铺权限
