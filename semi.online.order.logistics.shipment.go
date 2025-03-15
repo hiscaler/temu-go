@@ -26,8 +26,8 @@ import (
 type semiOnlineOrderLogisticsShipmentService service
 
 type SemiOnlineOrderLogisticsShipmentCreateSendItemOrder struct {
-	OrderSn       string `json:"orderSn"`       // 订单号
 	ParentOrderSn string `json:"parentOrderSn"` // 父订单号
+	OrderSn       string `json:"orderSn"`       // 订单号
 	GoodsId       int64  `json:"goodsId"`       // 商品 goodsId
 	SkuId         int64  `json:"skuId"`         // 商品 skuId
 	Quantity      int    `json:"quantity"`      // 发货数量
@@ -74,7 +74,11 @@ type SemiOnlineOrderLogisticsShipmentCreateRequest struct {
 
 func (m SemiOnlineOrderLogisticsShipmentCreateRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.SendType, validation.In(0, 1, 2).Error("无效的发货类型")),
+		validation.Field(&m.SendType, validation.In(
+			entity.SemiShippingTypeSingle,
+			entity.SemiShippingTypeSplit,
+			entity.SemiShippingTypeMerge,
+		).Error("无效的发货类型")),
 		validation.Field(&m.SendRequestList, validation.Required.Error("包裹信息不能为空")),
 	)
 }

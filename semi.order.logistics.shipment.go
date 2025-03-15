@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"errors"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
@@ -52,16 +53,42 @@ func (s *semiOrderLogisticsShipmentService) Query(ctx context.Context, params Se
 // 订单发货通知
 
 type SemiOrderLogisticsShipmentConfirmInformationOrder struct {
-	OrderSn       string `json:"orderSn"`       // orderSn
 	ParentOrderSn string `json:"parentOrderSn"` // parentOrderSn
+	OrderSn       string `json:"orderSn"`       // orderSn
 	GoodsId       int64  `json:"goodsId"`       // goodsId
 	SkuId         int64  `json:"skuId"`         // skuId
 	Quantity      int    `json:"quantity"`      // 发货数量
 }
+
+func (m SemiOrderLogisticsShipmentConfirmInformationOrder) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ParentOrderSn, validation.Required.Error("父单号不能为空")),
+		validation.Field(&m.OrderSn, validation.Required.Error("子单号不能为空")),
+		validation.Field(&m.GoodsId, validation.Required.Error("货品 ID 不能为空")),
+		validation.Field(&m.SkuId, validation.Required.Error("SKU ID 不能为空")),
+		validation.Field(&m.Quantity, validation.Min(1).Error("发货数量不能小于 {min}")),
+	)
+}
+
 type SemiOrderLogisticsShipmentConfirmInformation struct {
 	CarrierId         int64                                               `json:"carrierId"`         // 物流公司 ID
 	TrackingNumber    string                                              `json:"trackingNumber"`    // 运单号
 	OrderSendInfoList []SemiOrderLogisticsShipmentConfirmInformationOrder `json:"orderSendInfoList"` // 发货商品信息
+}
+
+func (m SemiOrderLogisticsShipmentConfirmInformation) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.OrderSendInfoList,
+			validation.Required.Error("发货商品信息不能为空"),
+			validation.Each(validation.By(func(value interface{}) error {
+				d, ok := value.(SemiOrderLogisticsShipmentConfirmInformationOrder)
+				if !ok {
+					return errors.New("无效的发货商品信息")
+				}
+				return d.validate()
+			})),
+		),
+	)
 }
 
 type SemiOrderLogisticsShipmentConfirmRequest struct {
@@ -71,8 +98,21 @@ type SemiOrderLogisticsShipmentConfirmRequest struct {
 
 func (m SemiOrderLogisticsShipmentConfirmRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.SendType, validation.In(0, 1, 2).Error("无效的发货类型")),
-		validation.Field(&m.SendRequestList, validation.Required.Error("发货商品信息不能为空")),
+		validation.Field(&m.SendType, validation.In(
+			entity.SemiShippingTypeSingle,
+			entity.SemiShippingTypeSplit,
+			entity.SemiShippingTypeMerge,
+		).Error("无效的发货类型")),
+		validation.Field(&m.SendRequestList,
+			validation.Required.Error("包裹信息不能为空"),
+			validation.By(func(value interface{}) error {
+				d, ok := value.(SemiOrderLogisticsShipmentConfirmInformation)
+				if !ok {
+					return errors.New("无效的包裹信息")
+				}
+				return d.validate()
+			}),
+		),
 	)
 }
 

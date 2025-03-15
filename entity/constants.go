@@ -142,6 +142,13 @@ const (
 	SemiParentOrderLabelPendingBuyerAddressChange = "pending_buyer_address_change" // 买家改地址待确认订单
 )
 
+// 半托物流发货类型
+const (
+	SemiShippingTypeSingle = 0 // 单个运单发货
+	SemiShippingTypeSplit  = 1 // 拆成多个运单发货
+	SemiShippingTypeMerge  = 2 // 合并发货
+)
+
 // TEMU 半托管订单状态（orderStatus、parentOrderStatus）
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#E10GkB
 const (
