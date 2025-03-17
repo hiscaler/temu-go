@@ -58,9 +58,13 @@ func Test_goodsService_Create(t *testing.T) {
 		CarouselImageUrls: []string{
 			"https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg",
 		},
-		//CarouselImageI18nReqs:        nil,
-		ProductOuterPackageImageReqs: nil,
-		MaterialImgUrl:               "https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg",
+		CarouselImageI18nReqs: nil,
+		ProductOuterPackageImageReqs: []GoodsCreateProductOuterPackageImage{
+			{
+				ImageUrl: "https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg",
+			},
+		},
+		MaterialImgUrl: "https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg",
 		ProductPropertyReqs: []GoodsCreateProductProperty{
 			{
 				TemplatePid:      201806,
@@ -212,13 +216,17 @@ func Test_goodsService_Create(t *testing.T) {
 								ParentSpecName: "颜色",
 							},
 						},
-						SupplierPrice:               100,
-						SiteSupplierPrices:          []GoodsCreateProductSkuSiteSupplierPrice{},
-						ProductSkuStockQuantityReq:  nil,
-						ProductSkuMultiPackReq:      nil,
-						ProductSkuSuggestedPriceReq: nil,
+						SupplierPrice:              100,
+						SiteSupplierPrices:         []GoodsCreateProductSkuSiteSupplierPrice{},
+						ProductSkuStockQuantityReq: nil,
+						ProductSkuMultiPackReq:     nil,
+						ProductSkuSuggestedPriceReq: &GoodsCreateProductSkuSuggestedPrice{
+							SpecialSuggestedPrice:      "NA",
+							SuggestedPriceCurrencyType: "",
+							SuggestedPrice:             0,
+						},
 						ProductSkuWhExtAttrReq: &GoodsCreateProductSkuWhExtAttr{
-							ProductSkuWeightReq:         GoodsCreateProductSkuWhExtAttrSensitiveLimitProductSkuWeight{Value: 100},
+							ProductSkuWeightReq:         GoodsCreateProductSkuWhExtAttrSensitiveLimitProductSkuWeight{Value: 10000},
 							ProductSkuSameReferPriceReq: GoodsCreateProductSkuWhExtAttrSameReferPrice{},
 							ProductSkuSensitiveLimitReq: nil,
 							ProductSkuVolumeReq: GoodsCreateProductSkuWhExtAttrVolume{
@@ -228,7 +236,7 @@ func Test_goodsService_Create(t *testing.T) {
 							},
 							ProductSkuSensitiveAttrReq: GoodsCreateProductSkuWhExtAttrSensitiveAttr{
 								IsSensitive:   0,
-								SensitiveList: nil,
+								SensitiveList: []int{},
 							},
 							ProductSkuBarCodeReqs: nil,
 							ExtCode:               "",
