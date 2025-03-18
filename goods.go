@@ -238,7 +238,9 @@ type GoodsCreateProductSpecProperty struct {
 type GoodsCreateProductWhExtAttr struct {
 	OuterGoodsUrl string `json:"outerGoodsUrl"` //  站外商品链接
 	ProductOrigin struct {
-		CountryShortName string `json:"countryShortName"` // 国家简称 (二字简码)
+		Region1ShortName string `json:"region1ShortName"` // 一级区域简称 (二字简码)
+		// 枚举值：https://seller.kuajingmaihuo.com/sop/view/735407268315104853
+		Region2Id string `json:"region2Id"` // 二级区域地址ID，当region1ShortName为CN时，必传
 	} `json:"productOrigin"` // 货品产地 (灰度内必传)，请注意，日本站点发品必须传产地，否则会被拦截
 }
 
@@ -262,7 +264,7 @@ type GoodsCreateProductSkuProductSkuMultiPack struct {
 	ProductSkuNetContentReq struct {
 		NetContentUnitCode int `json:"netContentUnitCode"` // 净含量单位，1：液体盎司，2：毫升，3：加仑，4：升，5：克，6：千克，7：常衡盎司，8：磅
 		NetContentNumber   int `json:"netContentNumber"`   // 净含量数值
-	} `json:"productSkuNetContentReq"`               // 净含量请求，传空对象表示空，指定类目灰度管控
+	} `json:"productSkuNetContentReq"` // 净含量请求，传空对象表示空，指定类目灰度管控
 	SkuClassification int `json:"skuClassification"` // sku分类，1：单品，2：组合装，3：混合套装
 	PieceUnitCode     int `json:"pieceUnitCode"`     // 单件单位，1：件，2：双，3：包
 }
@@ -421,7 +423,6 @@ type GoodsCreateProductSkuWhExtAttr struct {
 	ProductSkuVolumeReq         GoodsCreateProductSkuWhExtAttrVolume                         `json:"productSkuVolumeReq"`                   // 货品sku体积
 	ProductSkuSensitiveAttrReq  GoodsCreateProductSkuWhExtAttrSensitiveAttr                  `json:"productSkuSensitiveAttrReq"`            // 货品 sku 敏感属性请求
 	ProductSkuBarCodeReqs       []GoodsCreateProductSkuWhExtAttrBarCode                      `json:"productSkuBarCodeReqs,omitempty"`
-	ExtCode                     string                                                       `json:"extCode"` // sku货号，没有的场景传空字符串
 }
 
 // GoodsCreateProductSku 货品 SKC 下的 SKU 信息
@@ -549,7 +550,7 @@ type GoodsCreateRequest struct {
 	Cat9Id                       int64                                 `json:"cat9Id"`                             // 九级类目id（没有的情况传 0）
 	Cat10Id                      int64                                 `json:"cat10Id"`                            // 十级类目id（没有的情况传 0）
 	ProductWarehouseRouteReq     *GoodsCreateProductWarehouse          `json:"productWarehouseRouteReq,omitempty"` // 库存仓库配置对象。	半托管发品必传，全托管店铺不需要传这个属性，传入会报错。
-	ProductI18nReqs              *GoodsCreateProductI18n               `json:"productI18nReqs,omitempty"`          // 多语言标题设置
+	ProductI18nReqs              []GoodsCreateProductI18n              `json:"productI18nReqs,omitempty"`          // 多语言标题设置
 	ProductName                  string                                `json:"productName"`                        // 货品名称
 	ProductCarouseVideoReqList   []GoodsCreateProductCarouseVideo      `json:"productCarouseVideoReqList"`         // 商品主图视频 关于如何上传视频，请对接视频上传相关接口，获取图片相关参数即可用于此处入参 https://seller.kuajingmaihuo.com/sop/view/852640595329867111
 	ProductCustomReq             *GoodsCreateProductCustom             `json:"productCustomReq,omitempty"`         // 货品关务标签
@@ -558,20 +559,34 @@ type GoodsCreateRequest struct {
 	ProductOuterPackageImageReqs []GoodsCreateProductOuterPackageImage `json:"productOuterPackageImageReqs"`       // 外包装图片
 	MaterialImgUrl               string                                `json:"materialImgUrl"`                     // 素材图
 	ProductPropertyReqs          []GoodsCreateProductProperty          `json:"productPropertyReqs"`                // 货品属性
-	ProductSpecPropertyReqs      []GoodsCreateProductSpecProperty      `json:"productSpecPropertyReqs"`            // 货品规格属性
-	ProductWhExtAttrReq          GoodsCreateProductWhExtAttr           `json:"productWhExtAttrReq"`                // 货品仓配供应链侧扩展属性请求
-	ProductSkcReqs               []GoodsCreateProductSkc               `json:"productSkcReqs"`                     // 货品 skc 列表
-	SizeTemplateIds              []int                                 `json:"sizeTemplateIds"`                    // 尺码表模板id（从sizecharts.template.create获取），无尺码表时传空数组[]
-	GoodsModelReqs               []GoodsCreateModel                    `json:"goodsModelReqs"`                     // 商品模特列表请求
-	ShowSizeTemplateIds          []int64                               `json:"showSizeTemplateIds"`                // 套装尺码表展示，至多2个尺码表模板id入参
-	ProductOuterPackageReq       *GoodsCreateProductOuterPackage       `json:"productOuterPackageReq,omitempty"`   // 货品外包装信息
-	ProductGuideFileReqs         []GoodsCreateProductGuideFile         `json:"productGuideFileReqs"`               // 说明书请求对象
-	GoodsLayerDecorationReqs     []GoodsCreateGoodsLayerDecoration     `json:"goodsLayerDecorationReqs"`           // 商详装饰
-	PersonalizationSwitch        int                                   `json:"personalizationSwitch"`              // 是否定制品，API发品标记定制品后，请及时在卖家中心配置定制模版信息，否则无法正常加站点售卖 0：非定制品、1：定制品
-	ProductSemiManagedReq        *GoodsCreateProductSemiManaged        `json:"productSemiManagedReq,omitempty"`    // 半托管相关信息
-	ProductShipmentReq           *GoodsCreateProductShipment           `json:"productShipmentReq,omitempty"`       // 半托管货品配送信息请求
-	AddProductChannelType        int                                   `json:"addProductChannelType"`              // 发品渠道
-	MaterialMultiLanguages       []string                              `json:"materialMultiLanguages"`             // 图片多语言列表
+	ProductSpecPropertyReqs      []GoodsCreateProductSpecProperty      `json:"productSpecPropertyReqs"`
+	// 货品规格属性
+	ProductSaleExtAttrReq *struct {
+		ProductSecondHandReq struct {
+			IsSecondHand    bool `json:"isSecondHand"`    // 	是否二手货品，二手店铺传true，其他店铺不传值
+			SecondHandLevel int  `json:"secondHandLevel"` // 成色定义，二手货品必传值，非二手货品不可传值，枚举值：（1：接近全新，2：状况极佳，3：状况良好，4：尚可接受）
+		} `json:"productSecondHandReq"` // 货品二手信息，二手店铺传值，其他店铺不传值
+		InventoryRegion int `json:"inventoryRegion"` // 备货区域
+		// 满足如下两个条件时，必填无充电器版本货品id
+		// 引用属性：refPid=6919, propName="是否售卖不含充电器的同款商品"
+		// 属性值：vid=147374, value="是"
+		ProductNoChargerReq struct {
+			NoChargerProductIds []int `json:"noChargerProductIds"` // 无充电器版本spuid，至少入参1个，至多入参3个
+		} `json:"productNoChargerReq"` // 无充电器版本spuid请求
+	} `json:"productSaleExtAttrReq,omitempty"` // 货品销售类扩展属性请求
+	ProductWhExtAttrReq      GoodsCreateProductWhExtAttr       `json:"productWhExtAttrReq"`              // 货品仓配供应链侧扩展属性请求
+	ProductSkcReqs           []GoodsCreateProductSkc           `json:"productSkcReqs"`                   // 货品 skc 列表
+	SizeTemplateIds          []int                             `json:"sizeTemplateIds"`                  // 尺码表模板id（从sizecharts.template.create获取），无尺码表时传空数组[]
+	GoodsModelReqs           []GoodsCreateModel                `json:"goodsModelReqs"`                   // 商品模特列表请求
+	ShowSizeTemplateIds      []int64                           `json:"showSizeTemplateIds"`              // 套装尺码表展示，至多2个尺码表模板id入参
+	ProductOuterPackageReq   *GoodsCreateProductOuterPackage   `json:"productOuterPackageReq,omitempty"` // 货品外包装信息
+	ProductGuideFileReqs     []GoodsCreateProductGuideFile     `json:"productGuideFileReqs"`             // 说明书请求对象
+	GoodsLayerDecorationReqs []GoodsCreateGoodsLayerDecoration `json:"goodsLayerDecorationReqs"`         // 商详装饰
+	PersonalizationSwitch    int                               `json:"personalizationSwitch"`            // 是否定制品，API发品标记定制品后，请及时在卖家中心配置定制模版信息，否则无法正常加站点售卖 0：非定制品、1：定制品
+	ProductSemiManagedReq    *GoodsCreateProductSemiManaged    `json:"productSemiManagedReq,omitempty"`  // 半托管相关信息
+	ProductShipmentReq       *GoodsCreateProductShipment       `json:"productShipmentReq,omitempty"`     // 半托管货品配送信息请求
+	AddProductChannelType    int                               `json:"addProductChannelType"`            // 发品渠道
+	MaterialMultiLanguages   []string                          `json:"materialMultiLanguages"`           // 图片多语言列表
 }
 
 func (m GoodsCreateRequest) validate() error {

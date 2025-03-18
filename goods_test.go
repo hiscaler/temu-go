@@ -42,29 +42,33 @@ func Test_goodsService_Create(t *testing.T) {
 	createRequest := GoodsCreateRequest{
 		Cat1Id:                     9711,
 		Cat2Id:                     9712,
-		Cat3Id:                     10018,
-		Cat4Id:                     10023,
-		Cat5Id:                     10024,
+		Cat3Id:                     9809,
+		Cat4Id:                     10018,
+		Cat5Id:                     10023,
 		Cat6Id:                     0,
 		Cat7Id:                     0,
 		Cat8Id:                     0,
 		Cat9Id:                     0,
 		Cat10Id:                    0,
 		ProductWarehouseRouteReq:   nil,
-		ProductI18nReqs:            nil,
+		ProductI18nReqs:            []GoodsCreateProductI18n{},
 		ProductName:                "Ultra Absorbent & Soft Cotton Hand Towels",
 		ProductCarouseVideoReqList: nil,
 		ProductCustomReq:           nil,
 		CarouselImageUrls: []string{
-			"https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg",
+			"https://img.cdnfe.com/product/fancy/952b1680-bad4-431d-b288-7c4e41629757.jpg",
+			"https://img.cdnfe.com/product/fancy/952b1680-bad4-431d-b288-7c4e41629757.jpg",
+			"https://img.cdnfe.com/product/fancy/084ba15f-0af1-4dcd-ae4e-1976b7eecead.jpg",
+			"https://img.cdnfe.com/product/fancy/20d9ccbe-f159-4a56-9e8a-4e17ae6a24a4.jpg",
+			"https://img.cdnfe.com/product/fancy/5504b457-98d3-435c-84ef-a68cd56cac33.jpg",
 		},
 		CarouselImageI18nReqs: nil,
 		ProductOuterPackageImageReqs: []GoodsCreateProductOuterPackageImage{
 			{
-				ImageUrl: "https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg",
+				ImageUrl: "https://kjpfs-cn.kuajingmaihuo.com/product-material-private-tag/1f29b02490/1f15de43-494a-4e6f-b241-fb9f48140c3f_1080x1080.jpeg",
 			},
 		},
-		MaterialImgUrl: "https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg",
+		MaterialImgUrl: "https://img.cdnfe.com/product/fancy/69632d08-6605-42f5-ae03-f14263031160.jpg",
 		ProductPropertyReqs: []GoodsCreateProductProperty{
 			{
 				TemplatePid:      201806,
@@ -139,7 +143,7 @@ func Test_goodsService_Create(t *testing.T) {
 				PropName:         "封面材质",
 				Vid:              74,
 				PropValue:        "腈纶",
-				ValueUnit:        "",
+				ValueUnit:        "%",
 				ValueExtendInfo:  "",
 				NumberInputValue: "100",
 			},
@@ -177,47 +181,46 @@ func Test_goodsService_Create(t *testing.T) {
 		ProductWhExtAttrReq: GoodsCreateProductWhExtAttr{
 			OuterGoodsUrl: "",
 			ProductOrigin: struct {
-				CountryShortName string `json:"countryShortName"`
-			}{
-				"CN",
-			},
+				Region1ShortName string `json:"region1ShortName"`
+				Region2Id        string `json:"region2Id"`
+			}{Region1ShortName: "CN", Region2Id: "43000000000006"},
 		},
 		ProductSkcReqs: []GoodsCreateProductSkc{
 			{
-				PreviewImgUrls:                  []string{"https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg"},
+				PreviewImgUrls:                  []string{"https://img.cdnfe.com/product/fancy/69632d08-6605-42f5-ae03-f14263031160.jpg"},
 				ProductSkcCarouselImageI18nReqs: []ProductImageUrl{},
-				ColorImageUrl:                   "https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg",
+				ColorImageUrl:                   "https://img.cdnfe.com/product/fancy/69632d08-6605-42f5-ae03-f14263031160.jpg",
 				MainProductSkuSpecReqs: []entity.Specification{
 					{
-						SpecId:         2,
-						SpecName:       "红色",
-						ParentSpecId:   10001,
-						ParentSpecName: "颜色",
+						SpecId:         0,
+						SpecName:       "",
+						ParentSpecId:   0,
+						ParentSpecName: "",
 					},
 				},
 				ExtCode:     "test111",
 				IsBasePlate: 1,
 				ProductSkuReqs: []GoodsCreateProductSku{
 					{
-						ThumbUrl: "https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg",
+						ThumbUrl: "https://img.cdnfe.com/product/fancy/69632d08-6605-42f5-ae03-f14263031160.jpg",
 						// todo recheck
-						//ProductSkuThumbUrlI18nReqs: []ProductImageUrl{
+						// ProductSkuThumbUrlI18nReqs: []ProductImageUrl{
 						//	{
 						//		ImgUrlList: []string{"https://img.kwcdn.com/product/open/ebcea5a3ffdc4209a7865b6074460ca2-goods.jpeg"},
 						//		Language:   "US",
 						//	},
-						//},
+						// },
 						CurrencyType: "CNY",
 						ProductSkuSpecReqs: []entity.Specification{
 							{
 								SpecId:         2,
 								SpecName:       "红色",
-								ParentSpecId:   10001,
+								ParentSpecId:   1001,
 								ParentSpecName: "颜色",
 							},
 						},
-						SupplierPrice:              100,
-						SiteSupplierPrices:         []GoodsCreateProductSkuSiteSupplierPrice{},
+						SupplierPrice: 100,
+						// SiteSupplierPrices:         []GoodsCreateProductSkuSiteSupplierPrice{},
 						ProductSkuStockQuantityReq: nil,
 						ProductSkuMultiPackReq:     nil,
 						ProductSkuSuggestedPriceReq: &GoodsCreateProductSkuSuggestedPrice{
@@ -239,7 +242,6 @@ func Test_goodsService_Create(t *testing.T) {
 								SensitiveList: []int{},
 							},
 							ProductSkuBarCodeReqs: nil,
-							ExtCode:               "",
 						},
 						ExtCode: "extcode1",
 					},
@@ -256,23 +258,21 @@ func Test_goodsService_Create(t *testing.T) {
 		ProductGuideFileReqs:     nil,
 		GoodsLayerDecorationReqs: nil,
 		PersonalizationSwitch:    0,
-		//ProductSemiManagedReq: &GoodsCreateProductSemiManaged{
+		// ProductSemiManagedReq: &GoodsCreateProductSemiManaged{
 		//	BindSiteIds: []int{100},
-		//},
-		//ProductShipmentReq: &GoodsCreateProductShipment{
+		// },
+		// ProductShipmentReq: &GoodsCreateProductShipment{
 		//	FreightTemplateId:   "",
 		//	ShipmentLimitSecond: 259200,
-		//},
+		// },
 		AddProductChannelType:  1,
 		MaterialMultiLanguages: nil,
 	}
 
 	// 调用创建商品接口
 	result, err := temuClient.Services.Goods.Create(ctx, createRequest)
-	if err != nil {
-		fmt.Printf("创建商品错误: %s\n", err.Error())
-		return
+	assert.Equalf(t, nil, err, "Create(ctx, %v)", jsonx.ToPrettyJson(createRequest))
+	if err == nil {
+		fmt.Println(jsonx.ToPrettyJson(result))
 	}
-
-	fmt.Println(jsonx.ToPrettyJson(result))
 }
