@@ -27,8 +27,8 @@ func (s goodsCategoryAttributeService) Query(ctx context.Context, categoryId int
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
-		SetBody(map[string]int64{"catId": categoryId}).
 		SetContext(ctx).
+		SetBody(map[string]int64{"catId": categoryId}).
 		SetResult(&result).
 		Post("bg.goods.attrs.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
