@@ -223,9 +223,9 @@ type GoodsCreateProductSpecProperty struct {
 	PropName         string `json:"propName"`         // 引用属性名
 	Vid              int64  `json:"vid"`              // 基础属性值id，没有的情况传0
 	PropValue        string `json:"propValue"`        // 基础属性值
-	ParentSpecId     int64  `json:"parentSpecId"`     // 父规格id
+	ParentSpecId     int    `json:"parentSpecId"`     // 父规格id
 	ParentSpecName   string `json:"parentSpecName"`   // 父规格名称
-	SpecId           int64  `json:"specId"`           // 规格id
+	SpecId           int    `json:"specId"`           // 规格id
 	SpecName         string `json:"specName"`         // 规格名称
 	ValueGroupId     int    `json:"valueGroupId"`     // 属性值组id，没有的情况传0
 	ValueGroupName   string `json:"valueGroupName"`   // 属性值组名称，没有的情况传空字符串
