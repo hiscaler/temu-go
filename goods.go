@@ -635,5 +635,5 @@ func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (r
 		return
 	}
 
-	return
+	return result.Result, nil
 }
