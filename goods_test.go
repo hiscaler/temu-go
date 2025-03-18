@@ -198,8 +198,8 @@ func Test_goodsService_Create(t *testing.T) {
 						ParentSpecName: "",
 					},
 				},
-				ExtCode:     "test111",
-				IsBasePlate: 1,
+				ExtCode: "test111",
+				// IsBasePlate: 1,
 				ProductSkuReqs: []GoodsCreateProductSku{
 					{
 						ThumbUrl: "https://img.cdnfe.com/product/fancy/69632d08-6605-42f5-ae03-f14263031160.jpg",
