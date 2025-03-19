@@ -165,7 +165,13 @@ type ProductImageUrl struct {
 }
 
 func (m ProductImageUrl) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Language, validation.Required.Error("语种不能为空")),
+		validation.Field(&m.ImgUrlList,
+			validation.Required.Error("图片列表不能为空"),
+			validation.Each(validation.By(is.ImageUrl())),
+		),
+	)
 }
 
 // GoodsCreateProductWarehouse 库存仓库配置对象
@@ -410,9 +416,30 @@ type GoodsCreateProductSkuWhExtAttrSensitiveAttr struct {
 	SensitiveList []int `json:"sensitiveList"` // 敏感类型，        PURE_ELECTRIC(110001, "纯电"),    INTERNAL_ELECTRIC(120001, "内电"),    MAGNETISM(130001, "磁性"),    LIQUID(140001, "液体"),    POWDER(150001, "粉末"),    PASTE(160001, "膏体"),    CUTTER(170001, "刀具")
 }
 
+func (m GoodsCreateProductSkuWhExtAttrSensitiveAttr) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SensitiveList,
+			validation.When(
+				m.IsSensitive == 1,
+				validation.Required.Error("敏感类型不能为空"),
+				validation.In(110001, 120001, 130001, 140001, 150001, 160001, 170001).Error("无效的敏感类型"),
+			),
+		),
+	)
+}
+
 type GoodsCreateProductSkuWhExtAttrBarCode struct {
 	Code     string `json:"code"`     // 商品标准编码
 	CodeType int    `json:"codeType"` // 条码类型 (1: EAN, 2: UPC, 3: ISBN)
+}
+
+func (m GoodsCreateProductSkuWhExtAttrBarCode) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Code, validation.Required.Error("商品标准编码不能为空")),
+		validation.Field(&m.CodeType,
+			validation.In(1, 2, 3).Error("无效的条码类型"),
+		),
+	)
 }
 
 // GoodsCreateProductSkuWhExtAttr 货品sku扩展属性
@@ -598,6 +625,12 @@ func (m GoodsCreateRequest) validate() error {
 			validation.Required.Error("商品名称不能为空"),
 			validation.Length(1, 60).Error("商品名称最多 {{.max}} 个字符"),
 		),
+		validation.Field(&m.CarouselImageUrls,
+			validation.Required.Error("货品轮播图不能为空"),
+			validation.Min(5).Error("货品轮播图不能少于 {min} 张"),
+			validation.Each(validation.By(is.ImageUrl())),
+		),
+		validation.Field(&m.MaterialImgUrl, validation.When(m.MaterialImgUrl != "", validation.By(is.ImageUrl()))),
 		validation.Field(&m.AddProductChannelType, validation.Required.Error("发品渠道不能为空")),
 	)
 }
