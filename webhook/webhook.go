@@ -66,7 +66,7 @@ func (w *Webhook) Decrypt() (string, error) {
 	mac := hmac.New(sha256.New, []byte(w.secretKey))
 	mac.Write([]byte(w.rawBody))
 	if !hmac.Equal(sig, mac.Sum(nil)) {
-		return "", errors.New("invalid")
+		return "", errors.New("invalid webhook body")
 	}
 	return "", nil
 }
