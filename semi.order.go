@@ -114,8 +114,8 @@ func (m SemiOrderQueryParams) validate() error {
 // Query 订单列表查询接口
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#r2WKrz
 func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams) (items []entity.ParentOrder, total, totalPages int, isLastPage bool, err error) {
-	params.TidyPager()
-	params.PageNumber = params.Pager.Page
+	params.PageNumber = params.TidyPager().Page
+	params.OmitPage()
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return

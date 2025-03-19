@@ -35,6 +35,7 @@ func (s goodsSpecificationService) Create(ctx context.Context, request GoodsSpec
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
+		SetBody(request).
 		SetResult(&result).
 		Post("bg.goods.spec.create")
 	if err = recheckError(resp, result.Response, err); err != nil {

@@ -25,8 +25,8 @@ func (m GoodsBrandQueryParams) validate() error {
 // Query 查询可绑定的品牌接口
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#PjxWnZ
 func (s goodsBrandService) Query(ctx context.Context, params GoodsBrandQueryParams) (items []entity.GoodsBrand, total, totalPages int, isLastPage bool, err error) {
-	params.TidyPager()
-	params.Page = params.Pager.Page
+	params.Page = params.TidyPager().Page
+	params.OmitPage()
 	if err = params.validate(); err != nil {
 		return items, 0, 0, true, invalidInput(err)
 	}

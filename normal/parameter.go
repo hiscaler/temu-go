@@ -14,7 +14,7 @@ type Parameter struct {
 }
 
 type Pager struct {
-	Page     int `json:"pageNo"`
+	Page     int `json:"pageNo,omitempty"`
 	PageSize int `json:"pageSize"`
 }
 
@@ -39,5 +39,11 @@ func (p *Pager) TidyPager(options ...int) *Pager {
 	if p.PageSize <= 0 || p.PageSize > maxPageSize {
 		p.PageSize = maxPageSize
 	}
+	return p
+}
+
+// OmitPage 清理掉 page 参数
+func (p *Pager) OmitPage() *Pager {
+	p.Page = 0
 	return p
 }

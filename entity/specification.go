@@ -4,10 +4,10 @@ import "strings"
 
 // Specification 规格
 type Specification struct {
-	SpecId         int    `json:"specId"`
-	SpecName       string `json:"specName"`
-	ParentSpecId   int    `json:"parentSpecId"`
-	ParentSpecName string `json:"parentSpecName"`
+	ParentSpecId   int    `json:"parentSpecId"`   // 父规格 ID
+	ParentSpecName string `json:"parentSpecName"` // 父规格名称
+	SpecId         int    `json:"specId"`         // 子规格 id
+	SpecName       string `json:"specName"`       // 子规格名称
 }
 
 func (spec Specification) Ids() []int {

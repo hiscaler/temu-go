@@ -13,6 +13,7 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"regexp"
 	"slices"
 	"sort"
 	"strconv"
@@ -103,7 +104,9 @@ func url(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.logistics.shipped.package.confirm":      "",
 		"bg.order.unshipped.package.get":            "",
 		"bg.order.list.v2.get":                      "",
-		"bg.logistics.shipment.v2.get":              "",
+		"bg.order.list.get":                         "",
+		"bg.logistics.shipment.v2.get":              entity.AmericanRegion,
+		"bg.logistics.shipment.get":                 entity.AmericanRegion,
 		"bg.goods.quantity.get":                     "",
 		"bg.goods.quantity.update":                  "",
 		"bg.logistics.companies.get":                "",
@@ -132,7 +135,6 @@ func url(typ, region, env string, proxies config.RegionEnvUrls) string {
 			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
 		},
 	}
-
 	// 如果有设置请求代理的话，则使用代理的地址替换 Temu 平台地址
 	if proxies != nil {
 		for k, proxy := range proxies {
@@ -173,8 +175,7 @@ func generateSign(values map[string]any, appSecret string) map[string]any {
 	sb := strings.Builder{}
 	sb.WriteString(appSecret)
 	for _, key := range keys {
-		value := stringx.String(values[key])
-		value = strings.TrimSpace(value)
+		value := strings.TrimSpace(stringx.String(values[key]))
 		if value == "" {
 			delete(values, key)
 			continue
@@ -191,6 +192,7 @@ var loc *time.Location
 var lang *string
 var i18nBundle *i18n.Bundle
 var i18nLocalizer *i18n.Localizer
+var versionPattern = regexp.MustCompile(`\.(v[1-9]+)`)
 
 //go:embed locales/*.toml
 var localeFS embed.FS
@@ -229,6 +231,16 @@ func parseRegion(region string) string {
 		region = entity.ChinaRegion
 	}
 	return region
+}
+
+// getVersion 从 typ 中获取 API 版本
+func getVersion(typ string) string {
+	vs := versionPattern.FindStringSubmatch(typ)
+	if len(vs) <= 1 {
+		return "V1"
+	}
+
+	return strings.ToUpper(vs[1])
 }
 
 func NewClient(cfg config.Config) *Client {
@@ -291,9 +303,9 @@ func NewClient(cfg config.Config) *Client {
 			values["app_key"] = cfg.AppKey
 			values["access_token"] = cfg.AccessToken
 			values["data_type"] = "JSON"
-			values["version"] = "V1"
 			values["timestamp"] = time.Now().Unix()
 			typ := request.URL
+			values["version"] = getVersion(typ)
 			values["type"] = typ
 			request.URL = ""
 			request.SetBody(generateSign(values, cfg.AppSecret))

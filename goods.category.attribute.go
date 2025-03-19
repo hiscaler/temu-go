@@ -11,6 +11,7 @@ import (
 type goodsCategoryAttributeService service
 
 // Query 按类目查询货品属性
+// https://seller.kuajingmaihuo.com/sop/view/728777295758127187#6bz75P
 func (s goodsCategoryAttributeService) Query(ctx context.Context, categoryId int64) ([]entity.GoodsCategoryAttribute, error) {
 	if categoryId <= 0 {
 		return nil, fmt.Errorf("无效的分类：%d", categoryId)
@@ -26,8 +27,8 @@ func (s goodsCategoryAttributeService) Query(ctx context.Context, categoryId int
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
-		SetBody(map[string]int64{"catId": categoryId}).
 		SetContext(ctx).
+		SetBody(map[string]int64{"catId": categoryId}).
 		SetResult(&result).
 		Post("bg.goods.attrs.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
