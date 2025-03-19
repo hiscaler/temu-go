@@ -188,6 +188,16 @@ type GoodsCreateProductI18n struct {
 	ProductName string `json:"productName"` // 对应语言的商品标题
 }
 
+func (m GoodsCreateProductI18n) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Language,
+			validation.Required.Error("语言编码不能为空"),
+			validation.In("en").Error("无效的语言编码"),
+		),
+		validation.Field(&m.ProductName, validation.Required.Error("商品标题不能为空")),
+	)
+}
+
 // GoodsCreateProductCarouseVideo 商品主图视频
 type GoodsCreateProductCarouseVideo struct {
 	Vid      string `json:"vid"`      // 视频 VID

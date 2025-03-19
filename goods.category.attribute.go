@@ -12,19 +12,14 @@ type goodsCategoryAttributeService service
 
 // Query 按类目查询货品属性
 // https://seller.kuajingmaihuo.com/sop/view/728777295758127187#6bz75P
-func (s goodsCategoryAttributeService) Query(ctx context.Context, categoryId int64) ([]entity.GoodsCategoryAttribute, error) {
+func (s goodsCategoryAttributeService) Query(ctx context.Context, categoryId int64) (*entity.GoodsCategoryAttribute, error) {
 	if categoryId <= 0 {
 		return nil, fmt.Errorf("无效的分类：%d", categoryId)
 	}
 
 	var result = struct {
 		normal.Response
-		Result struct {
-			InputMaxSpecNum      int                             `json:"inputMaxSpecNum"`      // 模板允许的最大的自定义规格数量
-			ChooseAllQualifySpec bool                            `json:"chooseAllQualifySpec"` // 限定规格是否必须全选
-			SingleSpecValueNum   int                             `json:"singleSpecValueNum"`   // 单个自定义规格值上限
-			Properties           []entity.GoodsCategoryAttribute `json:"properties"`           // 模板属性
-		} `json:"result"`
+		Result *entity.GoodsCategoryAttribute `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
@@ -35,5 +30,9 @@ func (s goodsCategoryAttributeService) Query(ctx context.Context, categoryId int
 		return nil, err
 	}
 
-	return result.Result.Properties, nil
+	if result.Result == nil {
+		return nil, fmt.Errorf("类目 %d 无货品属性", categoryId)
+	}
+
+	return result.Result, nil
 }
