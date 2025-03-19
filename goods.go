@@ -277,6 +277,25 @@ type GoodsCreateProductSpecProperty struct {
 	ValueExtendInfo  string `json:"valueExtendInfo"`  // 属性组扩展信息（色板）
 }
 
+// GoodsCreateProductSaleExtAttr 货品销售类扩展属性请求
+type GoodsCreateProductSaleExtAttr struct {
+	ProductSecondHandReq struct {
+		IsSecondHand    bool `json:"isSecondHand"`    // 是否二手货品，二手店铺传true，其他店铺不传值
+		SecondHandLevel int  `json:"secondHandLevel"` // 成色定义，二手货品必传值，非二手货品不可传值，枚举值：（1：接近全新，2：状况极佳，3：状况良好，4：尚可接受）
+	} `json:"productSecondHandReq"` // 货品二手信息，二手店铺传值，其他店铺不传值
+	InventoryRegion int `json:"inventoryRegion"` // 备货区域
+	// 满足如下两个条件时，必填无充电器版本货品id
+	// 引用属性：refPid=6919, propName="是否售卖不含充电器的同款商品"
+	// 属性值：vid=147374, value="是"
+	ProductNoChargerReq struct {
+		NoChargerProductIds []int `json:"noChargerProductIds"` // 无充电器版本spuid，至少入参1个，至多入参3个
+	} `json:"productNoChargerReq"` // 无充电器版本spuid请求
+}
+
+func (m GoodsCreateProductSaleExtAttr) validate() error {
+	return nil
+}
+
 // GoodsCreateProductWhExtAttr 货品仓配供应链侧扩展属性请求
 type GoodsCreateProductWhExtAttr struct {
 	OuterGoodsUrl string `json:"outerGoodsUrl"` //  站外商品链接
@@ -594,12 +613,18 @@ type GoodsCreateProductSemiManaged struct {
 
 // GoodsCreateProductShipment 半托管货品配送信息请求
 type GoodsCreateProductShipment struct {
-	FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板id，使用bg.logistics.template.get查询，详见：https://seller.kuajingmaihuo.com/sop/view/867739977041685428
+	FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板 id，使用bg.logistics.template.get查询，详见：https://seller.kuajingmaihuo.com/sop/view/867739977041685428#pa858C
 	ShipmentLimitSecond int    `json:"shipmentLimitSecond"` // 承诺发货时间(单位:s)，可选值：86400，172800，259200（仅定制品可用）
 }
 
 func (m GoodsCreateProductShipment) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.FreightTemplateId, validation.Required.Error("运费模板 ID 不能为空")),
+		validation.Field(&m.ShipmentLimitSecond,
+			validation.Required.Error("承诺发货时间不能为空"),
+			validation.In(86400, 172800, 259200).Error("无效的承诺发货时间"),
+		),
+	)
 }
 
 type GoodsCreateRequest struct {
@@ -625,19 +650,7 @@ type GoodsCreateRequest struct {
 	ProductPropertyReqs          []GoodsCreateProductProperty          `json:"productPropertyReqs"`                // 货品属性
 	ProductSpecPropertyReqs      []GoodsCreateProductSpecProperty      `json:"productSpecPropertyReqs"`
 	// 货品规格属性
-	ProductSaleExtAttrReq *struct {
-		ProductSecondHandReq struct {
-			IsSecondHand    bool `json:"isSecondHand"`    // 	是否二手货品，二手店铺传true，其他店铺不传值
-			SecondHandLevel int  `json:"secondHandLevel"` // 成色定义，二手货品必传值，非二手货品不可传值，枚举值：（1：接近全新，2：状况极佳，3：状况良好，4：尚可接受）
-		} `json:"productSecondHandReq"` // 货品二手信息，二手店铺传值，其他店铺不传值
-		InventoryRegion int `json:"inventoryRegion"` // 备货区域
-		// 满足如下两个条件时，必填无充电器版本货品id
-		// 引用属性：refPid=6919, propName="是否售卖不含充电器的同款商品"
-		// 属性值：vid=147374, value="是"
-		ProductNoChargerReq struct {
-			NoChargerProductIds []int `json:"noChargerProductIds"` // 无充电器版本spuid，至少入参1个，至多入参3个
-		} `json:"productNoChargerReq"` // 无充电器版本spuid请求
-	} `json:"productSaleExtAttrReq,omitempty"` // 货品销售类扩展属性请求
+	ProductSaleExtAttrReq    *GoodsCreateProductSaleExtAttr    `json:"productSaleExtAttrReq,omitempty"`  // 货品销售类扩展属性请求
 	ProductWhExtAttrReq      GoodsCreateProductWhExtAttr       `json:"productWhExtAttrReq"`              // 货品仓配供应链侧扩展属性请求
 	ProductSkcReqs           []GoodsCreateProductSkc           `json:"productSkcReqs"`                   // 货品 skc 列表
 	SizeTemplateIds          []int                             `json:"sizeTemplateIds"`                  // 尺码表模板id（从sizecharts.template.create获取），无尺码表时传空数组[]
