@@ -197,6 +197,17 @@ type GoodsCreateProductCarouseVideo struct {
 	Height   int    `json:"height"`   // 视频高度
 }
 
+func (m GoodsCreateProductCarouseVideo) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Vid, validation.Required.Error("视频 ID 不能为空")),
+		validation.Field(&m.CoverUrl,
+			validation.Required.Error("视频封面图链接不能为空"),
+			validation.By(is.ImageUrl()),
+		),
+		validation.Field(&m.VideoUrl, validation.Required.Error("视频 URL 不能为空")),
+	)
+}
+
 // GoodsCreateProductCustom 货品关务标签
 type GoodsCreateProductCustom struct {
 	GoodsLabelName   string `json:"goodsLabelName"`   // 货品关务标签名称
@@ -208,9 +219,15 @@ type GoodsCreateProductOuterPackageImage struct {
 	ImageUrl string `json:"imageUrl"` // 图片链接，通过图片上传接口，imageBizType=1获取
 }
 
+func (m GoodsCreateProductOuterPackageImage) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ImageUrl, validation.When(m.ImageUrl != "", validation.By(is.ImageUrl()))),
+	)
+}
+
 // GoodsCreateProductProperty 货品属性
 type GoodsCreateProductProperty struct {
-	TemplatePid      int64  `json:"templatePid"`      // 模板属性id
+	TemplatePid      int64  `json:"templatePid"`      // 模板属性 id
 	Pid              int64  `json:"pid"`              // 属性 id
 	RefPid           int64  `json:"refPid"`           // 引用属性 id
 	PropName         string `json:"propName"`         // 引用属性名
@@ -219,6 +236,16 @@ type GoodsCreateProductProperty struct {
 	ValueUnit        string `json:"valueUnit"`        // 属性值单位，没有的情况传空字符串
 	NumberInputValue string `json:"numberInputValue"` // 属性输入值，例如：65.66
 	ValueExtendInfo  string `json:"valueExtendInfo"`  // 属性扩展信息，attrs.get返回
+}
+
+func (m GoodsCreateProductProperty) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.TemplatePid, validation.Required.Error("模板属性 ID 不能为空")),
+		validation.Field(&m.Pid, validation.Required.Error("属性 ID 不能为空")),
+		validation.Field(&m.RefPid, validation.Required.Error("引用属性 ID 不能为空")),
+		validation.Field(&m.PropName, validation.Required.Error("引用属性名不能为空")),
+		validation.Field(&m.PropValue, validation.Required.Error("基础属性值不能为空")),
+	)
 }
 
 // GoodsCreateProductSpecProperty 货品规格属性
