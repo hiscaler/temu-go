@@ -10,28 +10,31 @@ type GoodsCategoryAttribute struct {
 	Properties           []GoodsCategoryAttributeProperty `json:"properties"`           // 模板属性
 }
 
+// GoodsCategoryAttributePropertyValue 模板属性值
+type GoodsCategoryAttributePropertyValue struct {
+	SpecId        null.Int    `json:"specId"`
+	Vid           int         `json:"vid"`
+	Lang2Value    null.String `json:"lang2Value"`
+	ParentVidList []int64     `json:"parentVidList"`
+	ExtendInfo    null.String `json:"extendInfo"`
+	Value         string      `json:"value"`
+	Group         null.String `json:"group"`
+}
+
 // GoodsCategoryAttributeProperty 模板属性
 type GoodsCategoryAttributeProperty struct {
-	ParentSpecId                    null.Int    `json:"parentSpecId"`                    // 规格id
-	NumberInputTitle                null.String `json:"numberInputTitle"`                // 数值录入Title
-	TemplatePropertyValueParentList []any       `json:"templatePropertyValueParentList"` // 属性值关联关系
-	MaxValue                        string      `json:"maxValue"`                        // 输入最大值：文本类型代表文本最长长度、 数值类型代表数字最大值、时间类型代表时间最大值
-	Values                          []struct {
-		SpecId        null.Int    `json:"specId"`
-		Vid           int         `json:"vid"`
-		Lang2Value    null.String `json:"lang2Value"`
-		ParentVidList []int64     `json:"parentVidList"`
-		ExtendInfo    null.String `json:"extendInfo"`
-		Value         string      `json:"value"`
-		Group         null.String `json:"group"`
-	} `json:"values"` // 模板属性值
-	ValueUnit      []string `json:"valueUnit"`      // 属性值单位
-	ChooseMaxNum   int      `json:"chooseMaxNum"`   // 最大可勾选数目
-	Pid            int64    `json:"pid"`            // 基础属性id
-	TemplatePid    int64    `json:"templatePid"`    // 模板属性id
-	Required       bool     `json:"required"`       // 属性是否必填
-	InputMaxNum    int      `json:"inputMaxNum"`    // 最大可输入数目,为0时代表不可输入
-	ValuePrecision int      `json:"valuePrecision"` // 小数点允许最大精度,为0时代表不允许输入小数
+	ParentSpecId                    null.Int                              `json:"parentSpecId"`                    // 规格id
+	NumberInputTitle                null.String                           `json:"numberInputTitle"`                // 数值录入Title
+	TemplatePropertyValueParentList []any                                 `json:"templatePropertyValueParentList"` // 属性值关联关系
+	MaxValue                        string                                `json:"maxValue"`                        // 输入最大值：文本类型代表文本最长长度、 数值类型代表数字最大值、时间类型代表时间最大值
+	Values                          []GoodsCategoryAttributePropertyValue `json:"values"`                          // 模板属性值
+	ValueUnit                       []string                              `json:"valueUnit"`                       // 属性值单位
+	ChooseMaxNum                    int                                   `json:"chooseMaxNum"`                    // 最大可勾选数目
+	Pid                             int64                                 `json:"pid"`                             // 基础属性id
+	TemplatePid                     int64                                 `json:"templatePid"`                     // 模板属性id
+	Required                        bool                                  `json:"required"`                        // 属性是否必填
+	InputMaxNum                     int                                   `json:"inputMaxNum"`                     // 最大可输入数目,为0时代表不可输入
+	ValuePrecision                  int                                   `json:"valuePrecision"`                  // 小数点允许最大精度,为0时代表不允许输入小数
 	// TEXT(0, "文本-传属性值id或者自定义的属性值"),
 	// NUM(1, "数值-传属性值和单位"),
 	// NUMBER_RANGE(2, "输入数值范围"),
