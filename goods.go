@@ -3,12 +3,14 @@ package temu
 import (
 	"context"
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
+	"slices"
 	"time"
 )
 
@@ -224,6 +226,12 @@ type GoodsCreateProductCustom struct {
 	IsRecommendedTag bool   `json:"isRecommendedTag"` // 是否使用推荐标签
 }
 
+func (m GoodsCreateProductCustom) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.GoodsLabelName, validation.Required.Error("货品关务标签名称不能为空")),
+	)
+}
+
 // GoodsCreateProductOuterPackageImage 外包装图片
 type GoodsCreateProductOuterPackageImage struct {
 	ImageUrl string `json:"imageUrl"` // 图片链接，通过图片上传接口，imageBizType=1获取
@@ -241,19 +249,79 @@ type GoodsCreateProductProperty struct {
 	Pid              int64  `json:"pid"`              // 属性 id
 	RefPid           int64  `json:"refPid"`           // 引用属性 id
 	PropName         string `json:"propName"`         // 引用属性名
-	Vid              int64  `json:"vid"`              // 基础属性值id，没有的情况传0
+	Vid              int64  `json:"vid"`              // 基础属性值 id，没有的情况传 0
 	PropValue        string `json:"propValue"`        // 基础属性值
 	ValueUnit        string `json:"valueUnit"`        // 属性值单位，没有的情况传空字符串
 	NumberInputValue string `json:"numberInputValue"` // 属性输入值，例如：65.66
-	ValueExtendInfo  string `json:"valueExtendInfo"`  // 属性扩展信息，attrs.get返回
+	ValueExtendInfo  string `json:"valueExtendInfo"`  // 属性扩展信息，attrs.get 返回
 }
 
-func (m GoodsCreateProductProperty) validate() error {
+func (m GoodsCreateProductProperty) validate(attr entity.GoodsCategoryAttribute) error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.TemplatePid, validation.Required.Error("模板属性 ID 不能为空")),
-		validation.Field(&m.Pid, validation.Required.Error("属性 ID 不能为空")),
-		validation.Field(&m.RefPid, validation.Required.Error("引用属性 ID 不能为空")),
-		validation.Field(&m.PropName, validation.Required.Error("引用属性名不能为空")),
+		validation.Field(&m.TemplatePid,
+			validation.Required.Error("模板属性 ID 不能为空"),
+			validation.When(m.TemplatePid != 0, validation.By(func(value interface{}) error {
+				id, ok := value.(int64)
+				if !ok {
+					return fmt.Errorf("无效的模板属性 ID %v", value)
+				}
+				index := slices.IndexFunc(attr.Properties, func(prop entity.GoodsCategoryAttributeProperty) bool {
+					return id == prop.TemplatePid
+				})
+				if index == -1 {
+					return fmt.Errorf("模板属性 ID %d 在类目属性中不存在", id)
+				}
+				return nil
+			})),
+		),
+		validation.Field(&m.Pid,
+			validation.Required.Error("属性 ID 不能为空"),
+			validation.When(m.Pid != 0, validation.By(func(value interface{}) error {
+				id, ok := value.(int64)
+				if !ok {
+					return fmt.Errorf("无效的基础属性 ID %v", value)
+				}
+				index := slices.IndexFunc(attr.Properties, func(prop entity.GoodsCategoryAttributeProperty) bool {
+					return id == prop.Pid
+				})
+				if index == -1 {
+					return fmt.Errorf("基础属性 ID %d 在类目属性中不存在", id)
+				}
+				return nil
+			})),
+		),
+		validation.Field(&m.RefPid,
+			validation.Required.Error("引用属性 ID 不能为空"),
+			validation.When(m.RefPid != 0, validation.By(func(value interface{}) error {
+				id, ok := value.(int64)
+				if !ok {
+					return fmt.Errorf("无效的引用属性 ID %v", value)
+				}
+				index := slices.IndexFunc(attr.Properties, func(prop entity.GoodsCategoryAttributeProperty) bool {
+					return id == prop.RefPid
+				})
+				if index == -1 {
+					return fmt.Errorf("引用属性 ID %d 在类目属性中不存在", id)
+				}
+				return nil
+			})),
+		),
+		validation.Field(&m.PropName,
+			validation.Required.Error("引用属性名不能为空"),
+			validation.When(m.PropName != "", validation.By(func(value interface{}) error {
+				name, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("无效的引用属性名 %v", value)
+				}
+				index := slices.IndexFunc(attr.Properties, func(prop entity.GoodsCategoryAttributeProperty) bool {
+					return name == prop.Name
+				})
+				if index == -1 {
+					return fmt.Errorf("引用属性名 %s 在类目属性中不存在", name)
+				}
+				return nil
+			})),
+		),
 		validation.Field(&m.PropValue, validation.Required.Error("基础属性值不能为空")),
 	)
 }
@@ -666,7 +734,7 @@ type GoodsCreateRequest struct {
 	MaterialMultiLanguages   []string                          `json:"materialMultiLanguages"`           // 图片多语言列表
 }
 
-func (m GoodsCreateRequest) validate() error {
+func (m GoodsCreateRequest) validate(ctx context.Context, s goodsService) error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Cat1Id, validation.Required.Error("一级类目不能为空")),
 		validation.Field(&m.Cat2Id, validation.Required.Error("二级类目不能为空")),
@@ -681,6 +749,47 @@ func (m GoodsCreateRequest) validate() error {
 			validation.Each(validation.By(is.ImageUrl())),
 		),
 		validation.Field(&m.MaterialImgUrl, validation.When(m.MaterialImgUrl != "", validation.By(is.ImageUrl()))),
+		validation.Field(&m.ProductPropertyReqs,
+			validation.Required.Error("货品属性不能为空"),
+			// 判断是否有重复的数据
+			validation.By(func(value interface{}) error {
+				properties, ok := value.([]GoodsCreateProductProperty)
+				if !ok {
+					return errors.New("无效的货品属性。")
+				}
+				templatePids := make([]int64, 0)
+				for _, prop := range properties {
+					if slices.Index(templatePids, prop.TemplatePid) != -1 {
+						return fmt.Errorf("重复的模板属性 ID %d", prop.TemplatePid)
+					}
+					templatePids = append(templatePids, prop.TemplatePid)
+				}
+
+				return nil
+			}),
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(GoodsCreateProductProperty)
+				if !ok {
+					return errors.New("无效的货品属性。")
+				}
+
+				catIds := []int64{m.Cat10Id, m.Cat9Id, m.Cat8Id, m.Cat7Id, m.Cat6Id, m.Cat5Id, m.Cat4Id, m.Cat3Id, m.Cat2Id, m.Cat1Id}
+				var catId int64 = -1
+				if index := slices.IndexFunc(catIds, func(i int64) bool {
+					return i != 0
+				}); index != -1 {
+					catId = catIds[index]
+				}
+				attr, err := s.Category.Attribute.Query(ctx, catId)
+				if err != nil {
+					return nil
+				}
+				if attr == nil {
+					return fmt.Errorf("%d 类目属性查询失败", catId)
+				}
+				return v.validate(*attr)
+			})),
+		),
 		validation.Field(&m.AddProductChannelType, validation.Required.Error("发品渠道不能为空")),
 	)
 }
@@ -701,7 +810,7 @@ type GoodsCreateResult struct {
 // Create 添加货品
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#MwT6Ha
 func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (res GoodsCreateResult, err error) {
-	if err = request.validate(); err != nil {
+	if err = request.validate(ctx, s); err != nil {
 		return res, invalidInput(err)
 	}
 
