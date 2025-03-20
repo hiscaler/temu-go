@@ -14,7 +14,9 @@ type goodsCategoryService struct {
 }
 
 type GoodsCategoryQueryParams struct {
-	ParentCatId null.Int `json:"parentCatId,omitempty"` // 上级分类 ID
+	SiteId      int       `json:"siteId"`                // 站点 id，当前固定传 1
+	ParentCatId null.Int  `json:"parentCatId,omitempty"` // 上级分类 ID
+	ShowHidden  null.Bool `json:"showHidden"`            // 是否展示隐藏类目，默认不展示
 }
 
 func (m GoodsCategoryQueryParams) validate() error {
@@ -22,11 +24,13 @@ func (m GoodsCategoryQueryParams) validate() error {
 }
 
 // Query 商品分类查询
+// https://seller.kuajingmaihuo.com/sop/view/728777295758127187#G5hCmy
 func (s goodsCategoryService) Query(ctx context.Context, params GoodsCategoryQueryParams) (categories []entity.Category, err error) {
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
 		return
 	}
+	params.SiteId = 1 // 当前固定传 1
 
 	var result = struct {
 		normal.Response
