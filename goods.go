@@ -257,6 +257,7 @@ type GoodsCreateProductProperty struct {
 }
 
 func (m GoodsCreateProductProperty) validate(attr entity.GoodsCategoryAttribute) error {
+	templatePidIndex := -1
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.TemplatePid,
 			validation.Required.Error("模板属性 ID 不能为空"),
@@ -271,6 +272,7 @@ func (m GoodsCreateProductProperty) validate(attr entity.GoodsCategoryAttribute)
 				if index == -1 {
 					return fmt.Errorf("模板属性 ID %d 在类目属性中不存在", id)
 				}
+				templatePidIndex = index
 				return nil
 			})),
 		),
@@ -322,7 +324,35 @@ func (m GoodsCreateProductProperty) validate(attr entity.GoodsCategoryAttribute)
 				return nil
 			})),
 		),
-		validation.Field(&m.PropValue, validation.Required.Error("基础属性值不能为空")),
+		validation.Field(&m.PropValue,
+			validation.Required.Error("基础属性值不能为空"),
+			validation.By(func(value interface{}) error {
+				v, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("无效的基础属性值 %v", value)
+				}
+				index := slices.IndexFunc(attr.Properties[templatePidIndex].Values, func(e entity.GoodsCategoryAttributePropertyValue) bool {
+					return m.PropValue == e.Value
+				})
+				if index == -1 {
+					return fmt.Errorf("无效的基础属性值 %s", v)
+				}
+				return nil
+			}),
+		),
+		validation.Field(&m.ValueUnit,
+			validation.By(func(value interface{}) error {
+				v, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("无效的属性值单位 %v", value)
+				}
+				index := slices.Index(attr.Properties[templatePidIndex].ValueUnit, m.ValueUnit)
+				if index == -1 {
+					return fmt.Errorf("无效的属性值单位 %s", v)
+				}
+				return nil
+			}),
+		),
 	)
 }
 
