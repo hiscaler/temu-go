@@ -282,8 +282,8 @@ type SemiOnlineOrderLogisticsShipmentDocumentRequest struct {
 	DocumentType  string   `json:"documentType"`  // 文件类型
 	PackageSnList []string `json:"packageSnList"` // 需要打印面单的包裹号列表
 	// 自行添加，非接口字段，用于下载面单文件
-	Download      bool `json:"download"`      // 是否下载
-	RetryDownload bool `json:"retryDownload"` // 已经存在的情况下是否重新下载
+	Download      bool `json:"download"`      // 是否下载面单文件
+	RetryDownload bool `json:"retryDownload"` // 面单文件已经存在的情况下是否重新下载，为 false 的情况下直接返回，不会去再次请求
 }
 
 func (m SemiOnlineOrderLogisticsShipmentDocumentRequest) validate() error {
