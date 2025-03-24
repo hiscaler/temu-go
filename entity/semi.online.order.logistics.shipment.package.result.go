@@ -1,7 +1,7 @@
 package entity
 
-// SemiOnlineOrderLogisticsShipmentPackage 发货包裹
-type SemiOnlineOrderLogisticsShipmentPackage struct {
+// SemiOnlineOrderLogisticsShipmentPackageResult 物流在线发货下单结果
+type SemiOnlineOrderLogisticsShipmentPackageResult struct {
 	PackageSn string `json:"packageSn"` // 包裹号
 	// 包裹主子类型，对应枚举如下：
 	// 主包裹：MAIN
@@ -25,14 +25,14 @@ type SemiOnlineOrderLogisticsShipmentPackage struct {
 	// 状态为1成功和2失败都能转为自发货
 	ShippingLabelStatus   int    `json:"shippingLabelStatus"`   // 当前包裹下单状态
 	CanChangeToManualSend bool   `json:"canChangeToManualSend"` // 是否可以修改成手动填写物流单号
-	Weight                string `json:"weight"`                // 重量（默认2位小数）
+	Weight                string `json:"weight"`                // 重量（默认 2 位小数）
 	WeightUnit            string `json:"weightUnit"`            // 重量单位
-	Length                string `json:"length"`                // 包裹长度（默认2位小数）
-	Width                 string `json:"width"`                 // 包裹宽度（默认2位小数）
-	Height                string `json:"height"`                // 包裹高度（默认2位小数）
+	Length                string `json:"length"`                // 包裹长度（默认 2 位小数）
+	Width                 string `json:"width"`                 // 包裹宽度（默认 2 位小数）
+	Height                string `json:"height"`                // 包裹高度（默认 2 位小数）
 	DimensionUnit         string `json:"dimensionUnit"`         // 尺寸单位高度
-	ChannelId             int64  `json:"channelId"`             // 渠道id
-	ShipCompanyId         int64  `json:"shipCompanyId"`         // 物流公司id
+	ChannelId             int64  `json:"channelId"`             // 渠道 id
+	ShipCompanyId         int64  `json:"shipCompanyId"`         // 物流公司 id
 	ShipLogisticsType     int    `json:"shipLogisticsType"`     // 物流公司类型
 	ShippingCompanyName   string `json:"shippingCompanyName"`   // 运单号
 	TrackingNumber        string `json:"trackingNumber"`        // 物流公司名称

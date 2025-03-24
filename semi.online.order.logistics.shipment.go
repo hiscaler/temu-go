@@ -85,7 +85,7 @@ func (m SemiOnlineOrderLogisticsShipmentCreateRequest) validate() error {
 
 // Create 物流在线发货下单接口（bg.logistics.shipment.create）
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#Tf6UNY
-func (s semiOnlineOrderLogisticsShipmentService) Create(ctx context.Context, request SemiOnlineOrderLogisticsShipmentCreateRequest) (items []string, limitTime null.String, err error) {
+func (s semiOnlineOrderLogisticsShipmentService) Create(ctx context.Context, request SemiOnlineOrderLogisticsShipmentCreateRequest) (packageNumbers []string, limitTime null.String, err error) {
 	if err = request.validate(); err != nil {
 		return
 	}
@@ -111,7 +111,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Create(ctx context.Context, req
 
 // Query 物流在线发货下单查询接口
 // https://seller.kuajingmaihuo.com/sop/view/144659541206936016#S8m7N3
-func (s semiOnlineOrderLogisticsShipmentService) Query(ctx context.Context, packageNumbers ...string) ([]entity.SemiOnlineOrderLogisticsShipmentPackage, error) {
+func (s semiOnlineOrderLogisticsShipmentService) Query(ctx context.Context, packageNumbers ...string) ([]entity.SemiOnlineOrderLogisticsShipmentPackageResult, error) {
 	if len(packageNumbers) == 0 {
 		return nil, ErrInvalidParameters
 	}
@@ -119,7 +119,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Query(ctx context.Context, pack
 	var result = struct {
 		normal.Response
 		Result struct {
-			PackageInfoResultList []entity.SemiOnlineOrderLogisticsShipmentPackage `json:"packageInfoResultList"` // 包裹下单结果
+			PackageInfoResultList []entity.SemiOnlineOrderLogisticsShipmentPackageResult `json:"packageInfoResultList"` // 包裹下单结果
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
