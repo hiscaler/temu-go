@@ -136,59 +136,88 @@ func (s semiOnlineOrderLogisticsShipmentService) Query(ctx context.Context, pack
 
 // 重新下单
 
+// SemiOnlineOrderLogisticsShipmentUpdatePackageOrder 发货商品
+type SemiOnlineOrderLogisticsShipmentUpdatePackageOrder struct {
+	OrderSn       string `json:"orderSn"`
+	ParentOrderSn string `json:"parentOrderSn"`
+	GoodsId       int64  `json:"goodsId"`
+	SkuId         int64  `json:"skuId"`
+	Quantity      int    `json:"quantity"`
+}
+
+// SemiOnlineOrderLogisticsShipmentUpdatePackageSub 单件 sku 多包裹场景
+type SemiOnlineOrderLogisticsShipmentUpdatePackageSub struct {
+	ExtendWeightUnit string `json:"extendWeightUnit"` // 扩展重量单位
+	ExtendWeight     string `json:"extendWeight"`     // 扩展重量
+	WeightUnit       string `json:"weightUnit"`       // 重量单位
+	DimensionUnit    string `json:"dimensionUnit"`    // 尺寸单位
+	Weight           string `json:"weight"`           // 包裹重量（默认2位小数）
+	Height           string `json:"height"`           // 包包裹高度（默认2位小数）
+	Length           string `json:"length"`           // 包裹长度（默认2位小数）
+	Width            string `json:"width"`            // 包裹宽度（默认2位小数）
+	WarehouseId      string `json:"warehouseId"`      // 仓库id
+	ChannelId        int64  `json:"channelId"`        // 渠道id
+	ShipCompanyId    int64  `json:"shipCompanyId"`    // 物流公司ID
+	SignServiceId    int64  `json:"signServiceId"`    // 签收服务ID
+}
+
+// SemiOnlineOrderLogisticsShipmentUpdatePackage 包裹信息
+type SemiOnlineOrderLogisticsShipmentUpdatePackage struct {
+	PackageSn         string                                               `json:"packageSn"`         // 包裹号
+	PickupStartTime   int64                                                `json:"pickupStartTime"`   // 预约上门取件的开始时间 秒级时间戳
+	PickupEndTime     int64                                                `json:"pickupEndTime"`     // 预约上门取件的结束时间 秒级时间戳
+	SignServiceId     int64                                                `json:"signServiceId"`     // 签收服务 ID
+	ChannelId         int64                                                `json:"channelId"`         // 渠道 ID
+	ShipCompanyId     int64                                                `json:"shipCompanyId"`     // 物流公司 ID
+	OrderSendInfoList []SemiOnlineOrderLogisticsShipmentUpdatePackageOrder `json:"orderSendInfoList"` // 发货商品信息
+	// TRUE：是单件SKU多包裹场景
+	// FALSE/不填：不是单件SKU多包裹场景
+	SplitSubPackage    bool                                               `json:"splitSubPackage"`    // 是否为单件SKU拆多包裹
+	SendSubRequestList []SemiOnlineOrderLogisticsShipmentUpdatePackageSub `json:"sendSubRequestList"` // 单件sku多包裹场景，附属包裹入参
+	// 具体确认场景，目前存在枚举为：
+	// SUCCESSFUL_RETRY//确认是下call成功之后再次call
+	// NO_DELIVERY_ON_SATURDAY//确认允许周六不上门派送】强制发货
+	// DENY_CANCELLATION//确认驳回取消待确认请求，强制发货
+	// DENY_ADDRESS_CHANGE://确认驳回改地址待确认请求，强制发货
+	// DENY_PARENT_RISK_WARNING//确认驳回风控，强制发货
+	ConfirmAcceptance []string `json:"confirmAcceptance"` // 确认场景
+	WarehouseId       int64    `json:"warehouseId"`       // 仓库 id
+	Weight            string   `json:"weight"`            // 包裹重量（默认 2 位小数）
+	WeightUnit        string   `json:"weightUnit"`        // 重量单位
+	Height            string   `json:"height"`            // 包包裹高度（默认 2 位小数）
+	Length            string   `json:"length"`            // 包裹长度（默认 2 位小数）
+	Width             string   `json:"width"`             // 包裹宽度（默认 2 位小数）
+	DimensionUnit     string   `json:"dimensionUnit"`     // 尺寸单位高度
+}
+
+func (m SemiOnlineOrderLogisticsShipmentUpdatePackage) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ChannelId, validation.Required.Error("物流渠道不能为空")),
+		validation.Field(&m.OrderSendInfoList, validation.Required.Error("包裹发货商品不能为空")),
+	)
+}
+
 type SemiOnlineOrderLogisticsShipmentUpdateRequest struct {
-	RetrySendPackageRequestList []struct {
-		PackageSn         string `json:"packageSn"`       // 包裹号
-		PickupStartTime   int64  `json:"pickupStartTime"` // 预约上门取件的开始时间 秒级时间戳
-		PickupEndTime     int64  `json:"pickupEndTime"`   // 预约上门取件的结束时间 秒级时间戳
-		SignServiceId     int64  `json:"signServiceId"`   // 签收服务 ID
-		ChannelId         int64  `json:"channelId"`       // 渠道 ID
-		ShipCompanyId     int64  `json:"shipCompanyId"`   // 物流公司 ID
-		OrderSendInfoList []struct {
-			OrderSn       string `json:"orderSn"`
-			ParentOrderSn string `json:"parentOrderSn"`
-			GoodsId       int64  `json:"goodsId"`
-			SkuId         int64  `json:"skuId"`
-			Quantity      int    `json:"quantity"`
-		} `json:"orderSendInfoList"` // 发货商品信息
-		// TRUE：是单件SKU多包裹场景
-		// FALSE/不填：不是单件SKU多包裹场景
-		SplitSubPackage    bool `json:"splitSubPackage"` // 是否为单件SKU拆多包裹
-		SendSubRequestList []struct {
-			ExtendWeightUnit string `json:"extendWeightUnit"` // 扩展重量单位
-			ExtendWeight     string `json:"extendWeight"`     // 扩展重量
-			WeightUnit       string `json:"weightUnit"`       // 重量单位
-			DimensionUnit    string `json:"dimensionUnit"`    // 尺寸单位
-			Weight           string `json:"weight"`           // 包裹重量（默认2位小数）
-			Height           string `json:"height"`           // 包包裹高度（默认2位小数）
-			Length           string `json:"length"`           // 包裹长度（默认2位小数）
-			Width            string `json:"width"`            // 包裹宽度（默认2位小数）
-			WarehouseId      string `json:"warehouseId"`      // 仓库id
-			ChannelId        int64  `json:"channelId"`        // 渠道id
-			ShipCompanyId    int64  `json:"shipCompanyId"`    // 物流公司ID
-			SignServiceId    int64  `json:"signServiceId"`    // 签收服务ID
-		} `json:"sendSubRequestList"` // 单件sku多包裹场景，附属包裹入参
-		// 具体确认场景，目前存在枚举为：
-		// SUCCESSFUL_RETRY//确认是下call成功之后再次call
-		// NO_DELIVERY_ON_SATURDAY//确认允许周六不上门派送】强制发货
-		// DENY_CANCELLATION//确认驳回取消待确认请求，强制发货
-		// DENY_ADDRESS_CHANGE://确认驳回改地址待确认请求，强制发货
-		// DENY_PARENT_RISK_WARNING//确认驳回风控，强制发货
-		ConfirmAcceptance []string `json:"confirmAcceptance"` // 确认场景
-		WarehouseId       int64    `json:"warehouseId"`       // 仓库id
-		Weight            string   `json:"weight"`            // 包裹重量（默认2位小数）
-		WeightUnit        string   `json:"weightUnit"`        // 重量单位
-		Height            string   `json:"height"`            // 包包裹高度（默认2位小数）
-		Length            string   `json:"length"`            // 包裹长度（默认2位小数）
-		Width             string   `json:"width"`             // 包裹宽度（默认2位小数）
-		DimensionUnit     string   `json:"dimensionUnit"`     // 尺寸单位高度
-	} `json:"retrySendPackageRequestList"` // 包裹信息
+	RetrySendPackageRequestList []SemiOnlineOrderLogisticsShipmentUpdatePackage `json:"retrySendPackageRequestList"` // 包裹信息
 }
 
 func (m SemiOnlineOrderLogisticsShipmentUpdateRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.RetrySendPackageRequestList, validation.Required.Error("包裹列表不能为空")),
-		// todo 更多的数据验证
+		validation.Field(&m.RetrySendPackageRequestList,
+			validation.Required.Error("包裹列表不能为空"),
+			validation.By(func(value interface{}) error {
+				packages, ok := value.([]SemiOnlineOrderLogisticsShipmentUpdatePackage)
+				if !ok {
+					return errors.New("无效的发货包裹")
+				}
+				for _, pkg := range packages {
+					if err := pkg.validate(); err != nil {
+						return err
+					}
+				}
+				return nil
+			}),
+		),
 	)
 }
 
