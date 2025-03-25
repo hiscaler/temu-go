@@ -12,16 +12,30 @@ type PurchaseOrderStatistic struct {
 
 type PurchaseOrderSkuQuantityDetailList struct {
 	CurrencyType                 string   `json:"currencyType"`
+	ProcessTypeVO                any      `json:"processTypeVO"`
 	ClassName                    string   `json:"className"`
+	SupportIncreaseNum           bool     `json:"supportIncreaseNum"`
 	RealReceiveAuthenticQuantity int      `json:"realReceiveAuthenticQuantity"`
 	FulfilmentProductSkuId       int64    `json:"fulfilmentProductSkuId"`
 	CustomizationType            int      `json:"customizationType"`
 	ProductSkuId                 int64    `json:"productSkuId"`
 	DeliverQuantity              int      `json:"deliverQuantity"`
 	ThumbUrlList                 []string `json:"thumbUrlList"`
+	AdviceQuantity               int      `json:"adviceQuantity"`
 	QcResult                     any      `json:"qcResult"`
 	ExtCode                      string   `json:"extCode"`
+	PurchaseUpLimit              int      `json:"purchaseUpLimit"`
 	PurchaseQuantity             int      `json:"purchaseQuantity"`
+}
+
+type PurchaseOrderDeliverInformation struct {
+	ReceiveTime                      null.Int    `json:"receiveTime"`
+	DeliverTime                      null.Int    `json:"deliverTime"`
+	ReceiveWarehouseId               null.Int    `json:"receiveWarehouseId"`
+	ReceiveWarehouseName             null.String `json:"receiveWarehouseName"`
+	ExpectLatestDeliverTimeOrDefault int64       `json:"expectLatestDeliverTimeOrDefault"`
+	ExpectLatestArrivalTimeOrDefault null.Int    `json:"expectLatestArrivalTimeOrDefault"`
+	DeliveryOrderSn                  null.String `json:"deliveryOrderSn"`
 }
 
 // PurchaseOrder 采购单
@@ -33,32 +47,27 @@ type PurchaseOrder struct {
 	FulfilmentFormStatus    any                                  `json:"fulfilmentFormStatus"`
 	IsFirst                 bool                                 `json:"isFirst"`
 	SkuQuantityDetailList   []PurchaseOrderSkuQuantityDetailList `json:"skuQuantityDetailList"`
-	DeliverInfo             struct {
-		ReceiveTime                      null.Int    `json:"receiveTime"`
-		DeliverTime                      null.Int    `json:"deliverTime"`
-		ReceiveWarehouseId               null.Int    `json:"receiveWarehouseId"`
-		ReceiveWarehouseName             null.String `json:"receiveWarehouseName"`
-		ExpectLatestDeliverTimeOrDefault int64       `json:"expectLatestDeliverTimeOrDefault"`
-		ExpectLatestArrivalTimeOrDefault int64       `json:"expectLatestArrivalTimeOrDefault"`
-		DeliveryOrderSn                  null.String `json:"deliveryOrderSn"`
-	} `json:"deliverInfo"`
-	ProductSkcId         int64 `json:"productSkcId"`
-	IsCloseJit           bool  `json:"isCloseJit"`
-	WarehouseGroupId     int   `json:"warehouseGroupId"`
-	ProductId            int64 `json:"productId"`
-	HasQcBill            int   `json:"hasQcBill"`
-	SupplyStatus         int   `json:"supplyStatus"`
-	ApplyDeleteStatus    int   `json:"applyDeleteStatus"`
-	SkuQuantityTotalInfo struct {
-		CurrencyType                 any         `json:"currencyType"`
-		ClassName                    any         `json:"className"`
+	DeliverInfo             PurchaseOrderDeliverInformation      `json:"deliverInfo"`
+	ProductSkcId            int64                                `json:"productSkcId"`
+	IsCloseJit              bool                                 `json:"isCloseJit"`
+	WarehouseGroupId        int                                  `json:"warehouseGroupId"`
+	ProductId               int64                                `json:"productId"`
+	HasQcBill               int                                  `json:"hasQcBill"`
+	SupplyStatus            int                                  `json:"supplyStatus"`
+	ApplyDeleteStatus       int                                  `json:"applyDeleteStatus"`
+	SkuQuantityTotalInfo    struct {
+		CurrencyType                 any         `json:"currencyType"` // 货币类型(参考 ISO 4217) CNY-人民币 USD-美元
+		ProcessTypeVO                any         `json:"processTypeVO"`
+		ClassName                    any         `json:"className"` // 尺码名称
+		SupportIncreaseNum           any         `json:"supportIncreaseNum"`
 		CustomizationType            any         `json:"customizationType"`            // 定制类型
 		ProductSkuId                 int64       `json:"productSkuId"`                 // SKU
 		ExtCode                      null.String `json:"extCode"`                      // SKU 编码
-		PurchaseQuantity             int         `json:"purchaseQuantity"`             // 采购数量
+		PurchaseQuantity             int         `json:"purchaseQuantity"`             // 下单数量
 		DeliverQuantity              int         `json:"deliverQuantity"`              // 发货数量
-		RealReceiveAuthenticQuantity int         `json:"realReceiveAuthenticQuantity"` // 实际收货数量
-	} `json:"skuQuantityTotalInfo"`
+		AdviceQuantity               null.Int    `json:"adviceQuantity"`               //
+		RealReceiveAuthenticQuantity int         `json:"realReceiveAuthenticQuantity"` // 入库数量
+	} `json:"skuQuantityTotalInfo"` // sku 维度数量汇总信息
 	IsCanJoinDeliverPlatform bool     `json:"isCanJoinDeliverPlatform"` // 是否可以加入发货台
 	CategoryType             int      `json:"categoryType"`
 	Status                   int      `json:"status"`
