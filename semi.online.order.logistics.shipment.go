@@ -88,6 +88,23 @@ type SemiOnlineOrderLogisticsShipmentCreateSendItem struct {
 	SendSubRequestList []SemiOnlineOrderLogisticsShipmentAdditionalPackage `json:"sendSubRequestList,omitempty"` // 单件 sku 多包裹场景，附属包裹入参
 }
 
+func (m SemiOnlineOrderLogisticsShipmentCreateSendItem) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SendSubRequestList,
+			validation.When(m.SplitSubPackage,
+				validation.Required.Error("单件 sku 多包裹数据不能为空"),
+				validation.Each(validation.By(func(value interface{}) error {
+					v, ok := value.(SemiOnlineOrderLogisticsShipmentAdditionalPackage)
+					if !ok {
+						return errors.New("无效的单件 sku 多包裹数据")
+					}
+					return v.validate()
+				})),
+			),
+		),
+	)
+}
+
 type SemiOnlineOrderLogisticsShipmentCreateRequest struct {
 	SendType           int                                              `json:"sendType"`                     // 发货类型：0-单个运单发货 1-拆成多个运单发货 2-合并发货
 	ShipLater          bool                                             `json:"shipLater"`                    // 下 call 成功后是否延迟发货（TRUE：下call成功之后延迟发货，FALSE/不填：下call成功订单自动流转为已发货）
@@ -102,7 +119,16 @@ func (m SemiOnlineOrderLogisticsShipmentCreateRequest) validate() error {
 			entity.SemiShippingTypeSplit,
 			entity.SemiShippingTypeMerge,
 		).Error("无效的发货类型")),
-		validation.Field(&m.SendRequestList, validation.Required.Error("包裹信息不能为空")),
+		validation.Field(&m.SendRequestList,
+			validation.Required.Error("包裹信息不能为空"),
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(SemiOnlineOrderLogisticsShipmentCreateSendItem)
+				if !ok {
+					return errors.New("无效的包裹信息")
+				}
+				return v.validate()
+			})),
+		),
 	)
 }
 
