@@ -162,6 +162,19 @@ const (
 	SemiOrderStatusPartialReceipted = 51 // 部分签收（本本订单）
 )
 
+// 半托定制模板类型
+const (
+	SemiOrderCustomizationTemplateTypeImage        = 1 // Only image
+	SemiOrderCustomizationTemplateTypeText         = 2 // Only text
+	SemiOrderCustomizationTemplateTypeTextAndImage = 3 // Text and image
+)
+
+// 半托定制类型
+const (
+	SemiOrderCustomizationCustomizedTypePureText        = 1 // pure text customization, no customized templates
+	SemiOrderCustomizationCustomizedTypeGraphicsAndText = 2 // customized graphics and text, with customized templates available
+)
+
 // https://seller.kuajingmaihuo.com/sop/view/231998342274104483#6mTvhA
 const (
 	ChinaRegion         = "CN" // 中国区
