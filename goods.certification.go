@@ -7,6 +7,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"gopkg.in/guregu/null.v4"
 )
 
 // 商品资质服务
@@ -138,26 +139,29 @@ func (s goodsCertificationService) UploadFile(ctx context.Context, request Goods
 // 提交资质内容
 // https://seller.kuajingmaihuo.com/sop/view/649320516224723675#dCjnye
 
+type GoodsCertificationUploadFile struct {
+	FileName      string   `json:"fileName"`                // 文件名称
+	FileUrl       string   `json:"fileUrl"`                 // 文件 Url
+	ShowCustomer  bool     `json:"showCustomer"`            // 是否同意向消费者展示
+	ExpireTime    null.Int `json:"expireTime,omitempty"`    // 失效时间
+	EffectiveTime null.Int `json:"effectiveTime,omitempty"` // 生效时间
+}
+
+func (m GoodsCertificationUploadFile) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.FileName, validation.Required.Error("文件名称不能为空")),
+		validation.Field(&m.FileUrl, validation.Required.Error("文件 URL 不能为空")),
+	)
+}
+
 type GoodsCertificationUploadRequest struct {
 	ProductId             int64 `json:"productId"` // 货品 ID
 	ProductCatCertReqList []struct {
-		CertType         int    `json:"certType"` // 资质类型
-		AuthCode         string `json:"authCode"` // 资质编号
-		ProductCertFiles []struct {
-			FileName      string `json:"fileName"`      // 文件名称
-			FileUrl       string `json:"fileUrl"`       // 文件 url
-			ShowCustomer  bool   `json:"showCustomer"`  // 是否同意向消费者展示
-			ExpireTime    int64  `json:"expireTime"`    // 失效时间
-			EffectiveTime int64  `json:"effectiveTime"` // 生效时间
-		} `json:"productCertFiles"` // 货品资质文件列表
-		InspectReportFiles []struct {
-			FileName      string `json:"fileName"`      // 文件名称
-			FileUrl       string `json:"fileUrl"`       // 文件 url
-			ShowCustomer  bool   `json:"showCustomer"`  // 是否同意向消费者展示
-			ExpireTime    int64  `json:"expireTime"`    // 失效时间
-			EffectiveTime int64  `json:"effectiveTime"` // 生效时间
-		} `json:"inspectReportFiles"` // 检测报告文件列表
-		RealPictures []struct {
+		CertType           int                            `json:"certType"`           // 资质类型
+		AuthCode           string                         `json:"authCode"`           // 资质编号
+		ProductCertFiles   []GoodsCertificationUploadFile `json:"productCertFiles"`   // 货品资质文件列表
+		InspectReportFiles []GoodsCertificationUploadFile `json:"inspectReportFiles"` // 检测报告文件列表
+		RealPictures       []struct {
 			ImageUrl string `json:"imageUrl"` // 图片url
 		} `json:"realPictures"` // 实物图列表
 	} `json:"productCatCertReqList"` // 货品类目资质请求列表，仅传需上传的资质类型，审核通过/审核中的勿传
@@ -166,7 +170,9 @@ type GoodsCertificationUploadRequest struct {
 func (m GoodsCertificationUploadRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空")),
-		validation.Field(&m.ProductCatCertReqList, validation.Required.Error("货品类目资质请求列表不能为空")),
+		validation.Field(&m.ProductCatCertReqList,
+			validation.Required.Error("货品类目资质请求列表不能为空"),
+		),
 	)
 }
 
