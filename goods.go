@@ -775,7 +775,7 @@ func (m GoodsCreateRequest) validate(ctx context.Context, s goodsService) error 
 		),
 		validation.Field(&m.CarouselImageUrls,
 			validation.Required.Error("货品轮播图不能为空"),
-			validation.Min(5).Error("货品轮播图不能少于 {min} 张"),
+			validation.Min(5).Error("货品轮播图不能少于 {{.min}} 张"),
 			validation.Each(validation.By(is.ImageUrl())),
 		),
 		validation.Field(&m.MaterialImgUrl, validation.When(m.MaterialImgUrl != "", validation.By(is.ImageUrl()))),
