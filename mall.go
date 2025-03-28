@@ -58,7 +58,7 @@ func (s mallService) AccessToken(ctx context.Context, currentAccessToken, code s
 		SetContext(ctx).
 		SetBody(map[string]string{"accessToken": currentAccessToken, "code": code}).
 		SetResult(&result).
-		Post("")
+		Post("bg.open.accesstoken.create")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return at, err
 	}

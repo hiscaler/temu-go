@@ -8,9 +8,9 @@ import (
 
 // MallPermission 店铺权限
 type MallPermission struct {
-	MallId       int      `json:"mallId"`
-	ExpiredTime  int64    `json:"expiredTime"`
-	APIScopeList []string `json:"apiScopeList"`
+	MallId       int      `json:"mallId"`       // TEMU 店铺 ID
+	ExpiredTime  int64    `json:"expiredTime"`  // 过期时间（时间戳秒级）
+	APIScopeList []string `json:"apiScopeList"` // 有权限的 API 列表
 }
 
 // Accessible 是否有指定 API 权限

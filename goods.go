@@ -3,12 +3,14 @@ package temu
 import (
 	"context"
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
+	"slices"
 	"time"
 )
 
@@ -188,6 +190,16 @@ type GoodsCreateProductI18n struct {
 	ProductName string `json:"productName"` // 对应语言的商品标题
 }
 
+func (m GoodsCreateProductI18n) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Language,
+			validation.Required.Error("语言编码不能为空"),
+			validation.In("en").Error("无效的语言编码"),
+		),
+		validation.Field(&m.ProductName, validation.Required.Error("商品标题不能为空")),
+	)
+}
+
 // GoodsCreateProductCarouseVideo 商品主图视频
 type GoodsCreateProductCarouseVideo struct {
 	Vid      string `json:"vid"`      // 视频 VID
@@ -197,10 +209,27 @@ type GoodsCreateProductCarouseVideo struct {
 	Height   int    `json:"height"`   // 视频高度
 }
 
+func (m GoodsCreateProductCarouseVideo) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Vid, validation.Required.Error("视频 ID 不能为空")),
+		validation.Field(&m.CoverUrl,
+			validation.Required.Error("视频封面图链接不能为空"),
+			validation.By(is.ImageUrl()),
+		),
+		validation.Field(&m.VideoUrl, validation.Required.Error("视频 URL 不能为空")),
+	)
+}
+
 // GoodsCreateProductCustom 货品关务标签
 type GoodsCreateProductCustom struct {
 	GoodsLabelName   string `json:"goodsLabelName"`   // 货品关务标签名称
 	IsRecommendedTag bool   `json:"isRecommendedTag"` // 是否使用推荐标签
+}
+
+func (m GoodsCreateProductCustom) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.GoodsLabelName, validation.Required.Error("货品关务标签名称不能为空")),
+	)
 }
 
 // GoodsCreateProductOuterPackageImage 外包装图片
@@ -208,17 +237,123 @@ type GoodsCreateProductOuterPackageImage struct {
 	ImageUrl string `json:"imageUrl"` // 图片链接，通过图片上传接口，imageBizType=1获取
 }
 
+func (m GoodsCreateProductOuterPackageImage) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ImageUrl, validation.When(m.ImageUrl != "", validation.By(is.ImageUrl()))),
+	)
+}
+
 // GoodsCreateProductProperty 货品属性
 type GoodsCreateProductProperty struct {
-	TemplatePid      int64  `json:"templatePid"`      // 模板属性id
+	TemplatePid      int64  `json:"templatePid"`      // 模板属性 id
 	Pid              int64  `json:"pid"`              // 属性 id
 	RefPid           int64  `json:"refPid"`           // 引用属性 id
 	PropName         string `json:"propName"`         // 引用属性名
-	Vid              int64  `json:"vid"`              // 基础属性值id，没有的情况传0
+	Vid              int64  `json:"vid"`              // 基础属性值 id，没有的情况传 0
 	PropValue        string `json:"propValue"`        // 基础属性值
 	ValueUnit        string `json:"valueUnit"`        // 属性值单位，没有的情况传空字符串
 	NumberInputValue string `json:"numberInputValue"` // 属性输入值，例如：65.66
-	ValueExtendInfo  string `json:"valueExtendInfo"`  // 属性扩展信息，attrs.get返回
+	ValueExtendInfo  string `json:"valueExtendInfo"`  // 属性扩展信息，attrs.get 返回
+}
+
+func (m GoodsCreateProductProperty) validate(attr entity.GoodsCategoryAttribute) error {
+	templatePidIndex := -1
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.TemplatePid,
+			validation.Required.Error("模板属性 ID 不能为空"),
+			validation.When(m.TemplatePid != 0, validation.By(func(value interface{}) error {
+				id, ok := value.(int64)
+				if !ok {
+					return fmt.Errorf("无效的模板属性 ID %v", value)
+				}
+				index := slices.IndexFunc(attr.Properties, func(prop entity.GoodsCategoryAttributeProperty) bool {
+					return id == prop.TemplatePid
+				})
+				if index == -1 {
+					return fmt.Errorf("模板属性 ID %d 在类目属性中不存在", id)
+				}
+				templatePidIndex = index
+				return nil
+			})),
+		),
+		validation.Field(&m.Pid,
+			validation.Required.Error("属性 ID 不能为空"),
+			validation.When(m.Pid != 0, validation.By(func(value interface{}) error {
+				id, ok := value.(int64)
+				if !ok {
+					return fmt.Errorf("无效的基础属性 ID %v", value)
+				}
+				index := slices.IndexFunc(attr.Properties, func(prop entity.GoodsCategoryAttributeProperty) bool {
+					return id == prop.Pid
+				})
+				if index == -1 {
+					return fmt.Errorf("基础属性 ID %d 在类目属性中不存在", id)
+				}
+				return nil
+			})),
+		),
+		validation.Field(&m.RefPid,
+			validation.Required.Error("引用属性 ID 不能为空"),
+			validation.When(m.RefPid != 0, validation.By(func(value interface{}) error {
+				id, ok := value.(int64)
+				if !ok {
+					return fmt.Errorf("无效的引用属性 ID %v", value)
+				}
+				index := slices.IndexFunc(attr.Properties, func(prop entity.GoodsCategoryAttributeProperty) bool {
+					return id == prop.RefPid
+				})
+				if index == -1 {
+					return fmt.Errorf("引用属性 ID %d 在类目属性中不存在", id)
+				}
+				return nil
+			})),
+		),
+		validation.Field(&m.PropName,
+			validation.Required.Error("引用属性名不能为空"),
+			validation.When(m.PropName != "", validation.By(func(value interface{}) error {
+				name, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("无效的引用属性名 %v", value)
+				}
+				index := slices.IndexFunc(attr.Properties, func(prop entity.GoodsCategoryAttributeProperty) bool {
+					return name == prop.Name
+				})
+				if index == -1 {
+					return fmt.Errorf("引用属性名 %s 在类目属性中不存在", name)
+				}
+				return nil
+			})),
+		),
+		validation.Field(&m.PropValue,
+			validation.Required.Error("基础属性值不能为空"),
+			validation.By(func(value interface{}) error {
+				v, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("无效的基础属性值 %v", value)
+				}
+				index := slices.IndexFunc(attr.Properties[templatePidIndex].Values, func(e entity.GoodsCategoryAttributePropertyValue) bool {
+					return m.PropValue == e.Value
+				})
+				if index == -1 {
+					return fmt.Errorf("无效的基础属性值 %s", v)
+				}
+				return nil
+			}),
+		),
+		validation.Field(&m.ValueUnit,
+			validation.By(func(value interface{}) error {
+				v, ok := value.(string)
+				if !ok {
+					return fmt.Errorf("无效的属性值单位 %v", value)
+				}
+				index := slices.Index(attr.Properties[templatePidIndex].ValueUnit, m.ValueUnit)
+				if index == -1 {
+					return fmt.Errorf("无效的属性值单位 %s", v)
+				}
+				return nil
+			}),
+		),
+	)
 }
 
 // GoodsCreateProductSpecProperty 货品规格属性
@@ -238,6 +373,25 @@ type GoodsCreateProductSpecProperty struct {
 	ValueUnit        string `json:"valueUnit"`        // 属性值单位，没有的情况传空字符串
 	NumberInputValue string `json:"numberInputValue"` // 属性输入值，例如：65.66
 	ValueExtendInfo  string `json:"valueExtendInfo"`  // 属性组扩展信息（色板）
+}
+
+// GoodsCreateProductSaleExtAttr 货品销售类扩展属性请求
+type GoodsCreateProductSaleExtAttr struct {
+	ProductSecondHandReq struct {
+		IsSecondHand    bool `json:"isSecondHand"`    // 是否二手货品，二手店铺传true，其他店铺不传值
+		SecondHandLevel int  `json:"secondHandLevel"` // 成色定义，二手货品必传值，非二手货品不可传值，枚举值：（1：接近全新，2：状况极佳，3：状况良好，4：尚可接受）
+	} `json:"productSecondHandReq"` // 货品二手信息，二手店铺传值，其他店铺不传值
+	InventoryRegion int `json:"inventoryRegion"` // 备货区域
+	// 满足如下两个条件时，必填无充电器版本货品id
+	// 引用属性：refPid=6919, propName="是否售卖不含充电器的同款商品"
+	// 属性值：vid=147374, value="是"
+	ProductNoChargerReq struct {
+		NoChargerProductIds []int `json:"noChargerProductIds"` // 无充电器版本spuid，至少入参1个，至多入参3个
+	} `json:"productNoChargerReq"` // 无充电器版本spuid请求
+}
+
+func (m GoodsCreateProductSaleExtAttr) validate() error {
+	return nil
 }
 
 // GoodsCreateProductWhExtAttr 货品仓配供应链侧扩展属性请求
@@ -557,12 +711,18 @@ type GoodsCreateProductSemiManaged struct {
 
 // GoodsCreateProductShipment 半托管货品配送信息请求
 type GoodsCreateProductShipment struct {
-	FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板id，使用bg.logistics.template.get查询，详见：https://seller.kuajingmaihuo.com/sop/view/867739977041685428
+	FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板 id，使用bg.logistics.template.get查询，详见：https://seller.kuajingmaihuo.com/sop/view/867739977041685428#pa858C
 	ShipmentLimitSecond int    `json:"shipmentLimitSecond"` // 承诺发货时间(单位:s)，可选值：86400，172800，259200（仅定制品可用）
 }
 
 func (m GoodsCreateProductShipment) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.FreightTemplateId, validation.Required.Error("运费模板 ID 不能为空")),
+		validation.Field(&m.ShipmentLimitSecond,
+			validation.Required.Error("承诺发货时间不能为空"),
+			validation.In(86400, 172800, 259200).Error("无效的承诺发货时间"),
+		),
+	)
 }
 
 type GoodsCreateRequest struct {
@@ -588,19 +748,7 @@ type GoodsCreateRequest struct {
 	ProductPropertyReqs          []GoodsCreateProductProperty          `json:"productPropertyReqs"`                // 货品属性
 	ProductSpecPropertyReqs      []GoodsCreateProductSpecProperty      `json:"productSpecPropertyReqs"`
 	// 货品规格属性
-	ProductSaleExtAttrReq *struct {
-		ProductSecondHandReq struct {
-			IsSecondHand    bool `json:"isSecondHand"`    // 	是否二手货品，二手店铺传true，其他店铺不传值
-			SecondHandLevel int  `json:"secondHandLevel"` // 成色定义，二手货品必传值，非二手货品不可传值，枚举值：（1：接近全新，2：状况极佳，3：状况良好，4：尚可接受）
-		} `json:"productSecondHandReq"` // 货品二手信息，二手店铺传值，其他店铺不传值
-		InventoryRegion int `json:"inventoryRegion"` // 备货区域
-		// 满足如下两个条件时，必填无充电器版本货品id
-		// 引用属性：refPid=6919, propName="是否售卖不含充电器的同款商品"
-		// 属性值：vid=147374, value="是"
-		ProductNoChargerReq struct {
-			NoChargerProductIds []int `json:"noChargerProductIds"` // 无充电器版本spuid，至少入参1个，至多入参3个
-		} `json:"productNoChargerReq"` // 无充电器版本spuid请求
-	} `json:"productSaleExtAttrReq,omitempty"` // 货品销售类扩展属性请求
+	ProductSaleExtAttrReq    *GoodsCreateProductSaleExtAttr    `json:"productSaleExtAttrReq,omitempty"`  // 货品销售类扩展属性请求
 	ProductWhExtAttrReq      GoodsCreateProductWhExtAttr       `json:"productWhExtAttrReq"`              // 货品仓配供应链侧扩展属性请求
 	ProductSkcReqs           []GoodsCreateProductSkc           `json:"productSkcReqs"`                   // 货品 skc 列表
 	SizeTemplateIds          []int                             `json:"sizeTemplateIds"`                  // 尺码表模板id（从sizecharts.template.create获取），无尺码表时传空数组[]
@@ -616,7 +764,7 @@ type GoodsCreateRequest struct {
 	MaterialMultiLanguages   []string                          `json:"materialMultiLanguages"`           // 图片多语言列表
 }
 
-func (m GoodsCreateRequest) validate() error {
+func (m GoodsCreateRequest) validate(ctx context.Context, s goodsService) error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Cat1Id, validation.Required.Error("一级类目不能为空")),
 		validation.Field(&m.Cat2Id, validation.Required.Error("二级类目不能为空")),
@@ -627,10 +775,51 @@ func (m GoodsCreateRequest) validate() error {
 		),
 		validation.Field(&m.CarouselImageUrls,
 			validation.Required.Error("货品轮播图不能为空"),
-			validation.Min(5).Error("货品轮播图不能少于 {min} 张"),
+			validation.Min(5).Error("货品轮播图不能少于 {{.min}} 张"),
 			validation.Each(validation.By(is.ImageUrl())),
 		),
 		validation.Field(&m.MaterialImgUrl, validation.When(m.MaterialImgUrl != "", validation.By(is.ImageUrl()))),
+		validation.Field(&m.ProductPropertyReqs,
+			validation.Required.Error("货品属性不能为空"),
+			// 判断是否有重复的数据
+			validation.By(func(value interface{}) error {
+				properties, ok := value.([]GoodsCreateProductProperty)
+				if !ok {
+					return errors.New("无效的货品属性。")
+				}
+				templatePids := make([]int64, 0)
+				for _, prop := range properties {
+					if slices.Index(templatePids, prop.TemplatePid) != -1 {
+						return fmt.Errorf("重复的模板属性 ID %d", prop.TemplatePid)
+					}
+					templatePids = append(templatePids, prop.TemplatePid)
+				}
+
+				return nil
+			}),
+			validation.Each(validation.By(func(value interface{}) error {
+				v, ok := value.(GoodsCreateProductProperty)
+				if !ok {
+					return errors.New("无效的货品属性。")
+				}
+
+				catIds := []int64{m.Cat10Id, m.Cat9Id, m.Cat8Id, m.Cat7Id, m.Cat6Id, m.Cat5Id, m.Cat4Id, m.Cat3Id, m.Cat2Id, m.Cat1Id}
+				var catId int64 = -1
+				if index := slices.IndexFunc(catIds, func(i int64) bool {
+					return i != 0
+				}); index != -1 {
+					catId = catIds[index]
+				}
+				attr, err := s.Category.Attribute.Query(ctx, catId)
+				if err != nil {
+					return nil
+				}
+				if attr == nil {
+					return fmt.Errorf("%d 类目属性查询失败", catId)
+				}
+				return v.validate(*attr)
+			})),
+		),
 		validation.Field(&m.AddProductChannelType, validation.Required.Error("发品渠道不能为空")),
 	)
 }
@@ -651,7 +840,7 @@ type GoodsCreateResult struct {
 // Create 添加货品
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#MwT6Ha
 func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (res GoodsCreateResult, err error) {
-	if err = request.validate(); err != nil {
+	if err = request.validate(ctx, s); err != nil {
 		return res, invalidInput(err)
 	}
 

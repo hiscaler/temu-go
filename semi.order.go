@@ -184,3 +184,24 @@ func (s semiOrderService) ShippingInformation(ctx context.Context, parentOrderNu
 
 	return result.Result, nil
 }
+
+// CustomizationInformation 半托订单定制信息查询
+// https://partner.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=e8f86a2f5241441e9b095bf309d04dce
+func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNumbers ...string) ([]entity.SemiOrderCustomizationInformation, error) {
+	var result = struct {
+		normal.Response
+		Result []entity.SemiOrderCustomizationInformation `json:"result"`
+	}{}
+
+	resp, err := s.httpClient.
+		R().
+		SetContext(ctx).
+		SetBody(map[string][]string{"orderSnList": orderNumbers}).
+		SetResult(&result).
+		Post("bg.order.customization.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return nil, err
+	}
+
+	return result.Result, nil
+}
