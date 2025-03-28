@@ -859,3 +859,43 @@ func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (r
 
 	return result.Result, nil
 }
+
+// ImageUpload 上传货品图片（bg.goods.image.upload）
+// https://seller.kuajingmaihuo.com/sop/view/338873192956832611#atWm1f
+
+type GoodsImageUploadRequest struct {
+	Image        string   `json:"image"`                  // 支持格式有：jpg/jpeg、png等图片格式，注意入参图片必须转码为base64编码
+	ImageBizType null.Int `json:"imageBizType,omitempty"` // 枚举值：0、1，入参1返回的url用以货品发布时的外包装使用
+	Options      struct {
+		Boost              bool `json:"boost"`              // 是否 AI 清晰度提升
+		CateId             int  `json:"cateId"`             // 叶子类目ID，按不同类型进行裁剪，当doIntelligenceCrop=true生效
+		DoIntelligenceCrop bool `json:"doIntelligenceCrop"` // 是否AI智能裁剪，true-根据sizeMode返回一组智能裁剪图（1张原图+3张裁剪图）
+		SizeMode           int  `json:"sizeMode"`           // 返回尺寸大小，0-原图大小，1-800*800（1:1），2-1350*1800（3:4）
+	} `json:"options,omitempty"` //
+
+}
+
+func (m GoodsImageUploadRequest) validate() error {
+	return nil
+}
+
+func (s goodsService) ImageUpload(ctx context.Context, request GoodsImageUploadRequest) (res entity.GoodsImageUploadResult, err error) {
+	if err = request.validate(); err != nil {
+		return res, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result entity.GoodsImageUploadResult `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.goods.image.upload")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
+	}
+
+	return result.Result, nil
+}

@@ -63,6 +63,9 @@ func (s goodsCertificationService) Query(ctx context.Context, params GoodsCertif
 	return
 }
 
+// 查询资质要上传的内容
+// https://seller.kuajingmaihuo.com/sop/view/649320516224723675#5mZ1dI
+
 type GoodsCertificationNeedUploadItemRequest struct {
 	CertType  int   `json:"certType"`  // 资质类型
 	ProductId int64 `json:"productId"` // 货品 ID
@@ -93,4 +96,41 @@ func (s goodsCertificationService) QueryNeedUploadItems(ctx context.Context, req
 	}
 
 	return result.Result.CertNeedUploadItems, nil
+}
+
+// 上传文件接口（bg.arbok.open.upload.uploadFile）
+// https://seller.kuajingmaihuo.com/sop/view/649320516224723675#sFvgAq
+
+type GoodsCertificationUploadFileRequest struct {
+	Base64File string `json:"base64File"` // 支持格式有：jpg/jpeg、png,pdf格式，注意入参图片必须转码为base64编码
+	FileName   string `json:"fileName"`   // 文件名，主要用来辨别格式，名字不采用，仅支持jpg/jpeg、png,pdf格式
+	IsRealPic  bool   `json:"isRealPic"`  // 是否实拍图，是的话结果连接不需要签名就可以展示，不是的话就需要签名才能展示
+}
+
+func (m GoodsCertificationUploadFileRequest) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Base64File, validation.Required.Error("上传文件内容不能为空")),
+		validation.Field(&m.FileName, validation.Required.Error("上传文件名称不能为空")),
+	)
+}
+
+func (s goodsCertificationService) UploadFile(ctx context.Context, request GoodsCertificationUploadFileRequest) (string, error) {
+	if err := request.validate(); err != nil {
+		return "", invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result string `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.arbok.open.upload.uploadFile")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return "", err
+	}
+
+	return result.Result, nil
 }
