@@ -162,7 +162,7 @@ type GoodsCertificationUploadRequest struct {
 		ProductCertFiles   []GoodsCertificationUploadFile `json:"productCertFiles"`   // 货品资质文件列表
 		InspectReportFiles []GoodsCertificationUploadFile `json:"inspectReportFiles"` // 检测报告文件列表
 		RealPictures       []struct {
-			ImageUrl string `json:"imageUrl"` // 图片url
+			ImageUrl string `json:"imageUrl"` // 图片 Url
 		} `json:"realPictures"` // 实物图列表
 	} `json:"productCatCertReqList"` // 货品类目资质请求列表，仅传需上传的资质类型，审核通过/审核中的勿传
 }
