@@ -134,3 +134,59 @@ func (s goodsCertificationService) UploadFile(ctx context.Context, request Goods
 
 	return result.Result, nil
 }
+
+// 提交资质内容
+// https://seller.kuajingmaihuo.com/sop/view/649320516224723675#dCjnye
+
+type GoodsCertificationUploadRequest struct {
+	ProductId             int64 `json:"productId"` // 货品 ID
+	ProductCatCertReqList []struct {
+		CertType         int    `json:"certType"` // 资质类型
+		AuthCode         string `json:"authCode"` // 资质编号
+		ProductCertFiles []struct {
+			FileName      string `json:"fileName"`      // 文件名称
+			FileUrl       string `json:"fileUrl"`       // 文件 url
+			ShowCustomer  bool   `json:"showCustomer"`  // 是否同意向消费者展示
+			ExpireTime    int64  `json:"expireTime"`    // 失效时间
+			EffectiveTime int64  `json:"effectiveTime"` // 生效时间
+		} `json:"productCertFiles"` // 货品资质文件列表
+		InspectReportFiles []struct {
+			FileName      string `json:"fileName"`      // 文件名称
+			FileUrl       string `json:"fileUrl"`       // 文件 url
+			ShowCustomer  bool   `json:"showCustomer"`  // 是否同意向消费者展示
+			ExpireTime    int64  `json:"expireTime"`    // 失效时间
+			EffectiveTime int64  `json:"effectiveTime"` // 生效时间
+		} `json:"inspectReportFiles"` // 检测报告文件列表
+		RealPictures []struct {
+			ImageUrl string `json:"imageUrl"` // 图片url
+		} `json:"realPictures"` // 实物图列表
+	} `json:"productCatCertReqList"` // 货品类目资质请求列表，仅传需上传的资质类型，审核通过/审核中的勿传
+}
+
+func (m GoodsCertificationUploadRequest) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空")),
+		validation.Field(&m.ProductCatCertReqList, validation.Required.Error("货品类目资质请求列表不能为空")),
+	)
+}
+
+func (s goodsCertificationService) Upload(ctx context.Context, request GoodsCertificationUploadRequest) (bool, error) {
+	if err := request.validate(); err != nil {
+		return false, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result any `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.arbok.open.cert.uploadProductCert")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
