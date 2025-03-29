@@ -57,7 +57,7 @@ func (m SkuVirtualStockChangeRequest) validate() error {
 }
 
 type VirtualInventoryJitEditRequest struct {
-	ProductSkcId              int64                          `json:"productSkcId"`              // 货品SKC ID
+	ProductSkcId              int64                          `json:"productSkcId"`              // 货品 SKC ID
 	SkuVirtualStockChangeList []SkuVirtualStockChangeRequest `json:"skuVirtualStockChangeList"` // 虚拟库存模式下使用，虚拟库存调整信息.
 }
 
