@@ -17,7 +17,6 @@ func (s jitVirtualInventoryService) Query(ctx context.Context, productSkcId int6
 	var result = struct {
 		normal.Response
 		Result struct {
-			Total               int                                 `json:"total"`               // 总数
 			ProductSkuStockList []entity.JitProductVirtualInventory `json:"productSkuStockList"` // 货品 SKU 库存列表
 		} `json:"result"`
 	}{}
