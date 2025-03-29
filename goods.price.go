@@ -7,11 +7,11 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
-// goodsPriceService 供货价/核价/调价服务
+// goodsPriceService 货品价格服务
 type goodsPriceService struct {
 	service
-	Review         goodsPriceReviewService
-	FullAdjustment goodsPriceAdjustmentService
+	Review         goodsPriceReviewService     // 供货价/核价/调价服务
+	FullAdjustment goodsPriceAdjustmentService // 全托调价服务
 }
 
 // Query 货品供货价查询
