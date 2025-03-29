@@ -864,20 +864,39 @@ func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (r
 // ImageUpload 上传货品图片（bg.goods.image.upload）
 // https://seller.kuajingmaihuo.com/sop/view/338873192956832611#atWm1f
 
-type GoodsImageUploadRequest struct {
-	Image        string   `json:"image"`                  // 支持格式有：jpg/jpeg、png等图片格式，注意入参图片必须转码为base64编码
-	ImageBizType null.Int `json:"imageBizType,omitempty"` // 枚举值：0、1，入参1返回的url用以货品发布时的外包装使用
-	Options      struct {
-		Boost              bool `json:"boost"`              // 是否 AI 清晰度提升
-		CateId             int  `json:"cateId"`             // 叶子类目ID，按不同类型进行裁剪，当doIntelligenceCrop=true生效
-		DoIntelligenceCrop bool `json:"doIntelligenceCrop"` // 是否AI智能裁剪，true-根据sizeMode返回一组智能裁剪图（1张原图+3张裁剪图）
-		SizeMode           int  `json:"sizeMode"`           // 返回尺寸大小，0-原图大小，1-800*800（1:1），2-1350*1800（3:4）
-	} `json:"options,omitempty"` //
+type GoodsImageUploadOption struct {
+	Boost              bool `json:"boost"`              // 是否 AI 清晰度提升
+	CateId             int  `json:"cateId"`             // 叶子类目 ID，按不同类型进行裁剪，当doIntelligenceCrop=true生效
+	DoIntelligenceCrop bool `json:"doIntelligenceCrop"` // 是否 AI 智能裁剪，true-根据sizeMode返回一组智能裁剪图（1张原图+3张裁剪图）
+	SizeMode           int  `json:"sizeMode"`           // 返回尺寸大小，0-原图大小，1-800*800（1:1），2-1350*1800（3:4）
+}
 
+func (m GoodsImageUploadOption) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SizeMode,
+			validation.In(0, 1, 2).Error("无效的尺寸大小"),
+		),
+	)
+}
+
+type GoodsImageUploadRequest struct {
+	Image        string                  `json:"image"`                  // 支持格式有：jpg/jpeg、png等图片格式，注意入参图片必须转码为base64编码
+	ImageBizType null.Int                `json:"imageBizType,omitempty"` // 枚举值：0、1，入参1返回的 url 用以货品发布时的外包装使用
+	Options      *GoodsImageUploadOption `json:"options,omitempty"`      // 图片上传选项
 }
 
 func (m GoodsImageUploadRequest) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.Image, validation.Required.Error("图片文件不能为空")),
+		validation.Field(&m.ImageBizType, validation.In(0, 1).Error("无效的图片类型")),
+		validation.Field(&m.Options, validation.When(m.Options != nil, validation.By(func(value interface{}) error {
+			v, ok := value.(*GoodsImageUploadOption)
+			if !ok {
+				return errors.New("无效的图片上传选项")
+			}
+			return v.validate()
+		}))),
+	)
 }
 
 func (s goodsService) ImageUpload(ctx context.Context, request GoodsImageUploadRequest) (res entity.GoodsImageUploadResult, err error) {
