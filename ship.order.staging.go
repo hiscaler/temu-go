@@ -194,10 +194,10 @@ func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAd
 	}
 
 	type joinError struct {
-		ExtraInfoMap                any    `json:"extraInfoMap"`
-		JoinErrorSubPurchaseOrderSn string `json:"joinErrorSubPurchaseOrderSn"`
-		ErrorCode                   int    `json:"errorCode"`
-		ErrorMsg                    string `json:"errorMsg"`
+		ExtraInfoMap                map[string]string `json:"extraInfoMap"`
+		JoinErrorSubPurchaseOrderSn string            `json:"joinErrorSubPurchaseOrderSn"`
+		ErrorCode                   int               `json:"errorCode"`
+		ErrorMsg                    string            `json:"errorMsg"`
 	}
 	var result = struct {
 		normal.Response

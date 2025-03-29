@@ -377,7 +377,12 @@ func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest
 
 	var result = struct {
 		normal.Response
-		Result any `json:"result"`
+		Result struct {
+			DeliveryOrders                          []string `json:"deliveryOrders"`                          // 创建成功的发货单列表
+			IsUrgencyType                           bool     `json:"isUrgencyType"`                           // 是否是急采
+			CancelUrgencyType                       bool     `json:"cancelUrgencyType"`                       // 是否有取消急采标
+			CancelUrgencyTypeSubPurchaseOrderSnList []string `json:"cancelUrgencyTypeSubPurchaseOrderSnList"` // 取消急采标的采购单列表
+		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
@@ -417,7 +422,7 @@ func (s shipOrderService) Cancel(ctx context.Context, shipOrderNumber string) (o
 
 	var result = struct {
 		normal.Response
-		Result any `json:"result"`
+		Result []string `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
