@@ -11,8 +11,19 @@ import (
 // 商品仓库服务
 type goodsWarehouseService service
 
+type GoodsWarehouseOpenApiUser struct {
+	SupplierId int `json:"supplierId"` // 供应商 ID
+}
+
+func (m GoodsWarehouseOpenApiUser) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.SupplierId, validation.Required.Error("供应商 ID 不能为空")),
+	)
+}
+
 type GoodsWarehouseQueryParams struct {
-	SiteIdList []int `json:"siteIdList"` // 站点列表
+	SiteIdList  []int                     `json:"siteIdList"`  // 站点列表
+	OpenApiUser GoodsWarehouseOpenApiUser `json:"openApiUser"` // 用户信息
 }
 
 func (m GoodsWarehouseQueryParams) validate() error {
@@ -20,6 +31,9 @@ func (m GoodsWarehouseQueryParams) validate() error {
 		validation.Field(&m.SiteIdList,
 			validation.Required.Error("站点列表不能为空"),
 			validation.By(is.SiteIds(entity.SiteIds)),
+		),
+		validation.Field(&m.OpenApiUser,
+			validation.Required.Error("用户信息不能为空"),
 		),
 	)
 }

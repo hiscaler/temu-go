@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/normal"
 )
 
@@ -9,7 +10,7 @@ import (
 type goodsSpecificationService service
 
 type GoodsSpecificationCreateRequest struct {
-	ParentSpecId int `json:"parentSpecId"` // 父规格 id
+	ParentSpecId int `json:"parentSpecId"` // 父规格 ID
 	// 限制的特殊字符枚举如下
 	// - emoji表情符号
 	// - }、{、!、<、@、>、？、$、^、…、€、®、™、©、£、†、o、â、¥、¢、‡
@@ -17,7 +18,10 @@ type GoodsSpecificationCreateRequest struct {
 }
 
 func (m GoodsSpecificationCreateRequest) validate() error {
-	return nil
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ParentSpecId, validation.Required.Error("父规格 ID 不能为空")),
+		validation.Field(&m.SpecName, validation.Required.Error("子规格名称不能为空")),
+	)
 }
 
 // Create 生成规格（bg.goods.spec.create）
