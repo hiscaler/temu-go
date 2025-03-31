@@ -440,7 +440,7 @@ func NewClient(cfg config.Config) *Client {
 			Price: goodsPriceService{
 				service:        xService,
 				Review:         (goodsPriceReviewService)(xService),
-				FullAdjustment: (goodsPriceAdjustmentService)(xService),
+				FullAdjustment: (goodsPriceFullAdjustmentService)(xService),
 			},
 		},
 		Mall: mallService{

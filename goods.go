@@ -32,7 +32,7 @@ type goodsService struct {
 	Quantity            goodsQuantityService            // 虚拟库存
 	ParentSpecification goodsParentSpecificationService // 父规格
 	Specification       goodsSpecificationService       // 规格
-	Price               goodsPriceService               // 供货价/核价/调价
+	Price               goodsPriceService               // 货品价格
 }
 
 type GoodsQueryParams struct {

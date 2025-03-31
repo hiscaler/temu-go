@@ -8,13 +8,13 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
-// goodsPriceAdjustmentService 全托调价服务
-type goodsPriceAdjustmentService service
+// goodsPriceFullAdjustmentService 全托调价服务
+type goodsPriceFullAdjustmentService service
 
 // 分页查询全托管调价单
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=908751475686
 
-type GoodsPriceAdjustmentQueryParams struct {
+type GoodsPriceFullAdjustmentQueryParams struct {
 	normal.ParameterWithPager
 	SkcId               []int64  `json:"skcId"`               // Skc ID
 	ExtCodeType         int      `json:"extCodeType"`         // 货号类型 1-skc货号 2-sku货号
@@ -30,13 +30,13 @@ type GoodsPriceAdjustmentQueryParams struct {
 	Status              int      `json:"status"`              // 状态 0-待调价，1-带供应商确认，2-调价成功，3-调价失败
 }
 
-func (m GoodsPriceAdjustmentQueryParams) validate() error {
+func (m GoodsPriceFullAdjustmentQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Status, validation.In(0, 1, 2, 3).Error("无效的状态")),
 	)
 }
 
-func (s goodsPriceAdjustmentService) Query(ctx context.Context, params GoodsPriceAdjustmentQueryParams) (items []entity.GoodsReviewSamplePrice, err error) {
+func (s goodsPriceFullAdjustmentService) Query(ctx context.Context, params GoodsPriceFullAdjustmentQueryParams) (items []entity.GoodsReviewSamplePrice, err error) {
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)
 	}
@@ -63,28 +63,28 @@ func (s goodsPriceAdjustmentService) Query(ctx context.Context, params GoodsPric
 // 全托管批量确认调价单
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=908749899377
 
-type GoodsPriceAdjustmentReviewItem struct {
+type GoodsPriceFullAdjustmentConfirmItem struct {
 	PriceOrderSn string `json:"priceOrderSn"` // 调价单号
 	Result       int    `json:"result"`       // 审核结果 1-通过
 }
 
-func (m GoodsPriceAdjustmentReviewItem) validate() error {
+func (m GoodsPriceFullAdjustmentConfirmItem) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.PriceOrderSn, validation.Required.Error("调价单号不能为空")),
 		validation.Field(&m.Result, validation.In(0, 1).Error("无效的审核结果")),
 	)
 }
 
-type GoodsPriceAdjustmentReviewRequest struct {
-	AdjustList []GoodsPriceAdjustmentReviewItem `json:"adjustList"` // 调价列表
+type GoodsPriceFullAdjustmentConfirmRequest struct {
+	AdjustList []GoodsPriceFullAdjustmentConfirmItem `json:"adjustList"` // 调价列表
 }
 
-func (m GoodsPriceAdjustmentReviewRequest) validate() error {
+func (m GoodsPriceFullAdjustmentConfirmRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.AdjustList,
 			validation.Required.Error("调价列表不能为空"),
 			validation.Each(validation.By(func(value interface{}) error {
-				v, ok := value.(GoodsPriceAdjustmentReviewItem)
+				v, ok := value.(GoodsPriceFullAdjustmentConfirmItem)
 				if !ok {
 					return errors.New("无效的调价数据")
 				}
@@ -94,7 +94,7 @@ func (m GoodsPriceAdjustmentReviewRequest) validate() error {
 	)
 }
 
-func (s goodsPriceAdjustmentService) Review(ctx context.Context, params GoodsPriceAdjustmentReviewRequest) (bool, error) {
+func (s goodsPriceFullAdjustmentService) Confirm(ctx context.Context, params GoodsPriceFullAdjustmentConfirmRequest) (bool, error) {
 	if err := params.validate(); err != nil {
 		return false, invalidInput(err)
 	}
