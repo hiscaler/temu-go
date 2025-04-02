@@ -55,6 +55,7 @@ func (m SemiOrderQueryParams) validate() error {
 			if !ok {
 				return errors.New("无效的父单状态")
 			}
+
 			return validation.Validate(int(v.Int64), validation.In(
 				entity.SemiOrderStatusAll,
 				entity.SemiOrderStatusPending,
@@ -89,14 +90,14 @@ func (m SemiOrderQueryParams) validate() error {
 		validation.Field(&m.ParentOrderLabel, validation.Each(validation.By(func(value interface{}) error {
 			v, ok := value.(string)
 			if !ok {
-				return errors.New("无效的 PO 单订单状态标签")
+				return errors.New("无效的父单状态标签")
 			}
 			return validation.Validate(v, validation.In(
 				entity.SemiParentOrderLabelSoonToBeOverdue,
 				entity.SemiParentOrderLabelPastDue,
 				entity.SemiParentOrderLabelPendingBuyerCancellation,
 				entity.SemiParentOrderLabelPendingBuyerAddressChange,
-			).Error("无效的 PO 单订单状态标签"))
+			).Error("无效的父单状态标签"))
 		}))),
 		validation.Field(&m.SortBy, validation.When(m.SortBy.Valid, validation.By(func(value interface{}) error {
 			v, ok := value.(null.String)
