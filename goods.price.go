@@ -18,12 +18,12 @@ type goodsPriceService struct {
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=901410718805
 
 type GoodsPriceQueryParams struct {
-	ProductSkuIds []int64 `json:"productSkuIds"` // 货品 sku ID
+	ProductSkuIds []int64 `json:"productSkuIds"` // 货品 SKU ID
 }
 
 func (m GoodsPriceQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.ProductSkuIds, validation.Required.Error("货品 sku ID 列表不能为空")),
+		validation.Field(&m.ProductSkuIds, validation.Required.Error("货品 SKU ID 列表不能为空")),
 	)
 }
 

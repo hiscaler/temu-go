@@ -75,6 +75,7 @@ type services struct {
 	Mall          mallService
 	Jit           jitService
 	SemiManaged   semiManagedService
+	Picture       pictureService
 }
 
 type Client struct {
@@ -469,6 +470,7 @@ func NewClient(cfg config.Config) *Client {
 			OrderLogisticsShipment: (semiOrderLogisticsShipmentService)(xService),
 			Logistics:              (semiLogisticsService)(xService),
 		},
+		Picture: (pictureService)(xService),
 	}
 
 	return client

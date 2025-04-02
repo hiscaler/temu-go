@@ -46,7 +46,7 @@ func (w *Webhook) Valid() bool {
 		}
 		sb.WriteString(k)
 		sb.WriteString("=")
-		sb.WriteString("v")
+		sb.WriteString(v[0])
 	}
 
 	mac := hmac.New(sha256.New, []byte(w.secretKey))
