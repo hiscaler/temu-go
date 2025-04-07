@@ -925,8 +925,8 @@ func (s goodsService) ImageUpload(ctx context.Context, request GoodsImageUploadR
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=898264107502
 
 type GoodsUpdateRequest struct {
-	ProductId           int `json:"productId"`  // 货品 ID
-	SupplierId          int `json:"supplierId"` // 供应商 ID
+	ProductId           int64 `json:"productId"`  // 货品 ID
+	SupplierId          int64 `json:"supplierId"` // 供应商 ID
 	ProductWhExtAttrReq struct {
 		ProductOrigin struct {
 			Region2Id        int64  `json:"region2Id,omitempty"` // 省份，当region1ShortName为CN时，省份必传。枚举值：https://partner.kuajingmaihuo.com/document?cataId=875196199516&docId=894069632221
@@ -957,6 +957,55 @@ func (s goodsService) Update(ctx context.Context, request GoodsUpdateRequest) (b
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.goods.update")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// 编辑货品敏感品属性
+
+type GoodsEditSensitiveAttrRequest struct {
+	ProductId  int64 `json:"productId"`
+	SkuReqList []struct {
+		ProductSkuId                int64 `json:"productSkuId"` // 货品 skuId
+		ProductSkuSensitiveLimitReq struct {
+			MaxBatteryCapacityHp int64 `json:"maxBatteryCapacityHp"` // 最大电池容量 (mWh)
+			MaxLiquidCapacityHp  int64 `json:"maxLiquidCapacityHp"`  // 最大液体容量 (μL)
+			MaxKnifeLengthHp     int64 `json:"maxKnifeLengthHp"`     //	最大刀具长度 (μm)
+			KnifeTipAngle        struct {
+				Degrees int `json:"degrees"` // 度[1, 360]
+			} `json:"knifeTipAngle"` // 刀尖角度
+		} `json:"productSkuSensitiveLimitReq"` // 货品 sku 敏感属性限制请求 (编辑场景、没有限制时, 传空对象)
+		ProductSkuSensitiveAttrReq struct {
+			IsSensitive   int   `json:"isSensitive"`   // 是否敏感属性，0：非敏感，1：敏感
+			SensitiveList []int `json:"sensitiveList"` // 敏感类型， PURE_ELECTRIC(110001, "纯电"), INTERNAL_ELECTRIC(120001, "内电"), MAGNETISM(130001, "磁性"), LIQUID(140001, "液体"), POWDER(150001, "粉末"), PASTE(160001, "膏体"), CUTTER(170001, "刀具")
+		} `json:"productSkuSensitiveAttrReq"` // 货品 sku 敏感属性请求
+	} `json:"skuReqList"` // sku 敏感品属性请求列表
+}
+
+func (m GoodsEditSensitiveAttrRequest) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空")),
+		// todo 更严格的数据验证
+	)
+}
+
+func (s goodsService) EditSensitiveAttr(ctx context.Context, request GoodsEditSensitiveAttrRequest) (bool, error) {
+	if err := request.validate(); err != nil {
+		return false, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result entity.GoodsImageUploadResult `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.goods.edit.sensitive.attr")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}
