@@ -965,6 +965,7 @@ func (s goodsService) Update(ctx context.Context, request GoodsUpdateRequest) (b
 }
 
 // 编辑货品敏感品属性
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=898265919235
 
 type GoodsEditSensitiveAttrRequest struct {
 	ProductId  int64 `json:"productId"`
@@ -1006,6 +1007,51 @@ func (s goodsService) EditSensitiveAttr(ctx context.Context, request GoodsEditSe
 		SetBody(request).
 		SetResult(&result).
 		Post("bg.goods.edit.sensitive.attr")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+// 编辑货品属性
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=900361168169
+
+type GoodsEditPropertyRequest struct {
+	ProductId         int64 `json:"productId"`
+	ProductProperties []struct {
+		Vid              int64  `json:"vid"`              // 基础属性值id，没有的情况传0
+		ValueUnit        string `json:"valueUnit"`        // 属性值单位，没有的情况传空字符串
+		Pid              int64  `json:"pid"`              // 	属性id
+		TemplatePid      int64  `json:"templatePid"`      // 	模板属性id
+		NumberInputValue string `json:"numberInputValue"` // 数值录入
+		PropValue        string `json:"propValue"`        // 基础属性值
+		PropName         string `json:"propName"`         // 引用属性名
+		RefPid           int64  `json:"refPid"`           // 引用属性id
+	} `json:"productProperties"` // 货品属性
+}
+
+func (m GoodsEditPropertyRequest) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空")),
+		// todo 更严格的数据验证
+	)
+}
+
+func (s goodsService) EditProperty(ctx context.Context, request GoodsEditPropertyRequest) (bool, error) {
+	if err := request.validate(); err != nil {
+		return false, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result entity.GoodsImageUploadResult `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.goods.edit.property")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}
