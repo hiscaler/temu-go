@@ -425,9 +425,10 @@ type GoodsCreateProductSkuProductSkuMultiPack struct {
 	ProductSkuNetContentReq struct {
 		NetContentUnitCode int `json:"netContentUnitCode"` // 净含量单位，1：液体盎司，2：毫升，3：加仑，4：升，5：克，6：千克，7：常衡盎司，8：磅
 		NetContentNumber   int `json:"netContentNumber"`   // 净含量数值
-	} `json:"productSkuNetContentReq"`               // 净含量请求，传空对象表示空，指定类目灰度管控
-	SkuClassification int `json:"skuClassification"` // sku分类，1：单品，2：组合装，3：混合套装
-	PieceUnitCode     int `json:"pieceUnitCode"`     // 单件单位，1：件，2：双，3：包
+	} `json:"productSkuNetContentReq"`                 // 净含量请求，传空对象表示空，指定类目灰度管控
+	SkuClassification  int `json:"skuClassification"`  // sku分类，1：单品，2：组合装，3：混合套装
+	PieceUnitCode      int `json:"pieceUnitCode"`      // 单件单位，1：件，2：双，3：包
+	IndividuallyPacked int `json:"individuallyPacked"` // 是否独立包装，当 sku 分类为同款多件装或混合套装时，必填 1:是，0:否
 }
 
 // GoodsCreateProductSkuSuggestedPrice 货品sku建议价格
@@ -918,4 +919,47 @@ func (s goodsService) ImageUpload(ctx context.Context, request GoodsImageUploadR
 	}
 
 	return result.Result, nil
+}
+
+// 货品编辑
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=898264107502
+
+type GoodsUpdateRequest struct {
+	ProductId           int `json:"productId"`  // 货品 ID
+	SupplierId          int `json:"supplierId"` // 供应商 ID
+	ProductWhExtAttrReq struct {
+		ProductOrigin struct {
+			Region2Id        int64  `json:"region2Id,omitempty"` // 省份，当region1ShortName为CN时，省份必传。枚举值：https://partner.kuajingmaihuo.com/document?cataId=875196199516&docId=894069632221
+			Region1ShortName string `json:"region1ShortName"`    // 一级区域简称 (二字简码)
+		} `json:"productOrigin"` // 货品产地
+	} `json:"productWhExtAttrReq"` // 货品仓配供应链侧扩展属性请求
+}
+
+func (m GoodsUpdateRequest) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空")),
+		validation.Field(&m.SupplierId, validation.Required.Error("供应商 ID 不能为空")),
+		validation.Field(&m.ProductWhExtAttrReq.ProductOrigin.Region1ShortName, validation.Required.Error("一级区域简称不能为空")),
+	)
+}
+
+func (s goodsService) Update(ctx context.Context, request GoodsUpdateRequest) (bool, error) {
+	if err := request.validate(); err != nil {
+		return false, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result entity.GoodsImageUploadResult `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.goods.update")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
