@@ -143,18 +143,18 @@ func (s goodsService) One(ctx context.Context, productSkcId int64) (item entity.
 
 // Detail 货品详情查询（bg.goods.detail.get）
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#VSGe8J
-func (s goodsService) Detail(ctx context.Context, productId int64) (item entity.GoodsDetail, err error) {
-	var result = struct {
+func (s goodsService) Detail(ctx context.Context, productId int64) (entity.GoodsDetail, error) {
+	var result struct {
 		normal.Response
 		Result entity.GoodsDetail `json:"result"`
-	}{}
+	}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetBody(map[string]int64{"productId": productId}).
 		SetResult(&result).
 		Post("bg.goods.detail.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return entity.GoodsDetail{}, err
 	}
 
 	return result.Result, nil

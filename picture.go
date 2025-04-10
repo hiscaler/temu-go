@@ -22,30 +22,29 @@ func (m PictureCompressionRequest) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Urls,
 			validation.Required.Error("待压缩的图片链接地址不能为空"),
-			validation.Each(is.URL),
+			validation.Each(is.URL.Error("图片链接格式不正确")),
 		),
 	)
 }
 
-func (s pictureService) Compression(ctx context.Context, params PictureCompressionRequest) (items []entity.PictureCompressionResult, err error) {
-	if err = params.validate(); err != nil {
-		err = invalidInput(err)
-		return
+func (s pictureService) Compression(ctx context.Context, params PictureCompressionRequest) ([]entity.PictureCompressionResult, error) {
+	if err := params.validate(); err != nil {
+		return nil, invalidInput(err)
 	}
 
-	var result = struct {
+	var result struct {
 		normal.Response
 		Result struct {
 			Results []entity.PictureCompressionResult `json:"results"`
 		} `json:"result"`
-	}{}
+	}
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.picturecompression.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return nil, err
 	}
 
 	return result.Result.Results, nil
