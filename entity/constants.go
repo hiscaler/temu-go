@@ -216,6 +216,8 @@ const (
 	UnitedKingdomSiteId = 102 // 英国站
 	AustraliaSiteId     = 103 // 澳大利亚站
 	SaudiArabiaSiteId   = 120 // 沙特站
+	BelgiumSiteId       = 142 // 比利时站
+	VietNamSiteId       = 187 // 越南站
 )
 
 var AmericanSiteIds = []int{100, 101, 103, 104, 118, 110, 187}                                                                                                               // 美区站点 ID
