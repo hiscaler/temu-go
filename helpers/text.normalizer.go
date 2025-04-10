@@ -10,7 +10,7 @@ var (
 	re1, re2, re3 *regexp.Regexp
 )
 
-// TextNormalizer 商品标题文本处理
+// TextNormalizer 文本处理
 type TextNormalizer struct {
 	text            string // 待处理的文本
 	trimSpace       bool   // 删除文本两端多余的空格
