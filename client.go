@@ -510,7 +510,7 @@ func parseResponseTotal(currentPage, pageSize, total int) (n, totalPages int, is
 		currentPage = 1
 	}
 
-	totalPages = (total / pageSize) + 1
+	totalPages = (total + pageSize - 1) / pageSize
 	return total, totalPages, currentPage >= totalPages
 }
 
