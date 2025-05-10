@@ -177,9 +177,10 @@ const (
 
 // https://seller.kuajingmaihuo.com/sop/view/231998342274104483#6mTvhA
 const (
-	ChinaRegion         = "CN" // 中国区
-	AmericanRegion      = "US" // 美区
-	EuropeanUnionRegion = "EU" // 欧盟区
+	ChinaRegion         = "CN"     // 中国区
+	AmericanRegion      = "US"     // 美区
+	EuropeanUnionRegion = "EU"     // 欧盟区
+	GlobalRegion        = "GLOBAL" // 全球（除欧区、美国）
 )
 
 var RegionIds = []int{
