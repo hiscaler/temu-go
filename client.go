@@ -89,7 +89,7 @@ type Client struct {
 }
 
 // url 获取方法对应的 URL
-func url(typ, region, env string, proxies config.RegionEnvUrls) string {
+func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 	// key 为 type 值，value 为对应的区域，为空表示根据 region 确定 baseUrl，
 	// 不为空的情况下表示无论传入的 region 为何值，均取 value 作为 region 值去获取 baseUrl
 	//
@@ -316,7 +316,7 @@ func NewClient(cfg config.Config) *Client {
 			values["type"] = typ
 			request.URL = ""
 			request.SetBody(generateSign(values, cfg.AppSecret))
-			c.SetBaseURL(url(typ, client.Region, client.Env, cfg.Proxies))
+			c.SetBaseURL(baseUrl(typ, client.Region, client.Env, cfg.Proxies))
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) error {

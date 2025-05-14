@@ -9,6 +9,7 @@ require (
 	github.com/goccy/go-json v0.10.5
 	github.com/hiscaler/gox v0.0.0-20250228092509-f9ac5d6ae7e3
 	github.com/nicksnyder/go-i18n/v2 v2.6.0
+	github.com/spf13/cast v1.8.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/text v0.25.0
 	gopkg.in/guregu/null.v4 v4.0.0
