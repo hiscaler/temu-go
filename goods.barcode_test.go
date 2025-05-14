@@ -1,8 +1,9 @@
 package temu
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var deliveryOrderSnList = []string{"FH2411282498847"}
@@ -20,10 +21,20 @@ func Test_goodsBarcodeService_BoxMark(t *testing.T) {
 
 func Test_goodsBarcodeService_NormalGoods(t *testing.T) {
 	params := NormalGoodsBarcodeQueryParams{
-		ProductSkcIdList: []int64{8972250969},
+		ProductSkcIdList: []int64{92543270006},
 	}
 	_, err := temuClient.Services.Goods.Barcode.NormalGoods(ctx, params)
 	assert.Equalf(t, nil, err, "Services.Goods.Barcode.NormalGoods(ctx, %#v)", params)
+}
+
+func Test_goodsBarcodeService_NormalGoodsPrintUrl(t *testing.T) {
+	params := NormalGoodsBarcodeQueryParams{
+		ProductSkcIdList: []int64{92543270006},
+	}
+
+	url, err := temuClient.Services.Goods.Barcode.NormalGoodsPrintUrl(ctx, params)
+	assert.Equalf(t, nil, err, "Services.Goods.Barcode.NormalGoodsPrintUrl(ctx, %#v)", params)
+	assert.Contains(t, url, "https://openapi.kuajingmaihuo.com/tool/print?dataKey=")
 }
 
 func Test_goodsBarcodeService_CustomGoods(t *testing.T) {
