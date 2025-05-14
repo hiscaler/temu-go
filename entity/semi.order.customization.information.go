@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/goccy/go-json"
 	"github.com/hiscaler/gox/jsonx"
+	"github.com/hiscaler/gox/nullx"
 	"github.com/spf13/cast"
 	"gopkg.in/guregu/null.v4"
 	"slices"
@@ -117,12 +118,13 @@ type CustomizedSurfaces struct {
 type CustomizedData string
 
 type ParseResult struct {
-	Region     int
-	Type       string
-	Text       null.String
-	Image      null.String
-	Error      null.String
-	ExpireTime int64 `json:"expire_time"` // 过期时间
+	Region       int         `json:"region"`       // 区块
+	PreviewImage null.String `json:"previewImage"` // 预览图
+	Type         string      `json:"type"`         // 类型
+	Text         null.String `json:"text"`         // 定制文本
+	Image        null.String `json:"image"`        // 定制图片
+	Error        null.String `json:"error"`        // 错误信息
+	ExpireTime   int64       `json:"expireTime"`   // 过期时间
 }
 
 func (cd CustomizedData) Parse() (prs []ParseResult, err error) {
@@ -169,8 +171,9 @@ func (cd CustomizedData) Parse() (prs []ParseResult, err error) {
 						continue
 					}
 					prs = append(prs, ParseResult{
-						Region: textElement.RIndex,
-						Text:   null.NewString(textElement.Text, true),
+						Region:       textElement.RIndex,
+						PreviewImage: nullx.StringFrom(surface.MaskImage.ImageUrl),
+						Text:         null.NewString(textElement.Text, true),
 					})
 
 				case image:
@@ -180,8 +183,9 @@ func (cd CustomizedData) Parse() (prs []ParseResult, err error) {
 						continue
 					}
 					prs = append(prs, ParseResult{
-						Region: imageElement.RIndex,
-						Image:  null.NewString(imageElement.ImageUrl, true),
+						Region:       imageElement.RIndex,
+						PreviewImage: nullx.StringFrom(surface.MaskImage.ImageUrl),
+						Image:        null.NewString(imageElement.ImageUrl, true),
 					})
 
 				default:
