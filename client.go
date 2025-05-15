@@ -89,7 +89,7 @@ type Client struct {
 }
 
 // url 获取方法对应的 URL
-func url(typ, region, env string, proxies config.RegionEnvUrls) string {
+func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 	// key 为 type 值，value 为对应的区域，为空表示根据 region 确定 baseUrl，
 	// 不为空的情况下表示无论传入的 region 为何值，均取 value 作为 region 值去获取 baseUrl
 	//
@@ -113,6 +113,7 @@ func url(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.logistics.companies.get":                "",
 		"bg.order.shippinginfo.get":                 "",
 		"bg.logistics.shipment.confirm":             entity.AmericanRegion,
+		"bg.order.customization.get":                "",
 	}
 	if v, ok := semiTypes[typ]; ok {
 		if v != "" {
@@ -133,7 +134,11 @@ func url(typ, region, env string, proxies config.RegionEnvUrls) string {
 		},
 		entity.EuropeanUnionRegion: {
 			Prod: "https://openapi-b-eu.temu.com/openapi/router",
-			Test: "http://openapi-b-eu.temudemo.com/openapi/router",
+			Test: "http://openapi-b-eu.temudemo.com/openapi/router", // Exists?
+		},
+		entity.GlobalRegion: {
+			Prod: "https://openapi-b-global.temu.com/openapi/router",
+			Test: "https://openapi-b-global.temudemo.com/openapi/router", // Exists?
 		},
 	}
 	// 如果有设置请求代理的话，则使用代理的地址替换 Temu 平台地址
@@ -228,7 +233,7 @@ func (r simpleResponse) retry() bool {
 // 默认中国区
 func parseRegion(region string) string {
 	region = strings.ToUpper(region)
-	if !slices.Contains([]string{entity.ChinaRegion, entity.AmericanRegion, entity.EuropeanUnionRegion}, region) {
+	if !slices.Contains([]string{entity.ChinaRegion, entity.AmericanRegion, entity.EuropeanUnionRegion, entity.GlobalRegion}, region) {
 		region = entity.ChinaRegion
 	}
 	return region
@@ -311,7 +316,7 @@ func NewClient(cfg config.Config) *Client {
 			values["type"] = typ
 			request.URL = ""
 			request.SetBody(generateSign(values, cfg.AppSecret))
-			c.SetBaseURL(url(typ, client.Region, client.Env, cfg.Proxies))
+			c.SetBaseURL(baseUrl(typ, client.Region, client.Env, cfg.Proxies))
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
@@ -510,7 +515,7 @@ func parseResponseTotal(currentPage, pageSize, total int) (n, totalPages int, is
 		currentPage = 1
 	}
 
-	totalPages = (total / pageSize) + 1
+	totalPages = (total + pageSize - 1) / pageSize
 	return total, totalPages, currentPage >= totalPages
 }
 

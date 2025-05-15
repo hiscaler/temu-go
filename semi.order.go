@@ -2,13 +2,26 @@ package temu
 
 import (
 	"context"
+	"crypto/md5"
+	"crypto/tls"
 	"errors"
+	"fmt"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/gox/filex"
+	"github.com/hiscaler/gox/randx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
+	"net"
+	"net/http"
+	"net/url"
+	"path"
+	"path/filepath"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -188,6 +201,7 @@ func (s semiOrderService) ShippingInformation(ctx context.Context, parentOrderNu
 
 // CustomizationInformation 半托订单定制信息查询
 // https://partner.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=e8f86a2f5241441e9b095bf309d04dce
+// orderNumbers 为子单号
 func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNumbers ...string) ([]entity.SemiOrderCustomizationInformation, error) {
 	var result = struct {
 		normal.Response
@@ -204,5 +218,111 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 		return nil, err
 	}
 
-	return result.Result, nil
+	results := result.Result
+	if len(results) == 0 {
+		return results, nil
+	}
+
+	imageParseResults := make(map[int]map[int]entity.ParseResult)
+	for i, res := range results {
+		prs, e := res.CustomizedData.Parse()
+		if e == nil {
+			results[i].ParseResult = make([]entity.ParseResult, len(prs))
+			for j, pr := range prs {
+				results[i].ParseResult[j] = pr
+				if pr.Type == "image" {
+					imageParseResults[i][j] = pr
+				}
+			}
+		}
+	}
+	if len(imageParseResults) == 0 {
+		return results, nil
+	}
+
+	keys := []string{
+		"toa-access-token",
+		"toa-app-key",
+		"toa-random",
+		"toa-timestamp",
+	}
+	expireTime := time.Now().Add(10 * time.Minute).Unix() // 10 分钟后过期
+	dir := "./static_files/temu/semi/images"
+	sb := strings.Builder{}
+	headers := map[string]string{
+		"toa-app-key":      s.config.AppKey,
+		"toa-access-token": s.config.AccessToken,
+	}
+	httpClient := resty.New().
+		SetDebug(s.debug).
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+			"User-Agent":   UserAgent,
+		}).
+		SetAllowGetMethodPayload(true).
+		SetTimeout(s.config.Timeout * time.Second).
+		SetTransport(&http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: !s.config.VerifySSL},
+			DialContext: (&net.Dialer{
+				Timeout: s.config.Timeout * time.Second,
+			}).DialContext,
+		})
+	if s.debug {
+		httpClient.EnableTrace()
+	}
+	for i, regionPrs := range imageParseResults {
+		for j, pr := range regionPrs {
+			results[i].ParseResult[j].ExpireTime = expireTime
+			if !pr.Image.Valid {
+				results[i].ParseResult[j].Error = null.StringFrom("URL is empty")
+				continue
+			}
+
+			var parsedURL *url.URL
+			parsedURL, err = url.Parse(pr.Image.String)
+			if err != nil {
+				results[i].ParseResult[j].Error = null.StringFrom(err.Error())
+				continue
+			}
+			filename := strings.ToLower(filepath.Base(parsedURL.Path))
+			if filename == "" {
+				results[i].ParseResult[j].Error = null.StringFrom("无法获取文件名")
+			}
+			savePath := filepath.Join(dir, filename)
+			if !filex.Exists(savePath) {
+				results[i].ParseResult[j].Image = null.StringFrom(urlJoin(s.config.StaticFileServer, savePath))
+				continue
+			}
+
+			headers["toa-random"] = randx.Letter(32, true)
+			headers["toa-timestamp"] = strconv.FormatInt(time.Now().Unix(), 10)
+			sb.Reset()
+			sb.WriteString(s.config.AppSecret)
+			for _, key := range keys {
+				sb.WriteString(key)
+				sb.WriteString(headers[key])
+			}
+			sb.WriteString(s.config.AppSecret)
+			headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
+			resp, err = httpClient.
+				SetOutputDirectory(dir).
+				R().
+				SetHeaders(headers).
+				SetOutput(filename).
+				Get(pr.Image.String)
+			if err != nil {
+				results[i].ParseResult[j].Error = null.StringFrom(err.Error())
+			} else {
+				if resp.IsError() {
+					results[i].ParseResult[j].Error = null.StringFrom(resp.String())
+				} else if resp.IsSuccess() {
+					results[i].ParseResult[j].Image = null.StringFrom(urlJoin(s.config.StaticFileServer, path.Join(dir, filename)))
+				} else {
+					results[i].ParseResult[j].Error = null.StringFrom(resp.String())
+				}
+			}
+		}
+	}
+
+	return results, nil
 }
