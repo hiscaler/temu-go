@@ -61,10 +61,10 @@ func (s goodsBarcodeService) NormalGoods(ctx context.Context, params NormalGoods
 }
 
 // NormalGoodsPrintUrl 商品条码打印地址
-func (s goodsBarcodeService) NormalGoodsPrintUrl(ctx context.Context, params NormalGoodsBarcodeQueryParams) (printUrl string, err error) {
+func (s goodsBarcodeService) NormalGoodsPrintUrl(ctx context.Context, params NormalGoodsBarcodeQueryParams) (string, error) {
 	params.TidyPager()
 	params.ReturnDataKey = null.BoolFrom(true)
-	if err = params.validate(); err != nil {
+	if err := params.validate(); err != nil {
 		return "", invalidInput(err)
 	}
 
@@ -78,11 +78,10 @@ func (s goodsBarcodeService) NormalGoodsPrintUrl(ctx context.Context, params Nor
 		SetResult(&result).
 		Post("bg.goods.labelv2.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return "", err
 	}
-	printUrl = fmt.Sprintf("https://openapi.kuajingmaihuo.com/tool/print?dataKey=%s", result.Result)
 
-	return printUrl, nil
+	return fmt.Sprintf("https://openapi.kuajingmaihuo.com/tool/print?dataKey=%s", result.Result), nil
 }
 
 // 定制商品条码查询（bg.goods.custom.label.get）
@@ -161,12 +160,12 @@ func (m BoxMarkBarcodeQueryParams) validate() error {
 }
 
 // BoxMarkPrintUrl 箱唛打印地址
-func (s goodsBarcodeService) BoxMarkPrintUrl(ctx context.Context, shipOrderNumbers ...string) (dataKey string, err error) {
+func (s goodsBarcodeService) BoxMarkPrintUrl(ctx context.Context, shipOrderNumbers ...string) (string, error) {
 	params := BoxMarkBarcodeQueryParams{
 		ReturnDataKey:       null.BoolFrom(true),
 		DeliveryOrderSnList: shipOrderNumbers,
 	}
-	if err = params.validate(); err != nil {
+	if err := params.validate(); err != nil {
 		return "", invalidInput(err)
 	}
 
@@ -180,7 +179,7 @@ func (s goodsBarcodeService) BoxMarkPrintUrl(ctx context.Context, shipOrderNumbe
 		SetResult(&result).
 		Post("bg.logistics.boxmarkinfo.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return
+		return "", err
 	}
 
 	return fmt.Sprintf("https://openapi.kuajingmaihuo.com/tool/print?dataKey=%s", result.Result), nil
