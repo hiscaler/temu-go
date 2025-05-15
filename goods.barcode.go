@@ -3,13 +3,14 @@ package temu
 import (
 	"context"
 	"fmt"
+	"time"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
-	"time"
 )
 
 // 商品条码服务
@@ -17,11 +18,12 @@ type goodsBarcodeService service
 
 type NormalGoodsBarcodeQueryParams struct {
 	normal.ParameterWithPager
-	ProductSkuIdList []int64 `json:"productSkuIdList,omitempty"` // 货品 sku id 列表
-	SkcExtCode       string  `json:"skcExtCode,omitempty"`       // skc 货号
-	ProductSkcIdList []int64 `json:"productSkcIdList,omitempty"` // 货品 skc id 列表
-	SkuExtCode       string  `json:"skuExtCode,omitempty"`       // sku 货号
-	LabelCode        int     `json:"labelCode,omitempty"`        // 标签条码
+	ProductSkuIdList []int64   `json:"productSkuIdList,omitempty"` // 货品 sku id 列表
+	SkcExtCode       string    `json:"skcExtCode,omitempty"`       // skc 货号
+	ProductSkcIdList []int64   `json:"productSkcIdList,omitempty"` // 货品 skc id 列表
+	SkuExtCode       string    `json:"skuExtCode,omitempty"`       // sku 货号
+	LabelCode        int       `json:"labelCode,omitempty"`        // 标签条码
+	ReturnDataKey    null.Bool `json:"return_data_key"`            // 是否以打印页面url返回，如果入参是，则不返回参数信息，返回dataKey，通过拼接https://openapi.kuajingmaihuo.com/tool/print?dataKey={返回的dataKey}，访问组装的url即可打印，打印的条码按照入参参数所得结果进行打印
 }
 
 func (m NormalGoodsBarcodeQueryParams) validate() error {
@@ -32,6 +34,7 @@ func (m NormalGoodsBarcodeQueryParams) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#5LRokG
 func (s goodsBarcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
 	params.TidyPager()
+	params.ReturnDataKey = null.BoolFrom(false)
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)
 	}
@@ -55,6 +58,31 @@ func (s goodsBarcodeService) NormalGoods(ctx context.Context, params NormalGoods
 	}
 
 	return result.Result.LabelCodePageResult.Data, nil
+}
+
+// NormalGoodsPrintUrl 商品条码打印地址
+func (s goodsBarcodeService) NormalGoodsPrintUrl(ctx context.Context, params NormalGoodsBarcodeQueryParams) (printUrl string, err error) {
+	params.TidyPager()
+	params.ReturnDataKey = null.BoolFrom(true)
+	if err = params.validate(); err != nil {
+		return "", invalidInput(err)
+	}
+
+	result := struct {
+		normal.Response
+		Result string `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.goods.labelv2.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
+	}
+	printUrl = fmt.Sprintf("https://openapi.kuajingmaihuo.com/tool/print?dataKey=%s", result.Result)
+
+	return printUrl, nil
 }
 
 // 定制商品条码查询（bg.goods.custom.label.get）
