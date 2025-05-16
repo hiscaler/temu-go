@@ -88,14 +88,15 @@ func (s goodsBarcodeService) NormalGoodsPrintUrl(ctx context.Context, params Nor
 
 type CustomGoodsBarcodeQueryParams struct {
 	NormalGoodsBarcodeQueryParams
-	ProductSkuIdList         []int64 `json:"productSkuIdList,omitempty"`         // 货品 SKU ID 列表
-	SkcExtCode               string  `json:"skcExtCode,omitempty"`               // SKC 货号
-	ProductSkcIdList         []int64 `json:"productSkcIdList,omitempty"`         // 货品 SKC ID 列表
-	SkuExtCode               string  `json:"skuExtCode,omitempty"`               // SKU 货号
-	LabelCode                int64   `json:"labelCode,omitempty"`                // 标签条码
-	PersonalProductSkuIdList []int64 `json:"personalProductSkuIdList,omitempty"` // 定制品 SKU ID
-	CreateTimeStart          string  `json:"createTimeStart,omitempty"`          // 定制品创建时间，支持毫秒时间戳
-	CreateTimeEnd            string  `json:"createTimeEnd,omitempty"`            // 定制品创建时间，支持毫秒时间戳
+	ProductSkuIdList         []int64   `json:"productSkuIdList,omitempty"`         // 货品 SKU ID 列表
+	SkcExtCode               string    `json:"skcExtCode,omitempty"`               // SKC 货号
+	ProductSkcIdList         []int64   `json:"productSkcIdList,omitempty"`         // 货品 SKC ID 列表
+	SkuExtCode               string    `json:"skuExtCode,omitempty"`               // SKU 货号
+	LabelCode                int64     `json:"labelCode,omitempty"`                // 标签条码
+	PersonalProductSkuIdList []int64   `json:"personalProductSkuIdList,omitempty"` // 定制品 SKU ID
+	CreateTimeStart          string    `json:"createTimeStart,omitempty"`          // 定制品创建时间，支持毫秒时间戳
+	CreateTimeEnd            string    `json:"createTimeEnd,omitempty"`            // 定制品创建时间，支持毫秒时间戳
+	ReturnDataKey            null.Bool `json:"return_data_key"`                    // 是否以打印页面url返回，如果入参是，则不返回参数信息，返回dataKey，通过拼接https://openapi.kuajingmaihuo.com/tool/print?dataKey={返回的dataKey}，访问组装的url即可打印，打印的条码按照入参参数所得结果进行打印
 }
 
 func (m CustomGoodsBarcodeQueryParams) validate() error {
@@ -110,6 +111,7 @@ func (m CustomGoodsBarcodeQueryParams) validate() error {
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Hc5wmR
 func (s goodsBarcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
 	params.TidyPager()
+	params.ReturnDataKey = null.BoolFrom(false)
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)
 	}
@@ -140,6 +142,29 @@ func (s goodsBarcodeService) CustomGoods(ctx context.Context, params CustomGoods
 	}
 
 	return result.Result.PersonalLabelCodePageResult.Data, nil
+}
+
+func (s goodsBarcodeService) CustomGoodsPrintUrl(ctx context.Context, params CustomGoodsBarcodeQueryParams) (string, error) {
+	params.TidyPager()
+	params.ReturnDataKey = null.BoolFrom(true)
+	if err := params.validate(); err != nil {
+		return "", invalidInput(err)
+	}
+
+	result := struct {
+		normal.Response
+		Result string `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.goods.custom.label.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("https://openapi.kuajingmaihuo.com/tool/print?dataKey=%s", result.Result), nil
 }
 
 // 查询箱唛（bg.logistics.boxmarkinfo.get）
