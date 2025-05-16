@@ -3,7 +3,6 @@ package entity
 import (
 	"errors"
 	"github.com/goccy/go-json"
-	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/gox/nullx"
 	"github.com/spf13/cast"
 	"gopkg.in/guregu/null.v4"
@@ -12,28 +11,29 @@ import (
 
 // SemiOrderCustomizationInformationPreview 半托订单定制信息预览
 type SemiOrderCustomizationInformationPreview struct {
-	CustomizedAreaId string `json:"customizedAreaId"` // 定制区域 ID. This field will only be returned when templateType=3, previewType=3 or 4
-	ImageUrl         string `json:"imageUrl"`         // Image URL
-	CustomizedText   string `json:"customizedText"`   // 定制文本
 	// type of preview item, enum values:
 	// - 1: overall preview image(If the product does not have a customized area configured, it represents the effect image uploaded by the merchant)
 	// - 3: user uploaded image
 	// - 4: customized text
-	PreviewType int `json:"previewType"` // 预览类型
+	PreviewType        int         `json:"previewType"`        // 预览类型
+	CustomizedAreaId   null.String `json:"customizedAreaId"`   // 定制区域 ID. This field will only be returned when templateType=3, previewType=3 or 4
+	ImageUrl           null.String `json:"imageUrl"`           // Image URL
+	ImageDownloadUrl   null.String `json:"imageDownloadUrl"`   // 图片下载地址
+	ImageDownloadError null.String `json:"imageDownloadError"` // 图片下载错误
+	CustomizedText     null.String `json:"customizedText"`     // 定制文本
 }
 
 // SemiOrderCustomizationInformation 半托订单定制信息
 type SemiOrderCustomizationInformation struct {
+	OrderSn string `json:"orderSn"` // OrderSn corresponding to customized information
 	// Customization template type when user created customized information, return null when there is no template for the product, enum values:
 	// - 1: only image
 	// - 2: only text
 	// - 3: text and image
-	TemplateType   int                                        `json:"templateType"`
-	PreviewList    []SemiOrderCustomizationInformationPreview `json:"preview_list"`   // Graphic customization preview information, this field will only be returned when customizedType=2
+	TemplateType   null.Int                                   `json:"templateType"`
+	PreviewList    []SemiOrderCustomizationInformationPreview `json:"previewList"`    // Graphic customization preview information, this field will only be returned when customizedType=2
 	CustomizedData CustomizedData                             `json:"customizedData"` // Graphic customization content, in json format, this field will only be returned when customizedType=2
-	ParseResult    []ParseResult                              `json:"parseResult"`    // 解析结果
-	OrderSn        string                                     `json:"orderSn"`        // OrderSn corresponding to customized information
-	CustomizedText string                                     `json:"customizedText"` // Customization text, this field will only be returned when customizedType=1
+	CustomizedText null.String                                `json:"customizedText"` // Customization text, this field will only be returned when customizedType=1
 	TemplateId     int                                        `json:"templateId"`     // Customization template ID when user created customized information, return null when there is no template for the product
 	// Customized type, enum values:
 	// - 1: pure text customization, no customized templates
@@ -83,10 +83,10 @@ type CustomizedSurfaceTextElement struct {
 	RIndex            int    `json:"rIndex"`
 	Color             Color  `json:"color"`
 	Text              string `json:"text"`
-	userPlacementData struct {
+	UserPlacementData struct {
 		FontSize float64  `json:"fontSize"`
 		Position Position `json:"position"`
-	}
+	} `json:"userPlacementData"`
 }
 
 type CustomizedSurfaceTextRegion struct {
@@ -131,14 +131,14 @@ func (cd CustomizedData) Parse() (prs []ParseResult, err error) {
 	if cd == "" {
 		return prs, errors.New("customizedData is empty")
 	}
-	var surfaces []CustomizedSurface
-	err = jsonx.Convert([]byte(cd), &surfaces)
-	if err != nil {
+
+	var css CustomizedSurfaces
+	if err = json.Unmarshal([]byte(cd), &css); err != nil {
 		return
 	}
 
 	prs = make([]ParseResult, 0)
-	for _, surface := range surfaces {
+	for _, surface := range css.Surfaces {
 		for _, region := range surface.Regions {
 			for _, element := range region.Elements {
 				var t map[string]any
@@ -173,6 +173,7 @@ func (cd CustomizedData) Parse() (prs []ParseResult, err error) {
 					prs = append(prs, ParseResult{
 						Region:       textElement.RIndex,
 						PreviewImage: nullx.StringFrom(surface.MaskImage.ImageUrl),
+						Type:         "text",
 						Text:         null.NewString(textElement.Text, true),
 					})
 
@@ -185,6 +186,7 @@ func (cd CustomizedData) Parse() (prs []ParseResult, err error) {
 					prs = append(prs, ParseResult{
 						Region:       imageElement.RIndex,
 						PreviewImage: nullx.StringFrom(surface.MaskImage.ImageUrl),
+						Type:         "image",
 						Image:        null.NewString(imageElement.ImageUrl, true),
 					})
 
@@ -195,5 +197,5 @@ func (cd CustomizedData) Parse() (prs []ParseResult, err error) {
 		}
 	}
 
-	return nil, nil
+	return prs, nil
 }

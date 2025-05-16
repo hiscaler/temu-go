@@ -223,20 +223,18 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 		return results, nil
 	}
 
-	imageParseResults := make(map[int]map[int]entity.ParseResult)
+	imagePreviews := make(map[int]map[int]entity.SemiOrderCustomizationInformationPreview)
 	for i, res := range results {
-		prs, e := res.CustomizedData.Parse()
-		if e == nil {
-			results[i].ParseResult = make([]entity.ParseResult, len(prs))
-			for j, pr := range prs {
-				results[i].ParseResult[j] = pr
-				if pr.Type == "image" {
-					imageParseResults[i][j] = pr
+		for j, v := range res.PreviewList {
+			if v.PreviewType == 1 || v.PreviewType == 3 {
+				if _, ok := imagePreviews[i]; !ok {
+					imagePreviews[i] = make(map[int]entity.SemiOrderCustomizationInformationPreview)
 				}
+				imagePreviews[i][j] = v
 			}
 		}
 	}
-	if len(imageParseResults) == 0 {
+	if len(imagePreviews) == 0 {
 		return results, nil
 	}
 
@@ -246,7 +244,6 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 		"toa-random",
 		"toa-timestamp",
 	}
-	expireTime := time.Now().Add(10 * time.Minute).Unix() // 10 分钟后过期
 	dir := "./static_files/temu/semi/images"
 	sb := strings.Builder{}
 	headers := map[string]string{
@@ -270,27 +267,25 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 	if s.debug {
 		httpClient.EnableTrace()
 	}
-	for i, regionPrs := range imageParseResults {
-		for j, pr := range regionPrs {
-			results[i].ParseResult[j].ExpireTime = expireTime
-			if !pr.Image.Valid {
-				results[i].ParseResult[j].Error = null.StringFrom("URL is empty")
+	for i, res := range imagePreviews {
+		for j, pl := range res {
+			if !pl.ImageUrl.Valid {
 				continue
 			}
 
 			var parsedURL *url.URL
-			parsedURL, err = url.Parse(pr.Image.String)
+			parsedURL, err = url.Parse(pl.ImageUrl.String)
 			if err != nil {
-				results[i].ParseResult[j].Error = null.StringFrom(err.Error())
+				results[i].PreviewList[j].ImageDownloadError = null.StringFrom(err.Error())
 				continue
 			}
 			filename := strings.ToLower(filepath.Base(parsedURL.Path))
 			if filename == "" {
-				results[i].ParseResult[j].Error = null.StringFrom("无法获取文件名")
+				results[i].PreviewList[j].ImageDownloadError = null.StringFrom("无法获取文件名")
 			}
 			savePath := filepath.Join(dir, filename)
-			if !filex.Exists(savePath) {
-				results[i].ParseResult[j].Image = null.StringFrom(urlJoin(s.config.StaticFileServer, savePath))
+			if filex.Exists(savePath) {
+				results[i].PreviewList[j].ImageDownloadUrl = null.StringFrom(urlJoin(s.config.StaticFileServer, savePath))
 				continue
 			}
 
@@ -309,16 +304,16 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 				R().
 				SetHeaders(headers).
 				SetOutput(filename).
-				Get(pr.Image.String)
+				Get(pl.ImageUrl.String)
 			if err != nil {
-				results[i].ParseResult[j].Error = null.StringFrom(err.Error())
+				results[i].PreviewList[j].ImageDownloadError = null.StringFrom(err.Error())
 			} else {
 				if resp.IsError() {
-					results[i].ParseResult[j].Error = null.StringFrom(resp.String())
+					results[i].PreviewList[j].ImageDownloadError = null.StringFrom(resp.String())
 				} else if resp.IsSuccess() {
-					results[i].ParseResult[j].Image = null.StringFrom(urlJoin(s.config.StaticFileServer, path.Join(dir, filename)))
+					results[i].PreviewList[j].ImageDownloadUrl = null.StringFrom(urlJoin(s.config.StaticFileServer, path.Join(dir, filename)))
 				} else {
-					results[i].ParseResult[j].Error = null.StringFrom(resp.String())
+					results[i].PreviewList[j].ImageDownloadError = null.StringFrom(resp.String())
 				}
 			}
 		}
