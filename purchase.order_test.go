@@ -1,10 +1,11 @@
 package temu
 
 import (
+	"testing"
+
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/guregu/null.v4"
-	"testing"
 )
 
 func Test_purchaseOrderService_Query(t *testing.T) {
@@ -55,4 +56,18 @@ func Test_purchaseOrderService_One(t *testing.T) {
 	d, err := temuClient.Services.PurchaseOrder.One(ctx, purchaseOrderSn)
 	assert.Equalf(t, nil, err, "Services.PurchaseOrder.One(ctx, %s) err", purchaseOrderSn)
 	assert.Equalf(t, purchaseOrderSn, d.SubPurchaseOrderSn, "Services.PurchaseOrder.One(ctx, %s) value", purchaseOrderSn)
+}
+
+func Test_purchaseOrderService_Apply(t *testing.T) {
+	params := PurchaseOrderApplyRequest{
+		ProductSkcId: 3989778860,
+		PurchaseDetailList: []PurchaseOrderApplyDetail{
+			{
+				ProductSkuId:               4439236678,
+				ProductSkuPurchaseQuantity: 10,
+			},
+		},
+	}
+	_, err := temuClient.Services.PurchaseOrder.Apply(ctx, params)
+	assert.Equalf(t, nil, err, "Services.PurchaseOrder.Apply(ctx, %#v) err", params)
 }

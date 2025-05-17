@@ -4,15 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
-	"strconv"
-	"strings"
-	"time"
 )
 
 // 采购单（备货单）服务
@@ -302,10 +303,10 @@ func (m PurchaseOrderApplyDetail) validate() error {
 
 type PurchaseOrderApplyRequest struct {
 	normal.Parameter
-	ProductSkcId            int64                    `json:"productSkcId"`                      // skcId
-	ExpectLatestDeliverTime string                   `json:"expectLatestDeliverTime,omitempty"` // 最晚发货时间
-	ExpectLatestArrivalTime string                   `json:"expectLatestArrivalTime,omitempty"` // 最晚送达时间
-	PurchaseDetailList      PurchaseOrderApplyDetail `json:"purchaseDetailList"`                // 详情
+	ProductSkcId            int64                      `json:"productSkcId"`                      // skcId
+	ExpectLatestDeliverTime string                     `json:"expectLatestDeliverTime,omitempty"` // 最晚发货时间
+	ExpectLatestArrivalTime string                     `json:"expectLatestArrivalTime,omitempty"` // 最晚送达时间
+	PurchaseDetailList      []PurchaseOrderApplyDetail `json:"purchaseDetailList"`                // 详情
 }
 
 func (m PurchaseOrderApplyRequest) validate() error {
