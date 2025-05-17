@@ -45,3 +45,12 @@ func Test_goodsBarcodeService_CustomGoods(t *testing.T) {
 	assert.Equalf(t, nil, err, "Services.Goods.Barcode.CustomGoods(ctx, %#v)", params)
 	assert.Equalf(t, true, len(items) != 0, "Services.Goods.Barcode.CustomGoods(ctx, %#v)", params)
 }
+
+func Test_goodsBarcodeService_CustomGoodsPrintUrl(t *testing.T) {
+	params := CustomGoodsBarcodeQueryParams{
+		PersonalProductSkuIdList: []int64{60294097402138},
+	}
+	url, err := temuClient.Services.Goods.Barcode.CustomGoodsPrintUrl(ctx, params)
+	assert.Equalf(t, nil, err, "Services.Goods.Barcode.CustomGoodsPrintUrl(ctx, %#v)", params)
+	assert.Contains(t, url, "https://openapi.kuajingmaihuo.com/tool/print?dataKey=")
+}
