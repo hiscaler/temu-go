@@ -7,12 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"github.com/hiscaler/gox/jsonx"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 	"log/slog"
 	"net"
 	"net/http"
-	"os"
 	"regexp"
 	"slices"
 	"sort"
@@ -251,16 +251,12 @@ func getVersion(typ string) string {
 }
 
 func NewClient(cfg config.Config) *Client {
-	var l *slog.Logger
+	var l *logger
 	debug := cfg.Debug
 	if cfg.Logger != nil {
-		l = cfg.Logger
+		l.l = cfg.Logger
 	} else {
-		if debug {
-			l = slog.New(slog.NewTextHandler(os.Stdout, nil))
-		} else {
-			l = slog.New(slog.NewJSONHandler(os.Stdout, nil))
-		}
+		l = createLogger()
 	}
 
 	env := strings.ToLower(cfg.Env)
@@ -275,7 +271,7 @@ func NewClient(cfg config.Config) *Client {
 		Env:          env,
 		Debug:        debug,
 		Region:       region,
-		Logger:       l,
+		Logger:       l.l,
 		TimeLocation: loc,
 	}
 	httpClient := resty.New().
@@ -286,6 +282,7 @@ func NewClient(cfg config.Config) *Client {
 			"Accept":       "application/json",
 			"User-Agent":   UserAgent,
 		}).
+		SetLogger(l).
 		SetAllowGetMethodPayload(true).
 		SetTimeout(cfg.Timeout * time.Second).
 		SetTransport(&http.Transport{
@@ -329,18 +326,17 @@ func NewClient(cfg config.Config) *Client {
 						endpoint = vv.(string)
 					}
 				}
-				l.Error(fmt.Sprintf(`%s %s
-   ENDPOINT: %s
- PARAMETERS: %s
-	 STATUS: %s
-       BODY: %v`,
-					response.Request.Method,
-					response.Request.URL,
-					endpoint,
-					params,
-					response.Status(),
-					response.String(),
-				))
+				args := []any{
+					"endpoint", fmt.Sprintf("%s %s", response.Request.Method, endpoint),
+					"request", jsonx.ToJson(params, "{}"),
+					"status", response.Status(),
+					"response", response.String(),
+				}
+				if response.IsError() {
+					l.Errorf("call", args...)
+				} else {
+					l.Infof("call", args...)
+				}
 			}
 			return nil
 		}).
@@ -375,12 +371,11 @@ func NewClient(cfg config.Config) *Client {
 					retry = e == nil
 				}
 				if retry && debug {
-					messages := make([]string, 0)
-					messages = append(messages, "URL: "+response.Request.URL)
+					args := []any{"url", response.Request.URL}
 					if endpoint != "" {
-						messages = append(messages, "Type: "+endpoint)
+						args = append(args, "type", endpoint)
 					}
-					l.Info("Retry " + strings.Join(messages, " "))
+					l.Infof("retry", args...)
 				}
 			}
 			return retry
@@ -400,14 +395,16 @@ func NewClient(cfg config.Config) *Client {
 			if milliseconds == 0 {
 				return 0, nil
 			}
-			l.Debug(fmt.Sprintf("Retry waiting %d milliseconds...", milliseconds))
+			if debug {
+				l.Infof("retry", "waiting", milliseconds)
+			}
 			return time.Duration(milliseconds) * time.Millisecond, nil
 		})
 	httpClient.JSONMarshal = json.Marshal
 	httpClient.JSONUnmarshal = json.Unmarshal
 	xService := service{
 		debug:      debug,
-		logger:     l,
+		logger:     l.l,
 		httpClient: httpClient,
 		language:   lang,
 		config:     cfg,
