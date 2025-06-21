@@ -215,6 +215,14 @@ func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPack
 		return "", err
 	}
 
+	if len(result.Result.CreateExpressErrorRequestList) != 0 {
+		msg := result.ErrorMessage
+		if msg == "" {
+			msg = "未知错误"
+		}
+		return "", fmt.Errorf("装箱发货失败，%s", msg)
+	}
+
 	return result.Result.ExpressBatchSn, nil
 }
 
