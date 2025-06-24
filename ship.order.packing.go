@@ -223,7 +223,12 @@ func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPack
 		return "", fmt.Errorf("装箱发货失败，%s", msg)
 	}
 
-	return result.Result.ExpressBatchSn, nil
+	number := result.Result.ExpressBatchSn
+	if number == "" {
+		return "", errors.New("发货批次号为空")
+	}
+
+	return number, nil
 }
 
 // 装箱发货校验
