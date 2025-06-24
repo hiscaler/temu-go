@@ -16,6 +16,18 @@ type GoodsProperty struct {
 	RefPid           int         `json:"refPid"`           // 引用属性 ID
 }
 
+// Volume 体积
+type Volume struct {
+	Len    int `json:"len"`    // 长
+	Width  int `json:"width"`  // 宽
+	Height int `json:"height"` // 高
+}
+
+type ProductSkuWmsWeight struct {
+	WmsCollectionSourceType any `json:"wmsCollectionSourceType"`
+	Value                   int `json:"value"`
+}
+
 // GoodsSkuSummary 商品 SKU 描叙
 type GoodsSkuSummary struct {
 	ProductSkuId        int64  `json:"productSkuId"` // 货品 SKU Id
@@ -24,31 +36,27 @@ type GoodsSkuSummary struct {
 		ProductSkuWeight struct {
 			Value int `json:"value"`
 		} `json:"productSkuWeight"`
-		ProductSkuWmsVolume     any `json:"productSkuWmsVolume"`
-		ProductSkuBarCodes      any `json:"productSkuBarCodes"`
+		ProductSkuWmsVolume *Volume `json:"productSkuWmsVolume"`
+		ProductSkuBarCodes  []struct {
+			Code     string `json:"code"`     // 条码
+			CodeType int    `json:"codeType"` // 条码类型 (1: EAN, 2: UPC, 3: ISBN)
+		} `json:"productSkuBarCodes"`
 		ProductSkuSubSellMode   any `json:"productSkuSubSellMode"`
 		ProductSkuSensitiveAttr struct {
-			SensitiveTypes []any `json:"sensitiveTypes"`
-			IsSensitive    int   `json:"isSensitive"`
-		} `json:"productSkuSensitiveAttr"`
+			SensitiveTypes []int `json:"sensitiveTypes"`
+			IsSensitive    int   `json:"isSensitive"` // 是否敏感属性，0：非敏感，1：敏感
+		} `json:"productSkuSensitiveAttr"` // 敏感属性
 		ProductSkuFragileLabels    any `json:"productSkuFragileLabels"`
 		ProductSkuNewSensitiveAttr struct {
 			Force2NormalTypes any   `json:"force2NormalTypes"`
 			SensitiveList     []int `json:"sensitiveList"`
 			IsForce2Normal    bool  `json:"isForce2Normal"`
 		} `json:"productSkuNewSensitiveAttr"`
-		ProductSkuVolumeLabel any `json:"productSkuVolumeLabel"`
-		ProductSkuWmsWeight   struct {
-			WmsCollectionSourceType any `json:"wmsCollectionSourceType"`
-			Value                   int `json:"value"`
-		} `json:"productSkuWmsWeight"`
-		ProductSkuVolume struct {
-			Len    int `json:"len"`    // 长
-			Width  int `json:"width"`  // 宽
-			Height int `json:"height"` // 高
-		} `json:"productSkuVolume"`
-		ProductSkuSensitiveLimit any `json:"productSkuSensitiveLimit"`
-		ProductSkuWmsVolumeLabel any `json:"productSkuWmsVolumeLabel"`
+		ProductSkuVolumeLabel    any                  `json:"productSkuVolumeLabel"`
+		ProductSkuWmsWeight      *ProductSkuWmsWeight `json:"productSkuWmsWeight"`
+		ProductSkuVolume         *Volume              `json:"productSkuVolume"`
+		ProductSkuSensitiveLimit any                  `json:"productSkuSensitiveLimit"`
+		ProductSkuWmsVolumeLabel any                  `json:"productSkuWmsVolumeLabel"`
 	} `json:"productSkuWhExtAttr"`
 	VirtualStock          int             `json:"virtualStock"`
 	ProductSkuSpecList    []Specification `json:"productSkuSpecList"`
