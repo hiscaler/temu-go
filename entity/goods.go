@@ -84,7 +84,7 @@ type Goods struct {
 		Cat8    SimpleCategory `json:"cat8"`
 		Cat9    SimpleCategory `json:"cat9"`
 		Cat10   SimpleCategory `json:"cat10"`
-		LeafCat any            `json:"leafCat"`
+		LeafCat SimpleCategory `json:"leafCat"`
 	} `json:"categories"`
 	ProductSkcId    int64  `json:"productSkcId"`
 	MatchSkcJitMode bool   `json:"matchSkcJitMode"`

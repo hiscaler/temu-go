@@ -13,5 +13,5 @@ type Category struct {
 	ParentCatId int64  `json:"parentCatId"` // 父级分类 ID
 	IsLeaf      bool   `json:"isLeaf"`      // true=叶子类目
 	IsHidden    bool   `json:"isHidden"`    // 是否隐藏
-	HiddenType  int    `json:"hiddenType"`
+	HiddenType  int    `json:"hiddenType"`  // 隐藏类型
 }
