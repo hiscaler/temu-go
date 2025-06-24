@@ -66,29 +66,43 @@ type Goods struct {
 		SignLatestJitVersion   bool     `json:"signLatestJitVersion"`   // 是否签署最新版本 JIT 预售协议
 		MatchJitMode           bool     `json:"matchJitMode"`           // 是否 JIT 模式
 	} `json:"productJitMode"` // 货品 JIT 模式信息
-	ProductSkuSummaries      []GoodsSkuSummary `json:"productSkuSummaries"`
-	ProductName              string            `json:"productName"`
-	CreatedAt                int64             `json:"createdAt"`
-	ProductSemiManaged       any               `json:"productSemiManaged"`
-	IsSupportPersonalization bool              `json:"isSupportPersonalization"`
-	ExtCode                  string            `json:"extCode"` // 货品 SKC 外部编码
-	LeafCat                  SimpleCategory    `json:"leafCat"` // 叶子类目
+	ProductSkuSummaries      []GoodsSkuSummary  `json:"productSkuSummaries"`
+	ProductName              string             `json:"productName"`
+	CreatedAt                int64              `json:"createdAt"`
+	ProductSemiManaged       ProductSemiManaged `json:"productSemiManaged"`
+	IsSupportPersonalization bool               `json:"isSupportPersonalization"`
+	ExtCode                  string             `json:"extCode"`       // 货品 SKC 外部编码
+	LeafCat                  SimpleCategory     `json:"leafCat"`       // 叶子类目
+	SkcSiteStatus            int                `json:"skcSiteStatus"` // SKC 站点状态（0：未上架、1：已上架、2：已下架）
 	Categories               struct {
-		Cat1    SimpleCategory `json:"cat1"`
-		Cat2    SimpleCategory `json:"cat2"`
-		Cat3    SimpleCategory `json:"cat3"`
-		Cat4    SimpleCategory `json:"cat4"`
-		Cat5    SimpleCategory `json:"cat5"`
-		Cat6    SimpleCategory `json:"cat6"`
-		Cat7    SimpleCategory `json:"cat7"`
-		Cat8    SimpleCategory `json:"cat8"`
-		Cat9    SimpleCategory `json:"cat9"`
-		Cat10   SimpleCategory `json:"cat10"`
-		LeafCat SimpleCategory `json:"leafCat"`
+		Cat1    SimpleCategory  `json:"cat1"`
+		Cat2    SimpleCategory  `json:"cat2"`
+		Cat3    SimpleCategory  `json:"cat3"`
+		Cat4    SimpleCategory  `json:"cat4"`
+		Cat5    SimpleCategory  `json:"cat5"`
+		Cat6    SimpleCategory  `json:"cat6"`
+		Cat7    SimpleCategory  `json:"cat7"`
+		Cat8    SimpleCategory  `json:"cat8"`
+		Cat9    SimpleCategory  `json:"cat9"`
+		Cat10   SimpleCategory  `json:"cat10"`
+		LeafCat *SimpleCategory `json:"leafCat"`
 	} `json:"categories"`
 	ProductSkcId    int64  `json:"productSkcId"`
 	MatchSkcJitMode bool   `json:"matchSkcJitMode"`
 	MainImageUrl    string `json:"mainImageUrl"`
+}
+
+// ProductSemiManaged 商品半托管
+type ProductSemiManaged struct {
+	ProductShipment struct {
+		FreightTemplateId      string `json:"freightTemplateId"`
+		ShipmentLimitSecond    int    `json:"shipmentLimitSecond"`
+		WarehouseRegionId1List []int  `json:"warehouseRegionId1List"`
+	} `json:"productShipment"`
+	BindSites []struct {
+		SiteId   int    `json:"siteId"`
+		SiteName string `json:"siteName"`
+	} `json:"bindSites"`
 }
 
 // GoodsDetail 商品详情
