@@ -56,9 +56,9 @@ type PurchaseOrder struct {
 	SupplyStatus            int                                  `json:"supplyStatus"`
 	ApplyDeleteStatus       int                                  `json:"applyDeleteStatus"`
 	SkuQuantityTotalInfo    struct {
-		CurrencyType                 any         `json:"currencyType"` // 货币类型(参考 ISO 4217) CNY-人民币 USD-美元
+		CurrencyType                 string      `json:"currencyType"` // 货币类型(参考 ISO 4217) CNY-人民币 USD-美元
 		ProcessTypeVO                any         `json:"processTypeVO"`
-		ClassName                    any         `json:"className"` // 尺码名称
+		ClassName                    string      `json:"className"` // 尺码名称
 		SupportIncreaseNum           any         `json:"supportIncreaseNum"`
 		CustomizationType            any         `json:"customizationType"`            // 定制类型
 		ProductSkuId                 int64       `json:"productSkuId"`                 // SKU
@@ -67,12 +67,12 @@ type PurchaseOrder struct {
 		DeliverQuantity              int         `json:"deliverQuantity"`              // 发货数量
 		AdviceQuantity               null.Int    `json:"adviceQuantity"`               //
 		RealReceiveAuthenticQuantity int         `json:"realReceiveAuthenticQuantity"` // 入库数量
-	} `json:"skuQuantityTotalInfo"` // sku 维度数量汇总信息
+	} `json:"skuQuantityTotalInfo"`                                     // sku 维度数量汇总信息
 	IsCanJoinDeliverPlatform bool     `json:"isCanJoinDeliverPlatform"` // 是否可以加入发货台
 	CategoryType             int      `json:"categoryType"`
 	Status                   int      `json:"status"`
 	SupplierId               int64    `json:"supplierId"`
-	AppealStatus             int      `json:"appealStatus"`
+	AppealStatus             int      `json:"appealStatus"` // 定制品备货单取消申述状态（1000-审核中,1010-审核通过,1020-审核驳回）
 	IsCustomProduct          bool     `json:"isCustomProduct"`
 	FulfilmentFormId         null.Int `json:"fulfilmentFormId"` // 关联履约函 ID
 	ProductSkcPicture        string   `json:"productSkcPicture"`
@@ -80,7 +80,7 @@ type PurchaseOrder struct {
 	LackOrSoldOutTagList     []struct {
 		IsLack     bool   `json:"isLack"`
 		SkuDisplay string `json:"skuDisplay"`
-		SoldOut    any    `json:"soldOut"`
+		SoldOut    int    `json:"soldOut"` // 售罄状态（1-即将售罄;2-已售罄）
 	} `json:"lackOrSoldOutTagList"`
 	QcReject          int `json:"qcReject"`
 	PurchaseStockType int `json:"purchaseStockType"`
