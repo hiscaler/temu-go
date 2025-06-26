@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"fmt"
 	"log/slog"
 )
 
@@ -23,17 +24,17 @@ type logger struct {
 var _ Logger = (*logger)(nil)
 
 func (l *logger) Errorf(format string, v ...interface{}) {
-	l.l.Error(format, v...)
+	l.l.Error(fmt.Sprintf(format, v...))
 }
 
 func (l *logger) Warnf(format string, v ...interface{}) {
-	l.l.Warn(format, v...)
+	l.l.Warn(fmt.Sprintf(format, v...))
 }
 
 func (l *logger) Infof(format string, v ...interface{}) {
-	l.l.Info(format, v...)
+	l.l.Info(fmt.Sprintf(format, v...))
 }
 
 func (l *logger) Debugf(format string, v ...interface{}) {
-	l.l.Debug(format, v...)
+	l.l.Debug(fmt.Sprintf(format, v...))
 }
