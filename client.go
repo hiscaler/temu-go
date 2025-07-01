@@ -114,6 +114,7 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.order.shippinginfo.get":                 "",
 		"bg.logistics.shipment.confirm":             entity.AmericanRegion,
 		"bg.order.customization.get":                "",
+		"bg.arbok.open.product.cert.query":          entity.GlobalRegion,
 	}
 	if v, ok := semiTypes[typ]; ok {
 		if v != "" {
@@ -325,9 +326,9 @@ func NewClient(cfg config.Config) *Client {
 					}
 				}
 				args := []any{
-					"endpoint", fmt.Sprintf("%s %s", response.Request.Method, endpoint),
-					"request", jsonx.ToJson(params, "{}"),
-					"status", response.Status(),
+					"endpoint", fmt.Sprintf("%s %s %s", response.Request.Method, response.Request.URL, endpoint),
+					"payload", jsonx.ToJson(params, "{}"),
+					"status", response.StatusCode(),
 					"response", response.String(),
 				}
 				if response.IsError() {
@@ -369,9 +370,11 @@ func NewClient(cfg config.Config) *Client {
 					retry = e == nil
 				}
 				if retry && debug {
-					args := []any{"url", response.Request.URL}
-					if endpoint != "" {
-						args = append(args, "type", endpoint)
+					args := []any{
+						"endpoint", fmt.Sprintf("%s %s %s", response.Request.Method, response.Request.URL, endpoint),
+						"payload", jsonx.ToJson(response.Request.Body, "{}"),
+						"status", response.StatusCode(),
+						"response", response.String(),
 					}
 					l.Infof("retry", args...)
 				}
