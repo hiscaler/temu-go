@@ -34,7 +34,7 @@ func (m GoodsCertificationQueryParams) validate() error {
 				}
 				return nil
 			}))),
-		validation.Field(&m.ProductId, validation.Required.Error("货品不能为空")),
+		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空")),
 	)
 }
 
