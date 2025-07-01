@@ -6,10 +6,6 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"github.com/BurntSushi/toml"
-	"github.com/hiscaler/gox/jsonx"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"golang.org/x/text/language"
 	"log/slog"
 	"net"
 	"net/http"
@@ -19,6 +15,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/BurntSushi/toml"
+	"github.com/hiscaler/gox/jsonx"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"golang.org/x/text/language"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-resty/resty/v2"
@@ -114,6 +115,7 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.order.shippinginfo.get":                 "",
 		"bg.logistics.shipment.confirm":             entity.AmericanRegion,
 		"bg.order.customization.get":                "",
+		"bg.open.accesstoken.info.get":              region,
 	}
 	if v, ok := semiTypes[typ]; ok {
 		if v != "" {
@@ -331,9 +333,9 @@ func NewClient(cfg config.Config) *Client {
 					"response", response.String(),
 				}
 				if response.IsError() {
-					l.Errorf("call", args...)
+					l.Errorf("call %v", args)
 				} else {
-					l.Infof("call", args...)
+					l.Infof("call %v", args)
 				}
 			}
 			return nil
@@ -373,7 +375,7 @@ func NewClient(cfg config.Config) *Client {
 					if endpoint != "" {
 						args = append(args, "type", endpoint)
 					}
-					l.Infof("retry", args...)
+					l.Infof("retry %v", args)
 				}
 			}
 			return retry
@@ -394,7 +396,7 @@ func NewClient(cfg config.Config) *Client {
 				return 0, nil
 			}
 			if debug {
-				l.Infof("retry", "waiting", milliseconds)
+				l.Infof("retry waiting %d", milliseconds)
 			}
 			return time.Duration(milliseconds) * time.Millisecond, nil
 		})
