@@ -613,7 +613,7 @@ func errorWrap(code int, message string) error {
 	case MethodNotImplementedError:
 		message = "请求方法未实现"
 	case SystemExceptionError, 4000000:
-		message = "Temu 平台异常"
+		message = "Temu 平台异常，请稍后再试"
 	case InvalidSignError:
 		return ErrInvalidSign
 	case NoAppKeyError:
@@ -625,7 +625,7 @@ func errorWrap(code int, message string) error {
 	case AccessTokenKeyUnmatchedError:
 		message = "Access Token 和 Key 不匹配"
 	case TypeIsNotExistsError:
-		return errors.New("接口不存在")
+		return errors.New("接口不存在，请确认接口是否授权")
 	case 7000016:
 		message = "无效的请求地址"
 	case 2000000, 2000090, 3000000:
