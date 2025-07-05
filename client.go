@@ -117,6 +117,7 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.logistics.shipment.confirm":             entity.AmericanRegion,
 		"bg.order.customization.get":                "",
 		"bg.arbok.open.product.cert.query":          entity.GlobalRegion,
+		"bg.open.accesstoken.info.get":              "",
 	}
 	if v, ok := semiTypes[typ]; ok {
 		if v != "" {
