@@ -2,9 +2,10 @@ package temu
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func Test_shipOrderLogisticsService_Match(t *testing.T) {

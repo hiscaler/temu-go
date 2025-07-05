@@ -1,9 +1,10 @@
 package temu
 
 import (
+	"testing"
+
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func Test_goodsCertificationService_Query(t *testing.T) {

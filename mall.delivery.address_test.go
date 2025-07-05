@@ -1,9 +1,10 @@
 package temu
 
 import (
+	"testing"
+
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func Test_mallDeliveryAddressService_Query(t *testing.T) {

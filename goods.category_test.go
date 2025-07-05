@@ -1,10 +1,11 @@
 package temu
 
 import (
+	"testing"
+
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/guregu/null.v4"
-	"testing"
 )
 
 func Test_goodsCategoryService_Query(t *testing.T) {

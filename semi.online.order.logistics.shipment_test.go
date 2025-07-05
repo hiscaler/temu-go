@@ -3,9 +3,10 @@ package temu
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func Test_semiOnlineOrderLogisticsShipmentService_Query(t *testing.T) {
