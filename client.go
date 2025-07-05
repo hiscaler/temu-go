@@ -68,14 +68,15 @@ type service struct {
 }
 
 type services struct {
-	PurchaseOrder purchaseOrderService
-	ShipOrder     shipOrderService
-	Logistics     logisticsService
-	Goods         goodsService
-	Mall          mallService
-	Jit           jitService
-	SemiManaged   semiManagedService
-	Picture       pictureService
+	PurchaseOrder        purchaseOrderService
+	ShipOrder            shipOrderService
+	Logistics            logisticsService
+	Goods                goodsService
+	Mall                 mallService
+	Jit                  jitService
+	SemiManaged          semiManagedService
+	Picture              pictureService
+	BestSellerInvitation bestSellerInvitationService
 }
 
 type Client struct {
@@ -473,7 +474,8 @@ func NewClient(cfg config.Config) *Client {
 			OrderLogisticsShipment: (semiOrderLogisticsShipmentService)(xService),
 			Logistics:              (semiLogisticsService)(xService),
 		},
-		Picture: (pictureService)(xService),
+		Picture:              (pictureService)(xService),
+		BestSellerInvitation: (bestSellerInvitationService)(xService),
 	}
 
 	return client
