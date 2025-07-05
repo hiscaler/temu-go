@@ -1,8 +1,9 @@
 package helpers
 
 import (
-	"github.com/hiscaler/temu-go/entity"
 	"slices"
+
+	"github.com/hiscaler/temu-go/entity"
 )
 
 // GetRegionByRegionId 根据区域 ID 获取所在区域

@@ -3,9 +3,10 @@ package entity
 import (
 	"errors"
 	"fmt"
-	"gopkg.in/guregu/null.v4"
 	"sort"
 	"time"
+
+	"gopkg.in/guregu/null.v4"
 )
 
 type LogisticsMatchChannelScheduleTime struct {

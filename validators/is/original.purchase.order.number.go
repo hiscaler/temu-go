@@ -1,8 +1,9 @@
 package is
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"strings"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // OriginalPurchaseOrderNumber 母备货单号数据验证

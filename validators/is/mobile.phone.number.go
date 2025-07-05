@@ -1,8 +1,9 @@
 package is
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"strings"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // MobilePhoneNumber 判断是否为有效的手机号码

@@ -1,8 +1,9 @@
 package is
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"strings"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // PackageNumber 包裹号数据验证

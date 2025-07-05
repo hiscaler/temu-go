@@ -2,10 +2,11 @@ package temu
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func Test_goodsService_Query(t *testing.T) {

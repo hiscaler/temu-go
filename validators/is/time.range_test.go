@@ -1,10 +1,11 @@
 package is
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTimeRange(t *testing.T) {

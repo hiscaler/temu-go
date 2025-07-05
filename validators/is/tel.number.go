@@ -3,8 +3,9 @@ package is
 import (
 	"errors"
 	"fmt"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"strings"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // TelNumber 判断是否为有效的座机号码
