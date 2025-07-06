@@ -2,11 +2,12 @@ package temu
 
 import (
 	"context"
+	"strings"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
-	"strings"
 )
 
 // 大仓收货地址

@@ -6,10 +6,6 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"github.com/BurntSushi/toml"
-	"github.com/hiscaler/gox/jsonx"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
-	"golang.org/x/text/language"
 	"log/slog"
 	"net"
 	"net/http"
@@ -19,6 +15,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/BurntSushi/toml"
+	"github.com/hiscaler/gox/jsonx"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"golang.org/x/text/language"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-resty/resty/v2"
@@ -68,14 +69,15 @@ type service struct {
 }
 
 type services struct {
-	PurchaseOrder purchaseOrderService
-	ShipOrder     shipOrderService
-	Logistics     logisticsService
-	Goods         goodsService
-	Mall          mallService
-	Jit           jitService
-	SemiManaged   semiManagedService
-	Picture       pictureService
+	PurchaseOrder        purchaseOrderService
+	ShipOrder            shipOrderService
+	Logistics            logisticsService
+	Goods                goodsService
+	Mall                 mallService
+	Jit                  jitService
+	SemiManaged          semiManagedService
+	Picture              pictureService
+	BestSellerInvitation bestSellerInvitationService
 }
 
 type Client struct {
@@ -115,6 +117,7 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.logistics.shipment.confirm":             entity.AmericanRegion,
 		"bg.order.customization.get":                "",
 		"bg.arbok.open.product.cert.query":          entity.GlobalRegion,
+		"bg.open.accesstoken.info.get":              "",
 	}
 	if v, ok := semiTypes[typ]; ok {
 		if v != "" {
@@ -473,7 +476,8 @@ func NewClient(cfg config.Config) *Client {
 			OrderLogisticsShipment: (semiOrderLogisticsShipmentService)(xService),
 			Logistics:              (semiLogisticsService)(xService),
 		},
-		Picture: (pictureService)(xService),
+		Picture:              (pictureService)(xService),
+		BestSellerInvitation: (bestSellerInvitationService)(xService),
 	}
 
 	return client
@@ -613,7 +617,7 @@ func errorWrap(code int, message string) error {
 	case MethodNotImplementedError:
 		message = "请求方法未实现"
 	case SystemExceptionError, 4000000:
-		message = "Temu 平台异常"
+		message = "Temu 平台异常，请稍后再试"
 	case InvalidSignError:
 		return ErrInvalidSign
 	case NoAppKeyError:
@@ -625,7 +629,7 @@ func errorWrap(code int, message string) error {
 	case AccessTokenKeyUnmatchedError:
 		message = "Access Token 和 Key 不匹配"
 	case TypeIsNotExistsError:
-		return errors.New("接口不存在")
+		return errors.New("接口不存在，请确认接口是否授权")
 	case 7000016:
 		message = "无效的请求地址"
 	case 2000000, 2000090, 3000000:

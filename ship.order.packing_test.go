@@ -1,12 +1,13 @@
 package temu
 
 import (
+	"testing"
+	"time"
+
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/guregu/null.v4"
-	"testing"
-	"time"
 )
 
 func TestShipOrderPackingService_Match(t *testing.T) {

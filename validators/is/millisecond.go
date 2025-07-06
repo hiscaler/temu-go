@@ -1,8 +1,9 @@
 package is
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"strconv"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // Millisecond 判断是否为有效的毫秒值

@@ -6,13 +6,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-resty/resty/v2"
-	"github.com/hiscaler/gox/filex"
-	"github.com/hiscaler/gox/randx"
-	"github.com/hiscaler/temu-go/entity"
-	"github.com/hiscaler/temu-go/normal"
-	"gopkg.in/guregu/null.v4"
 	"net"
 	"net/http"
 	"path"
@@ -20,6 +13,14 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/gox/filex"
+	"github.com/hiscaler/gox/randx"
+	"github.com/hiscaler/temu-go/entity"
+	"github.com/hiscaler/temu-go/normal"
+	"gopkg.in/guregu/null.v4"
 )
 
 // 物流发货服务

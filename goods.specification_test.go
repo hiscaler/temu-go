@@ -3,8 +3,9 @@ package temu
 import (
 	"context"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_goodsSpecificationService_Create(t *testing.T) {

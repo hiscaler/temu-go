@@ -1,12 +1,13 @@
 package temu
 
 import (
+	"math/rand"
+	"testing"
+
 	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/guregu/null.v4"
-	"math/rand"
-	"testing"
 )
 
 func TestShipOrderService_Query(t *testing.T) {

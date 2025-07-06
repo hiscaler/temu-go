@@ -2,11 +2,12 @@ package entity
 
 import (
 	"errors"
+	"slices"
+
 	"github.com/goccy/go-json"
 	"github.com/hiscaler/gox/nullx"
 	"github.com/spf13/cast"
 	"gopkg.in/guregu/null.v4"
-	"slices"
 )
 
 // SemiOrderCustomizationInformationPreview 半托订单定制信息预览

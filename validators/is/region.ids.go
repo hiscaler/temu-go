@@ -1,8 +1,9 @@
 package is
 
 import (
-	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"slices"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
 // RegionIds 区域 ID 列表验证

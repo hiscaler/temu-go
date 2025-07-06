@@ -5,10 +5,6 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"github.com/go-resty/resty/v2"
-	"github.com/hiscaler/gox/filex"
-	"github.com/hiscaler/gox/randx"
-	"gopkg.in/guregu/null.v4"
 	"net"
 	"net/http"
 	"net/url"
@@ -17,6 +13,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/go-resty/resty/v2"
+	"github.com/hiscaler/gox/filex"
+	"github.com/hiscaler/gox/randx"
+	"gopkg.in/guregu/null.v4"
 )
 
 // DownloadableUrl 可下载 URL

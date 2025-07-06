@@ -3,9 +3,10 @@ package temu
 import (
 	"context"
 	"fmt"
+	"testing"
+
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func Test_jitPresaleRuleService_Query(t *testing.T) {

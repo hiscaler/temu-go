@@ -3,13 +3,16 @@ package temu
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strings"
+
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/gox/nullx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
-	"strings"
 )
 
 // 发货台服务
@@ -194,10 +197,10 @@ func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAd
 	}
 
 	type joinError struct {
-		ExtraInfoMap                map[string]string `json:"extraInfoMap"`
-		JoinErrorSubPurchaseOrderSn string            `json:"joinErrorSubPurchaseOrderSn"`
-		ErrorCode                   int               `json:"errorCode"`
-		ErrorMsg                    string            `json:"errorMsg"`
+		JoinErrorSubPurchaseOrderSn string            `json:"joinErrorSubPurchaseOrderSn"` // 加入发货台失败的发货单号
+		ExtraInfoMap                map[string]string `json:"extraInfoMap"`                // 附加信息字段
+		ErrorCode                   int               `json:"errorCode"`                   // 错误码
+		ErrorMsg                    string            `json:"errorMsg"`                    // 错误消息
 	}
 	var result = struct {
 		normal.Response
@@ -229,7 +232,11 @@ func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAd
 
 			r.Success = false
 			r.Code = null.IntFrom(int64(joinErr.ErrorCode))
-			r.Error = nullx.StringFrom(joinErr.ErrorMsg)
+			errMessage := joinErr.ErrorMsg
+			if len(joinErr.ExtraInfoMap) != 0 {
+				errMessage += fmt.Sprintf("(%s)", jsonx.ToJson(joinErr.ExtraInfoMap, "{}"))
+			}
+			r.Error = nullx.StringFrom(errMessage)
 			results[i] = r
 		}
 	}

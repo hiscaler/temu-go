@@ -3,13 +3,14 @@ package temu
 import (
 	"context"
 	"fmt"
+	"os"
+	"testing"
+
 	"github.com/goccy/go-json"
 	"github.com/hiscaler/temu-go/config"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
-	"os"
-	"testing"
 )
 
 var temuClient *Client
