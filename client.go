@@ -633,6 +633,8 @@ func errorWrap(code int, message string) error {
 		message = "Access Token 已过期，请联系卖家重新授权并与您共享新的 Access Token"
 	case 2000060:
 		message = "店铺类型不符合预期，不允许查询或变更库存操作"
+	case 4000004:
+		message = "请求过于频繁，超过了当前的限制阈值"
 	default:
 		message = fmt.Sprintf("%d: %s", code, strings.TrimSpace(message))
 	}
