@@ -8,6 +8,7 @@ import (
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	validationIs "github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
@@ -889,7 +890,7 @@ type GoodsImageUploadRequest struct {
 
 func (m GoodsImageUploadRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.Image, validation.Required.Error("图片文件不能为空")),
+		validation.Field(&m.Image, validation.Required.Error("图片文件不能为空"), validationIs.Base64.Error("无效的图片 Base64 内容")),
 		validation.Field(&m.ImageBizType, validation.In(0, 1).Error("无效的图片类型")),
 		validation.Field(&m.Options, validation.When(m.Options != nil, validation.By(func(value interface{}) error {
 			v, ok := value.(*GoodsImageUploadOption)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
 	"gopkg.in/guregu/null.v4"
@@ -111,7 +112,7 @@ type GoodsCertificationUploadFileRequest struct {
 
 func (m GoodsCertificationUploadFileRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.Base64File, validation.Required.Error("上传文件内容不能为空")),
+		validation.Field(&m.Base64File, validation.Required.Error("上传文件内容不能为空"), is.Base64.Error("无效的 Base64 内容")),
 		validation.Field(&m.FileName, validation.Required.Error("上传文件名称不能为空")),
 	)
 }
