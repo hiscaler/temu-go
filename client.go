@@ -639,6 +639,8 @@ func errorWrap(code int, message string) error {
 		message = "店铺类型不符合预期，不允许查询或变更库存操作"
 	case 4000004:
 		message = "请求过于频繁，超过了当前的限制阈值"
+	case 5000003:
+		message = "当前 IP 不在白名单中"
 	default:
 		message = fmt.Sprintf("%d: %s", code, strings.TrimSpace(message))
 	}
