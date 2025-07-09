@@ -31,7 +31,7 @@ type ShipOrderStagingQueryParams struct {
 	IsCustomProduct        null.Bool `json:"isCustomProduct,omitempty"`        // 是否为定制品
 	SubWarehouseId         int64     `json:"subWarehouseId,omitempty"`         // 收货子仓
 	InventoryRegion        []int     `json:"inventoryRegion,omitempty"`        // DOMESTIC(1, "国内备货"), OVERSEAS(2, "海外备货"), BOUNDED_WAREHOUSE(3, "保税仓备货"),
-	OrderType              null.Int  `json:"orderType,omitempty"`              // 订单类型（1：普通备货单、2：JIT 备货单、3：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
+	OrderType              null.Int  `json:"orderType,omitempty"`              // 订单类型（1：普通备货单、2：紧急备货单、3：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
 }
 
 func (m ShipOrderStagingQueryParams) validate() error {
@@ -68,15 +68,14 @@ func (s shipOrderStagingService) Query(ctx context.Context, params ShipOrderStag
 		switch params.OrderType.Int64 {
 		case entity.OrderTypeNormal:
 			params.IsCustomProduct = null.BoolFrom(false)
-			params.IsJit = null.BoolFrom(false)
+			params.UrgencyType = null.IntFrom(entity.UrgencyTypeNormal)
 
-		case entity.OrderTypeJIT:
+		case entity.OrderTypeUrgent:
 			params.IsCustomProduct = null.BoolFrom(false)
-			params.IsJit = null.BoolFrom(true)
+			params.UrgencyType = null.IntFrom(entity.UrgencyTypeUrgency)
 
 		case entity.OrderTypeCustomized:
 			params.IsCustomProduct = null.BoolFrom(true)
-			params.IsJit = null.BoolFrom(false)
 		}
 		params.OrderType = null.NewInt(0, false)
 	}
@@ -106,8 +105,8 @@ func (s shipOrderStagingService) Query(ctx context.Context, params ShipOrderStag
 		var orderType null.Int
 		if item.SubPurchaseOrderBasicVO.IsCustomProduct {
 			orderType = null.IntFrom(int64(entity.OrderTypeCustomized))
-		} else if item.SubPurchaseOrderBasicVO.PurchaseStockType == entity.PurchaseStockTypeJIT {
-			orderType = null.IntFrom(int64(entity.OrderTypeJIT))
+		} else if item.SubPurchaseOrderBasicVO.UrgencyType == entity.UrgencyTypeUrgency {
+			orderType = null.IntFrom(int64(entity.OrderTypeUrgent))
 		} else {
 			orderType = null.IntFrom(int64(entity.OrderTypeNormal))
 		}

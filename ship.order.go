@@ -49,7 +49,7 @@ type ShipOrderQueryParams struct {
 	IsPrintBoxMark           null.Int  `json:"isPrintBoxMark,omitempty"`           // 是否已打印商品打包标签，0-未打印，1-已打印
 	TargetReceiveAddress     string    `json:"targetReceiveAddress,omitempty"`     // 筛选项-收货地址（精准匹配）
 	TargetDeliveryAddress    string    `json:"targetDeliveryAddress,omitempty"`    // 筛选项-发货地址（精准匹配）
-	OrderType                null.Int  `json:"orderType,omitempty"`                // 订单类型（1：普通备货单、2：JIT 备货单、3：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
+	OrderType                null.Int  `json:"orderType,omitempty"`                // 订单类型（1：普通备货单、2：紧急备货单、3：定制备货单）此参数为扩展参数，用于简化备货类型查询处理
 }
 
 func (m ShipOrderQueryParams) validate() error {
@@ -84,7 +84,7 @@ func (m ShipOrderQueryParams) validate() error {
 					return errors.New("无效的发货单类型")
 				}
 
-				return validation.Validate(int(v.Int64), validation.In(entity.OrderTypeNormal, entity.OrderTypeJIT, entity.OrderTypeCustomized).Error("无效的发货单类型"))
+				return validation.Validate(int(v.Int64), validation.In(entity.OrderTypeNormal, entity.OrderTypeUrgent, entity.OrderTypeCustomized).Error("无效的发货单类型"))
 			})),
 		),
 	)
@@ -98,15 +98,14 @@ func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams
 		switch params.OrderType.Int64 {
 		case entity.OrderTypeNormal:
 			params.IsCustomProduct = null.BoolFrom(false)
-			params.IsJit = null.BoolFrom(false)
+			params.UrgencyType = null.IntFrom(entity.UrgencyTypeNormal)
 
-		case entity.OrderTypeJIT:
+		case entity.OrderTypeUrgent:
 			params.IsCustomProduct = null.BoolFrom(false)
-			params.IsJit = null.BoolFrom(true)
+			params.UrgencyType = null.IntFrom(entity.UrgencyTypeUrgency)
 
 		case entity.OrderTypeCustomized:
 			params.IsCustomProduct = null.BoolFrom(true)
-			params.IsJit = null.BoolFrom(false)
 		}
 		params.OrderType = null.NewInt(0, false)
 	}
@@ -143,8 +142,8 @@ func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams
 		var orderType null.Int
 		if item.IsCustomProduct {
 			orderType = null.IntFrom(int64(entity.OrderTypeCustomized))
-		} else if item.PurchaseStockType == entity.PurchaseStockTypeJIT {
-			orderType = null.IntFrom(int64(entity.OrderTypeJIT))
+		} else if item.UrgencyType == entity.UrgencyTypeUrgency {
+			orderType = null.IntFrom(int64(entity.OrderTypeUrgent))
 		} else {
 			orderType = null.IntFrom(int64(entity.OrderTypeNormal))
 		}
