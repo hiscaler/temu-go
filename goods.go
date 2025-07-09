@@ -1082,3 +1082,57 @@ func (s goodsService) EditProperty(ctx context.Context, request GoodsEditPropert
 
 	return true, nil
 }
+
+// Migrate 半托管店铺搬运同主体下全托管店铺的货品
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=902459443915
+
+type GoodsMigrateRequest struct {
+	MigrationList []struct {
+		ProductSemiManagedReq struct {
+			BindSiteIds         []int `json:"bindSiteIds"`         // 绑定站点列表
+			SemiManagedSiteMode int   `json:"semiManagedSiteMode"` // 半托管站点售卖模式
+		} `json:"productSemiManagedReq"` // 半托管货品信息
+		ProductWarehouseRouteReq struct {
+			TargetRouteList []struct {
+				SiteIdList  []int  `json:"siteIdList"`  // 站点 ID 列表
+				WarehouseId string `json:"warehouseId"` // 仓库 ID
+			} `json:"targetRouteList"` // 目标自发货站点-仓关系列表
+		} `json:"productWarehouseRouteReq"` // 货品仓库路由信息
+		SkcDetails []struct {
+			SkuDetails []struct {
+				CurrencyType string `json:"currencyType"` // 币种
+				SpecList     []struct {
+					SpecId         int    `json:"specId"`         // 规格id
+					ParentSpecName string `json:"parentSpecName"` // 父规格名称
+					ParentSpecId   int    `json:"parentSpecId"`   // 父规格id
+					SpecName       string `json:"specName"`       // 规格名称
+				} `json:"specList"` // sku 规格列表
+			} `json:"skuDetails"` // sku明细列表
+		} `json:"skcDetails"` // skc 明细列表
+	} `json:"migrationList"` // 搬运列表
+}
+
+func (m GoodsMigrateRequest) validate() error {
+	return nil
+}
+func (s goodsService) Migrate(ctx context.Context, request GoodsMigrateRequest) error {
+	//
+	if err := request.validate(); err != nil {
+		return invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result any `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(request).
+		SetResult(&result).
+		Post("bg.goods.migrate")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return err
+	}
+
+	return nil
+}

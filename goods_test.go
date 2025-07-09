@@ -35,8 +35,8 @@ func Test_goodsService_Query(t *testing.T) {
 func Test_goodsService_Detail(t *testing.T) {
 	var productId int64 = 141911679
 	detail, err := temuClient.Services.Goods.Detail(ctx, productId)
-	assert.Equalf(t, nil, err, "Services.Goods.One(ctx, %d)", productId)
-	assert.Equalf(t, detail.ProductId, productId, "Services.Goods.One(ctx, %d)", productId)
+	assert.Equalf(t, nil, err, "Services.Goods.Detail(ctx, %d)", productId)
+	assert.Equalf(t, detail.ProductId, productId, "Services.Goods.Detail(ctx, %d)", productId)
 }
 
 func Test_goodsService_Create(t *testing.T) {
