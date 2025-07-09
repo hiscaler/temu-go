@@ -641,6 +641,8 @@ func errorWrap(code int, message string) error {
 		message = "请求过于频繁，超过了当前的限制阈值"
 	case 5000003:
 		message = "当前 IP 不在白名单中"
+	case 7000022:
+		message = "访问令牌没有此 API 访问权限"
 	default:
 		message = fmt.Sprintf("%d: %s", code, strings.TrimSpace(message))
 	}
