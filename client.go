@@ -633,7 +633,7 @@ func errorWrap(code int, message string) error {
 	case 7000016:
 		message = "无效的请求地址"
 	case 2000000, 2000090, 3000000:
-	case 7000007:
+	case 7000007, 3000034:
 		message = "Access Token 已过期，请联系卖家重新授权并与您共享新的 Access Token"
 	case 2000060:
 		message = "店铺类型不符合预期，不允许查询或变更库存操作"
