@@ -10,8 +10,6 @@ import (
 // 商品生命周期服务
 type goodsLifeCycleService service
 
-// 货品生命周期状态
-
 type GoodsLifeCycleQueryParams struct {
 	normal.ParameterWithPager
 	Page             int     `json:"pageNum"`                    // 页码
@@ -23,9 +21,8 @@ func (m GoodsLifeCycleQueryParams) validate() error {
 	return nil
 }
 
-// 查询货品生命周期状态（bg.product.search）
+// Query 查询货品生命周期状态（bg.product.search）
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#CK9soN
-
 func (s goodsLifeCycleService) Query(ctx context.Context, params GoodsLifeCycleQueryParams) (items []entity.GoodsLifeCycle, total, totalPages int, isLastPage bool, err error) {
 	pager := params.TidyPager()
 	params.Page = pager.Page
