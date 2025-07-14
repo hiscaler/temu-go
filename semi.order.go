@@ -179,7 +179,7 @@ func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams
 	return
 }
 
-// ShippingInformation 订单收货地址查询接口（bg.order.shippinginfo.get）
+// ShippingInformation 订单收货地址查询接口（bg.order.shippinginfo.v2.get）
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#AVEKr6
 func (s semiOrderService) ShippingInformation(ctx context.Context, parentOrderNumber string) (entity.SemiOrderShippingInformation, error) {
 	var result = struct {
@@ -192,7 +192,7 @@ func (s semiOrderService) ShippingInformation(ctx context.Context, parentOrderNu
 		SetContext(ctx).
 		SetBody(map[string]string{"parentOrderSn": parentOrderNumber}).
 		SetResult(&result).
-		Post("bg.order.shippinginfo.get")
+		Post("bg.order.shippinginfo.v2.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return entity.SemiOrderShippingInformation{}, err
 	}

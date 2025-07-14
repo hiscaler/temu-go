@@ -116,7 +116,7 @@ func (m SemiOrderLogisticsShipmentConfirmRequest) validate() error {
 	)
 }
 
-// Confirm 订单发货通知接口（bg.logistics.shipment.confirm）
+// Confirm 订单发货通知接口（bg.logistics.shipment.v2.confirm）
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#bCMdFx
 func (s *semiOrderLogisticsShipmentService) Confirm(ctx context.Context, request SemiOrderLogisticsShipmentConfirmRequest) (bool, error) {
 	if err := request.validate(); err != nil {
@@ -134,7 +134,7 @@ func (s *semiOrderLogisticsShipmentService) Confirm(ctx context.Context, request
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.logistics.shipment.confirm")
+		Post("bg.logistics.shipment.v2.confirm")
 
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
