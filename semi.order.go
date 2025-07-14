@@ -137,21 +137,21 @@ func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams
 	}
 
 	if params.CreateBefore != "" && params.CreateAfter != "" {
-		if start, end, e := helpers.StrTime2UnixMilli(params.CreateBefore, params.CreateAfter); e == nil {
+		if start, end, e := helpers.StrTime2Unix(params.CreateBefore, params.CreateAfter); e == nil {
 			params.CreateBefore = start
 			params.CreateAfter = end
 		}
 	}
 
 	if params.ExpectShipLatestTimeStart != "" && params.ExpectShipLatestTimeEnd != "" {
-		if start, end, e := helpers.StrTime2UnixMilli(params.ExpectShipLatestTimeStart, params.ExpectShipLatestTimeEnd); e == nil {
+		if start, end, e := helpers.StrTime2Unix(params.ExpectShipLatestTimeStart, params.ExpectShipLatestTimeEnd); e == nil {
 			params.ExpectShipLatestTimeStart = start
 			params.ExpectShipLatestTimeEnd = end
 		}
 	}
 
 	if params.UpdateAtStart != "" && params.UpdateAtEnd != "" {
-		if start, end, e := helpers.StrTime2UnixMilli(params.UpdateAtStart, params.UpdateAtEnd); e == nil {
+		if start, end, e := helpers.StrTime2Unix(params.UpdateAtStart, params.UpdateAtEnd); e == nil {
 			params.UpdateAtStart = start
 			params.UpdateAtEnd = end
 		}
