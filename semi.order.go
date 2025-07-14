@@ -82,7 +82,7 @@ func (m SemiOrderQueryParams) validate() error {
 			).Error("无效的父单状态"))
 		}))),
 		validation.Field(&m.CreateBefore,
-			validation.When(m.CreateBefore != "" || m.CreateAfter != "", validation.By(is.TimeRange(m.CreateBefore, m.CreateAfter, time.DateTime))),
+			validation.When(m.CreateBefore != "" || m.CreateAfter != "", validation.By(is.TimeRange(m.CreateAfter, m.CreateBefore, time.DateTime))),
 		),
 		validation.Field(&m.ExpectShipLatestTimeStart,
 			validation.When(m.ExpectShipLatestTimeStart != "" || m.ExpectShipLatestTimeEnd != "", validation.By(is.TimeRange(m.ExpectShipLatestTimeStart, m.ExpectShipLatestTimeEnd, time.DateTime))),
@@ -137,9 +137,9 @@ func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams
 	}
 
 	if params.CreateBefore != "" && params.CreateAfter != "" {
-		if start, end, e := helpers.StrTime2Unix(params.CreateBefore, params.CreateAfter); e == nil {
-			params.CreateBefore = start
-			params.CreateAfter = end
+		if start, end, e := helpers.StrTime2Unix(params.CreateAfter, params.CreateBefore); e == nil {
+			params.CreateBefore = end
+			params.CreateAfter = start
 		}
 	}
 
