@@ -360,7 +360,7 @@ func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNu
 		ci.SetRawData(res)
 		surface := gci.NewSurface()
 		for _, v := range res.PreviewList {
-			region := gci.NewRegion()
+			region := gci.NewRegion(gci.ImageType)
 			var img gci.Image
 			if v.PreviewType == 1 {
 				img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), false)
