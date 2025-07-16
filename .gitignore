@@ -26,3 +26,5 @@ testdata/postgres
 .DS_Store
 .idea/
 config/config.json
+go.work
+go.work.sum
