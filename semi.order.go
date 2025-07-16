@@ -202,13 +202,16 @@ func (s semiOrderService) ShippingInformation(ctx context.Context, parentOrderNu
 
 // CustomizationInformation 半托订单定制信息查询
 // https://partner.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=e8f86a2f5241441e9b095bf309d04dce
-// orderNumbers 为子单号
+// 注意：orderNumbers 为子单号
 func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNumbers ...string) ([]entity.SemiOrderCustomizationInformation, error) {
+	if len(orderNumbers) == 0 {
+		return nil, errors.New("待查询半托订单定制信息子单号列表不能为空")
+	}
+
 	var result = struct {
 		normal.Response
 		Result []entity.SemiOrderCustomizationInformation `json:"result"`
 	}{}
-
 	resp, err := s.httpClient.
 		R().
 		SetContext(ctx).
