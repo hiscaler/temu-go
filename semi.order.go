@@ -15,6 +15,7 @@ import (
 	"strings"
 	"time"
 
+	gci "github.com/echo-ok/goods-customization-information"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-resty/resty/v2"
 	"github.com/hiscaler/gox/filex"
@@ -324,4 +325,144 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 	}
 
 	return results, nil
+}
+
+// CustomizationInformation2 半托订单定制信息查询
+// https://partner.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=e8f86a2f5241441e9b095bf309d04dce
+// 注意：orderNumbers 为子单号
+func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNumbers ...string) ([]gci.GoodsCustomizedInformation, error) {
+	if len(orderNumbers) == 0 {
+		return nil, errors.New("待查询半托订单定制信息子单号列表不能为空")
+	}
+
+	var result = struct {
+		normal.Response
+		Result []entity.SemiOrderCustomizationInformation `json:"result"`
+	}{}
+	resp, err := s.httpClient.
+		R().
+		SetContext(ctx).
+		SetBody(map[string][]string{"orderSnList": orderNumbers}).
+		SetResult(&result).
+		Post("bg.order.customization.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return nil, err
+	}
+
+	results := result.Result
+	if len(results) == 0 {
+		return nil, nil
+	}
+
+	ciList := make([]gci.GoodsCustomizedInformation, 0)
+	for _, res := range results {
+		ci := gci.NewGoodsCustomizedInformation()
+		ci.SetRawData(res)
+		surface := gci.NewSurface()
+		for _, v := range res.PreviewList {
+			region := gci.NewRegion()
+			var img gci.Image
+			if v.PreviewType == 1 {
+				img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), false)
+				if err == nil {
+					surface.PreviewImage = &img
+				}
+
+			} else if v.PreviewType == 3 {
+				img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), true)
+				if err == nil {
+					region.AddImage(img)
+				}
+			}
+			surface.AddRegion(region)
+		}
+		ci.AddSurface(surface)
+		ciList = append(ciList, ci)
+	}
+	if len(ciList) == 0 {
+		return ciList, nil
+	}
+
+	keys := []string{
+		"toa-access-token",
+		"toa-app-key",
+		"toa-random",
+		"toa-timestamp",
+	}
+	dir := "./static_files/temu/semi/images"
+	sb := strings.Builder{}
+	headers := map[string]string{
+		"toa-app-key":      s.config.AppKey,
+		"toa-access-token": s.config.AccessToken,
+	}
+	httpClient := resty.New().
+		SetDebug(s.debug).
+		SetHeaders(map[string]string{
+			"Content-Type": "application/json",
+			"User-Agent":   UserAgent,
+		}).
+		SetAllowGetMethodPayload(true).
+		SetTimeout(s.config.Timeout * time.Second).
+		SetTransport(&http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: !s.config.VerifySSL},
+			DialContext: (&net.Dialer{
+				Timeout: s.config.Timeout * time.Second,
+			}).DialContext,
+		})
+	if s.debug {
+		httpClient.EnableTrace()
+	}
+	for i, ci := range ciList {
+		for j, surface := range ci.Surfaces {
+			if surface.PreviewImage == nil || !surface.PreviewImage.Redownload() {
+				continue
+			}
+
+			var parsedURL *url.URL
+			parsedURL, err = url.Parse(surface.PreviewImage.RawUrl)
+			if err != nil {
+				ciList[i].Surfaces[j].PreviewImage.SetError(err)
+				continue
+			}
+			filename := strings.ToLower(filepath.Base(parsedURL.Path))
+			if filename == "" {
+				ciList[i].Surfaces[j].PreviewImage.SetError("无法获取文件名")
+			}
+			savePath := filepath.Join(dir, filename)
+			if filex.Exists(savePath) {
+				ciList[i].Surfaces[j].PreviewImage.SetUrl(urlJoin(s.config.StaticFileServer, savePath))
+				continue
+			}
+
+			headers["toa-random"] = randx.Letter(32, true)
+			headers["toa-timestamp"] = strconv.FormatInt(time.Now().Unix(), 10)
+			sb.Reset()
+			sb.WriteString(s.config.AppSecret)
+			for _, key := range keys {
+				sb.WriteString(key)
+				sb.WriteString(headers[key])
+			}
+			sb.WriteString(s.config.AppSecret)
+			headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
+			resp, err = httpClient.
+				SetOutputDirectory(dir).
+				R().
+				SetHeaders(headers).
+				SetOutput(filename).
+				Get(surface.PreviewImage.RawUrl)
+			if err != nil {
+				ciList[i].Surfaces[j].PreviewImage.SetError(err)
+			} else {
+				if resp.IsError() {
+					ciList[i].Surfaces[j].PreviewImage.SetError(resp.String())
+				} else if resp.IsSuccess() {
+					ciList[i].Surfaces[j].PreviewImage.SetUrl(urlJoin(s.config.StaticFileServer, path.Join(dir, filename)))
+				} else {
+					ciList[i].Surfaces[j].PreviewImage.SetError(resp.String())
+				}
+			}
+		}
+	}
+
+	return ciList, nil
 }
