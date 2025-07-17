@@ -362,19 +362,29 @@ func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNu
 		for _, v := range res.PreviewList {
 			region := gci.NewRegion()
 			var img gci.Image
-			if v.PreviewType == 1 {
+			switch v.PreviewType {
+			case 1:
 				if img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), false); err == nil {
 					surface.PreviewImage = &img
+				} else {
+					region.SetError(err)
 				}
-			} else if v.PreviewType == 3 {
+			case 3:
 				if img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), true); err == nil {
 					region.AddImage(img)
+				} else {
+					region.SetError(err)
 				}
-			}
-			if v.CustomizedText.Valid {
-				var text gci.Text
-				if text, err = gci.NewText("", v.CustomizedText.String); err == nil {
-					region.AddText(text)
+			case 4:
+				if v.CustomizedText.Valid {
+					var text gci.Text
+					if text, err = gci.NewText("", v.CustomizedText.String); err == nil {
+						region.AddText(text)
+					} else {
+						region.SetError(err)
+					}
+				} else {
+					region.SetError("无定制信息")
 				}
 			}
 			surface.AddRegion(region)
