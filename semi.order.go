@@ -360,18 +360,21 @@ func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNu
 		ci.SetRawData(res)
 		surface := gci.NewSurface()
 		for _, v := range res.PreviewList {
-			region := gci.NewRegion(gci.ImageType)
+			region := gci.NewRegion()
 			var img gci.Image
 			if v.PreviewType == 1 {
-				img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), false)
-				if err == nil {
+				if img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), false); err == nil {
 					surface.PreviewImage = &img
 				}
-
 			} else if v.PreviewType == 3 {
-				img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), true)
-				if err == nil {
+				if img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), true); err == nil {
 					region.AddImage(img)
+				}
+			}
+			if v.CustomizedText.Valid {
+				var text gci.Text
+				if text, err = gci.NewText("", v.CustomizedText.String); err == nil {
+					region.AddText(text)
 				}
 			}
 			surface.AddRegion(region)

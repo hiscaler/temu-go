@@ -27,10 +27,11 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/goccy/go-json"
 	"github.com/hiscaler/temu-go"
 	"github.com/hiscaler/temu-go/config"
-	"os"
 )
 
 func main() {
