@@ -429,6 +429,7 @@ func (m PurchaseOrderEditRequest) validate() error {
 	)
 }
 
+// Edit 修改备货单下单数量
 func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEditRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
@@ -450,8 +451,7 @@ func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEdi
 	return true, nil
 }
 
-// 批量取消待接单的备货单（bg.purchaseorder.cancel）
-
+// Cancel 批量取消待接单的备货单
 func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumbers ...string) (results []entity.Result, err error) {
 	if len(rawPurchaseOrderNumbers) == 0 {
 		return results, nil
