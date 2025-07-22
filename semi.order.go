@@ -427,7 +427,7 @@ func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNu
 	}
 	for i, ci := range ciList {
 		for j, surface := range ci.Surfaces {
-			if surface.PreviewImage == nil || !surface.PreviewImage.Redownload() {
+			if surface.PreviewImage == nil || !surface.PreviewImage.Redownload {
 				continue
 			}
 
