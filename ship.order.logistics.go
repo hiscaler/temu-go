@@ -55,6 +55,7 @@ func (m LogisticsMatchRequest) validate() error {
 	)
 }
 
+// Match 平台推荐物流商匹配
 func (s shipOrderLogisticsService) Match(ctx context.Context, request LogisticsMatchRequest) (items []entity.LogisticsMatch, err error) {
 	if err = request.validate(); err != nil {
 		return items, invalidInput(err)
@@ -133,6 +134,7 @@ func (m LogisticsChangeRequest) validate() error {
 	)
 }
 
+// Change 修改物流
 func (s shipOrderLogisticsService) Change(ctx context.Context, request LogisticsChangeRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)

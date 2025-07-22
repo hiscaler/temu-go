@@ -105,16 +105,14 @@ func (s *semiVirtualInventoryService) Update(ctx context.Context, params SemiVir
 		return false, err
 	}
 
-	var result = struct {
-		normal.Response
-	}{}
+	var result normal.Response
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
 		Post("bg.goods.quantity.update")
 
-	if err = recheckError(resp, result.Response, err); err != nil {
+	if err = recheckError(resp, result, err); err != nil {
 		return false, err
 	}
 
