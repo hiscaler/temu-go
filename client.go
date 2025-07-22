@@ -330,11 +330,12 @@ func NewClient(cfg config.Config) *Client {
 					"payload", jsonx.ToJson(params, "{}"),
 					"status", response.StatusCode(),
 					"response", response.String(),
+					"duration", fmt.Sprintf("%d ms", response.Time().Milliseconds()),
 				}
 				if response.IsError() {
 					l.Errorf("call", args...)
 				} else {
-					l.Infof("call", args...)
+					l.Debugf("call", args...)
 				}
 			}
 			return nil
