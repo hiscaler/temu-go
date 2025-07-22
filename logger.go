@@ -13,9 +13,7 @@ type Logger interface {
 }
 
 func createLogger() *logger {
-	ll := slog.Default()
-	l := &logger{l: ll}
-	return l
+	return &logger{l: slog.Default()}
 }
 
 type logger struct {
