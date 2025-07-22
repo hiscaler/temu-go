@@ -200,7 +200,7 @@ var loc *time.Location
 var lang *string
 var i18nBundle *i18n.Bundle
 var i18nLocalizer *i18n.Localizer
-var versionPattern = regexp.MustCompile(`\.(v[1-9]+)`)
+var versionPattern = regexp.MustCompile(`.*(v[1-9]+)\.`)
 
 //go:embed locales/*.toml
 var localeFS embed.FS
@@ -243,7 +243,6 @@ func parseRegion(region string) string {
 
 // getVersion 从 typ 中获取 API 版本
 func getVersion(typ string) string {
-	// todo 不是所有情况下 type 值都是 x.v2.y 的形式，存在 xv2.y 这样的 type，比如 bg.purchaseorderv2.get
 	vs := versionPattern.FindStringSubmatch(typ)
 	if len(vs) <= 1 {
 		return "V1"
