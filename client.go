@@ -90,7 +90,7 @@ type Client struct {
 	TimeLocation *time.Location // 时区
 }
 
-// url 获取方法对应的 URL
+// baseUrl 获取方法对应的 URL
 func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 	// key 为 type 值，value 为对应的区域，为空表示根据 region 确定 baseUrl，
 	// 不为空的情况下表示无论传入的 region 为何值，均取 value 作为 region 值去获取 baseUrl
