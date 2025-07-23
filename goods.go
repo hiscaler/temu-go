@@ -789,7 +789,7 @@ func (m GoodsCreateRequest) validate(ctx context.Context, s goodsService) error 
 			validation.By(func(value interface{}) error {
 				properties, ok := value.([]GoodsCreateProductProperty)
 				if !ok {
-					return errors.New("无效的货品属性。")
+					return errors.New("无效的货品属性")
 				}
 				templatePids := make([]int64, 0)
 				for _, prop := range properties {
@@ -804,7 +804,7 @@ func (m GoodsCreateRequest) validate(ctx context.Context, s goodsService) error 
 			validation.Each(validation.By(func(value interface{}) error {
 				v, ok := value.(GoodsCreateProductProperty)
 				if !ok {
-					return errors.New("无效的货品属性。")
+					return errors.New("无效的货品属性")
 				}
 
 				catIds := []int64{m.Cat10Id, m.Cat9Id, m.Cat8Id, m.Cat7Id, m.Cat6Id, m.Cat5Id, m.Cat4Id, m.Cat3Id, m.Cat2Id, m.Cat1Id}

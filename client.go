@@ -333,9 +333,9 @@ func NewClient(cfg config.Config) *Client {
 					"duration", fmt.Sprintf("%d ms", response.Time().Milliseconds()),
 				}
 				if response.IsError() {
-					l.Errorf("call", args...)
+					l.l.Error("call", args...)
 				} else {
-					l.Debugf("call", args...)
+					l.l.Debug("call", args...)
 				}
 			}
 			return nil
@@ -377,7 +377,7 @@ func NewClient(cfg config.Config) *Client {
 						"status", response.StatusCode(),
 						"response", response.String(),
 					}
-					l.Infof("retry", args...)
+					l.l.Info("retry", args...)
 				}
 			}
 			return retry
@@ -398,7 +398,7 @@ func NewClient(cfg config.Config) *Client {
 				return 0, nil
 			}
 			if debug {
-				l.Infof("retry", "waiting", milliseconds)
+				l.l.Info("retry", "waiting", milliseconds)
 			}
 			return time.Duration(milliseconds) * time.Millisecond, nil
 		})
