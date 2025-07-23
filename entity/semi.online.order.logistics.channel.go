@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+var (
+	estimatedAmountRegx = regexp.MustCompile(`\.?\d+\.?\d+`)                          // 金额解析正则
+	deliveryDaysRegx    = regexp.MustCompile(`(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)`) // 交货天数解析正则
+)
+
 // SemiOnlineOrderLogisticsChannel 物流供应商渠道
 type SemiOnlineOrderLogisticsChannel struct {
 	ChannelId             int64  `json:"channelId"`             // 渠道 id
@@ -35,12 +40,7 @@ func (c SemiOnlineOrderLogisticsChannel) ParseEstimatedAmount() (float64, error)
 		return 0, errors.New("预估金额待解析文本不能为空")
 	}
 
-	re, err := regexp.Compile(`\.?\d+\.?\d+`)
-	if err != nil {
-		return 0, err
-	}
-
-	v, err := strconv.ParseFloat(re.FindString(c.EstimatedAmount), 64)
+	v, err := strconv.ParseFloat(estimatedAmountRegx.FindString(c.EstimatedAmount), 64)
 	if err != nil {
 		return 0, err
 	}
@@ -57,17 +57,13 @@ func (c SemiOnlineOrderLogisticsChannel) DeliveryDays() (float64, float64, error
 		return 0, 0, errors.New("交货天数待解析文本不能为空")
 	}
 
-	re, err := regexp.Compile(`(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)`)
-	if err != nil {
-		return 0, 0, err
-	}
-
-	values := re.FindStringSubmatch(s)
+	values := deliveryDaysRegx.FindStringSubmatch(s)
 	if len(values) != 3 {
 		return 0, 0, errors.New("交货天数文本解析失败")
 	}
 
 	var v, minDays, maxDays float64
+	var err error
 	if v, err = strconv.ParseFloat(values[1], 64); err != nil {
 		return 0, 0, err
 	} else {
