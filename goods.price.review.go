@@ -11,9 +11,6 @@ import (
 // goodsPriceReviewService 供货价/核价/调价服务
 type goodsPriceReviewService service
 
-// 分页查询核价单
-// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=899321422992
-
 type GoodsPriceReviewQueryParams struct {
 	normal.ParameterWithPager
 	IdLt            int64 `json:"idLt,omitempty"`            // id 范围查询最大值
@@ -27,6 +24,8 @@ func (m GoodsPriceReviewQueryParams) validate() error {
 	)
 }
 
+// Query 分页查询核价单
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=899321422992
 func (s goodsPriceReviewService) Query(ctx context.Context, params GoodsPriceReviewQueryParams) (items []entity.GoodsReviewSamplePrice, err error) {
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)
@@ -70,9 +69,6 @@ func (s goodsPriceReviewService) Confirm(ctx context.Context, orderId int64) (bo
 	return true, nil
 }
 
-// Reject 不同意核价单建议价（并给出新的申报价）
-// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=901413494559
-
 type GoodsPriceReviewRejectRequest struct {
 	OrderId           int64 `json:"orderId"` // 核价单 ID
 	BargainReasonList []struct {
@@ -92,6 +88,8 @@ func (m GoodsPriceReviewRejectRequest) validate() error {
 	)
 }
 
+// Reject 不同意核价单建议价（并给出新的申报价）
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=901413494559
 func (s goodsPriceReviewService) Reject(ctx context.Context, request GoodsPriceReviewRejectRequest) (bool, error) {
 	var result = struct {
 		normal.Response

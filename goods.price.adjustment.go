@@ -12,9 +12,6 @@ import (
 // goodsPriceFullAdjustmentService 全托调价服务
 type goodsPriceFullAdjustmentService service
 
-// 分页查询全托管调价单
-// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=908751475686
-
 type GoodsPriceFullAdjustmentQueryParams struct {
 	normal.ParameterWithPager
 	SkcId               []int64  `json:"skcId"`               // Skc ID
@@ -37,6 +34,8 @@ func (m GoodsPriceFullAdjustmentQueryParams) validate() error {
 	)
 }
 
+// Query 分页查询全托管调价单
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=908751475686
 func (s goodsPriceFullAdjustmentService) Query(ctx context.Context, params GoodsPriceFullAdjustmentQueryParams) (items []entity.GoodsReviewSamplePrice, err error) {
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)
@@ -60,9 +59,6 @@ func (s goodsPriceFullAdjustmentService) Query(ctx context.Context, params Goods
 
 	return result.Result.List, nil
 }
-
-// 全托管批量确认调价单
-// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=908749899377
 
 type GoodsPriceFullAdjustmentConfirmItem struct {
 	PriceOrderSn string `json:"priceOrderSn"` // 调价单号
@@ -95,6 +91,8 @@ func (m GoodsPriceFullAdjustmentConfirmRequest) validate() error {
 	)
 }
 
+// Confirm 全托管批量确认调价单
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=908749899377
 func (s goodsPriceFullAdjustmentService) Confirm(ctx context.Context, params GoodsPriceFullAdjustmentConfirmRequest) (bool, error) {
 	if err := params.validate(); err != nil {
 		return false, invalidInput(err)

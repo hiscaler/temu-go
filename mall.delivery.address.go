@@ -48,9 +48,6 @@ func (s mallDeliveryAddressService) One(ctx context.Context, addressId int64) (a
 	return address, ErrNotFound
 }
 
-// 卖家发货地址创建
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#gcyXKJ
-
 type CreateDeliveryAddressRequest struct {
 	WarehouseType            int64  `json:"warehouseType"`                      // 仓库类型
 	WarehouseAreaType        string `json:"warehouseAreaType"`                  // 仓库面积类型
@@ -100,6 +97,8 @@ func (m CreateDeliveryAddressRequest) validate() error {
 	)
 }
 
+// Create 卖家发货地址创建
+// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#gcyXKJ
 func (s mallDeliveryAddressService) Create(ctx context.Context, request CreateDeliveryAddressRequest) (addressId int64, err error) {
 	if err = request.validate(); err != nil {
 		err = invalidInput(err)

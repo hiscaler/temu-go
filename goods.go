@@ -1016,9 +1016,6 @@ func (s goodsService) EditSensitiveAttr(ctx context.Context, request GoodsEditSe
 	return true, nil
 }
 
-// 编辑货品属性
-// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=900361168169
-
 type GoodsEditPropertyItem struct {
 	Vid              int64  `json:"vid"`              // 基础属性值 ID，没有的情况传 0
 	ValueUnit        string `json:"valueUnit"`        // 属性值单位，没有的情况传空字符串
@@ -1062,6 +1059,8 @@ func (m GoodsEditPropertyRequest) validate() error {
 	)
 }
 
+// EditProperty 编辑货品属性
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=900361168169
 func (s goodsService) EditProperty(ctx context.Context, request GoodsEditPropertyRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
@@ -1082,9 +1081,6 @@ func (s goodsService) EditProperty(ctx context.Context, request GoodsEditPropert
 
 	return true, nil
 }
-
-// Migrate 半托管店铺搬运同主体下全托管店铺的货品
-// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=902459443915
 
 type GoodsMigrateRequest struct {
 	MigrationList []struct {
@@ -1115,6 +1111,9 @@ type GoodsMigrateRequest struct {
 func (m GoodsMigrateRequest) validate() error {
 	return nil
 }
+
+// Migrate 半托管店铺搬运同主体下全托管店铺的货品
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=902459443915
 func (s goodsService) Migrate(ctx context.Context, request GoodsMigrateRequest) error {
 	//
 	if err := request.validate(); err != nil {

@@ -66,9 +66,6 @@ func (s goodsCertificationService) Query(ctx context.Context, params GoodsCertif
 	return
 }
 
-// 查询资质要上传的内容
-// https://seller.kuajingmaihuo.com/sop/view/649320516224723675#5mZ1dI
-
 type GoodsCertificationNeedUploadItemRequest struct {
 	CertType  int   `json:"certType"`  // 资质类型
 	ProductId int64 `json:"productId"` // 货品 ID
@@ -78,6 +75,8 @@ func (m GoodsCertificationNeedUploadItemRequest) validate() error {
 	return nil
 }
 
+// QueryNeedUploadItems 查询资质要上传的内容
+// https://seller.kuajingmaihuo.com/sop/view/649320516224723675#5mZ1dI
 func (s goodsCertificationService) QueryNeedUploadItems(ctx context.Context, request GoodsCertificationNeedUploadItemRequest) (items []entity.GoodsCertificationNeedUploadItem, err error) {
 	if err = request.validate(); err != nil {
 		return items, invalidInput(err)
@@ -101,9 +100,6 @@ func (s goodsCertificationService) QueryNeedUploadItems(ctx context.Context, req
 	return result.Result.CertNeedUploadItems, nil
 }
 
-// 上传文件接口（bg.arbok.open.upload.uploadFile）
-// https://seller.kuajingmaihuo.com/sop/view/649320516224723675#sFvgAq
-
 type GoodsCertificationUploadFileRequest struct {
 	Base64File string `json:"base64File"` // 支持格式有：jpg/jpeg、png,pdf格式，注意入参图片必须转码为base64编码
 	FileName   string `json:"fileName"`   // 文件名，主要用来辨别格式，名字不采用，仅支持jpg/jpeg、png,pdf格式
@@ -117,6 +113,8 @@ func (m GoodsCertificationUploadFileRequest) validate() error {
 	)
 }
 
+// UploadFile 上传文件接口（bg.arbok.open.upload.uploadFile）
+// https://seller.kuajingmaihuo.com/sop/view/649320516224723675#sFvgAq
 func (s goodsCertificationService) UploadFile(ctx context.Context, request GoodsCertificationUploadFileRequest) (string, error) {
 	if err := request.validate(); err != nil {
 		return "", invalidInput(err)
@@ -137,9 +135,6 @@ func (s goodsCertificationService) UploadFile(ctx context.Context, request Goods
 
 	return result.Result, nil
 }
-
-// 提交资质内容
-// https://seller.kuajingmaihuo.com/sop/view/649320516224723675#dCjnye
 
 type GoodsCertificationUploadFile struct {
 	FileName      string   `json:"fileName"`                // 文件名称
@@ -178,6 +173,8 @@ func (m GoodsCertificationUploadRequest) validate() error {
 	)
 }
 
+// Upload 提交资质内容
+// https://seller.kuajingmaihuo.com/sop/view/649320516224723675#dCjnye
 func (s goodsCertificationService) Upload(ctx context.Context, request GoodsCertificationUploadRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)

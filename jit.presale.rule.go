@@ -30,10 +30,6 @@ func (s jitPresaleRuleService) Query(ctx context.Context) (rule entity.JitPresal
 	return result.Result, nil
 }
 
-// Sign jit预售规则签署接口（bg.virtualinventoryjit.rule.sign）
-// https://seller.kuajingmaihuo.com/sop/view/706628248275137588#q8IeTi
-// - 全托管JIT开通：全托管的SKC开通JIT模式，需要签署对应协议之后才可添加虚拟库存
-
 type JitPresaleRuleSignRequest struct {
 	ProductId      int64  `json:"productId"`      // 货品 id，货品需要处于 JI T开启状态，才能签署 JIT 协议
 	AgtVersion     int    `json:"agtVersion"`     // JIT 预售协议版本号
@@ -59,6 +55,9 @@ func (m JitPresaleRuleSignRequest) validate() error {
 	)
 }
 
+// Sign jit预售规则签署接口（bg.virtualinventoryjit.rule.sign）
+// https://seller.kuajingmaihuo.com/sop/view/706628248275137588#q8IeTi
+// - 全托管JIT开通：全托管的SKC开通JIT模式，需要签署对应协议之后才可添加虚拟库存
 func (s jitPresaleRuleService) Sign(ctx context.Context, request JitPresaleRuleSignRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)

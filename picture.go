@@ -12,9 +12,6 @@ import (
 // 图片服务
 type pictureService service
 
-// 高清图片压缩处理
-// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=877312019388
-
 type PictureCompressionRequest struct {
 	Urls []string `json:"urls"` // 需要压缩的图片链接
 }
@@ -28,6 +25,8 @@ func (m PictureCompressionRequest) validate() error {
 	)
 }
 
+// Compression 高清图片压缩处理
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=877312019388
 func (s pictureService) Compression(ctx context.Context, params PictureCompressionRequest) ([]entity.PictureCompressionResult, error) {
 	if err := params.validate(); err != nil {
 		return nil, invalidInput(err)

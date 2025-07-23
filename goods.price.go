@@ -15,9 +15,6 @@ type goodsPriceService struct {
 	FullAdjustment goodsPriceFullAdjustmentService // 全托调价服务
 }
 
-// Query 货品供货价查询
-// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=901410718805
-
 type GoodsPriceQueryParams struct {
 	ProductSkuIds []int64 `json:"productSkuIds"` // 货品 SKU ID
 }
@@ -28,6 +25,8 @@ func (m GoodsPriceQueryParams) validate() error {
 	)
 }
 
+// Query 货品供货价查询
+// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=901410718805
 func (s goodsPriceService) Query(ctx context.Context, params GoodsPriceQueryParams) (items []entity.ProductSkuSupplierPrice, err error) {
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)

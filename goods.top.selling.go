@@ -10,9 +10,8 @@ import (
 // 商品畅销服务
 type goodsTopSellingService service
 
-// 批量查询爆款售罄商品（bg.goods.topselling.soldout.get）
+// SoldOut 批量查询爆款售罄商品（bg.goods.topselling.soldout.get）
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#1cxFkn
-
 func (s goodsTopSellingService) SoldOut(ctx context.Context) (items []entity.GoodsTopSellingSoldOut, err error) {
 	var result = struct {
 		normal.Response
