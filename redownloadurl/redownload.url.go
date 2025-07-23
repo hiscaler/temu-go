@@ -1,4 +1,4 @@
-package downloadableurl
+package redownloadurl
 
 import (
 	"crypto/md5"
@@ -20,8 +20,8 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
-// DownloadableUrl 可下载 URL
-type DownloadableUrl string
+// RedownloadUrl 可下载 URL
+type RedownloadUrl string
 
 type Option struct {
 	Debug            bool
@@ -54,10 +54,10 @@ func urlJoin(prefix, file string) string {
 	return prefix + file
 }
 
-func (dau DownloadableUrl) Download(opt Option) (Download, error) {
+func (rdu RedownloadUrl) Download(opt Option) (Download, error) {
 	var d Download
 	var err error
-	originalUrl := string(dau)
+	originalUrl := string(rdu)
 	if originalUrl == "" {
 		return d, errors.New("url is empty")
 	}
