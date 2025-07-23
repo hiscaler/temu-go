@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -56,7 +57,7 @@ func (c SemiOnlineOrderLogisticsChannel) DeliveryDays() (float64, float64, error
 		return 0, 0, errors.New("交货天数待解析文本不能为空")
 	}
 
-	re, err := regexp.Compile(`([0-9]+)\s*-\s*([0-9]+)`)
+	re, err := regexp.Compile(`(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)`)
 	if err != nil {
 		return 0, 0, err
 	}
@@ -66,20 +67,20 @@ func (c SemiOnlineOrderLogisticsChannel) DeliveryDays() (float64, float64, error
 		return 0, 0, errors.New("交货天数文本解析失败")
 	}
 
-	var v, minDays, maxDays int
-	if v, err = strconv.Atoi(values[1]); err != nil {
+	var v, minDays, maxDays float64
+	if v, err = strconv.ParseFloat(values[1], 64); err != nil {
 		return 0, 0, err
 	} else {
 		minDays = v
 	}
-	if v, err = strconv.Atoi(values[2]); err != nil {
+	if v, err = strconv.ParseFloat(values[2], 64); err != nil {
 		return 0, 0, err
 	} else {
 		maxDays = v
 	}
 	if minDays <= 0 || maxDays <= 0 {
-		return 0, 0, errors.New("无效的交货天数")
+		return 0, 0, fmt.Errorf("无效的交货天数：%f ~ %f", minDays, maxDays)
 	}
 
-	return float64(minDays), float64(maxDays), nil
+	return minDays, maxDays, nil
 }

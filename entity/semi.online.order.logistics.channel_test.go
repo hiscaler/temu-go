@@ -23,11 +23,12 @@ func TestSemiOnlineOrderLogisticsChannel_ParseEstimatedAmount(t *testing.T) {
 }
 
 func TestSemiOnlineOrderLogisticsChannel_DeliveryDays(t *testing.T) {
-	tests := map[string][]int{
-		"1-1":                              {1, 1},
-		"1  -2":                            {1, 2},
-		"预估$91.21; USD; 1-2工作日送达":   {1, 2},
-		"预估$91.21; USD; 1 - 2工作日送达": {1, 2},
+	tests := map[string][]float64{
+		"1-1":                     {1, 1},
+		"1  -2":                   {1, 2},
+		"预估$91.21; USD; 1-2工作日送达": {1, 2},
+		"预估$91.21; USD; 1 - 2工作日送达":     {1, 2},
+		"预估$91.21; USD; 1.0 - 2.5工作日送达": {1, 2.5},
 	}
 	for text, days := range tests {
 		d := SemiOnlineOrderLogisticsChannel{EstimatedText: text}
