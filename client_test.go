@@ -64,6 +64,8 @@ func Test_getVersion(t *testing.T) {
 		{"8", "av12.b", "V12"},
 		{"9", "ava12.b", "V1"},
 		{"10", "a.v3b.c", "V1"},
+		{"11", "bg.goods.labelv2.get", "V2"},
+		{"12", "bg.shiporderv3.logisticsmatch.get", "V3"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
