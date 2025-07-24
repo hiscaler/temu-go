@@ -31,7 +31,7 @@ const (
 // 扩展备货单、发货单类型
 const (
 	OrderTypeNormal     = 1 // 普通备货单
-	OrderTypeJIT        = 2 // JIT 备货单
+	OrderTypeUrgent     = 2 // 紧急备货单
 	OrderTypeCustomized = 3 // 定制备货单
 )
 
