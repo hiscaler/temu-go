@@ -351,11 +351,11 @@ func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNu
 
 	results := result.Result
 	if len(results) == 0 {
-		return nil, nil
+		return nil, errors.New("未查询到定制信息")
 	}
 
-	ciList := make([]gci.GoodsCustomizedInformation, 0)
-	for _, res := range results {
+	ciList := make([]gci.GoodsCustomizedInformation, len(results))
+	for i, res := range results {
 		ci := gci.NewGoodsCustomizedInformation()
 		ci.SetRawData(res)
 		surface := gci.NewSurface()
@@ -390,10 +390,7 @@ func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNu
 			surface.AddRegion(region)
 		}
 		ci.AddSurface(surface)
-		ciList = append(ciList, ci)
-	}
-	if len(ciList) == 0 {
-		return ciList, nil
+		ciList[i] = ci
 	}
 
 	keys := []string{
