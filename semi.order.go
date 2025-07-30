@@ -327,7 +327,7 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 	return results, nil
 }
 
-// CustomizationInformation2 半托订单定制信息查询
+// CustomizationInformation2 半托订单定制信息（规范化后的）查询
 // https://partner.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=e8f86a2f5241441e9b095bf309d04dce
 // 注意：orderNumbers 为子单号
 func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNumbers ...string) ([]gci.GoodsCustomizedInformation, error) {
@@ -363,19 +363,27 @@ func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNu
 			region := gci.NewRegion()
 			var img gci.Image
 			switch v.PreviewType {
-			case 1:
-				if img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), false); err == nil {
-					surface.PreviewImage = &img
+			case 1: // 预览图
+				if v.ImageUrl.Valid {
+					if img, err = gci.NewImage(v.ImageUrl.String, false); err == nil {
+						surface.PreviewImage = &img
+					} else {
+						region.SetError(err)
+					}
 				} else {
-					region.SetError(err)
+					region.SetError("预览图片地址为空")
 				}
-			case 3:
-				if img, err = gci.NewImage(v.ImageUrl.ValueOrZero(), true); err == nil {
-					region.AddImage(img)
+			case 3: // 用户上传的定制图片
+				if v.ImageUrl.Valid {
+					if img, err = gci.NewImage(v.ImageUrl.String, true); err == nil {
+						region.AddImage(img)
+					} else {
+						region.SetError(err)
+					}
 				} else {
-					region.SetError(err)
+					region.SetError("用户上传图片地址为空")
 				}
-			case 4:
+			case 4: // 用户定制的文本
 				if v.CustomizedText.Valid {
 					var text gci.Text
 					if text, err = gci.NewText("", v.CustomizedText.String); err == nil {
@@ -384,7 +392,7 @@ func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNu
 						region.SetError(err)
 					}
 				} else {
-					region.SetError("无定制信息")
+					region.SetError("定制信息内容为空")
 				}
 			}
 			surface.AddRegion(region)
