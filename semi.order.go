@@ -208,6 +208,13 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 	if len(orderNumbers) == 0 {
 		return nil, errors.New("待查询半托订单定制信息子单号列表不能为空")
 	}
+	for _, number := range orderNumbers {
+		if number == "" {
+			return nil, errors.New("待查询半托订单定制信息子单号列表不能包含空字符串")
+		} else if number != strings.TrimSpace(number) {
+			return nil, fmt.Errorf("无效的子单号 %s", number)
+		}
+	}
 
 	var result = struct {
 		normal.Response
@@ -327,12 +334,19 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 	return results, nil
 }
 
-// CustomizationInformation2 半托订单定制信息（规范化后的）查询
+// NormalizedCustomizationInformation 半托订单定制信息（规范化后的）查询
 // https://partner.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=e8f86a2f5241441e9b095bf309d04dce
 // 注意：orderNumbers 为子单号
-func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNumbers ...string) ([]gci.GoodsCustomizedInformation, error) {
+func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context, orderNumbers ...string) ([]gci.GoodsCustomizedInformation, error) {
 	if len(orderNumbers) == 0 {
 		return nil, errors.New("待查询半托订单定制信息子单号列表不能为空")
+	}
+	for _, number := range orderNumbers {
+		if number == "" {
+			return nil, errors.New("待查询半托订单定制信息子单号列表不能包含空字符串")
+		} else if number != strings.TrimSpace(number) {
+			return nil, fmt.Errorf("无效的子单号 %s", number)
+		}
 	}
 
 	var result = struct {
@@ -364,6 +378,7 @@ func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNu
 			var img gci.Image
 			switch v.PreviewType {
 			case 1: // 预览图
+				surface.Name = v.CustomizedAreaId
 				if v.ImageUrl.Valid {
 					if img, err = gci.NewImage(v.ImageUrl.String, false); err == nil {
 						surface.PreviewImage = &img
@@ -374,6 +389,7 @@ func (s semiOrderService) CustomizationInformation2(ctx context.Context, orderNu
 					region.SetError("预览图片地址为空")
 				}
 			case 3: // 用户上传的定制图片
+				region.Name = v.CustomizedAreaId
 				if v.ImageUrl.Valid {
 					if img, err = gci.NewImage(v.ImageUrl.String, true); err == nil {
 						region.AddImage(img)
