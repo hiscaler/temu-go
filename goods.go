@@ -383,7 +383,7 @@ type GoodsCreateProductSaleExtAttr struct {
 	ProductSecondHandReq struct {
 		IsSecondHand    bool `json:"isSecondHand"`    // 是否二手货品，二手店铺传true，其他店铺不传值
 		SecondHandLevel int  `json:"secondHandLevel"` // 成色定义，二手货品必传值，非二手货品不可传值，枚举值：（1：接近全新，2：状况极佳，3：状况良好，4：尚可接受）
-	} `json:"productSecondHandReq"`              // 货品二手信息，二手店铺传值，其他店铺不传值
+	} `json:"productSecondHandReq"` // 货品二手信息，二手店铺传值，其他店铺不传值
 	InventoryRegion int `json:"inventoryRegion"` // 备货区域
 	// 满足如下两个条件时，必填无充电器版本货品id
 	// 引用属性：refPid=6919, propName="是否售卖不含充电器的同款商品"
@@ -427,7 +427,7 @@ type GoodsCreateProductSkuProductSkuMultiPack struct {
 	ProductSkuNetContentReq struct {
 		NetContentUnitCode int `json:"netContentUnitCode"` // 净含量单位，1：液体盎司，2：毫升，3：加仑，4：升，5：克，6：千克，7：常衡盎司，8：磅
 		NetContentNumber   int `json:"netContentNumber"`   // 净含量数值
-	} `json:"productSkuNetContentReq"`                 // 净含量请求，传空对象表示空，指定类目灰度管控
+	} `json:"productSkuNetContentReq"` // 净含量请求，传空对象表示空，指定类目灰度管控
 	SkuClassification  int `json:"skuClassification"`  // sku分类，1：单品，2：组合装，3：混合套装
 	PieceUnitCode      int `json:"pieceUnitCode"`      // 单件单位，1：件，2：双，3：包
 	IndividuallyPacked int `json:"individuallyPacked"` // 是否独立包装，当 sku 分类为同款多件装或混合套装时，必填 1:是，0:否
@@ -775,7 +775,7 @@ func (m GoodsCreateRequest) validate(ctx context.Context, s goodsService) error 
 		validation.Field(&m.Cat3Id, validation.Required.Error("三级类目不能为空")),
 		validation.Field(&m.ProductName,
 			validation.Required.Error("商品名称不能为空"),
-			validation.Length(1, 60).Error("商品名称最多 {{.max}} 个字符"),
+			validation.Length(1, 250).Error("商品名称最多 {{.max}} 个字符"),
 		),
 		validation.Field(&m.CarouselImageUrls,
 			validation.Required.Error("货品轮播图不能为空"),
@@ -791,12 +791,14 @@ func (m GoodsCreateRequest) validate(ctx context.Context, s goodsService) error 
 				if !ok {
 					return errors.New("无效的货品属性")
 				}
-				templatePids := make([]int64, 0)
+				vids := make([]int64, 0)
 				for _, prop := range properties {
-					if slices.Index(templatePids, prop.TemplatePid) != -1 {
-						return fmt.Errorf("重复的模板属性 ID %d", prop.TemplatePid)
+					if slices.Index(vids, prop.Vid) != -1 {
+						return fmt.Errorf("重复的属性 ID %d", prop.Vid)
 					}
-					templatePids = append(templatePids, prop.TemplatePid)
+					if prop.Vid != 0 {
+						vids = append(vids, prop.Vid)
+					}
 				}
 
 				return nil
