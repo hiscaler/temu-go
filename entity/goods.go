@@ -151,4 +151,10 @@ type GoodsDetail struct {
 			} `json:"textModuleDetails"` // 文字模块详情
 		} `json:"contentList"` // 楼层内容
 	} `json:"goodsLayerDecorationList"`
+	ProductWhExtAttr struct {
+		ProductOrigin struct {
+			Region1ShortName string `json:"region1ShortName"` // 一级区域简称 (二字简码)
+			Region2Id        int64  `json:"region2Id"`        // 二级区域 ID
+		} `json:"productOrigin"` // 货品产地信息
+	} `json:"productWhExtAttr"` //货品仓配供应链扩展属性
 }

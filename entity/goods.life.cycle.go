@@ -1,5 +1,6 @@
 package entity
 
+// GoodsLifeCycle 货品生命周期状态
 type GoodsLifeCycle struct {
 	ProductId int64 `json:"productId"` // 货品 ID
 	SkcList   []struct {
