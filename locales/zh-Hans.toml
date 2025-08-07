@@ -67,6 +67,10 @@ other = "无效的区域 {{.Value}}"
 description = "无效的站点"
 other = "无效的站点 {{.Value}}"
 
+[InvalidImageUrl]
+description = "无效的图片链接"
+other = "无效的图片链接 {{.Value}}"
+
 [Http.400]
 description = "Bad Request"
 other = "错误的请求"

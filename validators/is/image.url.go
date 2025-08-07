@@ -11,14 +11,14 @@ func ImageUrl() validation.RuleFunc {
 		s, ok := value.(string)
 		if !ok {
 			return err.
-				SetCode("InvalidMillisecondValue").
+				SetCode("InvalidImageUrl").
 				SetParams(map[string]any{"Value": value}).
 				SetMessage("无效的图片链接 {{.Value}}")
 		}
 
 		if !imageUrlPattern.MatchString(s) {
 			return err.
-				SetCode("InvalidMillisecondValue").
+				SetCode("InvalidImageUrl").
 				SetParams(map[string]any{"Value": s}).
 				SetMessage("无效的图片链接 {{.Value}}")
 		}
