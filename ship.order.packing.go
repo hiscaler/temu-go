@@ -226,7 +226,7 @@ func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPack
 
 	number := result.Result.ExpressBatchSn
 	if number == "" {
-		return "", errors.New("发货批次号为空")
+		return "", errors.New("装箱发货失败，发货批次号为空")
 	}
 
 	return number, nil
