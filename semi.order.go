@@ -381,7 +381,7 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 				surface.Name = v.CustomizedAreaId
 				if v.ImageUrl.Valid {
 					if img, err = gci.NewImage(v.ImageUrl.String, false); err == nil {
-						surface.PreviewImage = &img
+						surface.SetPreviewImage(img)
 					} else {
 						region.SetError(err)
 					}
