@@ -1,7 +1,7 @@
 package entity
 
-// SubPurchaseOrder 子订单信息
-type SubPurchaseOrder struct {
+// SubPurchaseOrderBasic 子订单基本信息
+type SubPurchaseOrderBasic struct {
 	SupplierId                         int64          `json:"supplierId"`
 	IsCustomProduct                    bool           `json:"isCustomProduct"`                    // 是否为定制商品
 	ExpectLatestArrivalTimeOrDefault   int64          `json:"expectLatestArrivalTimeOrDefault"`   // 要求最晚到达时间带默认值（时间戳 单位：毫秒）

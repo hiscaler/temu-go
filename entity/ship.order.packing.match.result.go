@@ -87,10 +87,10 @@ type ShipOrderPackingMatchShouldAddDeliveryOrder struct {
 		ProvinceName  string `json:"provinceName"`
 		WarehouseType int    `json:"warehouseType"`
 	} `json:"deliveryAddressInfo"` // 需要勾选的相同发货地址的目标发货地址详情
-	SubPurchaseOrderBasicVO SubPurchaseOrder `json:"subPurchaseOrderBasicVO"`
-	SubWarehouseName        string           `json:"subWarehouseName"`
-	PurchaseTime            int64            `json:"purchaseTime"`
-	SkcPurchaseNum          int              `json:"skcPurchaseNum"`
-	DeliverSkcNum           int              `json:"deliverSkcNum"`
-	DeliveryOrderCreateTime int64            `json:"deliveryOrderCreateTime"`
+	SubPurchaseOrderBasicVO SubPurchaseOrderBasic `json:"subPurchaseOrderBasicVO"`
+	SubWarehouseName        string                `json:"subWarehouseName"`
+	PurchaseTime            int64                 `json:"purchaseTime"`
+	SkcPurchaseNum          int                   `json:"skcPurchaseNum"`
+	DeliverSkcNum           int                   `json:"deliverSkcNum"`
+	DeliveryOrderCreateTime int64                 `json:"deliveryOrderCreateTime"`
 }
