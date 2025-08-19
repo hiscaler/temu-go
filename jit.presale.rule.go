@@ -31,9 +31,9 @@ func (s jitPresaleRuleService) Query(ctx context.Context) (rule entity.JitPresal
 }
 
 type JitPresaleRuleSignRequest struct {
-	ProductId      int64  `json:"productId"`      // 货品 id，货品需要处于 JI T开启状态，才能签署 JIT 协议
+	ProductId      int64  `json:"productId"`      // 货品 ID，货品需要处于 JIT 开启状态，才能签署 JIT 协议
 	AgtVersion     int    `json:"agtVersion"`     // JIT 预售协议版本号
-	ProductAgtType int    `json:"productAgtType"` // 货品协议类型（1: JIT模式快速售卖协议）
+	ProductAgtType int    `json:"productAgtType"` // 货品协议类型（1: JIT 模式快速售卖协议）
 	Url            string `json:"url"`            // JIT 协议链接
 }
 
