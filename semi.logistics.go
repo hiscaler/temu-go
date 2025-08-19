@@ -32,9 +32,9 @@ func (s semiLogisticsService) Companies(ctx context.Context, regionId int) ([]en
 	return result.Result.Items, nil
 }
 
-// Template 物流模版查询
+// Templates 物流模版查询
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#pa858C
-func (s semiLogisticsService) Template(ctx context.Context, siteIds ...int) ([]entity.FreightTemplate, error) {
+func (s semiLogisticsService) Templates(ctx context.Context, siteIds ...int) ([]entity.FreightTemplate, error) {
 	if len(siteIds) == 0 {
 		return nil, errors.New("请提供站点 ID")
 	}
