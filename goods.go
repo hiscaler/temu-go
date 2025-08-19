@@ -634,12 +634,12 @@ type GoodsCreateProductSku struct {
 // GoodsCreateProductSkc 货品 SKC
 type GoodsCreateProductSkc struct {
 	PreviewImgUrls                  []string                `json:"previewImgUrls"`                  // SKC 轮播图列表
-	ProductSkcCarouselImageI18nReqs []ProductImageUrl       `json:"productSkcCarouselImageI18nReqs"` // SKC多语言轮播图，服饰类必传，非服饰不传
+	ProductSkcCarouselImageI18nReqs []ProductImageUrl       `json:"productSkcCarouselImageI18nReqs"` // SKC 多语言轮播图，服饰类必传，非服饰不传
 	ColorImageUrl                   string                  `json:"colorImageUrl"`                   // SKC 色块图，可通过（bg.colorimageurl.get）转换获取
 	MainProductSkuSpecReqs          []entity.Specification  `json:"mainProductSkuSpecReqs"`          // 主销售规格列表
 	IsBasePlate                     int                     `json:"isBasePlate"`                     // 是否底板
 	ProductSkuReqs                  []GoodsCreateProductSku `json:"productSkuReqs"`                  // 货品 sku 列表
-	ExtCode                         string                  `json:"extCode"`                         //
+	ExtCode                         string                  `json:"extCode"`                         // 货号
 }
 
 // GoodsCreateModel 商品模特
