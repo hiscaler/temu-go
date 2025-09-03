@@ -471,6 +471,7 @@ func NewClient(cfg config.Config) *Client {
 			},
 			VirtualInventory:       (semiVirtualInventoryService)(xService),
 			OrderLogisticsShipment: (semiOrderLogisticsShipmentService)(xService),
+			OrderLogisticsScanForm: (semiOrderLogisticsScanFormService)(xService),
 			Logistics:              (semiLogisticsService)(xService),
 		},
 		Picture:              (pictureService)(xService),
