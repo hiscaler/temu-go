@@ -645,9 +645,11 @@ func errorWrap(code int, message string) error {
 
 	// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=0ef1cf008e144cbb987771ae3a8fd99d
 	case 120018012:
-		message = `USPS 标签在打印前需要先进行确认。可以通过 "bg.logistics.shipment.result.get" 中的 "shipLabelPrintableTime" 进行查看，或者使用 "temu.logistics.scanform.create" 创建提货单`
+		message = `USPS 标签在打印前需要先进行确认，可以通过 "bg.logistics.shipment.result.get" 中的 "shipLabelPrintableTime" 进行查看，或者使用 "temu.logistics.scanform.create" 创建提货单`
 	case 120016053:
-		message = "仅支持 USPS 物流服务。请查看包裹是否符合要求"
+		message = "仅支持 USPS 物流服务，请查看包裹是否符合要求"
+	case 120011002:
+		message = "无效的扫描单创建请求参数"
 	default:
 		message = fmt.Sprintf("%d: %s", code, strings.TrimSpace(message))
 	}
