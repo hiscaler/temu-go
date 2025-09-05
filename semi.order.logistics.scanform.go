@@ -6,6 +6,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/hiscaler/temu-go/redownloadurl"
 )
 
 // 半托管物流扫描单服务
@@ -57,6 +58,37 @@ func (s *semiOrderLogisticsScanFormService) Create(ctx context.Context, request 
 	return result.Result.ScanFormInfoList, nil
 }
 
-func (s *semiOrderLogisticsScanFormService) Query(ctx context.Context, scanFormSn string) ([]entity.SemiOrderLogisticsScanFormResult, error) {
-	return nil, nil
+// Document 获取扫描单文件
+func (s *semiOrderLogisticsScanFormService) Document(ctx context.Context, scanFormSn string) (string, error) {
+	var result = struct {
+		normal.Response
+		Result struct {
+			Url redownloadurl.RedownloadUrl `json:"url"` // 面单文件
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(map[string]string{"scanFormSn": scanFormSn}).
+		SetResult(&result).
+		Post("temu.logistics.scanform.document.get")
+
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return "", err
+	}
+
+	download, err := result.Result.Url.Download(redownloadurl.Option{
+		Debug:            s.config.Debug,
+		UserAgent:        UserAgent,
+		AppKey:           s.config.AppKey,
+		AppSecret:        s.config.AppSecret,
+		AccessToken:      s.config.AccessToken,
+		Timeout:          s.config.Timeout,
+		VerifySSL:        s.config.VerifySSL,
+		StaticFileServer: s.config.StaticFileServer,
+		Dir:              "./semi/logistics/scan-forms",
+	})
+	if err != nil {
+		return "", err
+	}
+	return download.Url, nil
 }
