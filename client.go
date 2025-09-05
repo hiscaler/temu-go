@@ -633,15 +633,21 @@ func errorWrap(code int, message string) error {
 		message = "无效的请求地址"
 	case 2000000, 2000090, 3000000:
 	case 7000007, 3000034:
-		message = "Access Token 已过期，请联系卖家重新授权并与您共享新的 Access Token"
+		message = "Access Token 已过期，请联系卖家重新授权并更新 Access Token"
 	case 2000060:
 		message = "店铺类型不符合预期，不允许查询或变更库存操作"
 	case 4000004:
 		message = "请求过于频繁，超过了当前的限制阈值"
 	case 5000003:
 		message = "当前 IP 不在白名单中"
-	case 7000022:
-		message = "访问令牌没有此 API 访问权限"
+	case 7000022, 3000032:
+		message = "访问令牌未获得此 API 的访问权限，请联系卖家在卖家中心授权此 API 再重新请求。"
+
+	// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=0ef1cf008e144cbb987771ae3a8fd99d
+	case 120018012:
+		message = `USPS 标签在打印前需要先进行确认。可以通过 "bg.logistics.shipment.result.get" 中的 "shipLabelPrintableTime" 进行查看，或者使用 "temu.logistics.scanform.create" 创建提货单`
+	case 120016053:
+		message = "仅支持 USPS 物流服务。请查看包裹是否符合要求"
 	default:
 		message = fmt.Sprintf("%d: %s", code, strings.TrimSpace(message))
 	}
