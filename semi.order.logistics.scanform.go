@@ -58,7 +58,7 @@ func (s *semiOrderLogisticsScanFormService) Create(ctx context.Context, request 
 }
 
 // Document 获取扫描单文件
-func (s *semiOrderLogisticsScanFormService) Document(ctx context.Context, scanFormSn string) (string, []byte, error) {
+func (s *semiOrderLogisticsScanFormService) Document(ctx context.Context, scanFormSn string) (entity.File, error) {
 	var result = struct {
 		normal.Response
 		Result struct {
@@ -72,7 +72,7 @@ func (s *semiOrderLogisticsScanFormService) Document(ctx context.Context, scanFo
 		Post("temu.logistics.scanform.document.get")
 
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return "", nil, err
+		return entity.File{}, err
 	}
 	return result.Result.Url.Decode(s.config)
 }

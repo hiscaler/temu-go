@@ -43,12 +43,16 @@ import (
 // 接口返回文件流。
 type SignatureUrl string
 
+type File struct {
+	Filename string `json:"filename"` // 文件名
+	Content  []byte `json:"content"`  // 文件内容
+}
+
 // Decode 解码加签 URL，返回文件名，内容以及解码过程中出现的错误
-func (su SignatureUrl) Decode(cfg config.Config) (string, []byte, error) {
-	var err error
+func (su SignatureUrl) Decode(cfg config.Config) (f File, err error) {
 	rawUrl := string(su)
 	if rawUrl == "" {
-		return "", nil, errors.New("url is empty")
+		return f, errors.New("url is empty")
 	}
 	keys := []string{
 		"toa-access-token",
@@ -81,12 +85,13 @@ func (su SignatureUrl) Decode(cfg config.Config) (string, []byte, error) {
 	var u *url.URL
 	u, err = url.Parse(rawUrl)
 	if err != nil {
-		return "", nil, err
+		return f, err
 	}
 	filename := strings.ToLower(filepath.Base(u.Path))
 	if filename == "" {
-		return "", nil, errors.New("无法获取文件名")
+		return f, errors.New("无法获取文件名")
 	}
+	f.Filename = filename
 
 	headers["toa-random"] = randx.Letter(32, true)
 	headers["toa-timestamp"] = strconv.FormatInt(time.Now().Unix(), 10)
@@ -100,10 +105,11 @@ func (su SignatureUrl) Decode(cfg config.Config) (string, []byte, error) {
 	headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
 	resp, err := httpClient.R().SetHeaders(headers).SetOutput(filename).Get(rawUrl)
 	if err != nil {
-		return "", nil, err
+		return f, err
 	}
 	if !resp.IsSuccess() {
-		return "", nil, errors.New(resp.String())
+		return f, errors.New(resp.String())
 	}
-	return filename, resp.Body(), nil
+	f.Content = resp.Body()
+	return f, nil
 }
