@@ -2,12 +2,10 @@ package temu
 
 import (
 	"context"
-	"errors"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
-	"github.com/hiscaler/temu-go/redownloadurl"
 )
 
 // 半托管物流扫描单服务
@@ -60,11 +58,11 @@ func (s *semiOrderLogisticsScanFormService) Create(ctx context.Context, request 
 }
 
 // Document 获取扫描单文件
-func (s *semiOrderLogisticsScanFormService) Document(ctx context.Context, scanFormSn string) (string, error) {
+func (s *semiOrderLogisticsScanFormService) Document(ctx context.Context, scanFormSn string) (string, []byte, error) {
 	var result = struct {
 		normal.Response
 		Result struct {
-			Url redownloadurl.RedownloadUrl `json:"url"` // 面单文件
+			Url entity.SignatureUrl `json:"url"` // 面单文件
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
@@ -74,15 +72,7 @@ func (s *semiOrderLogisticsScanFormService) Document(ctx context.Context, scanFo
 		Post("temu.logistics.scanform.document.get")
 
 	if err = recheckError(resp, result.Response, err); err != nil {
-		return "", err
+		return "", nil, err
 	}
-
-	file, err := result.Result.Url.Download(s.config, "./semi/logistics/scan-forms")
-	if err != nil {
-		return "", err
-	}
-	if file.Error.Valid {
-		return "", errors.New(file.Error.String)
-	}
-	return file.Url, nil
+	return result.Result.Url.Decode(s.config)
 }
