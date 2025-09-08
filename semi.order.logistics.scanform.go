@@ -2,6 +2,7 @@ package temu
 
 import (
 	"context"
+	"errors"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
@@ -76,19 +77,12 @@ func (s *semiOrderLogisticsScanFormService) Document(ctx context.Context, scanFo
 		return "", err
 	}
 
-	download, err := result.Result.Url.Download(redownloadurl.Option{
-		Debug:            s.config.Debug,
-		UserAgent:        UserAgent,
-		AppKey:           s.config.AppKey,
-		AppSecret:        s.config.AppSecret,
-		AccessToken:      s.config.AccessToken,
-		Timeout:          s.config.Timeout,
-		VerifySSL:        s.config.VerifySSL,
-		StaticFileServer: s.config.StaticFileServer,
-		Dir:              "./semi/logistics/scan-forms",
-	})
+	file, err := result.Result.Url.Download(s.config, "./semi/logistics/scan-forms")
 	if err != nil {
 		return "", err
 	}
-	return download.Url, nil
+	if file.Error.Valid {
+		return "", errors.New(file.Error.String)
+	}
+	return file.Url, nil
 }
