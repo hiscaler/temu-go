@@ -644,11 +644,15 @@ func errorWrap(code int, message string) error {
 	case 7000022, 3000032:
 		message = "访问令牌未获得此 API 的访问权限，请联系卖家在卖家中心授权此 API 再重新请求。"
 
-	// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=0ef1cf008e144cbb987771ae3a8fd99d
+		// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=0ef1cf008e144cbb987771ae3a8fd99d
+	case 120016062:
+		message = `当前包裹无法生成相同的扫描单。请再次请求 "temu.logistics.candidate.scanform.list.get" 接口，以获取可以生成相同扫描单的包裹编号列表`
 	case 120018012:
 		message = `USPS 标签在打印前需要先进行确认，可以通过 "bg.logistics.shipment.result.get" 中的 "shipLabelPrintableTime" 进行查看，或者使用 "temu.logistics.scanform.create" 创建提货单`
 	case 120016053:
 		message = "仅支持 USPS 物流服务，请查看包裹是否符合要求"
+	case 120011001:
+		message = "系统异常，请检查数据并重试"
 	case 120011002:
 		message = "无效的扫描单创建请求参数"
 	default:
