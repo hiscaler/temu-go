@@ -334,11 +334,13 @@ func (m GoodsCreateProductProperty) validate(attr entity.GoodsCategoryAttribute)
 				if !ok {
 					return fmt.Errorf("无效的基础属性值 %v", value)
 				}
-				index := slices.IndexFunc(attr.Properties[templatePidIndex].Values, func(e entity.GoodsCategoryAttributePropertyValue) bool {
-					return m.PropValue == e.Value
-				})
-				if index == -1 {
-					return fmt.Errorf("无效的基础属性值 %s", v)
+				if templatePidIndex != -1 {
+					index := slices.IndexFunc(attr.Properties[templatePidIndex].Values, func(e entity.GoodsCategoryAttributePropertyValue) bool {
+						return m.PropValue == e.Value
+					})
+					if index == -1 {
+						return fmt.Errorf("无效的基础属性值 %s", v)
+					}
 				}
 				return nil
 			}),
@@ -349,9 +351,11 @@ func (m GoodsCreateProductProperty) validate(attr entity.GoodsCategoryAttribute)
 				if !ok {
 					return fmt.Errorf("无效的属性值单位 %v", value)
 				}
-				index := slices.Index(attr.Properties[templatePidIndex].ValueUnit, m.ValueUnit)
-				if index == -1 {
-					return fmt.Errorf("无效的属性值单位 %s", v)
+				if templatePidIndex != -1 {
+					index := slices.Index(attr.Properties[templatePidIndex].ValueUnit, m.ValueUnit)
+					if index == -1 {
+						return fmt.Errorf("无效的属性值单位 %s", v)
+					}
 				}
 				return nil
 			}),
