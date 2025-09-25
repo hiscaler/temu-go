@@ -40,7 +40,7 @@ func (s mallService) Permission(ctx context.Context) (p entity.MallPermission, e
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetResult(&result).
-		Post("bg.open.accesstoken.info.get")
+		Post("bg.open.accesstoken.info.get.global")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}

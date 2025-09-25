@@ -40,7 +40,7 @@ func (s *semiVirtualInventoryService) Query(ctx context.Context, params SemiVirt
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.quantity.get")
+		Post("bg.btg.goods.stock.quantity.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func (s *semiVirtualInventoryService) Update(ctx context.Context, params SemiVir
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.quantity.update")
+		Post("bg.btg.goods.stock.quantity.update")
 
 	if err = recheckError(resp, result, err); err != nil {
 		return false, err

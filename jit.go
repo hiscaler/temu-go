@@ -13,7 +13,7 @@ type jitService struct {
 	VirtualInventory jitVirtualInventoryService // 虚拟库存
 }
 
-// Activate 打开 JIT（bg.jitmode.activate）
+// Activate 打开 JIT（temu.jitmode.activate）
 // https://seller.kuajingmaihuo.com/sop/view/706628248275137588#b4ikfi
 // 全托管JIT开通：全托管的SKC开通JIT模式，进行虚拟库存售卖，关联查询bg.product.search，SKC出参满足applyJitStatus=1时，可开通JIT模式，进行虚拟库存售卖
 func (s jitService) Activate(ctx context.Context, productId, productSkcId int64) (bool, error) {
@@ -25,7 +25,7 @@ func (s jitService) Activate(ctx context.Context, productId, productSkcId int64)
 		SetContext(ctx).
 		SetBody(map[string]int64{"productId": productId, "productSkcId": productSkcId}).
 		SetResult(&result).
-		Post("bg.jitmode.activate")
+		Post("temu.jitmode.activate")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}

@@ -30,7 +30,7 @@ func (m NormalGoodsBarcodeQueryParams) validate() error {
 	return nil
 }
 
-// NormalGoods 商品条码查询v2（bg.goods.labelv2.get）
+// NormalGoods 商品条码查询v2（temu.goods.labelv2.get）
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#5LRokG
 func (s goodsBarcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
 	params.TidyPager()
@@ -52,7 +52,7 @@ func (s goodsBarcodeService) NormalGoods(ctx context.Context, params NormalGoods
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.labelv2.get")
+		Post("temu.goods.labelv2.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
@@ -76,7 +76,7 @@ func (s goodsBarcodeService) NormalGoodsPrintUrl(ctx context.Context, params Nor
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.labelv2.get")
+		Post("temu.goods.labelv2.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return "", err
 	}
@@ -84,7 +84,7 @@ func (s goodsBarcodeService) NormalGoodsPrintUrl(ctx context.Context, params Nor
 	return fmt.Sprintf("https://openapi.kuajingmaihuo.com/tool/print?dataKey=%s", result.Result), nil
 }
 
-// 定制商品条码查询（bg.goods.custom.label.get）
+// 定制商品条码查询（temu.goods.custom.label.get）
 
 type CustomGoodsBarcodeQueryParams struct {
 	NormalGoodsBarcodeQueryParams
@@ -107,7 +107,7 @@ func (m CustomGoodsBarcodeQueryParams) validate() error {
 	)
 }
 
-// CustomGoods 定制商品条码查询（bg.goods.custom.label.get）
+// CustomGoods 定制商品条码查询（temu.goods.custom.label.get）
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Hc5wmR
 func (s goodsBarcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
 	params.TidyPager()
@@ -136,7 +136,7 @@ func (s goodsBarcodeService) CustomGoods(ctx context.Context, params CustomGoods
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.custom.label.get")
+		Post("temu.goods.custom.label.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
@@ -159,7 +159,7 @@ func (s goodsBarcodeService) CustomGoodsPrintUrl(ctx context.Context, params Cus
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.custom.label.get")
+		Post("temu.goods.custom.label.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return "", err
 	}

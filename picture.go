@@ -42,7 +42,7 @@ func (s pictureService) Compression(ctx context.Context, params PictureCompressi
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.picturecompression.get")
+		Post("temu.picturecompression.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return nil, err
 	}

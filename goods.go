@@ -117,7 +117,7 @@ func (s goodsService) Query(ctx context.Context, params GoodsQueryParams) (items
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.list.get")
+		Post("temu.goods.list.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
@@ -143,7 +143,7 @@ func (s goodsService) One(ctx context.Context, productSkcId int64) (item entity.
 	return item, ErrNotFound
 }
 
-// Detail 货品详情查询（bg.goods.detail.get）
+// Detail 货品详情查询（temu.goods.detail.get）
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#VSGe8J
 func (s goodsService) Detail(ctx context.Context, productId int64) (entity.GoodsDetail, error) {
 	var result struct {
@@ -151,10 +151,11 @@ func (s goodsService) Detail(ctx context.Context, productId int64) (entity.Goods
 		Result entity.GoodsDetail `json:"result"`
 	}
 	resp, err := s.httpClient.R().
+		SetDebug(true).EnableTrace().
 		SetContext(ctx).
 		SetBody(map[string]int64{"productId": productId}).
 		SetResult(&result).
-		Post("bg.goods.detail.get")
+		Post("temu.goods.detail.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return entity.GoodsDetail{}, err
 	}
@@ -639,7 +640,7 @@ type GoodsCreateProductSku struct {
 type GoodsCreateProductSkc struct {
 	PreviewImgUrls                  []string                `json:"previewImgUrls"`                  // SKC 轮播图列表
 	ProductSkcCarouselImageI18nReqs []ProductImageUrl       `json:"productSkcCarouselImageI18nReqs"` // SKC 多语言轮播图，服饰类必传，非服饰不传
-	ColorImageUrl                   string                  `json:"colorImageUrl"`                   // SKC 色块图，可通过（bg.colorimageurl.get）转换获取
+	ColorImageUrl                   string                  `json:"colorImageUrl"`                   // SKC 色块图，可通过（temu.colorimageurl.get）转换获取
 	MainProductSkuSpecReqs          []entity.Specification  `json:"mainProductSkuSpecReqs"`          // 主销售规格列表
 	IsBasePlate                     int                     `json:"isBasePlate"`                     // 是否底板
 	ProductSkuReqs                  []GoodsCreateProductSku `json:"productSkuReqs"`                  // 货品 sku 列表
@@ -719,7 +720,7 @@ type GoodsCreateProductSemiManaged struct {
 
 // GoodsCreateProductShipment 半托管货品配送信息请求
 type GoodsCreateProductShipment struct {
-	FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板 id，使用bg.logistics.template.get查询，详见：https://seller.kuajingmaihuo.com/sop/view/867739977041685428#pa858C
+	FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板 id，使用 temu.logistics.template.get 查询，详见：https://seller.kuajingmaihuo.com/sop/view/867739977041685428#pa858C
 	ShipmentLimitSecond int    `json:"shipmentLimitSecond"` // 承诺发货时间(单位:s)，可选值：86400，172800，259200（仅定制品可用）
 }
 
@@ -862,7 +863,7 @@ func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (r
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.goods.add")
+		Post("temu.goods.add")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
@@ -870,7 +871,7 @@ func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (r
 	return result.Result, nil
 }
 
-// ImageUpload 上传货品图片（bg.goods.image.upload）
+// ImageUpload 上传货品图片（bg.goods.image.upload.global）
 // https://seller.kuajingmaihuo.com/sop/view/338873192956832611#atWm1f
 
 type GoodsImageUploadOption struct {
@@ -921,7 +922,7 @@ func (s goodsService) ImageUpload(ctx context.Context, request GoodsImageUploadR
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.goods.image.upload")
+		Post("bg.goods.image.upload.global")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
@@ -964,7 +965,7 @@ func (s goodsService) Update(ctx context.Context, request GoodsUpdateRequest) (b
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.goods.update")
+		Post("temu.goods.update")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}
@@ -1014,7 +1015,7 @@ func (s goodsService) EditSensitiveAttr(ctx context.Context, request GoodsEditSe
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.goods.edit.sensitive.attr")
+		Post("temu.goods.edit.sensitive.attr")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}
@@ -1080,7 +1081,7 @@ func (s goodsService) EditProperty(ctx context.Context, request GoodsEditPropert
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.goods.edit.property")
+		Post("temu.goods.edit.property")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}
@@ -1134,7 +1135,7 @@ func (s goodsService) Migrate(ctx context.Context, request GoodsMigrateRequest) 
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.goods.migrate")
+		Post("temu.goods.migrate")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return err
 	}

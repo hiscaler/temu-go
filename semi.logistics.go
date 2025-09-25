@@ -49,7 +49,7 @@ func (s semiLogisticsService) Templates(ctx context.Context, siteIds ...int) ([]
 		SetContext(ctx).
 		SetBody(map[string][]int{"siteIds": siteIds}).
 		SetResult(&result).
-		Post("bg.logistics.template.get")
+		Post("temu.logistics.template.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return nil, err
 	}

@@ -107,16 +107,35 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.order.unshipped.package.get":            "",
 		"bg.order.list.v2.get":                      "",
 		"bg.logistics.shipment.v2.get":              entity.AmericanRegion,
-		"bg.goods.quantity.get":                     "",
-		"bg.goods.quantity.update":                  "",
+		"bg.btg.goods.stock.quantity.get":           entity.Partner,
+		"bg.btg.goods.stock.quantity.update":        entity.Partner,
 		"bg.logistics.companies.get":                "",
 		"bg.order.shippinginfo.v2.get":              "",
 		"bg.logistics.shipment.v2.confirm":          entity.AmericanRegion,
 		"bg.order.customization.get":                "",
 		"bg.arbok.open.product.cert.query":          entity.GlobalRegion,
-		"bg.open.accesstoken.info.get":              "",
+		"bg.open.accesstoken.info.get.global":       entity.Partner,
 		"temu.logistics.scanform.create":            entity.AmericanRegion,
 		"temu.logistics.scanform.document.get":      entity.AmericanRegion,
+		"bg.btg.goods.stock.warehouse.list.get":     entity.Partner,
+		"bg.semi.price.review.page.query.order":     entity.Partner,
+		"bg.semi.price.review.confirm.order":        entity.Partner,
+		"bg.semi.price.review.reject.order":         entity.Partner,
+		"bg.goods.image.upload.global":              entity.Partner,
+		"temu.picturecompression.get":               entity.Partner,
+		"temu.goods.add":                            entity.Partner,
+		"temu.goods.list.get":                       entity.Partner,
+		"temu.goods.detail.get":                     entity.Partner,
+		"temu.goods.migrate":                        entity.Partner,
+		"temu.goods.topselling.soldout.get":         entity.Partner,
+		"temu.goods.custom.label.get":               entity.Partner,
+		"temu.goods.labelv2.get":                    entity.Partner,
+		"temu.goods.edit.sensitive.attr":            entity.Partner,
+		"temu.goods.update":                         entity.Partner,
+		"temu.goods.edit.property":                  entity.Partner,
+		"temu.logistics.template.get":               entity.Partner,
+		"temu.goods.price.list.get":                 entity.Partner,
+		"temu.jitmode.activate":                     entity.Partner,
 	}
 	if v, ok := semiTypes[typ]; ok {
 		if v != "" {
@@ -142,6 +161,10 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		entity.GlobalRegion: {
 			Prod: "https://openapi-b-global.temu.com/openapi/router",
 			Test: "https://openapi-b-global.temudemo.com/openapi/router", // Exists?
+		},
+		entity.Partner: {
+			Prod: "https://openapi-b-partner.temu.com/openapi/router",
+			Test: "https://openapi-b-partner.temudemo.com/openapi/router", // Exists?
 		},
 	}
 	// 如果有设置请求代理的话，则使用代理的地址替换 Temu 平台地址

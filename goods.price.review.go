@@ -42,7 +42,7 @@ func (s goodsPriceReviewService) Query(ctx context.Context, params GoodsPriceRev
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.price.review.page.query")
+		Post("bg.semi.price.review.page.query.order")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
@@ -61,7 +61,7 @@ func (s goodsPriceReviewService) Confirm(ctx context.Context, orderId int64) (bo
 		SetContext(ctx).
 		SetBody(map[string]int64{"orderId": orderId}).
 		SetResult(&result).
-		Post("bg.price.review.confirm")
+		Post("bg.semi.price.review.confirm.order")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}
@@ -99,7 +99,7 @@ func (s goodsPriceReviewService) Reject(ctx context.Context, request GoodsPriceR
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.price.review.reject")
+		Post("bg.semi.price.review.reject.order")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}

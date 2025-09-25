@@ -56,7 +56,7 @@ func (s goodsWarehouseService) Query(ctx context.Context, params GoodsWarehouseQ
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.warehouse.list.get")
+		Post("bg.btg.goods.stock.warehouse.list.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return items, err
 	}
