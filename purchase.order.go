@@ -250,14 +250,12 @@ func (s purchaseOrderService) Query(ctx context.Context, params PurchaseOrderQue
 // One 根据子采购单或者母采购单号查询采购单数据
 func (s purchaseOrderService) One(ctx context.Context, number string) (item entity.PurchaseOrder, err error) {
 	if len(number) <= 2 {
-		err = ErrInvalidParameters
-		return
+		return item, ErrInvalidParameters
 	}
 
 	prefix := strings.ToLower(number[0:2])
 	if prefix != "wp" && prefix != "wb" {
-		err = ErrInvalidParameters
-		return
+		return item, ErrInvalidParameters
 	}
 
 	isSubPurchaseOrderNumber := prefix == "wb"
@@ -269,7 +267,7 @@ func (s purchaseOrderService) One(ctx context.Context, number string) (item enti
 	}
 	items, _, err := s.Query(ctx, params)
 	if err != nil {
-		return
+		return item, err
 	}
 
 	number = strings.ToLower(number)
