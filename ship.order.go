@@ -437,6 +437,7 @@ func (s shipOrderService) Cancel(ctx context.Context, shipOrderNumber string) (b
 }
 
 // ThirdPartyLogisticsCompanies 自行委托三方物流公司查询接口
+// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#hdPda1
 func (s shipOrderService) ThirdPartyLogisticsCompanies(ctx context.Context) (companies []entity.LogisticsExpressCompany, err error) {
 	var result = struct {
 		normal.Response
