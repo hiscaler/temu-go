@@ -30,8 +30,8 @@ func (m ShipOrderPackageQueryParams) validate() error {
 
 // One 发货包裹查询
 // https://seller.kuajingmaihuo.com/sop/view/889973754324016047#eprtWq
-func (s shipOrderPackageService) One(ctx context.Context, shipOrderNumber string) ([]entity.ShipOrderPackage, error) {
-	params := ShipOrderPackageQueryParams{DeliveryOrderSn: shipOrderNumber}
+func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderNumber string) ([]entity.ShipOrderPackage, error) {
+	params := ShipOrderPackageQueryParams{DeliveryOrderSn: deliveryOrderNumber}
 	if err := params.validate(); err != nil {
 		return nil, invalidInput(err)
 	}

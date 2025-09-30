@@ -260,9 +260,9 @@ func (s purchaseOrderService) One(ctx context.Context, number string) (item enti
 		return
 	}
 
-	isPurchaseOrder := prefix == "wb"
+	isSubPurchaseOrderNumber := prefix == "wb"
 	params := PurchaseOrderQueryParams{}
-	if isPurchaseOrder {
+	if isSubPurchaseOrderNumber {
 		params.SubPurchaseOrderSnList = []string{number}
 	} else {
 		params.OriginalPurchaseOrderSnList = []string{number}
@@ -275,7 +275,7 @@ func (s purchaseOrderService) One(ctx context.Context, number string) (item enti
 	number = strings.ToLower(number)
 	for _, order := range items {
 		value := order.SubPurchaseOrderSn
-		if !isPurchaseOrder {
+		if !isSubPurchaseOrderNumber {
 			value = order.OriginalPurchaseOrderSn
 		}
 		if strings.ToLower(value) == number {
