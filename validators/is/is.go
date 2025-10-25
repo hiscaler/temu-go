@@ -14,7 +14,7 @@ var millisecondPattern,
 
 func init() {
 	millisecondPattern = regexp.MustCompile(`^[1-9][0-9]{12}$`)
-	packageNumberPattern = regexp.MustCompile(`^(?i)pc[0-9]{15}$`)
+	packageNumberPattern = regexp.MustCompile(`^(?i)pc[0-9]{13,15}$`)
 	originalPurchaseOrderNumberPattern = regexp.MustCompile(`^(?i)wp[0-9]{12,15}$`)
 	purchaseOrderNumberPattern = regexp.MustCompile(`^(?i)wb[0-9]{12,15}$`)
 	shipOrderNumberPattern = regexp.MustCompile(`^(?i)fh[0-9]{13,15}$`)
