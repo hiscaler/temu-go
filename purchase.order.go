@@ -323,7 +323,7 @@ func (m PurchaseOrderApplyRequest) validate() error {
 					t1, _ := time.ParseInLocation(time.DateTime, tStr1, time.Local)
 					t2, _ := time.ParseInLocation(time.DateTime, tStr2, time.Local)
 					if t1.After(t2) {
-						return fmt.Errorf("最晚发货时间 %s 不能大于最晚送达时间 %s", tStr1, tStr2)
+						return fmt.Errorf("最晚发货时间 %s 不能晚于最晚送达时间 %s", tStr1, tStr2)
 					}
 
 					return nil
@@ -343,7 +343,7 @@ func (m PurchaseOrderApplyRequest) validate() error {
 					t1, _ := time.ParseInLocation(time.DateTime, tStr1, time.Local)
 					t2, _ := time.ParseInLocation(time.DateTime, tStr2, time.Local)
 					if t1.After(t2) {
-						return fmt.Errorf("最晚发货时间 %s 不能大于最晚送达时间 %s", tStr1, tStr2)
+						return fmt.Errorf("最晚发货时间 %s 不能晚于最晚送达时间 %s", tStr1, tStr2)
 					}
 
 					return nil
