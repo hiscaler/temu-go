@@ -389,7 +389,7 @@ func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderAp
 }
 
 // 修改备货单下单数量（bg.purchaseorder.edit）
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YT2bPD
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=922390279809
 
 type PurchaseOrderEditItem struct {
 	ProductSkuId               int64 `json:"productSkuId"`               // 货品 SKU ID

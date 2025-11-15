@@ -62,6 +62,8 @@ func main() {
 
 ## 参考文档
 
+> [SMMS 服务商门户](https://agentpartner.temu.com/document?cataId=875198836203&docId=915047650924)
+
 > [TEMU 开发者指南](https://seller.kuajingmaihuo.com/sop/view/634117628601810731)
 
 1. [全托管系统对接指南 - 备货及V3发货](https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YSg2AE)
