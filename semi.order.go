@@ -262,6 +262,7 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 		"toa-app-key":      s.config.AppKey,
 		"toa-access-token": s.config.AccessToken,
 	}
+	timeout := time.Duration(s.config.Timeout) * time.Second
 	httpClient := resty.New().
 		SetDebug(s.debug).
 		SetHeaders(map[string]string{
@@ -269,11 +270,11 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 			"User-Agent":   UserAgent,
 		}).
 		SetAllowGetMethodPayload(true).
-		SetTimeout(s.config.Timeout * time.Second).
+		SetTimeout(timeout).
 		SetTransport(&http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: !s.config.VerifySSL},
 			DialContext: (&net.Dialer{
-				Timeout: s.config.Timeout * time.Second,
+				Timeout: timeout,
 			}).DialContext,
 		})
 	if s.debug {
@@ -429,6 +430,7 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 		"toa-app-key":      s.config.AppKey,
 		"toa-access-token": s.config.AccessToken,
 	}
+	timeout := time.Duration(s.config.Timeout) * time.Second
 	httpClient := resty.New().
 		SetDebug(s.debug).
 		SetHeaders(map[string]string{
@@ -436,11 +438,11 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 			"User-Agent":   UserAgent,
 		}).
 		SetAllowGetMethodPayload(true).
-		SetTimeout(s.config.Timeout * time.Second).
+		SetTimeout(timeout).
 		SetTransport(&http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: !s.config.VerifySSL},
 			DialContext: (&net.Dialer{
-				Timeout: s.config.Timeout * time.Second,
+				Timeout: timeout,
 			}).DialContext,
 		})
 	if s.debug {

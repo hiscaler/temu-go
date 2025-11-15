@@ -69,16 +69,17 @@ func (su SignatureUrl) Decode(cfg config.Config) (f File, err error) {
 	}
 	f.Filename = filename
 
+	timeout := time.Duration(cfg.Timeout) * time.Second
 	httpClient := resty.New().
 		SetDebug(cfg.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 		}).
-		SetTimeout(cfg.Timeout * time.Second).
+		SetTimeout(timeout).
 		SetTransport(&http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: !cfg.VerifySSL},
 			DialContext: (&net.Dialer{
-				Timeout: cfg.Timeout * time.Second,
+				Timeout: timeout,
 			}).DialContext,
 		})
 	if cfg.Debug {

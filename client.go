@@ -288,6 +288,7 @@ func NewClient(cfg config.Config) *Client {
 	} else if env != prodEnv {
 		env = testEnv
 	}
+	timeout := time.Duration(cfg.Timeout) * time.Second
 	region := parseRegion(cfg.Region)
 	client := &Client{
 		language:     *lang,
@@ -307,11 +308,11 @@ func NewClient(cfg config.Config) *Client {
 		}).
 		SetLogger(l).
 		SetAllowGetMethodPayload(true).
-		SetTimeout(cfg.Timeout * time.Second).
+		SetTimeout(timeout).
 		SetTransport(&http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: !cfg.VerifySSL},
 			DialContext: (&net.Dialer{
-				Timeout: cfg.Timeout * time.Second,
+				Timeout: timeout,
 			}).DialContext,
 		}).
 		OnBeforeRequest(func(c *resty.Client, request *resty.Request) error {
