@@ -604,7 +604,13 @@ func recheckError(resp *resty.Response, result normal.Response, e error) error {
 	}
 
 	if resp.IsError() {
-		return errorWrap(resp.StatusCode(), resp.Error().(string))
+		var msg string
+		if resp.Error() != nil {
+			msg = resp.Error().(string)
+		} else {
+			msg = string(resp.Body())
+		}
+		return errorWrap(resp.StatusCode(), msg)
 	}
 
 	if !result.Success {
