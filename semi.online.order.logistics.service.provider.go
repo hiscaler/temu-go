@@ -66,7 +66,8 @@ func (s semiOnlineOrderLogisticsServiceProviderService) Query(ctx context.Contex
 	var result = struct {
 		normal.Response
 		Result struct {
-			OnlineChannelDtoList []entity.SemiOnlineOrderLogisticsChannel `json:"onlineChannelDtoList"` // 可使用的渠道列表
+			OnlineChannelDtoList      []entity.SemiOnlineOrderLogisticsChannel `json:"onlineChannelDtoList"`      // 可使用的渠道列表
+			UnavailableChannelDtoList []any                                    `json:"unavailableChannelDtoList"` // 在线 shipLogisticsType 列表，但不适用于此包裹
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
