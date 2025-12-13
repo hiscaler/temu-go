@@ -576,7 +576,7 @@ func invalidInput(e error) error {
 			localizeConfig.TemplateData = errObj.Params()
 			msg, err := i18nLocalizer.Localize(localizeConfig)
 			if err != nil {
-				e1 = errors.New(errObj.Error())
+				e1 = errObj
 			} else {
 				e1 = errors.New(msg)
 			}
