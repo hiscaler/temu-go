@@ -7,6 +7,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"github.com/samber/lo"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -184,7 +185,7 @@ func (s adService) Update(ctx context.Context, request AdUpdateRequest) ([]AdUpd
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.glo.searchrec.ad.create")
+		Post("bg.glo.searchrec.ad.batch.modify")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return nil, err
 	}
@@ -199,4 +200,69 @@ func (s adService) Update(ctx context.Context, request AdUpdateRequest) ([]AdUpd
 	}
 
 	return results, nil
+}
+
+// Return on Advertising Spend [ROAS]
+
+type AdRoasRequest struct {
+	GoodsInfoList []struct {
+		ProductIds []int64 `json:"productIds"` // 货品 ID
+	} `json:"goodsInfoList"`
+}
+
+func (m AdRoasRequest) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.GoodsInfoList,
+			validation.Required.Error("货品信息列表不能为空"),
+			validation.Each(validation.By(func(value interface{}) error {
+				_, ok := value.(struct {
+					ProductIds []int64 `json:"productIds"` // 货品 ID
+				})
+				if !ok {
+					return errors.New("货品信息参数错误")
+				}
+				return nil
+			})),
+		),
+	)
+}
+
+type AdRoasResult struct {
+	ProductId int64 `json:"productId"`
+	PredList  []struct {
+		Roas string `json:"roas"` // 推荐 roas(广告投资回报率)
+	} `json:"predList"`
+}
+
+// Roas 广告投资回报率查询接口
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929735887634
+func (s adService) Roas(ctx context.Context, productId ...int64) ([]AdRoasResult, error) {
+	if len(productId) == 0 {
+		return nil, errors.New("请提供查询的商品 ID")
+	}
+
+	var result = struct {
+		normal.Response
+		Result struct {
+			QueryAdBidResult []AdRoasResult `json:"queryAdBidResult"`
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(map[string]any{
+			"goodsInfoList": lo.Map(productId, func(item int64, index int) struct {
+				ProductId int64 `json:"product_id"`
+			} {
+				return struct {
+					ProductId int64 `json:"product_id"`
+				}{ProductId: item}
+			}),
+		}).
+		SetResult(&result).
+		Post("bg.glo.searchrec.ad.roas.pred")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return nil, err
+	}
+
+	return result.Result.QueryAdBidResult, nil
 }
