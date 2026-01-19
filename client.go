@@ -77,6 +77,7 @@ type services struct {
 	SemiManaged          semiManagedService
 	Picture              pictureService
 	BestSellerInvitation bestSellerInvitationService
+	Ad                   adService
 }
 
 type Client struct {
@@ -502,6 +503,7 @@ func NewClient(cfg config.Config) *Client {
 		},
 		Picture:              (pictureService)(xService),
 		BestSellerInvitation: (bestSellerInvitationService)(xService),
+		Ad:                   (adService)(xService),
 	}
 
 	return client
