@@ -312,8 +312,8 @@ func (s adService) Logs(ctx context.Context, params AdLogQueryParams) ([]entity.
 
 type AdProductReportQueryParams struct {
 	ProductId int64 `json:"productId"` // 货品 ID
-	StartTs   int64 `json:"startTs"`   // 查询结束时间，毫秒级时间戳（值以当地时间23点59分59秒999毫秒为结束时间）
-	EndTs     int64 `json:"endTs"`     // 查询开始时间，毫秒级时间戳（值以当地时间0点为开始时间）
+	StartTs   int64 `json:"startTs"`   // 查询开始时间，毫秒级时间戳（值以当地时间0点为开始时间）
+	EndTs     int64 `json:"endTs"`     // 查询结束时间，毫秒级时间戳（值以当地时间23点59分59秒999毫秒为结束时间）
 }
 
 func (m AdProductReportQueryParams) validate() error {
