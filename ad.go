@@ -309,3 +309,45 @@ func (s adService) Logs(ctx context.Context, params AdLogQueryParams) ([]entity.
 
 	return result.Result, nil
 }
+
+type AdProductReportQueryParams struct {
+	ProductId int64 `json:"productId"` // 货品 ID
+	StartTs   int64 `json:"startTs"`   // 查询结束时间，毫秒级时间戳（值以当地时间23点59分59秒999毫秒为结束时间）
+	EndTs     int64 `json:"endTs"`     // 查询开始时间，毫秒级时间戳（值以当地时间0点为开始时间）
+}
+
+func (m AdProductReportQueryParams) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductId, validation.Required.Error("无效的货品 ID")),
+		validation.Field(&m.StartTs, validation.Required.Error("查询开始时间不能为空")),
+		validation.Field(&m.EndTs, validation.Required.Error("查询结束时间不能为空")),
+	)
+}
+
+// ProductReport 广告商品投放数据效果
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929739237497
+func (s adService) ProductReport(ctx context.Context, params AdProductReportQueryParams) ([]entity.AdReport, error) {
+	if err := params.validate(); err != nil {
+		return nil, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result struct {
+			ReportInfo struct {
+				ReportsItemList []entity.AdReport      `json:"reportsItemList"` // 分时间段报表信息，按照天级或小时级划分的报表信息（请求时间跨度大于一天按照天级划分，等于一天按照小时级划分）
+				ReportsSummary  entity.AdReportSummary `json:"reportsSummary"`  // 整体报表信息
+			} `json:"reportInfo"`
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.glo.searchrec.ad.reports.goods.query")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return nil, err
+	}
+
+	return result.Result.ReportInfo.ReportsItemList, nil
+}
