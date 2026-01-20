@@ -266,3 +266,46 @@ func (s adService) Roas(ctx context.Context, productId ...int64) ([]AdRoasResult
 
 	return result.Result.QueryAdBidResult, nil
 }
+
+type AdLogQuerParams struct {
+	ProductId null.Int `json:"productId,omitempty"` // 货品 ID
+	StartTime int64    `json:"startTime"`           // 查询开始时间，毫秒级时间戳（值以当地时间0点为开始时间）
+	EndTime   int64    `json:"endTime"`             // 查询结束时间，毫秒级时间戳（值以当地时间23点59分59秒999毫秒为结束时间）
+}
+
+func (m AdLogQuerParams) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ProductId, validation.When(m.ProductId.Valid, validation.By(func(value interface{}) error {
+			v, ok := value.(int64)
+			if !ok {
+				return errors.New("货品 ID 参数错误")
+			}
+			return validation.Validate(v, validation.Min(1).Error("无效的货品 ID"))
+		}))),
+		validation.Field(&m.StartTime, validation.Required.Error("查询开始时间不能为空")),
+		validation.Field(&m.EndTime, validation.Required.Error("查询结束时间不能为空")),
+	)
+}
+
+// Logs 操作日志查询接口
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=931830463288
+func (s adService) Logs(ctx context.Context, params AdLogQuerParams) ([]entity.AdLog, error) {
+	if err := params.validate(); err != nil {
+		return nil, invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result []entity.AdLog `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.glo.searchrec.ad.log.query")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return nil, err
+	}
+
+	return result.Result, nil
+}

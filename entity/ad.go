@@ -28,3 +28,11 @@ type Ad struct {
 	AdShowStatus int `json:"adShowStatus"` // 广告状态：0：no balance；1：today budget 0；2：goods sold out；3：goods offline；4：goods under review；5：review rejected；6：promotion limited；7：pause；8：promoting；9：del；10：not creat；11：low traffic；12：low traffic soft roas
 	Budget       int `json:"budget"`       // 广告日预算
 }
+
+// AdLog 广告操作日志
+type AdLog struct {
+	ChangeInfo       string `json:"changeInfo"`       // 修改详细内容
+	EventType        string `json:"eventType"`        // 修改类型：目前有新增，更新，删除三种类型
+	UpdateSellerName string `json:"updateSellerName"` // 商家名称
+	UpdatedAt        string `json:"updatedAt"`        // 修改时间
+}
