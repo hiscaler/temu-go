@@ -14,17 +14,17 @@ import (
 // ad 广告服务
 type adService service
 
-type ADQueryParams struct {
+type AdQueryParams struct {
 	GoodsInfoList []int `json:"productId"`
 }
 
-func (m ADQueryParams) validate() error {
+func (m AdQueryParams) validate() error {
 	return nil
 }
 
 // Query 广告投放查询接口
 // https://agentpartner.temu.com/document?cataId=875198836203&docId=929736716892
-func (s adService) Query(ctx context.Context, params ADQueryParams) ([]entity.Ad, error) {
+func (s adService) Query(ctx context.Context, params AdQueryParams) ([]entity.Ad, error) {
 	if err := params.validate(); err != nil {
 		return nil, invalidInput(err)
 	}
@@ -57,7 +57,13 @@ func (m AdCreateRequestItem) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空")),
 		validation.Field(&m.Roas, validation.Required.Error("目标广告投资回报率不能为空")),
-		validation.Field(&m.Budget, validation.Required.Error("广告日预算金额不能为空")),
+		validation.Field(&m.Budget, validation.By(func(value interface{}) error {
+			v, ok := value.(int)
+			if !ok || v == 0 || v < -1 {
+				return errors.New("无效的预算金额")
+			}
+			return nil
+		})),
 	)
 }
 
@@ -87,6 +93,7 @@ type AdCreateResult struct {
 }
 
 // Create 创建广告
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=931828091626
 func (s adService) Create(ctx context.Context, request AdCreateRequest) ([]AdCreateResult, error) {
 	if err := request.validate(); err != nil {
 		return nil, invalidInput(err)
@@ -137,7 +144,13 @@ func (m AdUpdateRequestItem) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ProductId, validation.Required.Error("货品 ID 不能为空")),
 		validation.Field(&m.Roas, validation.Required.Error("目标广告投资回报率不能为空")),
-		validation.Field(&m.Budget, validation.Required.Error("广告日预算金额不能为空")),
+		validation.Field(&m.Budget, validation.By(func(value interface{}) error {
+			v, ok := value.(int)
+			if !ok || v == 0 || v < -1 {
+				return errors.New("无效的广告日预算金额")
+			}
+			return nil
+		})),
 		validation.Field(&m.Status, validation.Required.Error("修改类型不能为空"), validation.In(2, 3).ErrorObject(validation.NewError("422", "无效的修改类型 {{.value}}").SetParams(map[string]interface{}{"value": m.Status}))),
 	)
 }
