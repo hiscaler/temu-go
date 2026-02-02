@@ -3,22 +3,22 @@ Temu SDK for Golang
 
 ## API 请求地址
 
-| 环境 | url | 使用场景 |
-|--------|---|---|
-| 正式环境 CN |https://openapi.kuajingmaihuo.com/openapi/router   |  全/半托发品，全托寄样、备货和发货 |
-| 正式环境 US |https://openapi-b-us.temu.com/openapi/router   | US半托订单、履约 |
-| 正式环境 EU | https://openapi-b-eu.temu.com/openapi/router  | EU半托订单、履约 |
-| 正式环境 GLOBAL | https://openapi-b-global.temu.com/openapi/router  | GLOBAL半托订单、履约 |
-| 正式环境 本本US | https://openapi-b-us.temu.com/openapi/router  | US本本发品、订单和履约全流程 |
-| 测试环境 本本US | https://openapi-b-us.temudemo.com/openapi/router  | US本本发品、订单和履约全流程 |
+| 环境          | url                                              | 使用场景              |
+|-------------|--------------------------------------------------|-------------------|
+| 正式环境 CN     | https://openapi.kuajingmaihuo.com/openapi/router | 全/半托发品，全托寄样、备货和发货 |
+| 正式环境 US     | https://openapi-b-us.temu.com/openapi/router     | US半托订单、履约         |
+| 正式环境 EU     | https://openapi-b-eu.temu.com/openapi/router     | EU半托订单、履约         |
+| 正式环境 GLOBAL | https://openapi-b-global.temu.com/openapi/router | GLOBAL半托订单、履约     |
+| 正式环境 本本US   | https://openapi-b-us.temu.com/openapi/router     | US本本发品、订单和履约全流程   |
+| 测试环境 本本US   | https://openapi-b-us.temudemo.com/openapi/router | US本本发品、订单和履约全流程   |
 
 ## 服务说明
 
-|   | 服务              | 说明    |
-|---|------------------|---------|
-| 1 | PurchaseOrder    | 备货单     |
-| 2 | ShipOrderStaging | 发货台     |
-| 3 | ShipOrder        | 发货单     |
+|   | 服务               | 说明  |
+|---|------------------|-----|
+| 1 | PurchaseOrder    | 备货单 |
+| 2 | ShipOrderStaging | 发货台 |
+| 3 | ShipOrder        | 发货单 |
 
 ## 使用
 
@@ -49,20 +49,19 @@ func main() {
 ```
 
 ## 服务说明
-| 服务地址                                    | 说明            | 查询参数参考地址 |
-|-----------------------------------------|---------------|----------|
-| client.Services.PurchaseOrder.Query     | 备货单查询         |          |
-| client.Services.ShipOrder.Query         | 发货单查询         |          |
-| client.Services.Logistics.Companies     | 物流商           |          |
-| client.Services.Goods.Query             | 商品查询          |          |
-| client.Services.Goods.One               | 根据商品 SKC ID 查询 |          |
-| client.Services.Goods.Create            | 创建商品          |          |
-| client.Services.Goods.Barcode.NormalGoods | 商品条码查询            |          |
-| client.Services.Goods.Brand.Query       | 查询可绑定的品牌接口    |          |
+
+| 服务地址                                      | 说明             | 查询参数参考地址 |
+|-------------------------------------------|----------------|----------|
+| client.Services.PurchaseOrder.Query       | 备货单查询          |          |
+| client.Services.ShipOrder.Query           | 发货单查询          |          |
+| client.Services.Logistics.Companies       | 物流商            |          |
+| client.Services.Goods.Query               | 商品查询           |          |
+| client.Services.Goods.One                 | 根据商品 SKC ID 查询 |          |
+| client.Services.Goods.Create              | 创建商品           |          |
+| client.Services.Goods.Barcode.NormalGoods | 商品条码查询         |          |
+| client.Services.Goods.Brand.Query         | 查询可绑定的品牌接口     |          |
 
 ## 参考文档
-
-> [SMMS 服务商门户](https://agentpartner.temu.com/document?cataId=875198836203&docId=915047650924)
 
 > [TEMU 开发者指南](https://seller.kuajingmaihuo.com/sop/view/634117628601810731)
 
@@ -71,6 +70,16 @@ func main() {
 > [TEMU OPEN API 更新日志](https://seller.kuajingmaihuo.com/sop/view/512560460535865385)
 
 > [Partner Platform 文档中心](https://partner.kuajingmaihuo.com/document?cataId=875196199516)
+
+> [半托文档](https://partner-us.temu.com/documentation)
+
+> **SMMS 服务商门户**
+> 
+> [API 文档](https://agentpartner.temu.com/document?cataId=875198836203)
+>
+> [开发者文档](https://agentpartner.temu.com/document?cataId=875196199516)
+> 
+> [平台公告](https://agentpartner.temu.com/announcement)
 
 ## 全托管备货单
 
