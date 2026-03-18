@@ -1,6 +1,10 @@
 package entity
 
-import "gopkg.in/guregu/null.v4"
+import (
+	"strings"
+
+	"gopkg.in/guregu/null.v4"
+)
 
 // ParentOrder PO 单
 type ParentOrder struct {
@@ -17,7 +21,7 @@ type ParentOrderMap struct {
 	// pending_buyer_address_change-买家改地址待确认订单
 	// value:
 	// 是否有标签：0=无标签，1=有标签
-	ParentOrderLabel             []Label   `json:"parentOrderLabel"`             // 标签名称
+	ParentOrderLabel             Labels    `json:"parentOrderLabel"`             // 标签名称
 	ParentOrderStatus            int       `json:"parentOrderStatus"`            // 订单状态
 	ParentOrderTime              int64     `json:"parentOrderTime"`              // 订单创建时间
 	ParentOrderPendingFinishTime int64     `json:"parentOrderPendingFinishTime"` // 订单结束pending转为自发货时间
@@ -36,6 +40,26 @@ type Label struct {
 	Value int    `json:"value"`
 }
 
+// Labels 标签集合
+type Labels []Label
+
+// Is 判断是否包含指定标签，names 可传入一个或多个标签名称，返回值为 true 代表包含所有指定标签
+func (s Labels) Is(names ...string) bool {
+	n := len(names)
+	if n == 0 {
+		return false
+	}
+
+	for _, name := range names {
+		for _, label := range s {
+			if label.Value == 1 && strings.EqualFold(label.Name, name) {
+				n--
+			}
+		}
+	}
+	return n == 0
+}
+
 // Order 订单
 // https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=554fd46b45ee49269cbdd6d4008a5dc1
 type Order struct {
@@ -50,11 +74,11 @@ type Order struct {
 	InventoryDeductionWarehouseId   string `json:"inventoryDeductionWarehouseId"`   // 库存扣减仓库id
 	InventoryDeductionWarehouseName string `json:"inventoryDeductionWarehouseName"` // 库存扣减仓库名称
 	// name: 标签名称
-	// {customized_products：定制品, US_to_CA：美发加BC，is_US_to_CA_BBC：美发加BBC}
+	// {customized_products, US_to_CA, is_US_to_CA_BBC, Y2_advance_sale, pre_sale_order, made_to_order, vacation_order, second_hand_collectible_order, second_hand_luxury_order}
 	// value
 	// 是否有标签：0=无标签，1=有标签
 	// BBC 订单需要结合is_US_to_CA_BBC判断
-	OrderLabel         []Label  `json:"orderLabel"`         // 子订单 O 单标签，内部请求异常返回为空，返回为空时请重试
+	OrderLabel         Labels   `json:"orderLabel"`         // 子订单 O 单标签，内部请求异常返回为空，返回为空时请重试
 	Spec               string   `json:"spec"`               // 商品信息描述
 	OriginalSpecName   string   `json:"originalSpecName"`   // 卖家的产品规格说明。仅对于确认时间不超过六个月的订单，请填写此字段。
 	ThumbUrl           string   `json:"thumbUrl"`           // 商品缩略图图片
