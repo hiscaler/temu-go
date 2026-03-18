@@ -36,6 +36,8 @@ type Label struct {
 	Value int    `json:"value"`
 }
 
+// Order 订单
+// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=554fd46b45ee49269cbdd6d4008a5dc1
 type Order struct {
 	OrderSn string `json:"orderSn"` // 子订单号
 	SkuId   int64  `json:"skuId"`   // SKU ID
@@ -52,16 +54,26 @@ type Order struct {
 	// value
 	// 是否有标签：0=无标签，1=有标签
 	// BBC 订单需要结合is_US_to_CA_BBC判断
-	OrderLabel  []Label `json:"orderLabel"`  // 子订单 O 单标签，内部请求异常返回为空，返回为空时请重试
-	Spec        string  `json:"spec"`        // 商品信息描述
-	ThumbUrl    string  `json:"thumbUrl"`    // 商品缩略图图片
-	OrderStatus int     `json:"orderStatus"` // 订单状态（3 是已取消）
+	OrderLabel         []Label  `json:"orderLabel"`         // 子订单 O 单标签，内部请求异常返回为空，返回为空时请重试
+	Spec               string   `json:"spec"`               // 商品信息描述
+	OriginalSpecName   string   `json:"originalSpecName"`   // 卖家的产品规格说明。仅对于确认时间不超过六个月的订单，请填写此字段。
+	ThumbUrl           string   `json:"thumbUrl"`           // 商品缩略图图片
+	OrderStatus        int      `json:"orderStatus"`        // 订单状态（Status of the order. 1-PENDING; 2-UN_SHIPPING; 3-CANCELED; 4-SHIPPED; 41-PARTIALLY_SHIPPED; 5-DELIVERED; 51-PARTIALLY_DELIVERED.）
+	FulfillmentWarning []string `json:"fulfillmentWarning"` // 履约相关提醒: SUGGEST_SIGNATURE_ON_DELIVERY-建议发货时购买签名服务
 	// 卖家履约订单值返回：fulfillBySeller
 	// 合作仓履约订单返回：fulfillByCooperativeWarehouse
-	FulfillmentType    string    `json:"fulfillmentType"`    // 子订单履约类型
-	GoodsName          string    `json:"goodsName"`          // 商品名称
-	ProductList        []Product `json:"productList"`        // 货品信息
-	FulfillmentWarning []string  `json:"fulfillmentWarning"` // 履约相关提醒: SUGGEST_SIGNATURE_ON_DELIVERY-建议发货时购买签名服务
+	FulfillmentType                  string    `json:"fulfillmentType"`                  // 子订单履约类型
+	GoodsName                        string    `json:"goodsName"`                        // 商品名称
+	ProductList                      []Product `json:"productList"`                      // 货品信息
+	PackageAbnormalTypeList          []string  `json:"packageAbnormalTypeList"`          // 包异常类型列表
+	OrderPaymentType                 string    `json:"orderPaymentType"`                 // 订单支付类型（COD, PPD）
+	IsCancelledDuringPending         bool      `json:"isCancelledDuringPending"`         // 订单在等待期间是否被完全取消
+	EarliestTimeBuyShippingLabel     int       `json:"earliestTimeBuyShippingLabel"`     // 在此时间之后订单只能购买运输标签
+	EarliestTimeGetShippingDocument  int       `json:"earliestTimeGetShippingDocument"`  // 订单只能在此时间之后获得运输文件
+	OrderShippingTime                null.Time `json:"orderShippingTime"`                // 订单发货时间
+	IsShipmentConsolidatedByMainMall bool      `json:"isShipmentConsolidatedByMainMall"` // 采购订单已由主商场合并发货
+	OrderCreateTime                  bool      `json:"orderCreateTime"`                  // 订单创建时间
+	QualificationUploadEndTime       int64     `json:"qualificationUploadEndTime"`       // 资质上传截止时间
 }
 
 type Product struct {
