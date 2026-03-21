@@ -42,7 +42,7 @@ func (s goodsLifeCycleService) Query(ctx context.Context, params GoodsLifeCycleQ
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.product.search")
+		Post("bg.glo.product.search")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
