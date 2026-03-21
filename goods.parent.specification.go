@@ -21,7 +21,7 @@ func (s goodsParentSpecificationService) Query(ctx context.Context) ([]entity.Go
 	resp, err := s.httpClient.R().
 		SetContext(ctx).
 		SetResult(&result).
-		Post("bg.goods.parentspec.get")
+		Post("bg.glo.goods.parentspec.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return nil, err
 	}

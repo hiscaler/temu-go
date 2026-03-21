@@ -21,7 +21,7 @@ func (m GoodsLifeCycleQueryParams) validate() error {
 	return nil
 }
 
-// Query 查询货品生命周期状态（bg.product.search）
+// Query 查询货品生命周期状态（bg.glo.product.search）
 // https://seller.kuajingmaihuo.com/sop/view/750197804480663142#CK9soN
 func (s goodsLifeCycleService) Query(ctx context.Context, params GoodsLifeCycleQueryParams) (items []entity.GoodsLifeCycle, total, totalPages int, isLastPage bool, err error) {
 	pager := params.TidyPager()

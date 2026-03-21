@@ -138,6 +138,11 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"temu.goods.price.list.get":                 entity.Partner,
 		"temu.jitmode.activate":                     entity.Partner,
 		"bg.glo.product.search":                     entity.Partner,
+		"bg.glo.goods.parentspec.get":               entity.Partner,
+		"bg.glo.goods.spec.create":                  entity.Partner,
+		"bg.qtg.stock.virtualinventoryjit.get":      entity.Partner,
+		"bg.qtg.stock.virtualinventoryjit.edit":     entity.Partner,
+		"bg.glo.goods.brand.get":                    entity.Partner,
 	}
 	if v, ok := semiTypes[typ]; ok {
 		if v != "" {

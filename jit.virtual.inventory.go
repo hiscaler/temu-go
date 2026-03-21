@@ -25,7 +25,7 @@ func (s jitVirtualInventoryService) Query(ctx context.Context, productSkcId int6
 		SetContext(ctx).
 		SetBody(map[string]int64{"productSkcId": productSkcId}).
 		SetResult(&result).
-		Post("bg.virtualinventoryjit.get")
+		Post("bg.qtg.stock.virtualinventoryjit.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}
@@ -33,7 +33,7 @@ func (s jitVirtualInventoryService) Query(ctx context.Context, productSkcId int6
 	return result.Result.ProductSkuStockList, nil
 }
 
-// 虚拟库存编辑接口（bg.virtualinventoryjit.edit）
+// 虚拟库存编辑接口（bg.qtg.stock.virtualinventoryjit.edit）
 // 全托管JIT库存限制：调整后虚拟库存数量必须 ≥ skuId在Temu仓库中的实物库存数量
 
 type SkuVirtualStockChangeRequest struct {
@@ -93,7 +93,7 @@ func (s jitVirtualInventoryService) Edit(ctx context.Context, request VirtualInv
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.virtualinventoryjit.edit")
+		Post("bg.qtg.stock.virtualinventoryjit.edit")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return false, err
 	}

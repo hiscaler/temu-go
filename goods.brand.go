@@ -43,7 +43,7 @@ func (s goodsBrandService) Query(ctx context.Context, params GoodsBrandQueryPara
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.goods.brand.get")
+		Post("bg.glo.goods.brand.get")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return
 	}

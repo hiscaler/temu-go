@@ -25,7 +25,7 @@ func (m GoodsSpecificationCreateRequest) validate() error {
 	)
 }
 
-// Create 生成规格（bg.goods.spec.create）
+// Create 生成规格（bg.glo.goods.spec.create）
 //
 //	https://seller.kuajingmaihuo.com/sop/view/728777295758127187#MOa2Iu
 func (s goodsSpecificationService) Create(ctx context.Context, request GoodsSpecificationCreateRequest) (int, error) {
@@ -42,7 +42,7 @@ func (s goodsSpecificationService) Create(ctx context.Context, request GoodsSpec
 		SetContext(ctx).
 		SetBody(request).
 		SetResult(&result).
-		Post("bg.goods.spec.create")
+		Post("bg.glo.goods.spec.create")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return 0, err
 	}
