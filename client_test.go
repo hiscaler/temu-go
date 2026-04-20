@@ -3,6 +3,7 @@ package temu
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"testing"
 
@@ -26,7 +27,10 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		panic(fmt.Sprintf("Parse config file error: %s", err.Error()))
 	}
-
+	opts := &slog.HandlerOptions{
+		Level: slog.LevelDebug, // Only logs at Debug level and above
+	}
+	cfg.Logger = slog.New(slog.NewTextHandler(os.Stdout, opts))
 	temuClient = NewClient(cfg)
 	temuClient.SetLanguage(language.Chinese)
 	ctx = context.Background()

@@ -28,3 +28,5 @@ testdata/postgres
 config/config.json
 go.work
 go.work.sum
+.ace-tool/
+.vscode/settings.json

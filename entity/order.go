@@ -26,7 +26,7 @@ type ParentOrderMap struct {
 	ParentOrderTime              int64     `json:"parentOrderTime"`              // 订单创建时间
 	ParentOrderPendingFinishTime int64     `json:"parentOrderPendingFinishTime"` // 订单结束pending转为自发货时间
 	ExpectShipLatestTime         int64     `json:"expectShipLatestTime"`         // 要求最晚发货时间
-	ParentShippingTime           int64     `json:"parentShippingTime"`           // 父单发货时间
+	ParentShippingTime           null.Int  `json:"parentShippingTime"`           // 父单发货时间
 	UpdateTime                   int64     `json:"updateTime"`                   // 订单更新时间（秒级时间戳）
 	LatestDeliveryTime           int64     `json:"latestDeliveryTime"`           // 最后发货时间
 	FulfillmentWarning           []string  `json:"fulfillmentWarning"`           // 履约相关提醒: SUGGEST_SIGNATURE_ON_DELIVERY-建议发货时购买签名服务
@@ -86,18 +86,18 @@ type Order struct {
 	FulfillmentWarning []string `json:"fulfillmentWarning"` // 履约相关提醒: SUGGEST_SIGNATURE_ON_DELIVERY-建议发货时购买签名服务
 	// 卖家履约订单值返回：fulfillBySeller
 	// 合作仓履约订单返回：fulfillByCooperativeWarehouse
-	FulfillmentType                  string    `json:"fulfillmentType"`                  // 子订单履约类型
-	GoodsName                        string    `json:"goodsName"`                        // 商品名称
-	ProductList                      []Product `json:"productList"`                      // 货品信息
-	PackageAbnormalTypeList          []string  `json:"packageAbnormalTypeList"`          // 包异常类型列表
-	OrderPaymentType                 string    `json:"orderPaymentType"`                 // 订单支付类型（COD, PPD）
-	IsCancelledDuringPending         bool      `json:"isCancelledDuringPending"`         // 订单在等待期间是否被完全取消
-	EarliestTimeBuyShippingLabel     int       `json:"earliestTimeBuyShippingLabel"`     // 在此时间之后订单只能购买运输标签
-	EarliestTimeGetShippingDocument  int       `json:"earliestTimeGetShippingDocument"`  // 订单只能在此时间之后获得运输文件
-	OrderShippingTime                null.Time `json:"orderShippingTime"`                // 订单发货时间
-	IsShipmentConsolidatedByMainMall bool      `json:"isShipmentConsolidatedByMainMall"` // 采购订单已由主商场合并发货
-	OrderCreateTime                  bool      `json:"orderCreateTime"`                  // 订单创建时间
-	QualificationUploadEndTime       int64     `json:"qualificationUploadEndTime"`       // 资质上传截止时间
+	FulfillmentType          string    `json:"fulfillmentType"`          // 子订单履约类型
+	GoodsName                string    `json:"goodsName"`                // 商品名称
+	ProductList              []Product `json:"productList"`              // 货品信息
+	PackageAbnormalTypeList  []string  `json:"packageAbnormalTypeList"`  // 包异常类型列表
+	OrderPaymentType         string    `json:"orderPaymentType"`         // 订单支付类型（COD, PPD）
+	IsCancelledDuringPending bool      `json:"isCancelledDuringPending"` // 订单在等待期间是否被完全取消
+
+	EarliestTimeBuyShippingLabel    null.Int `json:"earliestTimeBuyShippingLabel"`
+	EarliestTimeGetShippingDocument null.Int `json:"earliestTimeGetShippingDocument"`
+	OrderShippingTime               null.Int `json:"orderShippingTime"` // 秒级时间戳
+	OrderCreateTime                 int64    `json:"orderCreateTime"`   // 修正类型
+	QualificationUploadEndTime      null.Int `json:"qualificationUploadEndTime"`
 }
 
 type Product struct {
