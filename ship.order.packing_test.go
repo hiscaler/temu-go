@@ -10,6 +10,7 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
+// TestShipOrderPackingService_Match 测试装箱发货校验：按发货单号调用 Match，验证接口可正常返回且无错误
 func TestShipOrderPackingService_Match(t *testing.T) {
 	req := ShipOrderPackingMatchRequest{
 		DeliveryOrderSnList: []string{"FH2408231977953"},
@@ -18,7 +19,7 @@ func TestShipOrderPackingService_Match(t *testing.T) {
 	assert.Nilf(t, err, "temuClient.Services.ShipOrder.Packing.Match(ctx, %s)", jsonx.ToJson(req, "{}"))
 }
 
-// TestShipOrderPackingService_SendForSelf 自送发货
+// TestShipOrderPackingService_SendForSelf 测试自送发货：对待装箱发货单组装自送信息后调用 Send，验证可成功发货
 func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 	// 发货地址
 	addresses, err := temuClient.Services.Mall.DeliveryAddress.Query(ctx)
@@ -64,7 +65,7 @@ func TestShipOrderPackingService_SendForSelf(t *testing.T) {
 	}
 }
 
-// TestShipOrderPackingService_SendForPlatformRecommendation 平台推荐物流发货
+// TestShipOrderPackingService_SendForPlatformRecommendation 测试平台推荐物流发货：对待装箱发货单组装平台推荐配送信息后调用 Send，验证可成功发货
 func TestShipOrderPackingService_SendForPlatformRecommendation(t *testing.T) {
 	// 发货地址
 	addresses, err := temuClient.Services.Mall.DeliveryAddress.Query(ctx)
