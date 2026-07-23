@@ -20,6 +20,7 @@ type shipOrderLogisticsService service
 type LogisticsMatchRequest struct {
 	DeliveryAddressId         int64                  `json:"deliveryAddressId,omitempty"`  // 发货地址
 	PredictTotalPackageWeight int                    `json:"predictTotalPackageWeight"`    // 预估总包裹重量，单位g
+	PredictVolume             string                 `json:"predictVolume"`                // 预估体积，立方米
 	UrgencyType               null.Int               `json:"urgencyType,omitempty"`        // 是否是紧急发货单，0-普通 1-急采
 	SubWarehouseId            int64                  `json:"subWarehouseId"`               // 收货子仓 ID
 	TotalPackageNum           int                    `json:"totalPackageNum"`              // 包裹件数
