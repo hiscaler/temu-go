@@ -283,8 +283,8 @@ func getVersion(typ string) string {
 }
 
 func NewClient(cfg config.Config) *Client {
-	l := createLogger()
 	debug := cfg.Debug
+	l := createLogger(debug)
 	if cfg.Logger != nil {
 		l.l = cfg.Logger
 	}

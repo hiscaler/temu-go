@@ -3,6 +3,7 @@ package temu
 import (
 	"fmt"
 	"log/slog"
+	"os"
 	"strings"
 	"unicode"
 )
@@ -13,7 +14,10 @@ type Logger interface {
 	Debugf(format string, v ...interface{})
 }
 
-func createLogger() *logger {
+func createLogger(debug bool) *logger {
+	if debug {
+		return &logger{l: slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelDebug}))}
+	}
 	return &logger{l: slog.Default()}
 }
 
