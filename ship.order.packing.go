@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -118,6 +119,7 @@ type ShipOrderPackingSendRequest struct {
 	SelfDeliveryInfo                *ShipOrderPackingSendSelfDeliveryInformation                   `json:"selfDeliveryInfo,omitempty"`                // 自送信息
 	ThirdPartyDeliveryInfo          *ShipOrderPackingSendPlatformRecommendationDeliveryInformation `json:"thirdPartyDeliveryInfo,omitempty"`          // 平台指定物流
 	ThirdPartyExpressDeliveryInfoVO *ShipOrderPackingSendThirdPartyDeliveryInformation             `json:"thirdPartyExpressDeliveryInfoVO,omitempty"` // 第三方配送
+	PredictPackageVolume            string                                                         `json:"predictPackageVolume"`                      // 预估包裹总体积(立方米)
 }
 
 func (m ShipOrderPackingSendRequest) validate() error {
@@ -197,7 +199,7 @@ type ShipOrderPackingSendResult struct {
 
 // Send 装箱发货接口
 // 成功后返回创建生成的发货批次号
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#ezXrHy
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877371096318
 func (s shipOrderPackingService) Send(ctx context.Context, request ShipOrderPackingSendRequest) (string, error) {
 	if err := request.validate(); err != nil {
 		return "", invalidInput(err)
@@ -269,4 +271,34 @@ func (s shipOrderPackingService) Match(ctx context.Context, request ShipOrderPac
 	}
 
 	return result.Result, nil
+}
+
+// PredictVolume 获取预估体积（下发货单前调用该接口获取预估体积）
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=927625458896
+//
+// deliveryOrderNumbers: 发货单号列表，数量在 1-50 之间
+func (s shipOrderPackingService) PredictVolume(ctx context.Context, deliveryOrderNumbers ...string) (string, error) {
+	if n := len(deliveryOrderNumbers); n == 0 || n > 50 {
+		return "", errors.New("发货单号列表数量须在 1-50 之间")
+	}
+
+	var result = struct {
+		normal.Response
+		PredictVolume null.String `json:"predictVolume"` // 预估体积，单位为立方米。部分场景下，无法提供预估体积，返回数据为空
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(map[string][]string{"deliveryOrderSnList": deliveryOrderNumbers}).
+		SetResult(&result).
+		Post("bg.predict.volume.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return "", err
+	}
+
+	volume := strings.TrimSpace(result.PredictVolume.ValueOrZero())
+	if volume == "" {
+		return "", errors.New("无法获取预估体积")
+	}
+
+	return volume, nil
 }

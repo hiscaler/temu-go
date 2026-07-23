@@ -677,6 +677,8 @@ func errorWrap(code int, message string) error {
 		message = "店铺类型不符合预期，不允许查询或变更库存操作"
 	case 4000004:
 		message = "请求过于频繁，超过了当前的限制阈值"
+	case 500000002:
+		message = "获取预估体积失败，请稍后重试"
 	case 5000003:
 		message = "当前 IP 不在白名单中"
 	case 7000022, 3000032:
