@@ -25,7 +25,7 @@ func (m GoodsCategoryQueryParams) validate() error {
 }
 
 // Query 商品分类查询
-// https://seller.kuajingmaihuo.com/sop/view/728777295758127187#G5hCmy
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877327073796
 func (s goodsCategoryService) Query(ctx context.Context, params GoodsCategoryQueryParams) (categories []entity.Category, err error) {
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)

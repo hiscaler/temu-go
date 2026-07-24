@@ -22,6 +22,7 @@ func (m GoodsSizeChartClassQueryParams) validate() error {
 }
 
 // Query 查询尺码表模板
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877348824010
 func (s *goodsSizeChartClassService) Query(ctx context.Context, params GoodsSizeChartClassQueryParams) (items []entity.GoodsSizeChartClass, err error) {
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)

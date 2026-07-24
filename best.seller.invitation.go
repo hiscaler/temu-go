@@ -20,6 +20,7 @@ func (m BestSellerInvitationQueryParams) validate() error {
 
 // Query Best Seller 招标单查询
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=917138067169
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=931840586312
 func (s bestSellerInvitationService) Query(ctx context.Context, params BestSellerInvitationQueryParams) (items []entity.BestSellerInvitation, total, totalPages int, isLastPage bool, err error) {
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)

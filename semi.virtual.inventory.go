@@ -22,7 +22,7 @@ func (m SemiVirtualInventoryQueryParams) validate() error {
 }
 
 // Query 查询商品虚拟库存
-// https://seller.kuajingmaihuo.com/sop/view/867739977041685428#hm9Qgt
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929728959750
 func (s *semiVirtualInventoryService) Query(ctx context.Context, params SemiVirtualInventoryQueryParams) (items []entity.SemiVirtualInventory, err error) {
 	if err = params.validate(); err != nil {
 		err = invalidInput(err)
@@ -99,7 +99,7 @@ func (m SemiVirtualInventoryUpdateRequest) validate() error {
 }
 
 // Update 更新虚拟库存
-// https://seller.kuajingmaihuo.com/sop/view/867739977041685428#DMwO8O
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929727846558
 func (s *semiVirtualInventoryService) Update(ctx context.Context, params SemiVirtualInventoryUpdateRequest) (bool, error) {
 	if err := params.validate(); err != nil {
 		return false, err

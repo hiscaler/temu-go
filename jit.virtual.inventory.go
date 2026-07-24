@@ -13,7 +13,7 @@ import (
 type jitVirtualInventoryService service
 
 // Query 虚拟库存查询接口
-// https://seller.kuajingmaihuo.com/sop/view/706628248275137588#ag3EtD
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=931834215788
 func (s jitVirtualInventoryService) Query(ctx context.Context, productSkcId int64) (items []entity.JitProductVirtualInventory, err error) {
 	var result = struct {
 		normal.Response
@@ -79,7 +79,7 @@ func (m VirtualInventoryJitEditRequest) validate() error {
 }
 
 // Edit 虚拟库存编辑接口
-// https://seller.kuajingmaihuo.com/sop/view/706628248275137588#hALnFd
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929747124710
 func (s jitVirtualInventoryService) Edit(ctx context.Context, request VirtualInventoryJitEditRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)

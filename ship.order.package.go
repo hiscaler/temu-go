@@ -29,7 +29,7 @@ func (m ShipOrderPackageQueryParams) validate() error {
 }
 
 // One 发货包裹查询
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#eprtWq
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877374260423
 func (s shipOrderPackageService) One(ctx context.Context, deliveryOrderNumber string) ([]entity.ShipOrderPackage, error) {
 	params := ShipOrderPackageQueryParams{DeliveryOrderSn: deliveryOrderNumber}
 	if err := params.validate(); err != nil {
@@ -142,7 +142,7 @@ func (m ShipOrderPackageUpdateRequest) validate() error {
 }
 
 // Update 发货包裹编辑
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#qSU56c
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=900362063372
 func (s shipOrderPackageService) Update(ctx context.Context, req ShipOrderPackageUpdateRequest) (bool, error) {
 	if err := req.validate(); err != nil {
 		return false, invalidInput(err)

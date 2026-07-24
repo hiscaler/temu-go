@@ -27,7 +27,7 @@ func (m GoodsSpecificationCreateRequest) validate() error {
 
 // Create 生成规格（bg.glo.goods.spec.create）
 //
-//	https://seller.kuajingmaihuo.com/sop/view/728777295758127187#MOa2Iu
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=931841951080
 func (s goodsSpecificationService) Create(ctx context.Context, request GoodsSpecificationCreateRequest) (int, error) {
 	if err := request.validate(); err != nil {
 		return 0, err

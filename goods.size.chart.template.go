@@ -10,7 +10,7 @@ import (
 type goodsSizeChartTemplateService service
 
 // Create 生成尺码表模板
-// https://seller.kuajingmaihuo.com/sop/view/415794628056821162#n0Wlda
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877348687822
 func (s *goodsSizeChartTemplateService) Create(ctx context.Context, businessId int64) (tempBusinessId int64, err error) {
 	var result = struct {
 		normal.Response

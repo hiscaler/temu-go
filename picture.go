@@ -26,7 +26,7 @@ func (m PictureCompressionRequest) validate() error {
 }
 
 // Compression 高清图片压缩处理
-// https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=877312019388
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=931832124814
 func (s pictureService) Compression(ctx context.Context, params PictureCompressionRequest) ([]entity.PictureCompressionResult, error) {
 	if err := params.validate(); err != nil {
 		return nil, invalidInput(err)

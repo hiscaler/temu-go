@@ -40,7 +40,7 @@ func (m GoodsWarehouseQueryParams) validate() error {
 }
 
 // Query 根据站点查询可绑定的发货仓库信息接口（半托管专属）
-// https://seller.kuajingmaihuo.com/sop/view/867739977041685428#hpIdAo
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=931823464808
 func (s goodsWarehouseService) Query(ctx context.Context, params GoodsWarehouseQueryParams) (items []entity.SiteWarehouses, err error) {
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)

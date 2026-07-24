@@ -251,7 +251,7 @@ func (m ShipOrderPackingMatchRequest) validate() error {
 }
 
 // Match 装箱发货校验
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#TDP3qU
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877372462318
 func (s shipOrderPackingService) Match(ctx context.Context, request ShipOrderPackingMatchRequest) (item entity.ShipOrderPackingMatchResult, err error) {
 	if err = request.validate(); err != nil {
 		return item, invalidInput(err)

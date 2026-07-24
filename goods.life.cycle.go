@@ -22,7 +22,7 @@ func (m GoodsLifeCycleQueryParams) validate() error {
 }
 
 // Query 查询货品生命周期状态（bg.glo.product.search）
-// https://seller.kuajingmaihuo.com/sop/view/750197804480663142#CK9soN
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=931835549486
 func (s goodsLifeCycleService) Query(ctx context.Context, params GoodsLifeCycleQueryParams) (items []entity.GoodsLifeCycle, total, totalPages int, isLastPage bool, err error) {
 	pager := params.TidyPager()
 	params.Page = pager.Page

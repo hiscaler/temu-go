@@ -31,7 +31,7 @@ func (m NormalGoodsBarcodeQueryParams) validate() error {
 }
 
 // NormalGoods 商品条码查询v2（temu.goods.labelv2.get）
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#5LRokG
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=925530254496
 func (s goodsBarcodeService) NormalGoods(ctx context.Context, params NormalGoodsBarcodeQueryParams) (items []entity.GoodsLabel, err error) {
 	params.TidyPager()
 	params.ReturnDataKey = null.BoolFrom(false)
@@ -61,6 +61,7 @@ func (s goodsBarcodeService) NormalGoods(ctx context.Context, params NormalGoods
 }
 
 // NormalGoodsPrintUrl 商品条码打印地址
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=925530254496
 func (s goodsBarcodeService) NormalGoodsPrintUrl(ctx context.Context, params NormalGoodsBarcodeQueryParams) (string, error) {
 	params.TidyPager()
 	params.ReturnDataKey = null.BoolFrom(true)
@@ -108,7 +109,7 @@ func (m CustomGoodsBarcodeQueryParams) validate() error {
 }
 
 // CustomGoods 定制商品条码查询（temu.goods.custom.label.get）
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Hc5wmR
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=924483272975
 func (s goodsBarcodeService) CustomGoods(ctx context.Context, params CustomGoodsBarcodeQueryParams) (items []entity.CustomGoodsLabel, err error) {
 	params.TidyPager()
 	params.ReturnDataKey = null.BoolFrom(false)
@@ -144,6 +145,7 @@ func (s goodsBarcodeService) CustomGoods(ctx context.Context, params CustomGoods
 	return result.Result.PersonalLabelCodePageResult.Data, nil
 }
 
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=924483272975
 func (s goodsBarcodeService) CustomGoodsPrintUrl(ctx context.Context, params CustomGoodsBarcodeQueryParams) (string, error) {
 	params.TidyPager()
 	params.ReturnDataKey = null.BoolFrom(true)
@@ -185,6 +187,7 @@ func (m BoxMarkBarcodeQueryParams) validate() error {
 }
 
 // BoxMarkPrintUrl 箱唛打印地址
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=910849146238
 func (s goodsBarcodeService) BoxMarkPrintUrl(ctx context.Context, shipOrderNumbers ...string) (string, error) {
 	params := BoxMarkBarcodeQueryParams{
 		ReturnDataKey:       null.BoolFrom(true),
@@ -211,6 +214,7 @@ func (s goodsBarcodeService) BoxMarkPrintUrl(ctx context.Context, shipOrderNumbe
 }
 
 // BoxMark 箱唛信息
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=910849146238
 func (s goodsBarcodeService) BoxMark(ctx context.Context, shipOrderNumbers ...string) (items []entity.BoxMarkInfo, err error) {
 	params := BoxMarkBarcodeQueryParams{
 		ReturnDataKey:       null.BoolFrom(false),

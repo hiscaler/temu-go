@@ -24,7 +24,7 @@ func (m GoodsBrandQueryParams) validate() error {
 }
 
 // Query 查询可绑定的品牌接口
-// https://seller.kuajingmaihuo.com/sop/view/750197804480663142#PjxWnZ
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=932867285290
 func (s goodsBrandService) Query(ctx context.Context, params GoodsBrandQueryParams) (items []entity.GoodsBrand, total, totalPages int, isLastPage bool, err error) {
 	params.Page = params.TidyPager().Page
 	params.OmitPage()

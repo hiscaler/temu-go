@@ -61,7 +61,7 @@ func (m ShipOrderStagingQueryParams) validate() error {
 }
 
 // Query Queries staging orders
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#NOA03y
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877362437763
 func (s shipOrderStagingService) Query(ctx context.Context, params ShipOrderStagingQueryParams) (items []entity.ShipOrderStaging, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	if params.OrderType.Valid {
@@ -181,7 +181,7 @@ func (m ShipOrderStagingAddRequest) validate() error {
 }
 
 // Add 加入发货台
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#YSg2AE
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877365095165
 func (s shipOrderStagingService) Add(ctx context.Context, req ShipOrderStagingAddRequest) (ok bool, results []entity.Result, err error) {
 	if err = req.validate(); err != nil {
 		return ok, results, invalidInput(err)

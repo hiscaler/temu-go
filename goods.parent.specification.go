@@ -11,6 +11,7 @@ import (
 type goodsParentSpecificationService service
 
 // Query 查询父规格列表
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929747769955
 func (s goodsParentSpecificationService) Query(ctx context.Context) ([]entity.GoodsParentSpecification, error) {
 	var result = struct {
 		normal.Response

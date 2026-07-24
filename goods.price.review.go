@@ -26,6 +26,7 @@ func (m GoodsPriceReviewQueryParams) validate() error {
 
 // Query 分页查询核价单
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=899321422992
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929730272138
 func (s goodsPriceReviewService) Query(ctx context.Context, params GoodsPriceReviewQueryParams) (items []entity.GoodsReviewSamplePrice, err error) {
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)
@@ -52,6 +53,7 @@ func (s goodsPriceReviewService) Query(ctx context.Context, params GoodsPriceRev
 
 // Confirm 同意核价单建议价
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=901412462419
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929730556932
 func (s goodsPriceReviewService) Confirm(ctx context.Context, orderId int64) (bool, error) {
 	var result = struct {
 		normal.Response
@@ -90,6 +92,7 @@ func (m GoodsPriceReviewRejectRequest) validate() error {
 
 // Reject 不同意核价单建议价（并给出新的申报价）
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=901413494559
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=931823247765
 func (s goodsPriceReviewService) Reject(ctx context.Context, request GoodsPriceReviewRejectRequest) (bool, error) {
 	var result = struct {
 		normal.Response

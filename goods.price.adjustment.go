@@ -36,6 +36,7 @@ func (m GoodsPriceFullAdjustmentQueryParams) validate() error {
 
 // Query 分页查询全托管调价单
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=908751475686
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=908751475686
 func (s goodsPriceFullAdjustmentService) Query(ctx context.Context, params GoodsPriceFullAdjustmentQueryParams) (items []entity.GoodsReviewSamplePrice, err error) {
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)
@@ -93,6 +94,7 @@ func (m GoodsPriceFullAdjustmentConfirmRequest) validate() error {
 
 // Confirm 全托管批量确认调价单
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=908749899377
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=908749899377
 func (s goodsPriceFullAdjustmentService) Confirm(ctx context.Context, params GoodsPriceFullAdjustmentConfirmRequest) (bool, error) {
 	if err := params.validate(); err != nil {
 		return false, invalidInput(err)

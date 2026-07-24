@@ -378,7 +378,7 @@ func (m AdMallReportQueryParams) validate() error {
 }
 
 // MallReport 广告店铺投放数据效果
-// https://agentpartner.temu.com/document?cataId=875198836203&docId=929740420731
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929739237497
 func (s adService) MallReport(ctx context.Context, params AdMallReportQueryParams) ([]entity.AdReport, error) {
 	if err := params.validate(); err != nil {
 		return nil, invalidInput(err)

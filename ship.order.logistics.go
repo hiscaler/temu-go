@@ -15,7 +15,7 @@ import (
 type shipOrderLogisticsService service
 
 // 平台推荐物流商匹配接口
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#fsycCS
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=886730016425
 
 type LogisticsMatchRequest struct {
 	DeliveryAddressId         int64                  `json:"deliveryAddressId,omitempty"`  // 发货地址
@@ -57,6 +57,7 @@ func (m LogisticsMatchRequest) validate() error {
 }
 
 // Match 平台推荐物流商匹配
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=886730016425
 func (s shipOrderLogisticsService) Match(ctx context.Context, request LogisticsMatchRequest) (items []entity.LogisticsMatch, err error) {
 	if err = request.validate(); err != nil {
 		return items, invalidInput(err)
@@ -96,6 +97,7 @@ func (m LogisticsVerifyRequest) validate() error {
 }
 
 // Verify 物流单号与物流商校验
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877376122122
 func (s shipOrderLogisticsService) Verify(ctx context.Context, request LogisticsVerifyRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
@@ -136,6 +138,7 @@ func (m LogisticsChangeRequest) validate() error {
 }
 
 // Change 修改物流
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877378826334
 func (s shipOrderLogisticsService) Change(ctx context.Context, request LogisticsChangeRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)

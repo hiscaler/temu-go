@@ -27,6 +27,7 @@ func (m GoodsPriceQueryParams) validate() error {
 
 // Query 货品供货价查询
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=901410718805
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=924491336796
 func (s goodsPriceService) Query(ctx context.Context, params GoodsPriceQueryParams) (items []entity.ProductSkuSupplierPrice, err error) {
 	if err = params.validate(); err != nil {
 		return items, invalidInput(err)

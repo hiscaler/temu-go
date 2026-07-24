@@ -14,7 +14,7 @@ import (
 type shipOrderReceiveAddressService service
 
 // Query 查询大仓收货地址 V2
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#chUUk1
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877375480432
 func (s shipOrderReceiveAddressService) Query(ctx context.Context, purchaseOrderNumbers ...string) (items []entity.ShipOrderReceiveAddress, err error) {
 	err = validation.Validate(purchaseOrderNumbers,
 		validation.Required.Error("备货单号不能为空"),

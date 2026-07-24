@@ -15,7 +15,7 @@ import (
 type mallDeliveryAddressService service
 
 // Query 卖家发货地址查询
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#1qow2K
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877369025160
 func (s mallDeliveryAddressService) Query(ctx context.Context) (items []entity.DeliveryAddress, err error) {
 	var result = struct {
 		normal.Response
@@ -98,7 +98,7 @@ func (m CreateDeliveryAddressRequest) validate() error {
 }
 
 // Create 卖家发货地址创建
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#gcyXKJ
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877368590889
 func (s mallDeliveryAddressService) Create(ctx context.Context, request CreateDeliveryAddressRequest) (addressId int64, err error) {
 	if err = request.validate(); err != nil {
 		err = invalidInput(err)

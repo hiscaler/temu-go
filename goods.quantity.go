@@ -22,7 +22,7 @@ func (m GoodsQuantityQueryParams) validate() error {
 }
 
 // Query 查询商品虚拟库存
-// https://seller.kuajingmaihuo.com/sop/view/867739977041685428#hm9Qgt
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929728959750
 // Deprecated: 使用 semiVirtualInventory.Query 代替
 func (s *goodsQuantityService) Query(ctx context.Context, params GoodsQuantityQueryParams) (items []entity.GoodsQuantity, err error) {
 	if err = params.validate(); err != nil {
@@ -100,7 +100,7 @@ func (m GoodsQuantityUpdateRequest) validate() error {
 }
 
 // Update 更新虚拟库存
-// https://seller.kuajingmaihuo.com/sop/view/867739977041685428#DMwO8O
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929727846558
 //
 //	Deprecated: 使用 semiVirtualInventory.Update 代替
 func (s *goodsQuantityService) Update(ctx context.Context, params GoodsQuantityUpdateRequest) (bool, error) {

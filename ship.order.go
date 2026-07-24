@@ -91,7 +91,7 @@ func (m ShipOrderQueryParams) validate() error {
 }
 
 // Query 查询发货单 V2
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#B7c51j
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877366803148
 func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams) (items []entity.ShipOrder, total, totalPages int, isLastPage bool, err error) {
 	params.TidyPager()
 	if params.OrderType.Valid {
@@ -155,7 +155,7 @@ func (s shipOrderService) Query(ctx context.Context, params ShipOrderQueryParams
 }
 
 // 创建发货单
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#HqGnA0
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877363521599
 
 type ShipOrderCreateRequestOrderDetailInfo struct {
 	ProductSkuId  int64 `json:"productSkuId"`  // 定制品，传定制品id；非定制品，传货品 skuId
@@ -370,6 +370,7 @@ func (m ShipOrderCreateRequest) validate(ctx context.Context, s shipOrderService
 // DeliveryOrderCreateGroupList[].DeliveryOrderCreateInfos[] 下的 DeliverOrderDetailInfos, PackageInfos 为空表示用该备货单的全部数据来创建发货单，如果指定的话则只有指定的数据会创建发货单
 // 用户未主动添加发货信息，默认将所有可发货的数据加进来
 // 注意：用户要不全部提供，要不全部不提供由系统自行处理，不能只添加部分发货信息
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877363521599
 func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest) (ok bool, err error) {
 	if err = req.validate(ctx, s); err != nil {
 		return false, invalidInput(err)
@@ -400,7 +401,7 @@ func (s shipOrderService) Create(ctx context.Context, req ShipOrderCreateRequest
 
 type ShipOrderCancelRequest struct {
 	normal.Parameter
-	DeliveryOrderSn string `json:"deliveryOrderSn"` // 发货单 ID
+	DeliveryOrderSn string `json:"deliveryOrderSn"` // 发货单号
 }
 
 func (m ShipOrderCancelRequest) validate() error {
@@ -413,7 +414,7 @@ func (m ShipOrderCancelRequest) validate() error {
 }
 
 // Cancel 取消发货单
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#UywT8E
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877365979882
 func (s shipOrderService) Cancel(ctx context.Context, shipOrderNumber string) (bool, error) {
 	req := ShipOrderCancelRequest{DeliveryOrderSn: shipOrderNumber}
 	if err := req.validate(); err != nil {
@@ -437,7 +438,7 @@ func (s shipOrderService) Cancel(ctx context.Context, shipOrderNumber string) (b
 }
 
 // ThirdPartyLogisticsCompanies 自行委托三方物流公司查询接口
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#hdPda1
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877378100662
 func (s shipOrderService) ThirdPartyLogisticsCompanies(ctx context.Context) (companies []entity.LogisticsExpressCompany, err error) {
 	var result = struct {
 		normal.Response

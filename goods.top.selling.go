@@ -11,7 +11,7 @@ import (
 type goodsTopSellingService service
 
 // SoldOut 批量查询爆款售罄商品（temu.goods.topselling.soldout.get）
-// https://seller.kuajingmaihuo.com/sop/view/750197804480663142#1cxFkn
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=924481378182
 func (s goodsTopSellingService) SoldOut(ctx context.Context) (items []entity.GoodsTopSellingSoldOut, err error) {
 	var result = struct {
 		normal.Response

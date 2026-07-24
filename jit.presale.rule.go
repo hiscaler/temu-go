@@ -12,7 +12,7 @@ import (
 type jitPresaleRuleService service
 
 // Query jit预售规则查询接口（bg.virtualinventoryjit.rule.get）
-// https://seller.kuajingmaihuo.com/sop/view/706628248275137588#9h0RVQ
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=915052173981
 // 全托管JIT开通：全托管的SKC开通JIT模式，需要签署对应协议之后才可添加虚拟库存
 func (s jitPresaleRuleService) Query(ctx context.Context) (rule entity.JitPresaleRule, err error) {
 	var result = struct {
@@ -56,7 +56,7 @@ func (m JitPresaleRuleSignRequest) validate() error {
 }
 
 // Sign jit预售规则签署接口（bg.virtualinventoryjit.rule.sign）
-// https://seller.kuajingmaihuo.com/sop/view/706628248275137588#q8IeTi
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=916097664850
 // - 全托管JIT开通：全托管的SKC开通JIT模式，需要签署对应协议之后才可添加虚拟库存
 func (s jitPresaleRuleService) Sign(ctx context.Context, request JitPresaleRuleSignRequest) (bool, error) {
 	if err := request.validate(); err != nil {

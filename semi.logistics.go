@@ -33,7 +33,7 @@ func (s semiLogisticsService) Companies(ctx context.Context, regionId int) ([]en
 }
 
 // Templates 物流模版查询
-// https://seller.kuajingmaihuo.com/sop/view/867739977041685428#pa858C
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929751463671
 func (s semiLogisticsService) Templates(ctx context.Context, siteIds ...int) ([]entity.FreightTemplate, error) {
 	if len(siteIds) == 0 {
 		return nil, errors.New("请提供站点 ID")

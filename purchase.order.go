@@ -172,7 +172,7 @@ func (m PurchaseOrderQueryParams) validate() error {
 }
 
 // Query 查询采购单列表 V2
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#Ip0Gso
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877379616150
 func (s purchaseOrderService) Query(ctx context.Context, params PurchaseOrderQueryParams) (items []entity.PurchaseOrder, stat entity.PurchaseOrderStatistic, err error) {
 	params.TidyPager()
 	if params.OrderType.Valid {
@@ -355,7 +355,7 @@ func (m PurchaseOrderApplyRequest) validate() error {
 }
 
 // Apply 申请备货
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#nsjLx8
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877380983051
 func (s purchaseOrderService) Apply(ctx context.Context, request PurchaseOrderApplyRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
@@ -427,6 +427,7 @@ func (m PurchaseOrderEditRequest) validate() error {
 }
 
 // Edit 修改备货单下单数量
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=922390279809
 func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEditRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
@@ -449,6 +450,7 @@ func (s purchaseOrderService) Edit(ctx context.Context, request PurchaseOrderEdi
 }
 
 // Cancel 批量取消待接单的备货单
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=931839452482
 func (s purchaseOrderService) Cancel(ctx context.Context, rawPurchaseOrderNumbers ...string) (results []entity.Result, err error) {
 	if len(rawPurchaseOrderNumbers) == 0 {
 		return results, nil

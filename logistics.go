@@ -12,7 +12,7 @@ import (
 type logisticsService service
 
 // Companies 查询发货快递公司
-// https://seller.kuajingmaihuo.com/sop/view/889973754324016047#wjtGTK
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877369974057
 func (s logisticsService) Companies(ctx context.Context) (items []entity.LogisticsShippingCompany, err error) {
 	var result = struct {
 		normal.Response

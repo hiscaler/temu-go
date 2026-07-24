@@ -91,7 +91,7 @@ func (m GoodsQueryParams) validate() error {
 }
 
 // Query 货品列表查询
-// https://seller.kuajingmaihuo.com/sop/view/750197804480663142#SjadVR
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=924479235154
 func (s goodsService) Query(ctx context.Context, params GoodsQueryParams) (items []entity.Goods, total, totalPages int, isLastPage bool, err error) {
 	params.Page = params.TidyPager().Page
 	params.OmitPage()
@@ -144,7 +144,7 @@ func (s goodsService) One(ctx context.Context, productSkcId int64) (item entity.
 }
 
 // Detail 货品详情查询（temu.goods.detail.get）
-// https://seller.kuajingmaihuo.com/sop/view/750197804480663142#VSGe8J
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=925528074151
 func (s goodsService) Detail(ctx context.Context, productId int64) (entity.GoodsDetail, error) {
 	var result struct {
 		normal.Response
@@ -720,7 +720,7 @@ type GoodsCreateProductSemiManaged struct {
 
 // GoodsCreateProductShipment 半托管货品配送信息请求
 type GoodsCreateProductShipment struct {
-	FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板 id，使用 temu.logistics.template.get 查询，详见：https://seller.kuajingmaihuo.com/sop/view/867739977041685428#pa858C
+	FreightTemplateId   string `json:"freightTemplateId"`   // 运费模板 id，使用 bg.glo.logistics.template.get 查询，详见：https://agentpartner.temu.com/document?cataId=875198836203&docId=929751463671
 	ShipmentLimitSecond int    `json:"shipmentLimitSecond"` // 承诺发货时间(单位:s)，可选值：86400，172800，259200（仅定制品可用）
 }
 
@@ -848,8 +848,8 @@ type GoodsCreateResult struct {
 	} `json:"productSkuList"` // sku 列表
 }
 
-// Create 添加货品
-// https://seller.kuajingmaihuo.com/sop/view/750197804480663142#MwT6Ha
+// Create 添加货品（temu.goods.add）
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=875202591662
 func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (res GoodsCreateResult, err error) {
 	if err = request.validate(ctx, s); err != nil {
 		return res, invalidInput(err)
@@ -872,7 +872,7 @@ func (s goodsService) Create(ctx context.Context, request GoodsCreateRequest) (r
 }
 
 // ImageUpload 上传货品图片（bg.goods.image.upload.global）
-// https://seller.kuajingmaihuo.com/sop/view/338873192956832611#atWm1f
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929743122710
 
 type GoodsImageUploadOption struct {
 	Boost              bool `json:"boost"`              // 是否 AI 清晰度提升
@@ -909,6 +909,7 @@ func (m GoodsImageUploadRequest) validate() error {
 	)
 }
 
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929743122710
 func (s goodsService) ImageUpload(ctx context.Context, request GoodsImageUploadRequest) (res entity.GoodsImageUploadResult, err error) {
 	if err = request.validate(); err != nil {
 		return res, invalidInput(err)
@@ -952,6 +953,7 @@ func (m GoodsUpdateRequest) validate() error {
 	)
 }
 
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=925532416793
 func (s goodsService) Update(ctx context.Context, request GoodsUpdateRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
@@ -1002,6 +1004,7 @@ func (m GoodsEditSensitiveAttrRequest) validate() error {
 	)
 }
 
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=924485149181
 func (s goodsService) EditSensitiveAttr(ctx context.Context, request GoodsEditSensitiveAttrRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
@@ -1068,6 +1071,7 @@ func (m GoodsEditPropertyRequest) validate() error {
 
 // EditProperty 编辑货品属性
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=900361168169
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=924487372748
 func (s goodsService) EditProperty(ctx context.Context, request GoodsEditPropertyRequest) (bool, error) {
 	if err := request.validate(); err != nil {
 		return false, invalidInput(err)
@@ -1121,6 +1125,7 @@ func (m GoodsMigrateRequest) validate() error {
 
 // Migrate 半托管店铺搬运同主体下全托管店铺的货品
 // https://partner.kuajingmaihuo.com/document?cataId=875198836203&docId=902459443915
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=924481089321
 func (s goodsService) Migrate(ctx context.Context, request GoodsMigrateRequest) error {
 	//
 	if err := request.validate(); err != nil {

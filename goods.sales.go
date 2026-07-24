@@ -51,7 +51,7 @@ func (m GoodsSalesQueryParams) validate() error {
 }
 
 // Query 销售管理数据查询接口
-// https://seller.kuajingmaihuo.com/sop/view/078755754290460420#D6SACs
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877385749076
 func (s goodsSalesService) Query(ctx context.Context, params GoodsSalesQueryParams) (items []entity.GoodsSales, err error) {
 	params.TidyPager()
 	if err = params.validate(); err != nil {

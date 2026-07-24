@@ -13,7 +13,7 @@ type mallService struct {
 }
 
 // Type 店铺类型
-// https://seller.kuajingmaihuo.com/sop/view/634117628601810731#uJ0fSb
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=881490244071
 func (s mallService) Type(ctx context.Context) (entity.MallType, error) {
 	var result = struct {
 		normal.Response
@@ -31,7 +31,7 @@ func (s mallService) Type(ctx context.Context) (entity.MallType, error) {
 }
 
 // Permission 查询店铺权限
-// https://seller.kuajingmaihuo.com/sop/view/634117628601810731#3tCaqU
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=929722395417
 func (s mallService) Permission(ctx context.Context) (p entity.MallPermission, err error) {
 	var result = struct {
 		normal.Response

@@ -11,6 +11,7 @@ import (
 type goodsSizeChartSettingService service
 
 // View 查询尺码模板规则
+// https://agentpartner.temu.com/document?cataId=875198836203&docId=877350954517
 func (s *goodsSizeChartSettingService) View(ctx context.Context, categoryId int64) (data entity.GoodsSizeChartSetting, err error) {
 	var result = struct {
 		normal.Response
