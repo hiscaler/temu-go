@@ -115,7 +115,7 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.logistics.shipment.v2.confirm":          entity.AmericanRegion,
 		"bg.order.customization.get":                "",
 		"bg.arbok.open.product.cert.query":          entity.GlobalRegion,
-		"bg.open.accesstoken.info.get.global":       entity.Partner,
+		"bg.open.accesstoken.info.get":              "",
 		"temu.logistics.scanform.create":            entity.AmericanRegion,
 		"temu.logistics.scanform.document.get":      entity.AmericanRegion,
 		"bg.btg.goods.stock.warehouse.list.get":     entity.Partner,
