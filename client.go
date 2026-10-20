@@ -507,6 +507,7 @@ func NewClient(cfg config.Config) *Client {
 			OrderLogisticsShipment: (semiOrderLogisticsShipmentService)(xService),
 			OrderLogisticsScanForm: (semiOrderLogisticsScanFormService)(xService),
 			Logistics:              (semiLogisticsService)(xService),
+			Goods:                  (semiGoodsService)(xService),
 		},
 		Picture:              (pictureService)(xService),
 		BestSellerInvitation: (bestSellerInvitationService)(xService),
