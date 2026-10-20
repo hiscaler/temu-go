@@ -9,6 +9,7 @@ type semiManagedService struct {
 	OrderLogisticsScanForm semiOrderLogisticsScanFormService // 订单物流扫描单
 	Logistics              semiLogisticsService              // 物流
 	Goods                  semiGoodsService                  // 商品
+	Category               semiCategoryService               // 分类
 }
 
 // 在线下单服务

@@ -17,7 +17,7 @@ type SemiCategoryQueryParams struct {
 
 // All 分类查询
 // https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=7ce116fe6b87443ba2a5320b25bf2b20
-func (s semiCategoryService) All(ctx context.Context, params SemiCategoryQueryParams) ([]entity.SemiCategory, error) {
+func (s semiCategoryService) Query(ctx context.Context, params SemiCategoryQueryParams) ([]entity.SemiCategory, error) {
 	var result = struct {
 		normal.Response
 		Result struct {
