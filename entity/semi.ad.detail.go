@@ -1,18 +1,13 @@
 package entity
 
+type AdSummaryValue struct {
+	Val int `json:"val"`
+}
 type AdSummary struct {
-	Total struct {
-		Val int `json:"val"`
-	} `json:"total"`
-	Ad struct {
-		Val int `json:"val"`
-	} `json:"ad"`
-	NetTotal struct {
-		Val int `json:"val"`
-	} `json:"netTotal"`
-	NetAd struct {
-		Val int `json:"val"`
-	} `json:"netAd"`
+	Total    AdSummaryValue `json:"total"`
+	Ad       AdSummaryValue `json:"ad"`
+	NetTotal AdSummaryValue `json:"netTotal"`
+	NetAd    AdSummaryValue `json:"netAd"`
 }
 type SemiAdDetail struct {
 	Summary struct {
@@ -37,33 +32,15 @@ type SemiAdDetail struct {
 	} `json:"siteStatusInfoList"`
 	GoodsId           int `json:"goodsId"`
 	ReportsSummaryDTO struct {
-		ClkCntAll struct {
-			Val int `json:"val"`
-		} `json:"clkCntAll"`
-		OrderPayCntAll struct {
-			Val int `json:"val"`
-		} `json:"orderPayCntAll"`
-		AdSpendAll struct {
-			Val int `json:"val"`
-		} `json:"adSpendAll"`
-		AcosAll struct {
-			Val int `json:"val"`
-		} `json:"acosAll"`
-		CtrAll struct {
-			Val int `json:"val"`
-		} `json:"ctrAll"`
-		ImprCntAll struct {
-			Val int `json:"val"`
-		} `json:"imprCntAll"`
-		OrderPayAmtAll struct {
-			Val int `json:"val"`
-		} `json:"orderPayAmtAll"`
-		CartCntAll struct {
-			Val int `json:"val"`
-		} `json:"cartCntAll"`
-		RoasAll struct {
-			Val int `json:"val"`
-		} `json:"roasAll"`
+		ClkCntAll      AdSummaryValue `json:"clkCntAll"`
+		OrderPayCntAll AdSummaryValue `json:"orderPayCntAll"`
+		AdSpendAll     AdSummaryValue `json:"adSpendAll"`
+		AcosAll        AdSummaryValue `json:"acosAll"`
+		CtrAll         AdSummaryValue `json:"ctrAll"`
+		ImprCntAll     AdSummaryValue `json:"imprCntAll"`
+		OrderPayAmtAll AdSummaryValue `json:"orderPayAmtAll"`
+		CartCntAll     AdSummaryValue `json:"cartCntAll"`
+		RoasAll        AdSummaryValue `json:"roasAll"`
 	} `json:"reportsSummaryDTO"`
 	AdShowStatusList []struct {
 		ForbidReason string `json:"forbidReason"`
