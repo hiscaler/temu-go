@@ -10,6 +10,7 @@ type semiManagedService struct {
 	Logistics              semiLogisticsService              // 物流
 	Goods                  semiGoodsService                  // 商品
 	Category               semiCategoryService               // 分类
+	Ad                     semiAdService                     // 广告
 }
 
 // 在线下单服务
