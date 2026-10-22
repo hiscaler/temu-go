@@ -7,7 +7,10 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
-type semiGoodsService service
+type semiGoodsService struct {
+	service
+	Image semiGoodsImageService
+}
 
 type SemiGoodsQueryParams struct {
 	normal.ParameterWithPager
@@ -60,4 +63,44 @@ func (s semiGoodsService) Query(ctx context.Context, params SemiGoodsQueryParams
 	items = result.Result.GoodsList
 	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Total)
 	return
+}
+
+type SemiGoodsCreateRequest struct {
+	Language   string     `json:"language"`
+	GoodsBasic struct{}   `json:"goodsBasic"`
+	Attributes []struct{} `json:"attributes"`
+	SkuList    []struct{} `json:"skuList"`
+}
+
+type SemiGoodsCreateGoodsBasic struct {
+}
+
+func (m SemiGoodsCreateRequest) validate() error {
+	return nil
+}
+
+// Create 添加商品
+// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=f6f78d3f42ca41e59420cc4b7e3be479
+func (s semiGoodsService) Create(ctx context.Context, req SemiGoodsCreateRequest) (int64, string, error) {
+	if err := req.validate(); err != nil {
+		return 0, "", invalidInput(err)
+	}
+
+	var result = struct {
+		normal.Response
+		Result struct {
+			GoodsId         int64  `json:"goodsId"`
+			ExternalGoodsId string `json:"externalGoodsId"`
+		} `json:"result"`
+	}{}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(req).
+		SetResult(&result).
+		Post("temu.local.goods.v3.add")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return 0, "", err
+	}
+
+	return result.Result.GoodsId, result.Result.ExternalGoodsId, nil
 }

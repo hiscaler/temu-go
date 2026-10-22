@@ -180,6 +180,47 @@ func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams
 	return
 }
 
+type SemiOrderDetailQueryParams struct {
+	ParentOrderSn string `json:"parentOrderSn"` // Parent order number
+	// The type of order fulfillment. Enum values:
+	//fulfillBySeller: fulfill by seller.
+	//fulfillByCooperativeWarehouse: fulfill by Partner Warehouse.
+	//fulfillBy3rdPartyReturnWarehouse: fulfill by third-party returning warehouse.
+	//If not filled in, it defaults to fulfillBySeller.
+	FulfillmentTypeList []string `json:"fulfillmentTypeList"`
+}
+
+func (m SemiOrderDetailQueryParams) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.ParentOrderSn, validation.Required.Error("父单号不能为空")),
+	)
+}
+
+// Detail 订单详情
+// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=9bf33a25319e4d7bbaf5ece4b823b9c3
+func (s semiOrderService) Detail(ctx context.Context, params SemiOrderDetailQueryParams) (*entity.ParentOrder, error) {
+	if err := params.validate(); err != nil {
+		err = invalidInput(err)
+		return nil, err
+	}
+
+	var result = struct {
+		normal.Response
+		Result entity.ParentOrder `json:"result"`
+	}{}
+
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.order.detail.v2.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return nil, err
+	}
+
+	return &result.Result, nil
+}
+
 // ShippingInformation 订单收货地址查询接口（bg.order.shippinginfo.v2.get）
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#AVEKr6
 func (s semiOrderService) ShippingInformation(ctx context.Context, parentOrderNumber string) (entity.SemiOrderShippingInformation, error) {
