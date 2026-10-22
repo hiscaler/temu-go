@@ -511,6 +511,8 @@ func NewClient(cfg config.Config) *Client {
 				Image: (semiGoodsImageService)(xService),
 			},
 			Category: (semiCategoryService)(xService),
+			Ad:       (semiAdService)(xService),
+			Activity: (semiActivityService)(xService),
 		},
 		Picture:              (pictureService)(xService),
 		BestSellerInvitation: (bestSellerInvitationService)(xService),
