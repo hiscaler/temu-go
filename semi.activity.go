@@ -263,3 +263,58 @@ func (s semiActivityService) Update(ctx context.Context, req SemiActivityUpdateR
 
 	return &result.Result, nil
 }
+
+// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=0a11814e7d4146b595918ff3c0f3e239
+// SemiActivityCandidateQueryParams 半托活动候选商品查询参数
+type SemiActivityCandidateQueryParams struct {
+	normal.Pager
+	PageNumber int   `json:"pageNumber"` // 页码，从 1 开始，由 Pager.Page 映射
+	ActivityId int64 `json:"activityId"`
+}
+
+// validate 校验半托活动候选商品查询参数
+func (m SemiActivityCandidateQueryParams) validate() error {
+	return validation.ValidateStruct(&m,
+		validation.Field(&m.PageNumber,
+			validation.Required.Error("页码不能为空"),
+			validation.Min(1).Error("页码必须大于 0"),
+		),
+		validation.Field(&m.PageSize,
+			validation.Required.Error("页面大小不能为空"),
+			validation.Min(1).Error("页面大小必须大于 0"),
+			validation.Max(entity.MaxPageSize).Error("页面大小不能超过 100"),
+		),
+		validation.Field(&m.ActivityId,
+			validation.Required.Error("活动 ID 不能为空"),
+			validation.Min(1).Error("活动 ID 必须大于 0"),
+		),
+	)
+}
+
+// Candidate 查询半托活动候选商品
+// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=0a11814e7d4146b595918ff3c0f3e239
+func (s semiActivityService) Candidate(ctx context.Context, params SemiActivityCandidateQueryParams) (items []entity.SemiActivityCandidateGoods, total, totalPages int, isLastPage bool, err error) {
+	params.PageNumber = params.TidyPager().Page
+	params.OmitPage()
+	if err = params.validate(); err != nil {
+		err = invalidInput(err)
+		return
+	}
+
+	var result struct {
+		normal.Response
+		Result entity.SemiActivityCandidateResult `json:"result"`
+	}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(params).
+		SetResult(&result).
+		Post("bg.promotion.activity.candidate.goods.query")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return
+	}
+
+	items = result.Result.GoodsList
+	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Total)
+	return
+}
