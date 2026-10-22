@@ -150,3 +150,116 @@ func (s semiActivityService) Enroll(ctx context.Context, req SemiActivityEnrollR
 
 	return &result.Result, nil
 }
+
+// SemiActivityUpdateSku 活动商品 SKU 更新信息
+type SemiActivityUpdateSku struct {
+	SkuId                 int64   `json:"skuId"`
+	ActivitySupplierPrice float64 `json:"activitySupplierPrice"`
+}
+
+// SemiActivityUpdateRequest 半托活动商品更新请求
+type SemiActivityUpdateRequest struct {
+	TraceCode        string                  `json:"traceCode,omitempty"`        // 幂等键，长度不能超过 32 个字符
+	ActivityId       int64                   `json:"activityId"`                 // 活动 ID
+	ActivityQuantity int                     `json:"activityQuantity,omitempty"` // 活动数量，操作类型 20 时必填
+	GoodsId          int64                   `json:"goodsId"`                    // 商品 ID
+	OperateType      int                     `json:"operateType"`                // 10-更新活动供货价，20-更新活动数量，30-下架活动商品，40-新增活动 SKU
+	UpdateSkuList    []SemiActivityUpdateSku `json:"updateSkuList,omitempty"`    // 更新活动 SKU 列表，操作类型 10 时使用
+	AddSkuList       []SemiActivityUpdateSku `json:"addSkuList,omitempty"`       // 新增活动 SKU 列表，操作类型 40 时使用
+}
+
+func (s SemiActivityUpdateRequest) validate() error {
+	if err := validation.ValidateStruct(&s,
+		validation.Field(&s.TraceCode, validation.Length(0, 32).Error("幂等键长度不能超过 32 个字符")),
+		validation.Field(&s.ActivityId,
+			validation.Required.Error("活动 ID 不能为空"),
+			validation.Min(1).Error("活动 ID 必须大于 0"),
+		),
+		validation.Field(&s.GoodsId,
+			validation.Required.Error("商品 ID 不能为空"),
+			validation.Min(1).Error("商品 ID 必须大于 0"),
+		),
+		validation.Field(&s.OperateType,
+			validation.Required.Error("操作类型不能为空"),
+			validation.In(10, 20, 30, 40).Error("无效的操作类型"),
+		),
+		validation.Field(&s.UpdateSkuList,
+			validation.Each(validation.By(func(value any) error {
+				return value.(SemiActivityUpdateSku).validate()
+			})),
+		),
+		validation.Field(&s.AddSkuList,
+			validation.Each(validation.By(func(value any) error {
+				return value.(SemiActivityUpdateSku).validate()
+			})),
+		),
+	); err != nil {
+		return err
+	}
+
+	switch s.OperateType {
+	case 10:
+		if len(s.UpdateSkuList) == 0 {
+			return errors.New("更新活动供货价时 SKU 列表不能为空")
+		}
+		if s.ActivityQuantity != 0 || len(s.AddSkuList) != 0 {
+			return errors.New("更新活动供货价时只能传入 updateSkuList")
+		}
+	case 20:
+		if s.ActivityQuantity <= 0 {
+			return errors.New("更新活动数量时活动数量必须大于 0")
+		}
+		if len(s.UpdateSkuList) != 0 || len(s.AddSkuList) != 0 {
+			return errors.New("更新活动数量时不能传入 SKU 列表")
+		}
+	case 30:
+		if s.ActivityQuantity != 0 || len(s.UpdateSkuList) != 0 || len(s.AddSkuList) != 0 {
+			return errors.New("下架活动商品时不能传入活动数量或 SKU 列表")
+		}
+	case 40:
+		if len(s.AddSkuList) == 0 {
+			return errors.New("新增活动 SKU 时 SKU 列表不能为空")
+		}
+		if s.ActivityQuantity != 0 || len(s.UpdateSkuList) != 0 {
+			return errors.New("新增活动 SKU 时只能传入 addSkuList")
+		}
+	}
+
+	return nil
+}
+
+func (s SemiActivityUpdateSku) validate() error {
+	return validation.ValidateStruct(&s,
+		validation.Field(&s.SkuId,
+			validation.Required.Error("SKU ID 不能为空"),
+			validation.Min(1).Error("SKU ID 必须大于 0"),
+		),
+		validation.Field(&s.ActivitySupplierPrice,
+			validation.Required.Error("活动供货价不能为空"),
+			validation.Min(0).Error("活动供货价不能为负数"),
+		),
+	)
+}
+
+// Update 更新活动商品信息
+// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=29959238217c41f38f5904e32bf1d14f
+func (s semiActivityService) Update(ctx context.Context, req SemiActivityUpdateRequest) (*entity.SemiActivityEnrollResult, error) {
+	if err := req.validate(); err != nil {
+		return nil, invalidInput(err)
+	}
+
+	var result struct {
+		normal.Response
+		Result entity.SemiActivityEnrollResult `json:"result"`
+	}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(req).
+		SetResult(&result).
+		Post("bg.promotion.activity.goods.update")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return nil, err
+	}
+
+	return &result.Result, nil
+}
