@@ -14,15 +14,15 @@ type semiGoodsService struct {
 
 type SemiGoodsQueryParams struct {
 	normal.ParameterWithPager
-	OrderField                string  `url:"orderField,omitempty"`
-	OrderType                 int     `url:"orderType,omitempty"`
-	GoodsSearchType           int     `url:"goodsSearchType,omitempty"`
-	SearchText                string  `url:"searchText,omitempty"`
-	StatusFilterType          int     `url:"statusFilterType,omitempty"`
-	CrtFrom                   int64   `url:"crtFrom,omitempty"`
-	CrtTo                     int64   `url:"crtTo,omitempty"`
-	GoodsIdList               []int64 `url:"goodsIdList,omitempty"`
-	CatIdList                 []int64 `url:"catIdList,omitempty"`
+	OrderField                string  `json:"orderField,omitempty"`
+	OrderType                 int     `json:"orderType,omitempty"`
+	GoodsSearchType           int     `json:"goodsSearchType,omitempty"`
+	SearchText                string  `json:"searchText,omitempty"`
+	StatusFilterType          int     `json:"statusFilterType,omitempty"`
+	CrtFrom                   int64   `json:"crtFrom,omitempty"`
+	CrtTo                     int64   `json:"crtTo,omitempty"`
+	GoodsIdList               []int64 `json:"goodsIdList,omitempty"`
+	CatIdList                 []int64 `json:"catIdList,omitempty"`
 	GoodsStatusFilterType     int     `json:"goodsStatusFilterType"`
 	GoodsSubStatusFilterType  int     `json:"goodsSubStatusFilterType"`
 	GoodsStatusChangeTimeFrom int64   `json:"goodsStatusChangeTimeFrom"`
