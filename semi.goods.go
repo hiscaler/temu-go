@@ -6,6 +6,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/normal"
+	"gopkg.in/guregu/null.v4"
 )
 
 type semiGoodsService struct {
@@ -346,4 +347,26 @@ func (s semiGoodsService) Create(ctx context.Context, req SemiGoodsCreateRequest
 	}
 
 	return result.Result.GoodsId, result.Result.ExternalGoodsId, nil
+}
+
+type SemiGoodsInferRequest struct {
+	GoodsId        int64   `json:"goodsId"`         // 商品 ID
+	Cost           float64 `json:"cost"`            // 成本
+	Freight        float64 `json:"freight"`         // 运费
+	ExpectedProfit float64 `json:"expected_profit"` // 期望利润
+}
+
+type SemiGoodsInferRecommend struct {
+	ActivityId null.Int   `json:"activity_id"` // 活动 ID
+	Roas       null.Float `json:"roas"`        // ROAS
+	Profit     float64    `json:"profit"`      // 利润（申报价|活动价 - 成本 - 运费 - (申报价|活动价)/Roas）
+}
+
+type SemiGoodsInferResult struct {
+	GoodsId    int64                  `json:"goods_id"`
+	Recommends []SemiGoodsInferResult `json:"recommends"` // 推荐的
+}
+
+func (s semiGoodsService) Infer(ctx context.Context, req SemiGoodsInferRequest) (*SemiGoodsInferResult, error) {
+	return nil, nil
 }

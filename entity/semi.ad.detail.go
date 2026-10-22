@@ -3,12 +3,14 @@ package entity
 type AdSummaryValue struct {
 	Val int `json:"val"`
 }
+
 type AdSummary struct {
 	Total    AdSummaryValue `json:"total"`
 	Ad       AdSummaryValue `json:"ad"`
 	NetTotal AdSummaryValue `json:"netTotal"`
 	NetAd    AdSummaryValue `json:"netAd"`
 }
+
 type SemiAdDetail struct {
 	Summary struct {
 		Ctr             AdSummary `json:"ctr"`

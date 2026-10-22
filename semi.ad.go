@@ -8,11 +8,12 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
+// semiAdService 半托广告服务
 type semiAdService service
 
 type SemiAdQueryParams struct {
-	GoodsList             []int64 `url:"goodsList"`
-	SelectedAdManagedType int     `url:"selectedAdManagedType"`
+	GoodsList             []int64 `url:"goodsList"`             // Goods list
+	SelectedAdManagedType int     `url:"selectedAdManagedType"` // 广告管理类型，0或null表示单个商品，1表示全店促销
 }
 
 func (m SemiAdQueryParams) validate() error {
