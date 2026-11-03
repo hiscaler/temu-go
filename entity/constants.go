@@ -153,13 +153,13 @@ const (
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#E10GkB
 const (
 	SemiOrderStatusAll              = 0  // 全部
-	SemiOrderStatusPending          = 1  // 订单挂起中，用户支付后PO单(parentOrder)进入pending状态，订单暂时被挂起，用户支付后存在一段时间下单冷静期，包含风控处置等订单处理时间
+	SemiOrderStatusPending          = 1  // 待处理（PENDING）
 	SemiOrderStatusUnShipping       = 2  // 订单待发货，待发货状态下用户依然可以取消订单，需要及时监听订单取消状态及时接单
 	SemiOrderStatusCanceled         = 3  // 订单已取消，用户已经取消订单
 	SemiOrderStatusShipped          = 4  // 订单已发货，订单已经发货完成
 	SemiOrderStatusReceipted        = 5  // 订单已签收
-	SemiOrderStatusPartialCanceled  = 41 // 部分取消（本本订单）
-	SemiOrderStatusPartialReceipted = 51 // 部分签收（本本订单）
+	SemiOrderStatusPartialCanceled  = 41 // 部分发货（仅本地店铺）
+	SemiOrderStatusPartialReceipted = 51 // 部分收货（仅本地店铺）
 )
 
 // 半托定制模板类型

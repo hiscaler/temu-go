@@ -35,15 +35,13 @@ type SemiOrderQueryParams struct {
 	PageNumber int `json:"pageNumber"` // 第几页
 	// 父单状态，默认查全部枚举值如下
 	// 0-全部
-	// 1-”PENDING“，挂起中
+	// 1-”PENDING“，待处理
 	// 2-"UN_SHIPPING"，待发货
 	// 3-"CANCELED",已取消
 	// 4-"SHIPPED"，已发货
 	// 5-“RECEIPTED”,已签收
-	// 备注：
-	// 本本订单还存在如下状态
-	// 41-部分取消
-	// 51-部分签收
+	// 41-部分发货（仅本地店铺）
+	// 51-部分收货（仅本地店铺）
 	ParentOrderStatus         null.Int `json:"parentOrderStatus,omitempty"`         // 父单状态
 	CreateBefore              string   `json:"createBefore,omitempty"`              // 父单创建时间结束查询时间，格式是秒时间戳。查询时间需要同时入参开始和结束时间才生效
 	CreateAfter               string   `json:"createAfter,omitempty"`               // 父单创建时间开始查询时间，格式是秒时间戳

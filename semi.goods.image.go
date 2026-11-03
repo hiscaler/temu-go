@@ -37,7 +37,7 @@ func (s semiGoodsImageService) Upload(ctx context.Context, params SemiGoodsImage
 		SetContext(ctx).
 		SetBody(params).
 		SetResult(&result).
-		Post("bg.local.goods.list.query")
+		Post("temu.local.goods.image.v2.upload")
 	if err = recheckError(resp, result.Response, err); err != nil {
 		return nil, err
 	}
