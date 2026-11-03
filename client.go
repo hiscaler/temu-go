@@ -108,6 +108,7 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.order.unshipped.package.get":              "",
 		"bg.order.list.v2.get":                        "",
 		"bg.logistics.shipment.v2.get":                entity.AmericanRegion,
+		"temu.track.trackinginfo.get":                 entity.AmericanRegion,
 		"bg.btg.goods.stock.quantity.get":             entity.Partner,
 		"bg.btg.goods.stock.quantity.update":          entity.Partner,
 		"bg.logistics.companies.get":                  "",

@@ -12,6 +12,29 @@ import (
 // 半托管订单发货信息
 type semiOrderLogisticsShipmentService service
 
+// SemiOrderTrackingQueryParams 物流轨迹查询条件。
+type SemiOrderTrackingQueryParams struct {
+	PackageSn string `json:"packageSn"`          // 包裹号
+	Language  string `json:"language,omitempty"` // 轨迹语言
+}
+
+// Tracking 查询包裹物流轨迹。
+// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=e4ec6bc629bf42e38346de78b297d349
+func (s *semiOrderLogisticsShipmentService) Tracking(ctx context.Context, params SemiOrderTrackingQueryParams) (*entity.SemiOrderTracking, error) {
+	if err := validation.ValidateStruct(&params, validation.Field(&params.PackageSn, validation.Required.Error("包裹号不能为空"))); err != nil {
+		return nil, err
+	}
+	var result struct {
+		normal.Response
+		Result entity.SemiOrderTracking `json:"result"`
+	}
+	resp, err := s.httpClient.R().SetContext(ctx).SetBody(params).SetResult(&result).Post("temu.track.trackinginfo.get")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return nil, err
+	}
+	return &result.Result, nil
+}
+
 type SemiOrderLogisticsShipmentQueryParams struct {
 	ParentOrderSn string `json:"parentOrderSn"` // 父订单号
 	OrderSn       string `json:"orderSn"`       // 子订单号
