@@ -24,6 +24,13 @@ type SemiOrderCustomizationInformationPreview struct {
 	CustomizedText     null.String `json:"customizedText"`     // 定制文本
 }
 
+// SemiOrderCustomizationInformationSvg 定制信息 SVG 文件。
+//
+// CompressedFileUrl 有效期为 10 分钟，使用 SignatureUrl.Decode() 下载时会自动附加 Temu 要求的签名请求头。
+type SemiOrderCustomizationInformationSvg struct {
+	CompressedFileUrl SignatureUrl `json:"compressedFileUrl"`
+}
+
 // SemiOrderCustomizationInformation 半托订单定制信息
 type SemiOrderCustomizationInformation struct {
 	OrderSn string `json:"orderSn"` // OrderSn corresponding to customized information
@@ -31,11 +38,12 @@ type SemiOrderCustomizationInformation struct {
 	// - 1: only image
 	// - 2: only text
 	// - 3: text and image
-	TemplateType   null.Int                                   `json:"templateType"`
-	PreviewList    []SemiOrderCustomizationInformationPreview `json:"previewList"`    // Graphic customization preview information, this field will only be returned when customizedType=2
-	CustomizedData CustomizedData                             `json:"customizedData"` // Graphic customization content, in json format, this field will only be returned when customizedType=2
-	CustomizedText null.String                                `json:"customizedText"` // Customization text, this field will only be returned when customizedType=1
-	TemplateId     int                                        `json:"templateId"`     // Customization template ID when user created customized information, return null when there is no template for the product
+	TemplateType      null.Int                                   `json:"templateType"`
+	PreviewList       []SemiOrderCustomizationInformationPreview `json:"previewList"`       // Graphic customization preview information, this field will only be returned when customizedType=2
+	CustomizedData    CustomizedData                             `json:"customizedData"`    // Graphic customization content, in json format, this field will only be returned when customizedType=2
+	CustomizedText    null.String                                `json:"customizedText"`    // Customization text, this field will only be returned when customizedType=1
+	CustomizedSvgList []SemiOrderCustomizationInformationSvg     `json:"customizedSvgList"` // 定制信息 SVG 文件列表
+	TemplateId        null.Int                                   `json:"templateId"`        // Customization template ID when user created customized information, return null when there is no template for the product
 	// Customized type, enum values:
 	// - 1: pure text customization, no customized templates
 	// - 2: customized graphics and text, with customized templates available

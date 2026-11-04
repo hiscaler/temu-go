@@ -30,6 +30,8 @@ import (
 // 订单服务（半托管专属，必须在 US/EU 网关调用）
 type semiOrderService service
 
+const maxCustomizationInformationOrders = 10
+
 type SemiOrderQueryParams struct {
 	normal.ParameterWithPager
 	PageNumber int `json:"pageNumber"` // 第几页
@@ -188,6 +190,25 @@ type SemiOrderDetailQueryParams struct {
 	FulfillmentTypeList []string `json:"fulfillmentTypeList"`
 }
 
+func validateCustomizationInformationOrderNumbers(orderNumbers []string) error {
+	if len(orderNumbers) == 0 {
+		return errors.New("待查询半托订单定制信息子单号列表不能为空")
+	}
+	if len(orderNumbers) > maxCustomizationInformationOrders {
+		return fmt.Errorf("待查询半托订单定制信息子单号列表不能超过 %d 个", maxCustomizationInformationOrders)
+	}
+	for _, number := range orderNumbers {
+		if number == "" {
+			return errors.New("待查询半托订单定制信息子单号列表不能包含空字符串")
+		}
+		if number != strings.TrimSpace(number) {
+			return fmt.Errorf("无效的子单号 %s", number)
+		}
+	}
+
+	return nil
+}
+
 func (m SemiOrderDetailQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ParentOrderSn, validation.Required.Error("父单号不能为空")),
@@ -244,15 +265,8 @@ func (s semiOrderService) ShippingInformation(ctx context.Context, parentOrderNu
 // https://partner.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=e8f86a2f5241441e9b095bf309d04dce
 // 注意：orderNumbers 为子单号
 func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNumbers ...string) ([]entity.SemiOrderCustomizationInformation, error) {
-	if len(orderNumbers) == 0 {
-		return nil, errors.New("待查询半托订单定制信息子单号列表不能为空")
-	}
-	for _, number := range orderNumbers {
-		if number == "" {
-			return nil, errors.New("待查询半托订单定制信息子单号列表不能包含空字符串")
-		} else if number != strings.TrimSpace(number) {
-			return nil, fmt.Errorf("无效的子单号 %s", number)
-		}
+	if err := validateCustomizationInformationOrderNumbers(orderNumbers); err != nil {
+		return nil, err
 	}
 
 	var result = struct {
@@ -378,15 +392,8 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 // https://partner.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=e8f86a2f5241441e9b095bf309d04dce
 // 注意：orderNumbers 为子单号
 func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context, orderNumbers ...string) ([]gci.GoodsCustomizedInformation, error) {
-	if len(orderNumbers) == 0 {
-		return nil, errors.New("待查询半托订单定制信息子单号列表不能为空")
-	}
-	for _, number := range orderNumbers {
-		if number == "" {
-			return nil, errors.New("待查询半托订单定制信息子单号列表不能包含空字符串")
-		} else if number != strings.TrimSpace(number) {
-			return nil, fmt.Errorf("无效的子单号 %s", number)
-		}
+	if err := validateCustomizationInformationOrderNumbers(orderNumbers); err != nil {
+		return nil, err
 	}
 
 	var result = struct {
