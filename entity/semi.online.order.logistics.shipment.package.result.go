@@ -30,28 +30,31 @@ type SemiOnlineOrderLogisticsShipmentPackageResult struct {
 	// 对应枚举如下：0申请中 1成功 2失败
 	// 当且仅当状态为2失败才能再次在线下单
 	// 状态为1成功和2失败都能转为自发货
-	ShippingLabelStatus   int    `json:"shippingLabelStatus"`   // 当前包裹下单状态
-	CanChangeToManualSend bool   `json:"canChangeToManualSend"` // 是否可以修改成手动填写物流单号
-	Weight                string `json:"weight"`                // 重量（默认 2 位小数）
-	WeightUnit            string `json:"weightUnit"`            // 重量单位
-	Length                string `json:"length"`                // 包裹长度（默认 2 位小数）
-	Width                 string `json:"width"`                 // 包裹宽度（默认 2 位小数）
-	Height                string `json:"height"`                // 包裹高度（默认 2 位小数）
-	DimensionUnit         string `json:"dimensionUnit"`         // 尺寸单位高度
-	ChannelId             int64  `json:"channelId"`             // 渠道 id
-	ShipCompanyId         int64  `json:"shipCompanyId"`         // 物流公司 id
-	ShipLogisticsType     string `json:"shipLogisticsType"`     // 物流公司类型
-	ShippingCompanyName   string `json:"shippingCompanyName"`   // 运单号
-	TrackingNumber        string `json:"trackingNumber"`        // 物流公司名称
-	OrderSendInfoList     []struct {
-		ParentOrderSn string `json:"parentOrderSn"` // PO 单号
-		OrderSn       string `json:"orderSn"`       // O 单号
-		GoodsId       int64  `json:"goodsId"`       // goodsId
-		SkuId         int64  `json:"skuId"`         // skuId
-		Quantity      int    `json:"quantity"`      // 数量
-	} `json:"orderSendInfoList"` // 订单信息
-	SignServiceId   null.String `json:"signServiceId"`
-	PickupStartTime null.Time   `json:"pickupStartTime"`
-	PickupEndTime   null.Time   `json:"pickupEndTime"`
-	EstimatedAmount null.String `json:"estimatedAmount"`
+	ShippingLabelStatus   int                                                    `json:"shippingLabelStatus"`   // 当前包裹下单状态
+	CanChangeToManualSend bool                                                   `json:"canChangeToManualSend"` // 是否可以修改成手动填写物流单号
+	Weight                string                                                 `json:"weight"`                // 重量（默认 2 位小数）
+	WeightUnit            string                                                 `json:"weightUnit"`            // 重量单位
+	Length                string                                                 `json:"length"`                // 包裹长度（默认 2 位小数）
+	Width                 string                                                 `json:"width"`                 // 包裹宽度（默认 2 位小数）
+	Height                string                                                 `json:"height"`                // 包裹高度（默认 2 位小数）
+	DimensionUnit         string                                                 `json:"dimensionUnit"`         // 尺寸单位高度
+	ChannelId             int64                                                  `json:"channelId"`             // 渠道 id
+	ShipCompanyId         int64                                                  `json:"shipCompanyId"`         // 物流公司 id
+	ShipLogisticsType     string                                                 `json:"shipLogisticsType"`     // 物流公司类型
+	ShippingCompanyName   string                                                 `json:"shippingCompanyName"`   // 运单号
+	TrackingNumber        string                                                 `json:"trackingNumber"`        // 物流公司名称
+	OrderSendInfoList     []SemiOnlineOrderLogisticsShipmentPackageOrderSendInfo `json:"orderSendInfoList"`     // 订单信息
+	SignServiceId         null.String                                            `json:"signServiceId"`
+	PickupStartTime       null.Time                                              `json:"pickupStartTime"`
+	PickupEndTime         null.Time                                              `json:"pickupEndTime"`
+	EstimatedAmount       null.String                                            `json:"estimatedAmount"`
+}
+
+// SemiOnlineOrderLogisticsShipmentPackageOrderSendInfo 半托包裹订单发送信息
+type SemiOnlineOrderLogisticsShipmentPackageOrderSendInfo struct {
+	ParentOrderSn string `json:"parentOrderSn"` // PO 单号
+	OrderSn       string `json:"orderSn"`       // O 单号
+	GoodsId       int64  `json:"goodsId"`       // goodsId
+	SkuId         int64  `json:"skuId"`         // skuId
+	Quantity      int    `json:"quantity"`      // 数量
 }

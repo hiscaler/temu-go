@@ -27,18 +27,21 @@ type SemiOnlineOrderLogisticsChannel struct {
 	SignServiceId         string   `json:"signServiceId"`         // 签收服务 ID
 	PayWayCode            int      `json:"payWayCode"`            // payWayCode=1, means this channel can only fulfill PPD order
 	//payWayCode=2, means this channel can only fulfill COD order
-	PickupRules                 string `json:"pickupRules"`  // The text description of pickup time. Only some channels wihch support reservation through open api will return this rules.
-	ChannelRules                string `json:"channelRules"` // 渠道规则
-	AvailablePickupTimeSlotList []struct {
-		PickupStartTime int64 `json:"pickupStartTime"` // 安排取件的开始时间，时间戳为秒。
-		PickupEndTime   int64 `json:"pickupEndTime"`   // 安排取件的结束时间，时间戳为秒。
-	} `json:"availablePickupTimeSlotList"` // 仓库地址对应的 pickup_time 信息列表
+	PickupRules                 string                                      `json:"pickupRules"`                 // The text description of pickup time. Only some channels wihch support reservation through open api will return this rules.
+	ChannelRules                string                                      `json:"channelRules"`                // 渠道规则
+	AvailablePickupTimeSlotList []SemiOnlineOrderLogisticsChannelPickupTime `json:"availablePickupTimeSlotList"` // 仓库地址对应的 pickup_time 信息列表
 	// 获取数据后系统解析得到的数据
 	Amount            float64 `json:"amount"`              // 预估金额（数字）
 	AmountError       string  `json:"amount_error"`        // 预估金额解析错误信息
 	DeliveryMinDays   float64 `json:"delivery_min_days"`   // 发货最少天数
 	DeliveryMaxDays   float64 `json:"delivery_max_days"`   // 发货最多天数
 	DeliveryDaysError string  `json:"delivery_days_error"` // 发货时间解析错误信息
+}
+
+// SemiOnlineOrderLogisticsChannelPickupTime 半托在线物流渠道取件时间
+type SemiOnlineOrderLogisticsChannelPickupTime struct {
+	PickupStartTime int64 `json:"pickupStartTime"` // 安排取件的开始时间，时间戳为秒。
+	PickupEndTime   int64 `json:"pickupEndTime"`   // 安排取件的结束时间，时间戳为秒。
 }
 
 // ParseEstimatedAmount 解析预估金额
