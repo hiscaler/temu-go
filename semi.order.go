@@ -240,6 +240,29 @@ func (s semiOrderService) Detail(ctx context.Context, params SemiOrderDetailQuer
 	return &result.Result, nil
 }
 
+// Amount 查询父订单及子订单的金额，金额以对应币种的最小单位返回。
+// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=5454abbb70374f4ba7f72ac654fdb174
+func (s semiOrderService) Amount(ctx context.Context, parentOrderNumber string) (*entity.SemiOrderAmount, error) {
+	if strings.TrimSpace(parentOrderNumber) == "" {
+		return nil, invalidInput(errors.New("父单号不能为空"))
+	}
+
+	var result struct {
+		normal.Response
+		Result entity.SemiOrderAmount `json:"result"`
+	}
+	resp, err := s.httpClient.R().
+		SetContext(ctx).
+		SetBody(map[string]string{"parentOrderSn": parentOrderNumber}).
+		SetResult(&result).
+		Post("bg.order.amount.query")
+	if err = recheckError(resp, result.Response, err); err != nil {
+		return nil, err
+	}
+
+	return &result.Result, nil
+}
+
 // ShippingInformation 订单收货地址查询接口（bg.order.shippinginfo.v2.get）
 // https://seller.kuajingmaihuo.com/sop/view/867739977041685428#AVEKr6
 func (s semiOrderService) ShippingInformation(ctx context.Context, parentOrderNumber string) (entity.SemiOrderShippingInformation, error) {
