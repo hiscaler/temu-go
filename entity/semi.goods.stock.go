@@ -29,8 +29,8 @@ type SKuStockInfo struct {
 
 // SemiGoodsStockUpdateResult 半托管商品库存更新结果
 type SemiGoodsStockUpdateResult struct { // 来源：Temu bg.local.goods.stock.edit
-	GoodsId                    int64                  `json:"goodsId"`                    // 商品 ID
-	SkuStockEditStatusInfoList SkuStockEditStatusInfo `json:"skuStockEditStatusInfoList"` // 各 SKU 库存修改状态
+	GoodsId                    int64                    `json:"goodsId"`                    // 商品 ID
+	SkuStockEditStatusInfoList []SkuStockEditStatusInfo `json:"skuStockEditStatusInfoList"` // 各 SKU 库存修改状态
 }
 
 // SkuStockEditStatusInfo SKU 库存编辑状态信息
