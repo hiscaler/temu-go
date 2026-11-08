@@ -4,7 +4,7 @@ go 1.26.0
 
 require (
 	github.com/BurntSushi/toml v1.6.0
-	github.com/echo-ok/goods-customization-information v0.0.0-20251011065600-fd872e219e14
+	github.com/echo-ok/goods-customization-information v0.0.0-20261107153616-70a52d1074c1
 	github.com/go-ozzo/ozzo-validation/v4 v4.5.0
 	github.com/go-resty/resty/v2 v2.17.2
 	github.com/goccy/go-json v0.12.0

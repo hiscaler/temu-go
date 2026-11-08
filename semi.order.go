@@ -183,10 +183,10 @@ func (s semiOrderService) Query(ctx context.Context, params SemiOrderQueryParams
 type SemiOrderDetailQueryParams struct {
 	ParentOrderSn string `json:"parentOrderSn"` // Parent order number
 	// The type of order fulfillment. Enum values:
-	//fulfillBySeller: fulfill by seller.
-	//fulfillByCooperativeWarehouse: fulfill by Partner Warehouse.
-	//fulfillBy3rdPartyReturnWarehouse: fulfill by third-party returning warehouse.
-	//If not filled in, it defaults to fulfillBySeller.
+	// fulfillBySeller: fulfill by seller.
+	// fulfillByCooperativeWarehouse: fulfill by Partner Warehouse.
+	// fulfillBy3rdPartyReturnWarehouse: fulfill by third-party returning warehouse.
+	// If not filled in, it defaults to fulfillBySeller.
 	FulfillmentTypeList []string `json:"fulfillmentTypeList"`
 }
 
@@ -440,17 +440,19 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 
 	ciList := make([]gci.GoodsCustomizedInformation, len(results))
 	for i, res := range results {
-		ci := gci.NewGoodsCustomizedInformation()
+		ci := gci.NewGoodsCustomizedInformation(res.OrderSn)
 		ci.SetRawData(res)
 		surface := gci.NewSurface()
 		for _, v := range res.PreviewList {
 			region := gci.NewRegion()
+			region.Name = v.CustomizedAreaId
 			var img gci.Image
 			switch v.PreviewType {
 			case 1: // 预览图
 				surface.Name = v.CustomizedAreaId
 				if v.ImageUrl.Valid {
-					if img, err = gci.NewImage(v.ImageUrl.String, false); err == nil {
+					if img, err = gci.NewImage(v.ImageUrl.String, true); err == nil {
+						img.Label = v.CustomizedAreaId
 						surface.SetPreviewImage(img)
 					} else {
 						region.SetError(err)
@@ -458,10 +460,12 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 				} else {
 					region.SetError("预览图片地址为空")
 				}
+				continue
 			case 3: // 用户上传的定制图片
 				region.Name = v.CustomizedAreaId
 				if v.ImageUrl.Valid {
 					if img, err = gci.NewImage(v.ImageUrl.String, true); err == nil {
+						img.Label = v.CustomizedAreaId
 						region.AddImage(img)
 					} else {
 						region.SetError(err)
@@ -473,6 +477,7 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 				if v.CustomizedText.Valid {
 					var text gci.Text
 					if text, err = gci.NewText("", v.CustomizedText.String); err == nil {
+						text.Label = v.CustomizedAreaId.ValueOrZero()
 						region.AddText(text)
 					} else {
 						region.SetError(err)
@@ -480,6 +485,8 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 				} else {
 					region.SetError("定制信息内容为空")
 				}
+			default:
+				continue
 			}
 			surface.AddRegion(region)
 		}
@@ -519,51 +526,99 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 	}
 	for i, ci := range ciList {
 		for j, surface := range ci.Surfaces {
-			if surface.PreviewImage == nil || !surface.PreviewImage.Redownload {
-				continue
-			}
-
-			var parsedURL *url.URL
-			parsedURL, err = url.Parse(surface.PreviewImage.RawUrl)
-			if err != nil {
-				ciList[i].Surfaces[j].PreviewImage.SetError(err)
-				continue
-			}
-			filename := strings.ToLower(filepath.Base(parsedURL.Path))
-			if filename == "" {
-				ciList[i].Surfaces[j].PreviewImage.SetError("无法获取文件名")
-			}
-			savePath := filepath.Join(dir, filename)
-			if filex.Exists(savePath) {
-				ciList[i].Surfaces[j].PreviewImage.SetUrl(urlJoin(s.config.StaticFileServer, savePath))
-				continue
-			}
-
-			headers["toa-random"] = randx.Letter(32, true)
-			headers["toa-timestamp"] = strconv.FormatInt(time.Now().Unix(), 10)
-			sb.Reset()
-			sb.WriteString(s.config.AppSecret)
-			for _, key := range keys {
-				sb.WriteString(key)
-				sb.WriteString(headers[key])
-			}
-			sb.WriteString(s.config.AppSecret)
-			headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
-			resp, err = httpClient.
-				SetOutputDirectory(dir).
-				R().
-				SetHeaders(headers).
-				SetOutput(filename).
-				Get(surface.PreviewImage.RawUrl)
-			if err != nil {
-				ciList[i].Surfaces[j].PreviewImage.SetError(err)
-			} else {
-				if resp.IsError() {
-					ciList[i].Surfaces[j].PreviewImage.SetError(resp.String())
-				} else if resp.IsSuccess() {
-					ciList[i].Surfaces[j].PreviewImage.SetUrl(urlJoin(s.config.StaticFileServer, path.Join(dir, filename)))
+			if surface.PreviewImage != nil && surface.PreviewImage.Redownload {
+				var parsedURL *url.URL
+				parsedURL, err = url.Parse(surface.PreviewImage.RawUrl)
+				if err != nil {
+					ciList[i].Surfaces[j].PreviewImage.SetError(err)
 				} else {
-					ciList[i].Surfaces[j].PreviewImage.SetError(resp.String())
+
+				}
+				filename := strings.ToLower(filepath.Base(parsedURL.Path))
+				if filename == "" {
+					ciList[i].Surfaces[j].PreviewImage.SetError("无法获取文件名")
+				} else {
+					savePath := filepath.Join(dir, filename)
+					if filex.Exists(savePath) {
+						ciList[i].Surfaces[j].PreviewImage.SetUrl(urlJoin(s.config.StaticFileServer, savePath))
+					} else {
+						headers["toa-random"] = randx.Letter(32, true)
+						headers["toa-timestamp"] = strconv.FormatInt(time.Now().Unix(), 10)
+						sb.Reset()
+						sb.WriteString(s.config.AppSecret)
+						for _, key := range keys {
+							sb.WriteString(key)
+							sb.WriteString(headers[key])
+						}
+						sb.WriteString(s.config.AppSecret)
+						headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
+						resp, err = httpClient.
+							SetOutputDirectory(dir).
+							R().
+							SetHeaders(headers).
+							SetOutput(filename).
+							Get(surface.PreviewImage.RawUrl)
+						if err != nil {
+							ciList[i].Surfaces[j].PreviewImage.SetError(err)
+						} else {
+							if resp.IsError() {
+								ciList[i].Surfaces[j].PreviewImage.SetError(resp.String())
+							} else if resp.IsSuccess() {
+								ciList[i].Surfaces[j].PreviewImage.SetUrl(urlJoin(s.config.StaticFileServer, path.Join(dir, filename)))
+							} else {
+								ciList[i].Surfaces[j].PreviewImage.SetError(resp.String())
+							}
+						}
+					}
+				}
+			}
+			for k, region := range surface.Regions {
+				for kk, img := range region.Images {
+					if img.RawUrl != "" && img.Redownload {
+						var parsedURL *url.URL
+						parsedURL, err = url.Parse(img.RawUrl)
+						if err != nil {
+							ciList[i].Surfaces[j].Regions[k].Images[kk].SetError(err)
+							continue
+						}
+						filename := strings.ToLower(filepath.Base(parsedURL.Path))
+						if filename == "" {
+							ciList[i].Surfaces[j].Regions[k].Images[kk].SetError("无法获取文件名")
+						}
+						savePath := filepath.Join(dir, filename)
+						if filex.Exists(savePath) {
+							ciList[i].Surfaces[j].Regions[k].Images[kk].SetUrl(urlJoin(s.config.StaticFileServer, savePath))
+							continue
+						}
+
+						headers["toa-random"] = randx.Letter(32, true)
+						headers["toa-timestamp"] = strconv.FormatInt(time.Now().Unix(), 10)
+						sb.Reset()
+						sb.WriteString(s.config.AppSecret)
+						for _, key := range keys {
+							sb.WriteString(key)
+							sb.WriteString(headers[key])
+						}
+						sb.WriteString(s.config.AppSecret)
+						headers["toa-sign"] = strings.ToUpper(fmt.Sprintf("%x", md5.Sum([]byte(sb.String()))))
+						resp, err = httpClient.
+							SetOutputDirectory(dir).
+							R().
+							SetHeaders(headers).
+							SetOutput(filename).
+							Get(img.RawUrl)
+						if err != nil {
+							ciList[i].Surfaces[j].Regions[k].Images[kk].SetError(err)
+						} else {
+							if resp.IsError() {
+								ciList[i].Surfaces[j].Regions[k].Images[kk].SetError(resp.String())
+							} else if resp.IsSuccess() {
+								ciList[i].Surfaces[j].Regions[k].Images[kk].SetUrl(urlJoin(s.config.StaticFileServer, path.Join(dir, filename)))
+							} else {
+								ciList[i].Surfaces[j].Regions[k].Images[kk].SetError(resp.String())
+							}
+						}
+					}
 				}
 			}
 		}
