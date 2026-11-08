@@ -2,8 +2,6 @@ github.com/BurntSushi/toml v1.6.0 h1:dRaEfpa2VI55EwlIW72hMRHdWouJeRF7TPYhI+AUQjk
 github.com/BurntSushi/toml v1.6.0/go.mod h1:ukJfTF/6rtPPRCnwkur4qwRxa8vTRFBF0uk2lLoLwho=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
 github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
-github.com/echo-ok/goods-customization-information v0.0.0-20251011065600-fd872e219e14 h1:Xx0P9gfVEl8SC3B/m0FNIqBJEcHtWz5ADL0iFXVvv3I=
-github.com/echo-ok/goods-customization-information v0.0.0-20251011065600-fd872e219e14/go.mod h1:2QCwPrNWvuaAFdyxFfZccHlxlcemJJNWPoJP8pCg5gA=
 github.com/echo-ok/goods-customization-information v0.0.0-20261107153616-70a52d1074c1 h1:H89AGclMYmYmvCtarUo28sVAcl4IqvXrP45w+S3hhGY=
 github.com/echo-ok/goods-customization-information v0.0.0-20261107153616-70a52d1074c1/go.mod h1:2QCwPrNWvuaAFdyxFfZccHlxlcemJJNWPoJP8pCg5gA=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
