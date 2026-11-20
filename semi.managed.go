@@ -7,9 +7,8 @@ type semiManagedService struct {
 	VirtualInventory       semiVirtualInventoryService       // 虚拟库存
 	OrderLogisticsShipment semiOrderLogisticsShipmentService // 订单物流信息
 	OrderLogisticsScanForm semiOrderLogisticsScanFormService // 订单物流扫描单
+	FreightTemplate        semiFreightTemplateService        // 运费模板
 	Logistics              semiLogisticsService              // 物流
-	Goods                  semiGoodsService                  // 商品
-	Category               semiCategoryService               // 分类
 	Ad                     semiAdService                     // 广告
 	Activity               semiActivityService               // 活动
 }

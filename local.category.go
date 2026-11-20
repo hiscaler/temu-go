@@ -7,21 +7,26 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
-// 半托管分类服务
-type semiCategoryService service
-
-type SemiCategoryQueryParams struct {
-	Language    string `url:"language,omitempty"`
-	ParentCatId int64  `url:"parentCatId,omitempty"`
+// 本本服务
+type localService struct {
+	Category localCategoryService // 分类
+	Goods    localGoodsService    // 商品
 }
 
-// All 分类查询
+type localCategoryService service
+
+type LocalCategoryQueryParams struct {
+	Language    string `json:"language,omitempty" url:"language,omitempty"`
+	ParentCatId int64  `json:"parentCatId,omitempty" url:"parentCatId,omitempty"`
+}
+
+// Query 分类查询
 // https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=7ce116fe6b87443ba2a5320b25bf2b20
-func (s semiCategoryService) Query(ctx context.Context, params SemiCategoryQueryParams) ([]entity.SemiCategory, error) {
+func (s localCategoryService) Query(ctx context.Context, params LocalCategoryQueryParams) ([]entity.LocalCategory, error) {
 	var result = struct {
 		normal.Response
 		Result struct {
-			Items []entity.SemiCategory `json:"items"`
+			Items []entity.LocalCategory `json:"items"`
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().

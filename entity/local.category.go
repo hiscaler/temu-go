@@ -1,7 +1,7 @@
 package entity
 
-// SemiCategory 半托管类目
-type SemiCategory struct {
+// LocalCategory 本本类目
+type LocalCategory struct {
 	CatId              int    `json:"catId"`              // 类目 ID
 	AvailableStatus    int    `json:"availableStatus"`    // 可用状态 1=可用，2=不可用
 	Level              int    `json:"level"`              // 类目层级

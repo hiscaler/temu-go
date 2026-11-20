@@ -9,13 +9,14 @@ import (
 	"gopkg.in/guregu/null.v4"
 )
 
-type semiGoodsService struct {
+type localGoodsService struct {
 	service
-	Image semiGoodsImageService
+	Image localGoodsImageService
 }
 
-type SemiGoodsQueryParams struct {
+type LocalGoodsQueryParams struct {
 	normal.ParameterWithPager
+	PageNumber                int     `json:"pageNo"`
 	OrderField                string  `json:"orderField,omitempty"`
 	OrderType                 int     `json:"orderType,omitempty"`
 	GoodsSearchType           int     `json:"goodsSearchType,omitempty"`
@@ -32,15 +33,16 @@ type SemiGoodsQueryParams struct {
 	GoodsSearchTags           []int   `json:"goodsSearchTags"`
 }
 
-// validate 校验半托管商品查询参数。
-func (m SemiGoodsQueryParams) validate() error {
+// validate 校验本本商品查询参数。
+func (m LocalGoodsQueryParams) validate() error {
 	return nil
 }
 
 // Query 商品查询
 // https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=d2a836cf1711473ba1f83597a1b52fb0
-func (s semiGoodsService) Query(ctx context.Context, params SemiGoodsQueryParams) (items []entity.SemiGoods, total, totalPages int, isLastPage bool, err error) {
+func (s localGoodsService) Query(ctx context.Context, params LocalGoodsQueryParams) (items []entity.LocalGoods, total, totalPages int, isLastPage bool, err error) {
 	params.Page = params.TidyPager().Page
+	params.PageNumber = params.TidyPager().Page
 	params.OmitPage()
 	if err = params.validate(); err != nil {
 		return items, 0, 0, true, invalidInput(err)
@@ -49,9 +51,9 @@ func (s semiGoodsService) Query(ctx context.Context, params SemiGoodsQueryParams
 	var result = struct {
 		normal.Response
 		Result struct {
-			PageNo    int                `json:"pageNo"`
-			Total     int                `json:"total"`
-			GoodsList []entity.SemiGoods `json:"goodsList"`
+			PageNo    int                 `json:"pageNo"`
+			Total     int                 `json:"total"`
+			GoodsList []entity.LocalGoods `json:"goodsList"`
 		} `json:"result"`
 	}{}
 	resp, err := s.httpClient.R().
@@ -68,16 +70,16 @@ func (s semiGoodsService) Query(ctx context.Context, params SemiGoodsQueryParams
 	return
 }
 
-// SemiGoodsCreateRequest temu.local.goods.v3.add 添加商品请求参数
-type SemiGoodsCreateRequest struct {
-	Language   string                     `json:"language"`   // 语言，可选
-	GoodsBasic SemiGoodsCreateGoodsBasic  `json:"goodsBasic"` // 商品基础信息，必填
-	Attributes []SemiGoodsCreateAttribute `json:"attributes"` // 商品属性，可填写基础属性、治理属性、合规属性、品牌及二手商品信息，可选
-	SkuList    []SemiGoodsCreateSku       `json:"skuList"`    // SKU 列表，必填，至少包含一个 SKU
+// LocalGoodsCreateRequest temu.local.goods.v3.add 添加商品请求参数
+type LocalGoodsCreateRequest struct {
+	Language   string                      `json:"language"`   // 语言，可选
+	GoodsBasic LocalGoodsCreateGoodsBasic  `json:"goodsBasic"` // 商品基础信息，必填
+	Attributes []LocalGoodsCreateAttribute `json:"attributes"` // 商品属性，可填写基础属性、治理属性、合规属性、品牌及二手商品信息，可选
+	SkuList    []LocalGoodsCreateSku       `json:"skuList"`    // SKU 列表，必填，至少包含一个 SKU
 }
 
-// SemiGoodsCreateGoodsBasic temu.local.goods.v3.add 商品基础信息
-type SemiGoodsCreateGoodsBasic struct {
+// LocalGoodsCreateGoodsBasic temu.local.goods.v3.add 商品基础信息
+type LocalGoodsCreateGoodsBasic struct {
 	ExternalGoodsId      string   `json:"externalGoodsId"`                // 外部平台商品编码，用于关联 Temu 商品，同一店铺内必须唯一，必填
 	GoodsName            string   `json:"goodsName"`                      // 商品名称，必填
 	ExtCatName           string   `json:"extCatName,omitempty"`           // 外部类目名称，可提高类目匹配准确度
@@ -91,70 +93,70 @@ type SemiGoodsCreateGoodsBasic struct {
 	CostTemplate         string   `json:"costTemplate,omitempty"`         // 运费模板 ID 或名称
 }
 
-// SemiGoodsCreateAttribute temu.local.goods.v3.add 商品属性
-type SemiGoodsCreateAttribute struct {
+// LocalGoodsCreateAttribute temu.local.goods.v3.add 商品属性
+type LocalGoodsCreateAttribute struct {
 	Name  string   `json:"name"`  // 属性名称
 	Value []string `json:"value"` // 属性值
 }
 
-// SemiGoodsCreateSku temu.local.goods.v3.add SKU 信息
-type SemiGoodsCreateSku struct {
-	ExternalSkuId string                        `json:"externalSkuId"`        // 外部 SKU 编码，同一店铺内必须唯一，必填
-	Images        []string                      `json:"images"`               // SKU 轮播图，必填
-	Price         SemiGoodsCreateSkuPrice       `json:"price"`                // 价格信息，必填
-	Quantity      int64                         `json:"quantity"`             // 常规库存数量，必填
-	PackageInfo   SemiGoodsCreateSkuPackageInfo `json:"packageInfo"`          // 商品包装信息，必填
-	Variations    []SemiGoodsCreateSkuVariation `json:"variations"`           // SKU 规格，至少包含一个，必填
-	BarCode       *SemiGoodsCreateSkuBarCode    `json:"barCode,omitempty"`    // 外部商品编码，可选
-	References    *SemiGoodsCreateSkuReferences `json:"references,omitempty"` // 参考信息，可选
+// LocalGoodsCreateSku temu.local.goods.v3.add SKU 信息
+type LocalGoodsCreateSku struct {
+	ExternalSkuId string                         `json:"externalSkuId"`        // 外部 SKU 编码，同一店铺内必须唯一，必填
+	Images        []string                       `json:"images"`               // SKU 轮播图，必填
+	Price         LocalGoodsCreateSkuPrice       `json:"price"`                // 价格信息，必填
+	Quantity      int64                          `json:"quantity"`             // 常规库存数量，必填
+	PackageInfo   LocalGoodsCreateSkuPackageInfo `json:"packageInfo"`          // 商品包装信息，必填
+	Variations    []LocalGoodsCreateSkuVariation `json:"variations"`           // SKU 规格，至少包含一个，必填
+	BarCode       *LocalGoodsCreateSkuBarCode    `json:"barCode,omitempty"`    // 外部商品编码，可选
+	References    *LocalGoodsCreateSkuReferences `json:"references,omitempty"` // 参考信息，可选
 }
 
-// SemiGoodsCreateSkuPrice temu.local.goods.v3.add SKU 价格信息
-type SemiGoodsCreateSkuPrice struct {
-	BasePrice SemiGoodsCreateSkuPriceValue  `json:"basePrice"`           // 基础价格，必填
-	ListPrice *SemiGoodsCreateSkuPriceValue `json:"listPrice,omitempty"` // 建议零售价，必须高于基础价格，可选
+// LocalGoodsCreateSkuPrice temu.local.goods.v3.add SKU 价格信息
+type LocalGoodsCreateSkuPrice struct {
+	BasePrice LocalGoodsCreateSkuPriceValue  `json:"basePrice"`           // 基础价格，必填
+	ListPrice *LocalGoodsCreateSkuPriceValue `json:"listPrice,omitempty"` // 建议零售价，必须高于基础价格，可选
 }
 
-// SemiGoodsCreateSkuPriceValue temu.local.goods.v3.add 价格值
-type SemiGoodsCreateSkuPriceValue struct {
+// LocalGoodsCreateSkuPriceValue temu.local.goods.v3.add 价格值
+type LocalGoodsCreateSkuPriceValue struct {
 	Amount   string `json:"amount"`   // 金额，必填
 	Currency string `json:"currency"` // 货币，必填
 }
 
-// SemiGoodsCreateSkuPackageInfo temu.local.goods.v3.add SKU 包装信息
-type SemiGoodsCreateSkuPackageInfo struct {
+// LocalGoodsCreateSkuPackageInfo temu.local.goods.v3.add SKU 包装信息
+type LocalGoodsCreateSkuPackageInfo struct {
 	Weight string `json:"weight"` // 重量，美国使用 lb，其他国家使用 g，必填
 	Length string `json:"length"` // 长度，美国使用 in，其他国家使用 cm，必填
 	Width  string `json:"width"`  // 宽度，美国使用 in，其他国家使用 cm，必填
 	Height string `json:"height"` // 高度，美国使用 in，其他国家使用 cm，必填
 }
 
-// SemiGoodsCreateSkuVariation temu.local.goods.v3.add SKU 规格
-type SemiGoodsCreateSkuVariation struct {
+// LocalGoodsCreateSkuVariation temu.local.goods.v3.add SKU 规格
+type LocalGoodsCreateSkuVariation struct {
 	Name  string `json:"name"`  // 父规格名称，例如 color、size，必填
 	Value string `json:"value"` // 规格值，例如 red、xl，必填
 }
 
-// SemiGoodsCreateSkuBarCode temu.local.goods.v3.add SKU 外部商品编码
-type SemiGoodsCreateSkuBarCode struct {
+// LocalGoodsCreateSkuBarCode temu.local.goods.v3.add SKU 外部商品编码
+type LocalGoodsCreateSkuBarCode struct {
 	BarCodeType string   `json:"barCodeType"` // 编码类型：EAN、UPC、ISBN、GTIN-14
 	BarCodeId   []string `json:"barCodeId"`   // 编码值，ISBN 支持传入多个
 }
 
-// SemiGoodsCreateSkuReferences temu.local.goods.v3.add SKU 参考信息
-type SemiGoodsCreateSkuReferences struct {
-	Code *SemiGoodsCreateSkuReferenceCode `json:"code,omitempty"` // 参考编码
-	Note []string                         `json:"note,omitempty"` // 其他参考信息
+// LocalGoodsCreateSkuReferences temu.local.goods.v3.add SKU 参考信息
+type LocalGoodsCreateSkuReferences struct {
+	Code *LocalGoodsCreateSkuReferenceCode `json:"code,omitempty"` // 参考编码
+	Note []string                          `json:"note,omitempty"` // 其他参考信息
 }
 
-// SemiGoodsCreateSkuReferenceCode temu.local.goods.v3.add SKU 参考编码
-type SemiGoodsCreateSkuReferenceCode struct {
+// LocalGoodsCreateSkuReferenceCode temu.local.goods.v3.add SKU 参考编码
+type LocalGoodsCreateSkuReferenceCode struct {
 	Name string `json:"name"` // 编码名称
 	Id   string `json:"id"`   // 编码 ID
 }
 
 // validate 校验 temu.local.goods.v3.add 添加商品请求参数。
-func (m SemiGoodsCreateRequest) validate() error {
+func (m LocalGoodsCreateRequest) validate() error {
 	if err := validation.ValidateStruct(&m,
 		validation.Field(&m.SkuList,
 			validation.Required.Error("SKU 列表不能为空"),
@@ -182,7 +184,7 @@ func (m SemiGoodsCreateRequest) validate() error {
 }
 
 // validate 校验商品基础信息。
-func (m SemiGoodsCreateGoodsBasic) validate() error {
+func (m LocalGoodsCreateGoodsBasic) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.ExternalGoodsId, validation.Required.Error("外部商品 ID 不能为空")),
 		validation.Field(&m.GoodsName, validation.Required.Error("商品名称不能为空")),
@@ -208,7 +210,7 @@ func (m SemiGoodsCreateGoodsBasic) validate() error {
 }
 
 // validate 校验商品属性。
-func (m SemiGoodsCreateAttribute) validate() error {
+func (m LocalGoodsCreateAttribute) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Name, validation.Required.Error("属性名称不能为空")),
 		validation.Field(&m.Value,
@@ -220,7 +222,7 @@ func (m SemiGoodsCreateAttribute) validate() error {
 }
 
 // validate 校验 SKU 信息及其嵌套数据。
-func (m SemiGoodsCreateSku) validate() error {
+func (m LocalGoodsCreateSku) validate() error {
 	if err := validation.ValidateStruct(&m,
 		validation.Field(&m.ExternalSkuId, validation.Required.Error("外部 SKU ID 不能为空")),
 		validation.Field(&m.Images,
@@ -263,7 +265,7 @@ func (m SemiGoodsCreateSku) validate() error {
 }
 
 // validate 校验 SKU 价格信息。
-func (m SemiGoodsCreateSkuPrice) validate() error {
+func (m LocalGoodsCreateSkuPrice) validate() error {
 	if err := m.BasePrice.validate(); err != nil {
 		return err
 	}
@@ -274,7 +276,7 @@ func (m SemiGoodsCreateSkuPrice) validate() error {
 }
 
 // validate 校验价格金额和币种。
-func (m SemiGoodsCreateSkuPriceValue) validate() error {
+func (m LocalGoodsCreateSkuPriceValue) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Amount, validation.Required.Error("价格金额不能为空")),
 		validation.Field(&m.Currency, validation.Required.Error("价格币种不能为空")),
@@ -282,7 +284,7 @@ func (m SemiGoodsCreateSkuPriceValue) validate() error {
 }
 
 // validate 校验 SKU 包装信息。
-func (m SemiGoodsCreateSkuPackageInfo) validate() error {
+func (m LocalGoodsCreateSkuPackageInfo) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Weight, validation.Required.Error("包装重量不能为空")),
 		validation.Field(&m.Length, validation.Required.Error("包装长度不能为空")),
@@ -292,7 +294,7 @@ func (m SemiGoodsCreateSkuPackageInfo) validate() error {
 }
 
 // validate 校验 SKU 规格信息。
-func (m SemiGoodsCreateSkuVariation) validate() error {
+func (m LocalGoodsCreateSkuVariation) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.Name, validation.Required.Error("规格名称不能为空")),
 		validation.Field(&m.Value, validation.Required.Error("规格值不能为空")),
@@ -300,7 +302,7 @@ func (m SemiGoodsCreateSkuVariation) validate() error {
 }
 
 // validate 校验 SKU 条码信息。
-func (m SemiGoodsCreateSkuBarCode) validate() error {
+func (m LocalGoodsCreateSkuBarCode) validate() error {
 	return validation.ValidateStruct(&m,
 		validation.Field(&m.BarCodeType,
 			validation.When(m.BarCodeType != "", validation.In("EAN", "UPC", "ISBN", "GTIN-14").Error("无效的条码类型")),
@@ -312,7 +314,7 @@ func (m SemiGoodsCreateSkuBarCode) validate() error {
 }
 
 // validate 校验 SKU 参考信息。
-func (m SemiGoodsCreateSkuReferences) validate() error {
+func (m LocalGoodsCreateSkuReferences) validate() error {
 	if m.Code == nil {
 		return nil
 	}
@@ -325,7 +327,7 @@ func (m SemiGoodsCreateSkuReferences) validate() error {
 
 // Create 添加商品
 // https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=f6f78d3f42ca41e59420cc4b7e3be479
-func (s semiGoodsService) Create(ctx context.Context, req SemiGoodsCreateRequest) (int64, string, error) {
+func (s localGoodsService) Create(ctx context.Context, req LocalGoodsCreateRequest) (int64, string, error) {
 	if err := req.validate(); err != nil {
 		return 0, "", invalidInput(err)
 	}
@@ -349,24 +351,24 @@ func (s semiGoodsService) Create(ctx context.Context, req SemiGoodsCreateRequest
 	return result.Result.GoodsId, result.Result.ExternalGoodsId, nil
 }
 
-type SemiGoodsInferRequest struct {
+type LocalGoodsInferRequest struct {
 	GoodsId        int64   `json:"goodsId"`         // 商品 ID
 	Cost           float64 `json:"cost"`            // 成本
 	Freight        float64 `json:"freight"`         // 运费
 	ExpectedProfit float64 `json:"expected_profit"` // 期望利润
 }
 
-type SemiGoodsInferRecommend struct {
+type LocalGoodsInferRecommend struct {
 	ActivityId null.Int   `json:"activity_id"` // 活动 ID
 	Roas       null.Float `json:"roas"`        // ROAS
 	Profit     float64    `json:"profit"`      // 利润（申报价|活动价 - 成本 - 运费 - (申报价|活动价)/Roas）
 }
 
-type SemiGoodsInferResult struct {
-	GoodsId    int64                  `json:"goods_id"`
-	Recommends []SemiGoodsInferResult `json:"recommends"` // 推荐的
+type LocalGoodsInferResult struct {
+	GoodsId    int64                   `json:"goods_id"`
+	Recommends []LocalGoodsInferResult `json:"recommends"` // 推荐的
 }
 
-func (s semiGoodsService) Infer(ctx context.Context, req SemiGoodsInferRequest) (*SemiGoodsInferResult, error) {
+func (s localGoodsService) Infer(ctx context.Context, req LocalGoodsInferRequest) (*LocalGoodsInferResult, error) {
 	return nil, nil
 }

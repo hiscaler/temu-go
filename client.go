@@ -75,6 +75,7 @@ type services struct {
 	Mall                 mallService
 	Jit                  jitService
 	SemiManaged          semiManagedService
+	Local                localService
 	Picture              pictureService
 	BestSellerInvitation bestSellerInvitationService
 	Ad                   adService
@@ -118,36 +119,39 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.order.customization.get":                  "",
 		"bg.promotion.activity.candidate.goods.query": entity.AmericanRegion,
 		"bg.arbok.open.product.cert.query":            entity.GlobalRegion,
+		"bg.local.goods.cats.get":                     entity.GlobalRegion,
 		"bg.open.accesstoken.info.get.global":         entity.Partner,
 		"temu.logistics.scanform.create":              entity.AmericanRegion,
 		"temu.logistics.scanform.document.get":        entity.AmericanRegion,
-		"bg.local.goods.list.query":                   entity.AmericanRegion,
+		"bg.local.goods.list.query":                   entity.GlobalRegion,
 		"temu.local.goods.image.v2.upload":            entity.AmericanRegion,
-		"bg.btg.goods.stock.warehouse.list.get":       entity.Partner,
-		"bg.semi.price.review.page.query.order":       entity.Partner,
-		"bg.semi.price.review.confirm.order":          entity.Partner,
-		"bg.semi.price.review.reject.order":           entity.Partner,
-		"bg.goods.image.upload.global":                entity.Partner,
-		"temu.picturecompression.get":                 entity.Partner,
-		"temu.goods.add":                              entity.Partner,
-		"temu.goods.list.get":                         entity.Partner,
-		"temu.goods.detail.get":                       entity.Partner,
-		"temu.goods.migrate":                          entity.Partner,
-		"temu.goods.topselling.soldout.get":           entity.Partner,
-		"temu.goods.custom.label.get":                 entity.Partner,
-		"temu.goods.labelv2.get":                      entity.Partner,
-		"temu.goods.edit.sensitive.attr":              entity.Partner,
-		"temu.goods.update":                           entity.Partner,
-		"temu.goods.edit.property":                    entity.Partner,
-		"temu.logistics.template.get":                 entity.Partner,
-		"temu.goods.price.list.get":                   entity.Partner,
-		"temu.jitmode.activate":                       entity.Partner,
-		"bg.glo.product.search":                       entity.Partner,
-		"bg.glo.goods.parentspec.get":                 entity.Partner,
-		"bg.glo.goods.spec.create":                    entity.Partner,
-		"bg.qtg.stock.virtualinventoryjit.get":        entity.Partner,
-		"bg.qtg.stock.virtualinventoryjit.edit":       entity.Partner,
-		"bg.glo.goods.brand.get":                      entity.Partner,
+		//"bg.local.goods.cats.get":                     entity.AmericanRegion,
+		"bg.btg.goods.stock.warehouse.list.get": entity.Partner,
+		"bg.semi.price.review.page.query.order": entity.Partner,
+		"bg.semi.price.review.confirm.order":    entity.Partner,
+		"bg.semi.price.review.reject.order":     entity.Partner,
+		"bg.goods.image.upload.global":          entity.Partner,
+		"temu.picturecompression.get":           entity.Partner,
+		"temu.goods.add":                        entity.Partner,
+		"temu.goods.list.get":                   entity.Partner,
+		"temu.goods.detail.get":                 entity.Partner,
+		"temu.goods.migrate":                    entity.Partner,
+		"temu.goods.topselling.soldout.get":     entity.Partner,
+		"temu.goods.custom.label.get":           entity.Partner,
+		"temu.goods.labelv2.get":                entity.Partner,
+		"temu.goods.edit.sensitive.attr":        entity.Partner,
+		"temu.goods.update":                     entity.Partner,
+		"temu.goods.edit.property":              entity.Partner,
+		"temu.logistics.template.get":           entity.Partner,
+		"bg.glo.logistics.template.get":         entity.Partner,
+		"temu.goods.price.list.get":             entity.Partner,
+		"temu.jitmode.activate":                 entity.Partner,
+		"bg.glo.product.search":                 entity.Partner,
+		"bg.glo.goods.parentspec.get":           entity.Partner,
+		"bg.glo.goods.spec.create":              entity.Partner,
+		"bg.qtg.stock.virtualinventoryjit.get":  entity.Partner,
+		"bg.qtg.stock.virtualinventoryjit.edit": entity.Partner,
+		"bg.glo.goods.brand.get":                entity.Partner,
 	}
 	if v, ok := semiTypes[typ]; ok {
 		if v != "" {
@@ -318,7 +322,7 @@ func NewClient(cfg config.Config) *Client {
 			"Accept":       "application/json",
 			"User-Agent":   UserAgent,
 		}).
-		SetLogger(l).
+		//SetLogger(l).
 		SetAllowGetMethodPayload(true).
 		SetTimeout(timeout).
 		SetTransport(&http.Transport{
@@ -511,14 +515,17 @@ func NewClient(cfg config.Config) *Client {
 			VirtualInventory:       (semiVirtualInventoryService)(xService),
 			OrderLogisticsShipment: (semiOrderLogisticsShipmentService)(xService),
 			OrderLogisticsScanForm: (semiOrderLogisticsScanFormService)(xService),
+			FreightTemplate:        (semiFreightTemplateService)(xService),
 			Logistics:              (semiLogisticsService)(xService),
-			Goods: semiGoodsService{
+			Ad:                     (semiAdService)(xService),
+			Activity:               (semiActivityService)(xService),
+		},
+		Local: localService{
+			Category: (localCategoryService)(xService),
+			Goods: localGoodsService{
 				service: xService,
-				Image:   (semiGoodsImageService)(xService),
+				Image:   (localGoodsImageService)(xService),
 			},
-			Category: (semiCategoryService)(xService),
-			Ad:       (semiAdService)(xService),
-			Activity: (semiActivityService)(xService),
 		},
 		Picture:              (pictureService)(xService),
 		BestSellerInvitation: (bestSellerInvitationService)(xService),

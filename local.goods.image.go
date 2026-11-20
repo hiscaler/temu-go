@@ -6,21 +6,21 @@ import (
 	"github.com/hiscaler/temu-go/normal"
 )
 
-type semiGoodsImageService service
+type localGoodsImageService service
 
-type SemiGoodsImageRequest struct {
+type LocalGoodsImageRequest struct {
 	FileUrl string `json:"fileUrl"`
 	CatId   int64  `json:"catId"`
 	Usage   int    `json:"usage"`
 }
 
-func (m SemiGoodsImageRequest) validate() error {
+func (m LocalGoodsImageRequest) validate() error {
 	return nil
 }
 
 // Upload 商品图片上传
 // https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=37d470d8c6e149f78953311aa0b0296d
-func (s semiGoodsImageService) Upload(ctx context.Context, params SemiGoodsImageRequest) ([]string, error) {
+func (s localGoodsImageService) Upload(ctx context.Context, params LocalGoodsImageRequest) ([]string, error) {
 	if err := params.validate(); err != nil {
 		return nil, err
 	}
