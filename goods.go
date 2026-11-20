@@ -715,7 +715,7 @@ type GoodsCreateProductSemiManaged struct {
 	// 墨西哥站：多语言标题语言传es-MX。多语言素材语言传es
 	//
 	// 2：英语以及其他语种
-	SemiLanguageStrategy int `json:"emiLanguageStrategy"` // 半托管-素材语种策略
+	SemiLanguageStrategy int `json:"semiLanguageStrategy"` // 半托管-素材语种策略
 }
 
 // GoodsCreateProductShipment 半托管货品配送信息请求
