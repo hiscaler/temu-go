@@ -841,10 +841,10 @@ type GoodsCreateResult struct {
 		ProductSkcId int64 `json:"productSkcId"` // skc id
 	} `json:"productSkcList"` //  skc列表
 	ProductSkuList []struct {
-		ProductSkcId int64                  `json:"productSkcId "` // SKC ID
-		ProductSkuId int64                  `json:"productSkuId"`  // sku id
-		ExtCode      string                 `json:"extCode"`       // sku 外部编码
-		SkuSpecList  []entity.Specification `json:"skuSpecList"`   // sku 规格
+		ProductSkcId int64                  `json:"productSkcId"` // SKC ID
+		ProductSkuId int64                  `json:"productSkuId"` // sku id
+		ExtCode      string                 `json:"extCode"`      // sku 外部编码
+		SkuSpecList  []entity.Specification `json:"skuSpecList"`  // sku 规格
 	} `json:"productSkuList"` // sku 列表
 }
 

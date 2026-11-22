@@ -22,5 +22,6 @@ type Config struct {
 	VerifySSL        bool          `json:"verify_ssl"`         // 是否验证 SSL
 	Logger           *slog.Logger  `json:"-"`                  // 日志
 	Proxies          RegionEnvUrls `json:"proxies"`            // 代理
+	ProxyURL         string        `json:"proxy_url"`          // HTTP 请求代理地址，为空时直连
 	StaticFileServer string        `json:"static_file_server"` // 静态文件服务器地址（用于访问物流面单文件）
 }

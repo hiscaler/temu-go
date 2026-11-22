@@ -22,6 +22,8 @@ Temu SDK for Golang
 
 ## 使用
 
+HTTP 请求默认直连。需要代理时，在 `config.Config` 中设置 `ProxyURL`，或在 JSON 配置中设置 `"proxy_url": "socks5://127.0.0.1:1080"`，也可使用 HTTP 代理地址。该配置与用于替换各区域 API 地址的 `proxies` 相互独立。
+
 ```go
 package main
 

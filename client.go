@@ -331,7 +331,6 @@ func NewClient(cfg config.Config) *Client {
 				Timeout: timeout,
 			}).DialContext,
 		}).
-		SetProxy("socks5://127.0.0.1:1080").
 		OnBeforeRequest(func(c *resty.Client, request *resty.Request) error {
 			values := make(map[string]any)
 			if request.Body != nil {
@@ -444,6 +443,9 @@ func NewClient(cfg config.Config) *Client {
 			}
 			return time.Duration(milliseconds) * time.Millisecond, nil
 		})
+	if cfg.ProxyURL != "" {
+		httpClient.SetProxy(cfg.ProxyURL)
+	}
 	httpClient.JSONMarshal = json.Marshal
 	httpClient.JSONUnmarshal = json.Unmarshal
 	xService := service{
