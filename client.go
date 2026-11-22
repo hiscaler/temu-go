@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	"crypto/md5"
 	"crypto/tls"
 	"embed"
@@ -14,13 +15,13 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/BurntSushi/toml"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-resty/resty/v2"
 	"github.com/goccy/go-json"
-	"github.com/hiscaler/gox/jsonx"
 	"github.com/hiscaler/gox/stringx"
 	"github.com/hiscaler/temu-go/config"
 	"github.com/hiscaler/temu-go/entity"
@@ -292,11 +293,8 @@ func getVersion(typ string) string {
 }
 
 func NewClient(cfg config.Config) *Client {
-	debug := cfg.Debug
-	l := createLogger(debug)
-	if cfg.Logger != nil {
-		l.l = cfg.Logger
-	}
+	debug := strings.EqualFold(cfg.LogLevel, "debug") || (cfg.LogLevel == "" && cfg.Debug)
+	l := &logger{l: scopedLogger(cfg.Logger, cfg.LogLevel, cfg.Debug), secrets: []string{cfg.AppSecret, cfg.AccessToken}}
 
 	env := strings.ToLower(cfg.Env)
 	if env == "" {
@@ -322,7 +320,21 @@ func NewClient(cfg config.Config) *Client {
 			"Accept":       "application/json",
 			"User-Agent":   UserAgent,
 		}).
-		//SetLogger(l).
+		SetLogger(l).
+		OnRequestLog(func(log *resty.RequestLog) error {
+			redactLogHeaders(log.Header, cfg.AppSecret, cfg.AccessToken)
+			if log.Body != "" {
+				log.Body = redactLogJSON([]byte(log.Body), cfg.AppSecret, cfg.AccessToken)
+			}
+			return nil
+		}).
+		OnResponseLog(func(log *resty.ResponseLog) error {
+			redactLogHeaders(log.Header, cfg.AppSecret, cfg.AccessToken)
+			if log.Body != "" {
+				log.Body = redactLogJSON([]byte(log.Body), cfg.AppSecret, cfg.AccessToken)
+			}
+			return nil
+		}).
 		SetAllowGetMethodPayload(true).
 		SetTimeout(timeout).
 		SetTransport(&http.Transport{
@@ -357,7 +369,7 @@ func NewClient(cfg config.Config) *Client {
 			return nil
 		}).
 		OnAfterResponse(func(client *resty.Client, response *resty.Response) error {
-			if debug || response.IsError() {
+			{
 				params := response.Request.Body
 				endpoint := ""
 				if v, ok := params.(map[string]any); ok {
@@ -367,19 +379,31 @@ func NewClient(cfg config.Config) *Client {
 					}
 				}
 				args := []any{
-					"endpoint", fmt.Sprintf("%s %s %s", response.Request.Method, response.Request.URL, endpoint),
-					"payload", jsonx.ToJson(params, "{}"),
+					"endpoint", endpoint,
 					"status", response.StatusCode(),
-					"response", response.String(),
 					"duration", fmt.Sprintf("%d ms", response.Time().Milliseconds()),
 				}
-				if response.IsError() {
+				var result simpleResponse
+				decoded := json.Unmarshal(response.Body(), &result) == nil
+				if response.IsError() || (decoded && !result.Success) {
+					args = append(args, "error_code", result.ErrorCode)
 					l.l.Error("call", args...)
 				} else {
-					l.l.Debug("call", args...)
+					l.l.Info("call", args...)
 				}
 			}
 			return nil
+		}).
+		OnError(func(request *resty.Request, err error) {
+			reason := "request failed"
+			if errors.Is(err, syscall.ECONNREFUSED) {
+				reason = "connection refused"
+			} else if errors.Is(err, context.DeadlineExceeded) {
+				reason = "deadline exceeded"
+			} else if errors.Is(err, context.Canceled) {
+				reason = "request canceled"
+			}
+			l.l.Error("transport error", "reason", reason, "error_type", fmt.Sprintf("%T", err))
 		}).
 		SetRetryCount(3).
 		SetRetryWaitTime(time.Duration(500) * time.Millisecond).
@@ -411,14 +435,12 @@ func NewClient(cfg config.Config) *Client {
 					}
 					retry = e == nil
 				}
-				if retry && debug {
+				if retry {
 					args := []any{
-						"endpoint", fmt.Sprintf("%s %s %s", response.Request.Method, response.Request.URL, endpoint),
-						"payload", jsonx.ToJson(response.Request.Body, "{}"),
+						"endpoint", endpoint,
 						"status", response.StatusCode(),
-						"response", response.String(),
 					}
-					l.l.Info("retry", args...)
+					l.l.Warn("retry", args...)
 				}
 			}
 			return retry
@@ -438,9 +460,7 @@ func NewClient(cfg config.Config) *Client {
 			if milliseconds == 0 {
 				return 0, nil
 			}
-			if debug {
-				l.l.Info("retry", "waiting", milliseconds)
-			}
+			l.l.Debug("retry", "waiting", milliseconds)
 			return time.Duration(milliseconds) * time.Millisecond, nil
 		})
 	if cfg.ProxyURL != "" {

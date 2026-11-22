@@ -14,6 +14,7 @@ type RegionEnvUrls = map[string]EnvUrl
 type Config struct {
 	Env              string        `json:"env"`                // 环境（dev：开发环境、test：测试环境、prod：生产环境）
 	Debug            bool          `json:"debug"`              // 是否为调试模式
+	LogLevel         string        `json:"log_level"`          // 调用日志级别，空值兼容 Debug
 	Region           string        `json:"region"`             // 区域
 	AppKey           string        `json:"app_key"`            // App Key
 	AppSecret        string        `json:"app_secret"`         // App 秘钥

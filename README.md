@@ -24,6 +24,8 @@ Temu SDK for Golang
 
 HTTP 请求默认直连。需要代理时，在 `config.Config` 中设置 `ProxyURL`，或在 JSON 配置中设置 `"proxy_url": "socks5://127.0.0.1:1080"`，也可使用 HTTP 代理地址。该配置与用于替换各区域 API 地址的 `proxies` 相互独立。
 
+将 `log_level` 设置为 `debug` 后，API 请求和响应以 Resty 原生格式通过 slog 输出，可复制给平台排查。日志保留 `app_key`、`sign` 和普通业务字段，隐藏 `access_token`、`app_secret`、常见个人信息及敏感请求头；非 JSON 报文不记录原文。由于已脱敏，该日志不一定可直接重放。发送前仍需检查业务自定义字段和错误文本是否包含敏感信息。
+
 ```go
 package main
 

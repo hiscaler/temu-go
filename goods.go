@@ -151,7 +151,6 @@ func (s goodsService) Detail(ctx context.Context, productId int64) (entity.Goods
 		Result entity.GoodsDetail `json:"result"`
 	}
 	resp, err := s.httpClient.R().
-		SetDebug(true).EnableTrace().
 		SetContext(ctx).
 		SetBody(map[string]int64{"productId": productId}).
 		SetResult(&result).

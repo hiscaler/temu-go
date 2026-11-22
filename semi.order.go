@@ -340,7 +340,6 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 	}
 	timeout := time.Duration(s.config.Timeout) * time.Second
 	httpClient := resty.New().
-		SetDebug(s.debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"User-Agent":   UserAgent,
@@ -353,6 +352,7 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 				Timeout: timeout,
 			}).DialContext,
 		})
+	s.config.ConfigureAuxiliaryHTTPLogging(httpClient)
 	if s.debug {
 		httpClient.EnableTrace()
 	}
@@ -508,7 +508,6 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 	}
 	timeout := time.Duration(s.config.Timeout) * time.Second
 	httpClient := resty.New().
-		SetDebug(s.debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"User-Agent":   UserAgent,
@@ -521,6 +520,7 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 				Timeout: timeout,
 			}).DialContext,
 		})
+	s.config.ConfigureAuxiliaryHTTPLogging(httpClient)
 	if s.debug {
 		httpClient.EnableTrace()
 	}

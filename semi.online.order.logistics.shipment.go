@@ -405,7 +405,6 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 	}
 	timeout := time.Duration(s.config.Timeout) * time.Second
 	httpClient := resty.New().
-		SetDebug(s.debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"User-Agent":   UserAgent,
@@ -418,6 +417,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 				Timeout: timeout,
 			}).DialContext,
 		})
+	s.config.ConfigureAuxiliaryHTTPLogging(httpClient)
 	if s.debug {
 		httpClient.EnableTrace()
 	}

@@ -71,7 +71,6 @@ func (su SignatureUrl) Decode(cfg config.Config) (f File, err error) {
 
 	timeout := time.Duration(cfg.Timeout) * time.Second
 	httpClient := resty.New().
-		SetDebug(cfg.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 		}).
@@ -82,7 +81,8 @@ func (su SignatureUrl) Decode(cfg config.Config) (f File, err error) {
 				Timeout: timeout,
 			}).DialContext,
 		})
-	if cfg.Debug {
+	cfg.ConfigureAuxiliaryHTTPLogging(httpClient)
+	if cfg.IsDebug() {
 		httpClient.EnableTrace()
 	}
 

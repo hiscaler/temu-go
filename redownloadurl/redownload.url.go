@@ -67,7 +67,6 @@ func (rdu RedownloadUrl) Download(cfg config.Config, saveDir string) (File, erro
 	}
 	timeout := time.Duration(cfg.Timeout) * time.Second
 	httpClient := resty.New().
-		SetDebug(cfg.Debug).
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 		}).
@@ -79,7 +78,8 @@ func (rdu RedownloadUrl) Download(cfg config.Config, saveDir string) (File, erro
 				Timeout: timeout,
 			}).DialContext,
 		})
-	if cfg.Debug {
+	cfg.ConfigureAuxiliaryHTTPLogging(httpClient)
+	if cfg.IsDebug() {
 		httpClient.EnableTrace()
 	}
 
