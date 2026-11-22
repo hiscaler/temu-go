@@ -16,6 +16,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/hiscaler/gox/randx"
 	"github.com/hiscaler/temu-go/config"
+	"github.com/hiscaler/temu-go/internal/httplog"
 )
 
 // SignatureUrl 加签 URL 处理
@@ -81,8 +82,8 @@ func (su SignatureUrl) Decode(cfg config.Config) (f File, err error) {
 				Timeout: timeout,
 			}).DialContext,
 		})
-	cfg.ConfigureAuxiliaryHTTPLogging(httpClient)
-	if cfg.IsDebug() {
+	httplog.Configure(httpClient, cfg)
+	if httplog.IsDebug(cfg) {
 		httpClient.EnableTrace()
 	}
 

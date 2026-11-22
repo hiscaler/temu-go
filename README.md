@@ -24,7 +24,22 @@ Temu SDK for Golang
 
 HTTP 请求默认直连。需要代理时，在 `config.Config` 中设置 `ProxyURL`，或在 JSON 配置中设置 `"proxy_url": "socks5://127.0.0.1:1080"`，也可使用 HTTP 代理地址。该配置与用于替换各区域 API 地址的 `proxies` 相互独立。
 
-将 `log_level` 设置为 `debug` 后，API 请求和响应以 Resty 原生格式通过 slog 输出，可复制给平台排查。日志保留 `app_key`、`sign` 和普通业务字段，隐藏 `access_token`、`app_secret`、常见个人信息及敏感请求头；非 JSON 报文不记录原文。由于已脱敏，该日志不一定可直接重放。发送前仍需检查业务自定义字段和错误文本是否包含敏感信息。
+将 `log_level` 设置为 `debug` 后，API 请求和响应以 Resty 原生格式通过 `slog` 输出。脱敏规则由调用方在 `config.Config.LogMask` 中指定；未提供规则时不做脱敏，例如 `access_token` 和个人信息会原样输出。
+
+```go
+cfg.LogLevel = "debug"
+cfg.LogMask = &restyslog.LogMask{
+    Keep:     1,
+    Request:  []string{"access_token", "app_secret", "Authorization"},
+    Response: []string{"phone", "shipping_address.name"},
+}
+```
+
+示例中的 `restyslog` 对应 `github.com/hiscaler/resty-slog`。`Keep` 表示首尾各保留的字符数，设为 `0` 时每个字符替换为 `*`，例如 `abc` 变为 `***`；点分路径从 JSON 根节点匹配。规则不会修改实际 HTTP 请求和响应。配置规则后，非 JSON body 和包含原始请求数据的 cURL 会整体隐藏；发送日志前应检查调用方配置的规则是否覆盖所需字段。
+
+`LogLevel` 为空时保留原有 `Debug` 的兼容行为。传入的 `slog.Handler` 也需要允许目标日志级别。`NewClient` 不返回错误，若日志配置无效，会记录配置错误并关闭 HTTP debug 日志。
+
+本地开发时，可以在 Go workspace 中加入 `resty-slog`。
 
 ```go
 package main

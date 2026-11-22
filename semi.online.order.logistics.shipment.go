@@ -19,6 +19,7 @@ import (
 	"github.com/hiscaler/gox/filex"
 	"github.com/hiscaler/gox/randx"
 	"github.com/hiscaler/temu-go/entity"
+	"github.com/hiscaler/temu-go/internal/httplog"
 	"github.com/hiscaler/temu-go/normal"
 	"gopkg.in/guregu/null.v4"
 )
@@ -417,7 +418,7 @@ func (s semiOnlineOrderLogisticsShipmentService) Document(ctx context.Context, r
 				Timeout: timeout,
 			}).DialContext,
 		})
-	s.config.ConfigureAuxiliaryHTTPLogging(httpClient)
+	httplog.Configure(httpClient, s.config)
 	if s.debug {
 		httpClient.EnableTrace()
 	}

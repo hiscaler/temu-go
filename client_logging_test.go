@@ -12,9 +12,17 @@ import (
 	"strings"
 	"testing"
 
+	restyslog "github.com/hiscaler/resty-slog"
 	"github.com/hiscaler/temu-go/config"
 	"github.com/hiscaler/temu-go/entity"
 )
+
+func testLogMask() *restyslog.LogMask {
+	return &restyslog.LogMask{
+		Request:  []string{"access_token", "app_secret", "phone", "Authorization"},
+		Response: []string{"address", "Set-Cookie"},
+	}
+}
 
 func TestRequestLogLevelsAndRedaction(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -36,6 +44,7 @@ func TestRequestLogLevelsAndRedaction(t *testing.T) {
 			logger := slog.New(slog.NewJSONHandler(&output, &slog.HandlerOptions{Level: slog.LevelDebug}))
 			client := NewClient(config.Config{
 				Env: "prod", LogLevel: tc.level, Logger: logger, AppKey: "public-key", AppSecret: "secret-app", AccessToken: "secret-token",
+				LogMask: testLogMask(),
 				Proxies: config.RegionEnvUrls{entity.ChinaRegion: {Prod: server.URL}},
 			})
 			_, err := client.Services.Goods.service.httpClient.R().
@@ -90,11 +99,12 @@ func TestRequestLogLevelsAndRedaction(t *testing.T) {
 				if err := json.Unmarshal([]byte(responseJSON), &response); err != nil {
 					t.Fatal(err)
 				}
-				if request["type"] != "test.call" || request["data_type"] != "JSON" || request["access_token"] != redacted || request["app_key"] != "public-key" || request["sign"] == redacted || request["sign"] == "" {
+				sign, signIsString := request["sign"].(string)
+				if request["type"] != "test.call" || request["data_type"] != "JSON" || request["access_token"] != strings.Repeat("*", len("secret-token")) || request["app_key"] != "public-key" || !signIsString || sign == "" || strings.Contains(sign, "*") {
 					t.Fatalf("unexpected request: %#v", request)
 				}
 				result := response["result"].(map[string]any)
-				if response["success"] != true || result["categoryId"] != float64(123) || result["categoryName"] != "Clothes" || result["address"] != redacted {
+				if response["success"] != true || result["categoryId"] != float64(123) || result["categoryName"] != "Clothes" || result["address"] != strings.Repeat("*", len("private-address")) {
 					t.Fatalf("unexpected response: %#v", response)
 				}
 			}
@@ -102,56 +112,12 @@ func TestRequestLogLevelsAndRedaction(t *testing.T) {
 	}
 }
 
-func TestRedactLogJSON(t *testing.T) {
-	input := map[string]any{
-		"accessToken": "token-value", "SIGN": "signed", "app_key": "key-value",
-		"nested":   []any{map[string]any{"receiverPhone": "private-phone", "goodsName": "T-shirt", "qty": 3}},
-		"embedded": `{"email":"private@example.com","sku":"ABC"}`,
-		"imageUrl": "https://example.com/image?token=private-url#secret",
-		"message":  "bad token-value",
-	}
-	output := redactLogJSON(input, "token-value")
-	for _, secret := range []string{"token-value", "private-phone", "private@example.com", "private-url", "#secret"} {
-		if strings.Contains(output, secret) {
-			t.Fatalf("secret %q in output: %s", secret, output)
-		}
-	}
-	for _, expected := range []string{"signed", "key-value", "T-shirt", `"qty": 3`, "ABC", "https://example.com/image?REDACTED"} {
-		if !strings.Contains(output, expected) {
-			t.Fatalf("missing %q in output: %s", expected, output)
-		}
-	}
-	if got := redactLogJSON([]byte("not JSON secret")); strings.Contains(got, "secret") {
-		t.Fatalf("non-JSON body leaked: %s", got)
-	}
-	largeID := `{"productId":9223372036854775807,"nested":"{\"skuId\":9223372036854775807}"}`
-	if got := redactLogJSON([]byte(largeID)); strings.Count(got, "9223372036854775807") != 2 {
-		t.Fatalf("large IDs must retain their exact values: %s", got)
-	}
-}
-
-func TestRestyLoggerRedactsSensitiveURLQuery(t *testing.T) {
-	var output bytes.Buffer
-	logger := &logger{
-		l:       slog.New(slog.NewJSONHandler(&output, &slog.HandlerOptions{Level: slog.LevelDebug})),
-		secrets: []string{"secret-token", "secret-app"},
-	}
-	logger.Debugf("%s", "/router?app_key=public&sign=signature&access_token=secret-token&phone=private-phone")
-	for _, secret := range []string{"secret-token", "secret-app", "private-phone"} {
-		if strings.Contains(output.String(), secret) {
-			t.Fatalf("sensitive value in log: %s", output.String())
-		}
-	}
-	if !strings.Contains(output.String(), "app_key=public") || !strings.Contains(output.String(), "sign=signature") {
-		t.Fatalf("missing public signing fields: %s", output.String())
-	}
-}
-
 func TestTransportErrorIncludesRedactedRequestInDebug(t *testing.T) {
 	var output bytes.Buffer
 	client := NewClient(config.Config{
 		Env: "prod", LogLevel: "debug", AccessToken: "secret-token",
-		Logger: slog.New(slog.NewJSONHandler(&output, &slog.HandlerOptions{Level: slog.LevelDebug})),
+		LogMask: testLogMask(),
+		Logger:  slog.New(slog.NewJSONHandler(&output, &slog.HandlerOptions{Level: slog.LevelDebug})),
 	})
 	transport, err := client.Services.Goods.service.httpClient.Transport()
 	if err != nil {
@@ -213,11 +179,97 @@ func TestHTTPErrorDebugIncludesRestyResponse(t *testing.T) {
 	var output bytes.Buffer
 	client := NewClient(config.Config{
 		Env: "prod", LogLevel: "debug", AppKey: "public-key", AppSecret: "secret-app", AccessToken: "secret-token",
+		LogMask: testLogMask(),
 		Logger:  slog.New(slog.NewJSONHandler(&output, &slog.HandlerOptions{Level: slog.LevelDebug})),
 		Proxies: config.RegionEnvUrls{entity.ChinaRegion: {Prod: server.URL}},
 	})
 	_, err := client.Services.Goods.service.httpClient.R().SetBody(map[string]int{"categoryId": 42}).Post("test.call")
 	if err != nil || !strings.Contains(output.String(), "STATUS       : 400 Bad Request") || !strings.Contains(output.String(), "invalid category") || !strings.Contains(output.String(), "public-key") || strings.Contains(output.String(), "secret-token") {
 		t.Fatalf("unexpected error or logs: %v, %s", err, output.String())
+	}
+}
+
+func TestCallerMaskPolicyAndUnchangedHTTP(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var body map[string]any
+		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+			t.Error(err)
+		}
+		if body["access_token"] != "secret-token" || r.Header.Get("Authorization") != "header-secret" {
+			t.Errorf("request changed: %#v, %s", body, r.Header.Get("Authorization"))
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"success":true,"result":{"phone":"123456","items":[{"name":"Alice"}]}}`))
+	}))
+	defer server.Close()
+
+	for _, tc := range []struct {
+		name   string
+		mask   *restyslog.LogMask
+		want   []string
+		absent []string
+	}{
+		{"no rules", nil, []string{"secret-token", "header-secret", "123456", "Alice"}, nil},
+		{"independent rules", &restyslog.LogMask{Keep: 1, Request: []string{"access_token", "Authorization", "private.value"}, Response: []string{"result.items.name"}}, []string{"s**********n", "h***********t", "p*****e", "A***e", "123456", "public-key"}, []string{"secret-token", "header-secret", "Alice"}},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var output bytes.Buffer
+			client := NewClient(config.Config{
+				Env: "prod", LogLevel: "debug", LogMask: tc.mask,
+				AppKey: "public-key", AppSecret: "secret-app", AccessToken: "secret-token",
+				Logger:  slog.New(slog.NewJSONHandler(&output, &slog.HandlerOptions{Level: slog.LevelDebug})),
+				Proxies: config.RegionEnvUrls{entity.ChinaRegion: {Prod: server.URL}},
+			})
+			resp, err := client.Services.Goods.service.httpClient.R().SetHeader("Authorization", "header-secret").
+				SetBody(map[string]any{"private": map[string]any{"value": "private"}}).Post("test.call")
+			if err != nil || !strings.Contains(resp.String(), "Alice") {
+				t.Fatalf("unexpected response: %v, %v", resp, err)
+			}
+			for _, value := range tc.want {
+				if !strings.Contains(output.String(), value) {
+					t.Errorf("missing %q: %s", value, output.String())
+				}
+			}
+			for _, value := range tc.absent {
+				if strings.Contains(output.String(), value) {
+					t.Errorf("unexpected %q: %s", value, output.String())
+				}
+			}
+		})
+	}
+}
+
+func TestInvalidMaskDisablesDebugAndLegacyDebug(t *testing.T) {
+	for _, tc := range []struct {
+		name    string
+		cfg     config.Config
+		debug   bool
+		invalid bool
+	}{
+		{"legacy debug", config.Config{Debug: true}, true, false},
+		{"explicit level overrides debug", config.Config{Debug: true, LogLevel: "info"}, false, false},
+		{"invalid mask", config.Config{LogLevel: "debug", LogMask: &restyslog.LogMask{Request: []string{"a..b"}}}, false, true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var output bytes.Buffer
+			tc.cfg.Logger = slog.New(slog.NewJSONHandler(&output, &slog.HandlerOptions{Level: slog.LevelDebug}))
+			client := NewClient(tc.cfg)
+			if client.Debug != tc.debug || client.Services.Goods.service.httpClient.Debug != tc.debug {
+				t.Fatalf("unexpected debug state: %v", client.Debug)
+			}
+			if strings.Contains(output.String(), "invalid HTTP logging configuration") != tc.invalid {
+				t.Fatalf("unexpected log: %s", output.String())
+			}
+		})
+	}
+}
+
+func TestMaskConfigurationFromJSON(t *testing.T) {
+	var cfg config.Config
+	if err := json.Unmarshal([]byte(`{"log_level":"debug","log_mask":{"keep":1,"request":["access_token"],"response":["result.phone"]}}`), &cfg); err != nil {
+		t.Fatal(err)
+	}
+	if cfg.LogLevel != "debug" || cfg.LogMask == nil || cfg.LogMask.Keep != 1 || len(cfg.LogMask.Request) != 1 || cfg.LogMask.Request[0] != "access_token" || len(cfg.LogMask.Response) != 1 || cfg.LogMask.Response[0] != "result.phone" {
+		t.Fatalf("unexpected configuration: %#v", cfg)
 	}
 }

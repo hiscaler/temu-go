@@ -30,7 +30,7 @@ func TestMain(m *testing.M) {
 	temuClient = NewClient(cfg)
 	temuClient.SetLanguage(language.Chinese)
 	ctx = context.Background()
-	m.Run()
+	os.Exit(m.Run())
 }
 
 func TestClient_SetRegion(t *testing.T) {

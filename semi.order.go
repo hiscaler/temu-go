@@ -22,6 +22,7 @@ import (
 	"github.com/hiscaler/gox/randx"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
+	"github.com/hiscaler/temu-go/internal/httplog"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/hiscaler/temu-go/validators/is"
 	"gopkg.in/guregu/null.v4"
@@ -352,7 +353,7 @@ func (s semiOrderService) CustomizationInformation(ctx context.Context, orderNum
 				Timeout: timeout,
 			}).DialContext,
 		})
-	s.config.ConfigureAuxiliaryHTTPLogging(httpClient)
+	httplog.Configure(httpClient, s.config)
 	if s.debug {
 		httpClient.EnableTrace()
 	}
@@ -520,7 +521,7 @@ func (s semiOrderService) NormalizedCustomizationInformation(ctx context.Context
 				Timeout: timeout,
 			}).DialContext,
 		})
-	s.config.ConfigureAuxiliaryHTTPLogging(httpClient)
+	httplog.Configure(httpClient, s.config)
 	if s.debug {
 		httpClient.EnableTrace()
 	}

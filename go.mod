@@ -9,6 +9,7 @@ require (
 	github.com/go-resty/resty/v2 v2.17.2
 	github.com/goccy/go-json v0.12.0
 	github.com/hiscaler/gox v0.0.0-20250228092509-f9ac5d6ae7e3
+	github.com/hiscaler/resty-slog v0.0.0-20261122125617-5ed7dc958f08
 	github.com/nicksnyder/go-i18n/v2 v2.7.0
 	github.com/samber/lo v1.53.0
 	github.com/spf13/cast v1.10.0

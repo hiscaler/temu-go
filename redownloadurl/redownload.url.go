@@ -18,6 +18,7 @@ import (
 	"github.com/hiscaler/gox/filex"
 	"github.com/hiscaler/gox/randx"
 	"github.com/hiscaler/temu-go/config"
+	"github.com/hiscaler/temu-go/internal/httplog"
 	"gopkg.in/guregu/null.v4"
 )
 
@@ -78,8 +79,8 @@ func (rdu RedownloadUrl) Download(cfg config.Config, saveDir string) (File, erro
 				Timeout: timeout,
 			}).DialContext,
 		})
-	cfg.ConfigureAuxiliaryHTTPLogging(httpClient)
-	if cfg.IsDebug() {
+	httplog.Configure(httpClient, cfg)
+	if httplog.IsDebug(cfg) {
 		httpClient.EnableTrace()
 	}
 

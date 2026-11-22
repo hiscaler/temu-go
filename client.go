@@ -23,8 +23,10 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/goccy/go-json"
 	"github.com/hiscaler/gox/stringx"
+	restyslog "github.com/hiscaler/resty-slog"
 	"github.com/hiscaler/temu-go/config"
 	"github.com/hiscaler/temu-go/entity"
+	"github.com/hiscaler/temu-go/internal/httplog"
 	"github.com/hiscaler/temu-go/normal"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
@@ -293,8 +295,12 @@ func getVersion(typ string) string {
 }
 
 func NewClient(cfg config.Config) *Client {
-	debug := strings.EqualFold(cfg.LogLevel, "debug") || (cfg.LogLevel == "" && cfg.Debug)
-	l := &logger{l: scopedLogger(cfg.Logger, cfg.LogLevel, cfg.Debug), secrets: []string{cfg.AppSecret, cfg.AccessToken}}
+	level := strings.ToLower(strings.TrimSpace(cfg.LogLevel))
+	if level == "" && cfg.Debug {
+		level = "debug"
+	}
+	debug := level == "debug"
+	l := httplog.ScopedLogger(cfg.Logger, level, false)
 
 	env := strings.ToLower(cfg.Env)
 	if env == "" {
@@ -309,31 +315,15 @@ func NewClient(cfg config.Config) *Client {
 		Env:          env,
 		Debug:        debug,
 		Region:       region,
-		Logger:       l.l,
+		Logger:       l,
 		TimeLocation: loc,
 	}
 	httpClient := resty.New().
-		SetDebug(debug).
 		EnableTrace().
 		SetHeaders(map[string]string{
 			"Content-Type": "application/json",
 			"Accept":       "application/json",
 			"User-Agent":   UserAgent,
-		}).
-		SetLogger(l).
-		OnRequestLog(func(log *resty.RequestLog) error {
-			redactLogHeaders(log.Header, cfg.AppSecret, cfg.AccessToken)
-			if log.Body != "" {
-				log.Body = redactLogJSON([]byte(log.Body), cfg.AppSecret, cfg.AccessToken)
-			}
-			return nil
-		}).
-		OnResponseLog(func(log *resty.ResponseLog) error {
-			redactLogHeaders(log.Header, cfg.AppSecret, cfg.AccessToken)
-			if log.Body != "" {
-				log.Body = redactLogJSON([]byte(log.Body), cfg.AppSecret, cfg.AccessToken)
-			}
-			return nil
 		}).
 		SetAllowGetMethodPayload(true).
 		SetTimeout(timeout).
@@ -387,9 +377,9 @@ func NewClient(cfg config.Config) *Client {
 				decoded := json.Unmarshal(response.Body(), &result) == nil
 				if response.IsError() || (decoded && !result.Success) {
 					args = append(args, "error_code", result.ErrorCode)
-					l.l.Error("call", args...)
+					l.Error("call", args...)
 				} else {
-					l.l.Info("call", args...)
+					l.Info("call", args...)
 				}
 			}
 			return nil
@@ -403,7 +393,7 @@ func NewClient(cfg config.Config) *Client {
 			} else if errors.Is(err, context.Canceled) {
 				reason = "request canceled"
 			}
-			l.l.Error("transport error", "reason", reason, "error_type", fmt.Sprintf("%T", err))
+			l.Error("transport error", "reason", reason, "error_type", fmt.Sprintf("%T", err))
 		}).
 		SetRetryCount(3).
 		SetRetryWaitTime(time.Duration(500) * time.Millisecond).
@@ -440,7 +430,7 @@ func NewClient(cfg config.Config) *Client {
 						"endpoint", endpoint,
 						"status", response.StatusCode(),
 					}
-					l.l.Warn("retry", args...)
+					l.Warn("retry", args...)
 				}
 			}
 			return retry
@@ -460,9 +450,16 @@ func NewClient(cfg config.Config) *Client {
 			if milliseconds == 0 {
 				return 0, nil
 			}
-			l.l.Debug("retry", "waiting", milliseconds)
+			l.Debug("retry", "waiting", milliseconds)
 			return time.Duration(milliseconds) * time.Millisecond, nil
 		})
+	if err := restyslog.Configure(httpClient, restyslog.Options{Logger: l, Level: level, LogMask: cfg.LogMask}); err != nil {
+		// NewClient has no error return; disable HTTP debug logs if the policy is invalid.
+		l.Error("invalid HTTP logging configuration", "error", err)
+		httpClient.SetDebug(false).SetLogger(httplog.NewLogger(cfg))
+		client.Debug = false
+		debug = false
+	}
 	if cfg.ProxyURL != "" {
 		httpClient.SetProxy(cfg.ProxyURL)
 	}
@@ -470,7 +467,7 @@ func NewClient(cfg config.Config) *Client {
 	httpClient.JSONUnmarshal = json.Unmarshal
 	xService := service{
 		debug:      debug,
-		logger:     l.l,
+		logger:     l,
 		httpClient: httpClient,
 		language:   lang,
 		config:     cfg,
