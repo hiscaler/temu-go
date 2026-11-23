@@ -770,7 +770,7 @@ type GoodsCreateRequest struct {
 	ProductSemiManagedReq    *GoodsCreateProductSemiManaged    `json:"productSemiManagedReq,omitempty"`  // 半托管相关信息
 	ProductShipmentReq       *GoodsCreateProductShipment       `json:"productShipmentReq,omitempty"`     // 半托管货品配送信息请求
 	AddProductChannelType    int                               `json:"addProductChannelType"`            // 发品渠道
-	MaterialMultiLanguages   []string                          `json:"materialMultiLanguages"`           // 图片多语言列表
+	MaterialMultiLanguages   []string                          `json:"materialMultiLanguages,omitempty"` // 图片多语言列表
 }
 
 func (m GoodsCreateRequest) validate(ctx context.Context, s goodsService) error {

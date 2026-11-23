@@ -1,6 +1,7 @@
 package temu
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -276,4 +277,26 @@ func Test_goodsService_Create(t *testing.T) {
 	if err == nil {
 		fmt.Println(jsonx.ToPrettyJson(result))
 	}
+}
+
+// TestGoodsCreateRequestValidateCarouselImageCount 验证轮播图按数组长度校验。
+func TestGoodsCreateRequestValidateCarouselImageCount(t *testing.T) {
+	request := GoodsCreateRequest{
+		Cat1Id:                1,
+		Cat2Id:                2,
+		Cat3Id:                3,
+		ProductName:           "Test product",
+		AddProductChannelType: 1,
+		CarouselImageUrls: []string{
+			"https://img.example.com/1.jpg",
+			"https://img.example.com/2.jpg",
+			"https://img.example.com/3.jpg",
+			"https://img.example.com/4.jpg",
+			"https://img.example.com/5.jpg",
+		},
+	}
+
+	err := request.validate(context.Background(), goodsService{})
+
+	assert.EqualError(t, err, "productPropertyReqs: 货品属性不能为空.")
 }
