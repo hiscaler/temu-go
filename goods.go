@@ -678,27 +678,33 @@ type GoodsCreateProductGuideFile struct {
 	Languages     []string `json:"languages"`     // 语言（zh-中文、en-英文）
 }
 
+// GoodsCreateGoodsLayerDecorationTextModuleDetails 商详文本组件配置
+type GoodsCreateGoodsLayerDecorationTextModuleDetails struct {
+	BackgroundColor string `json:"backgroundColor"`      // 背景颜色文本-text必填，六位值，例#ffffff
+	FontFamily      int    `json:"fontFamily,omitempty"` // 字体类型文本-text不传
+	FontSize        int    `json:"fontSize"`             // 文字模块字体大小文本-text必传12
+	Align           string `json:"align"`                // 文字对齐方式，left--左对齐；right--右对齐；center--居中；justify--两端对齐文本-text必填
+	FontColor       string `json:"fontColor"`            // 文字颜色文本-text必填，六位值，例#333333
+}
+
+// GoodsCreateGoodsLayerDecorationContent 商详楼层内容
+type GoodsCreateGoodsLayerDecorationContent struct {
+	ImgUrl            string                                            `json:"imgUrl,omitempty"`            // 图片地址--通用，图片最大3M
+	Width             int                                               `json:"width,omitempty"`             // 图片宽度--通用，宽度最小480px
+	Text              string                                            `json:"text,omitempty"`              // 文字信息--文字模块，文本-text必填，长度限制500字符内
+	Height            int                                               `json:"height,omitempty"`            // 图片高度--通用，高度最小480px
+	TextModuleDetails *GoodsCreateGoodsLayerDecorationTextModuleDetails `json:"textModuleDetails,omitempty"` // 文字模块详情，仅文本组件传入
+}
+
 // GoodsCreateGoodsLayerDecoration 商详装饰
 type GoodsCreateGoodsLayerDecoration struct {
-	FloorId     null.Int `json:"floorId"`  // 楼层id,null:新增,否则为更新
-	GoodsId     int64    `json:"goodsId"`  // 商品 ID
-	Lang        string   `json:"lang"`     // 语言类型
-	Type        string   `json:"type"`     // 组件类型type,图片-image,文本-text 商详需要包含至少一个图片类型组件
-	Priority    int      `json:"priority"` // 楼层排序
-	Key         string   `json:"key"`      // 楼层类型的key,目前默认传'DecImage'
-	ContentList []struct {
-		ImgUrl            string `json:"imgUrl"` // 图片地址--通用，图片最大3M
-		Width             int    `json:"width"`  // 图片宽度--通用，宽度最小480px
-		Text              string `json:"text"`   // 文字信息--文字模块，文本-text必填，长度限制500字符内
-		Height            int    `json:"height"` // 图片高度--通用，高度最小480px
-		TextModuleDetails struct {
-			BackgroundColor string `json:"backgroundColor"` // 背景颜色文本-text必填，六位值，例#ffffff
-			FontFamily      int    `json:"fontFamily"`      // 字体类型文本-text不传
-			FontSize        int    `json:"fontSize"`        // 文字模块字体大小文本-text必传12
-			Align           string `json:"align"`           // 文字对齐方式，left--左对齐；right--右对齐；center--居中；justify--两端对齐文本-text必填
-			FontColor       string `json:"fontColor"`       // 文字颜色文本-text必填，六位值，例#333333
-		} `json:"textModuleDetails"` // 文字模块详情文本-text必填
-	} `json:"contentList"` // 楼层内容
+	FloorId     null.Int                                 `json:"floorId"`           // 楼层id,null:新增,否则为更新
+	GoodsId     int64                                    `json:"goodsId,omitempty"` // 商品 ID
+	Lang        string                                   `json:"lang"`              // 语言类型
+	Type        string                                   `json:"type"`              // 组件类型type,图片-image,文本-text 商详需要包含至少一个图片类型组件
+	Priority    int                                      `json:"priority"`          // 楼层排序
+	Key         string                                   `json:"key"`               // 楼层类型的key,目前默认传'DecImage'
+	ContentList []GoodsCreateGoodsLayerDecorationContent `json:"contentList"`       // 楼层内容
 }
 
 // GoodsCreateProductSemiManaged 半托管相关信息
