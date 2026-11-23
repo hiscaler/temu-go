@@ -2,13 +2,14 @@ package temu
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"slices"
+	"strings"
 	"time"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	validationIs "github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/hiscaler/temu-go/entity"
 	"github.com/hiscaler/temu-go/helpers"
 	"github.com/hiscaler/temu-go/normal"
@@ -620,7 +621,7 @@ type GoodsCreateProductSku struct {
 	ProductSkuThumbUrlI18nReqs []ProductImageUrl                             `json:"productSkuThumbUrlI18nReqs"`           // SKU多语言预览图，服饰类不传，非服饰非必传 （英国英语、中东英语必传）
 	CurrencyType               string                                        `json:"currencyType"`                         // 币种 (CNY: 人民币, USD: 美元) (默认人民币)
 	ProductSkuSpecReqs         []entity.Specification                        `json:"productSkuSpecReqs"`                   // 货品sku规格列表
-	SupplierPrice              int64                                         `json:"supplierPrice"`                        // 全托供货价 （单位：人民币-分/美元-美分），半托不传
+	SupplierPrice              int64                                         `json:"supplierPrice,omitempty"`              // 全托供货价 （单位：人民币-分/美元-美分），半托不传
 	SiteSupplierPrices         []GoodsCreateProductSkuSiteSupplierPrice      `json:"siteSupplierPrices"`                   // 站点供货价列表，半托必传
 	ProductSkuStockQuantityReq *GoodsCreateProductSkuProductSkuStockQuantity `json:"productSkuStockQuantityReq,omitempty"` // 货品sku仓库库存，半托管发品必传
 	ProductSkuMultiPackReq     *GoodsCreateProductSkuProductSkuMultiPack     `json:"productSkuMultiPackReq,omitempty"`     // 货品多包规请求
@@ -783,7 +784,7 @@ func (m GoodsCreateRequest) validate(ctx context.Context, s goodsService) error 
 		),
 		validation.Field(&m.CarouselImageUrls,
 			validation.Required.Error("货品轮播图不能为空"),
-			validation.Min(5).Error("货品轮播图不能少于 {{.min}} 张"),
+			validation.Length(5, 0).Error("货品轮播图不能少于 {{.min}} 张"),
 			validation.Each(validation.By(is.ImageUrl())),
 		),
 		validation.Field(&m.MaterialImgUrl, validation.When(m.MaterialImgUrl != "", validation.By(is.ImageUrl()))),
@@ -889,14 +890,14 @@ func (m GoodsImageUploadOption) validate() error {
 }
 
 type GoodsImageUploadRequest struct {
-	Image        string                  `json:"image"`                  // 支持格式有：jpg/jpeg、png等图片格式，注意入参图片必须转码为base64编码
+	Image        string                  `json:"image"`                  // 支持纯 Base64 或 data:image/*;base64, 数据，格式支持 jpg/jpeg、png 等图片格式
 	ImageBizType null.Int                `json:"imageBizType,omitempty"` // 枚举值：0、1，入参1返回的 url 用以货品发布时的外包装使用
 	Options      *GoodsImageUploadOption `json:"options,omitempty"`      // 图片上传选项
 }
 
 func (m GoodsImageUploadRequest) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.Image, validation.Required.Error("图片文件不能为空"), validationIs.Base64.Error("无效的图片 Base64 内容")),
+		validation.Field(&m.Image, validation.Required.Error("图片文件不能为空"), validation.By(validateGoodsImageBase64)),
 		validation.Field(&m.ImageBizType, validation.In(0, 1).Error("无效的图片类型")),
 		validation.Field(&m.Options, validation.When(m.Options != nil, validation.By(func(value interface{}) error {
 			v, ok := value.(*GoodsImageUploadOption)
@@ -906,6 +907,28 @@ func (m GoodsImageUploadRequest) validate() error {
 			return v.validate()
 		}))),
 	)
+}
+
+// validateGoodsImageBase64 校验商品图片的纯 Base64 或标准图片 Data URL。
+func validateGoodsImageBase64(value interface{}) error {
+	image, ok := value.(string)
+	if !ok {
+		return errors.New("无效的图片 Base64 内容")
+	}
+
+	if strings.HasPrefix(image, "data:") {
+		header, encoded, found := strings.Cut(image, ",")
+		if !found || !strings.HasPrefix(header, "data:image/") || !strings.HasSuffix(header, ";base64") {
+			return errors.New("无效的图片 Base64 内容")
+		}
+		image = encoded
+	}
+
+	if _, err := base64.StdEncoding.DecodeString(image); err != nil {
+		return errors.New("无效的图片 Base64 内容")
+	}
+
+	return nil
 }
 
 // https://agentpartner.temu.com/document?cataId=875198836203&docId=929743122710
