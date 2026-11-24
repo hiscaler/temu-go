@@ -20,7 +20,7 @@ type GoodsPriceReviewQueryParams struct {
 
 func (m GoodsPriceReviewQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.OrderStatusList, validation.In(0, 1, 2, 3, 4, 5).Error("无效的核价单状态")),
+		validation.Field(&m.OrderStatusList, validation.Each(validation.In(0, 1, 2, 3, 4, 5).Error("无效的核价单状态"))),
 	)
 }
 

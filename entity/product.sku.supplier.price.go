@@ -8,7 +8,7 @@ type ProductSkuSupplierPrice struct {
 	ProductSkcId       int64   `json:"productSkcId"`  // 货品 skc ID
 	ProductSkuId       int64   `json:"productSkuId"`  // 货品sku ID
 	SupplierPrice      float64 `json:"supplierPrice"` // 供货价
-	CurrencyType       float64 `json:"currencyType"`  // 币种
+	CurrencyType       string  `json:"currencyType"`  // 币种
 	SiteSupplierPrices []struct {
 		SiteId            int64    `json:"siteId"`            // 站点 ID
 		SupplierPrice     float64  `json:"supplierPrice"`     // 供货价

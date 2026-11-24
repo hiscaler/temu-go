@@ -56,6 +56,7 @@ type GoodsQueryParams struct {
 	BindSiteIds            []int     `json:"bindSiteIds,omitempty"`            // 经营站点
 	ProductName            string    `json:"productName,omitempty"`            // 货品名称
 	ProductSkcIds          []int64   `json:"productSkcIds,omitempty"`          // SKC 列表
+	SkcTopStatus           null.Int  `json:"skcTopStatus,omitempty"`           // SKC 一级状态：0 未发布、100 在售、200 下架或终止、300 已删除
 	SkuExtCodes            []string  `json:"skuExtCodes,omitempty"`            // SKU 货号列表
 	QuickSellAgtSignStatus null.Int  `json:"quickSellAgtSignStatus,omitempty"` // 快速售卖协议签署状态 0-未签署 1-已签署
 	MatchJitMode           null.Bool `json:"matchJitMode,omitempty"`           // 是否命中 JIT 模式
@@ -66,6 +67,15 @@ type GoodsQueryParams struct {
 
 func (m GoodsQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
+		validation.Field(&m.SkcTopStatus,
+			validation.When(m.SkcTopStatus.Valid, validation.By(func(value interface{}) error {
+				v, ok := value.(null.Int)
+				if !ok {
+					return errors.New("无效的 SKC 一级状态")
+				}
+				return validation.Validate(int(v.Int64), validation.In(0, 100, 200, 300))
+			})),
+		),
 		validation.Field(&m.BindSiteIds, validation.By(is.SiteIds(entity.SiteIds))),
 		validation.Field(&m.CreatedAtStart,
 			validation.When(m.CreatedAtStart != "" || m.CreatedAtEnd != "", validation.By(is.TimeRange(m.CreatedAtStart, m.CreatedAtEnd, time.DateTime))),
