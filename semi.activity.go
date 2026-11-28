@@ -25,7 +25,7 @@ type SemiActivityQueryParams struct {
 
 func (m SemiActivityQueryParams) validate() error {
 	return validation.ValidateStruct(&m,
-		validation.Field(&m.Page,
+		validation.Field(&m.PageNumber,
 			validation.Required.Error("页码不能为空"),
 			validation.Min(1).Error("页码必须大于 0"),
 		),
@@ -48,17 +48,18 @@ func (m SemiActivityQueryParams) validate() error {
 
 // Query 活动查询
 // https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=05820fed7179430c8e353905692d51b6
-func (s semiActivityService) Query(ctx context.Context, params SemiActivityQueryParams) (items []entity.SemiActivity, err error) {
+func (s semiActivityService) Query(ctx context.Context, params SemiActivityQueryParams) (items []entity.SemiActivity, total, totalPages int, isLastPage bool, err error) {
 	params.PageNumber = params.TidyPager().Page
 	params.OmitPage()
 	if err = params.validate(); err != nil {
-		return nil, invalidInput(err)
+		err = invalidInput(err)
+		return
 	}
 
 	var result = struct {
 		normal.Response
 		Result struct {
-			Total        int64                 `json:"total"`
+			Total        int                   `json:"total"`
 			ActivityList []entity.SemiActivity `json:"activityList"`
 		} `json:"result"`
 	}{}
@@ -71,7 +72,9 @@ func (s semiActivityService) Query(ctx context.Context, params SemiActivityQuery
 		return
 	}
 
-	return result.Result.ActivityList, nil
+	items = result.Result.ActivityList
+	total, totalPages, isLastPage = parseResponseTotal(params.PageNumber, params.PageSize, result.Result.Total)
+	return
 }
 
 // SemiActivityEnrollRequest 半托活动报名请求
@@ -315,6 +318,6 @@ func (s semiActivityService) Candidate(ctx context.Context, params SemiActivityC
 	}
 
 	items = result.Result.GoodsList
-	total, totalPages, isLastPage = parseResponseTotal(params.Page, params.PageSize, result.Result.Total)
+	total, totalPages, isLastPage = parseResponseTotal(params.PageNumber, params.PageSize, result.Result.Total)
 	return
 }
