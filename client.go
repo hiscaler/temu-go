@@ -673,7 +673,10 @@ func errorWrap(code int, message string) error {
 	}
 
 	if code == NotFoundError {
-		return ErrNotFound
+		return fmt.Errorf("%d: %w", code, ErrNotFound)
+	}
+	if code == InvalidSignError {
+		return fmt.Errorf("%d: %w", code, ErrInvalidSign)
 	}
 
 	// message not found in translate file if err not equal nil
@@ -681,7 +684,7 @@ func errorWrap(code int, message string) error {
 		MessageID: strconv.Itoa(code),
 	})
 	if err == nil {
-		return errors.New(msg)
+		return fmt.Errorf("%d: %s", code, msg)
 	}
 
 	switch code {
@@ -695,8 +698,6 @@ func errorWrap(code int, message string) error {
 		message = "请求方法未实现"
 	case SystemExceptionError, 4000000:
 		message = "Temu 平台异常，请稍后再试"
-	case InvalidSignError:
-		return ErrInvalidSign
 	case NoAppKeyError:
 		message = "未设置 App Key"
 	case NoAccessTokenError:
@@ -706,7 +707,7 @@ func errorWrap(code int, message string) error {
 	case AccessTokenKeyUnmatchedError:
 		message = "Access Token 和 Key 不匹配"
 	case TypeIsNotExistsError:
-		return errors.New("接口不存在，请确认接口是否授权")
+		message = "接口不存在，请确认接口是否授权"
 	case 7000016:
 		message = "无效的请求地址"
 	case 2000000, 2000090, 3000000:
@@ -722,7 +723,6 @@ func errorWrap(code int, message string) error {
 		message = "当前 IP 不在白名单中"
 	case 7000022, 3000032:
 		message = "访问令牌未获得此 API 的访问权限，请联系卖家在卖家中心授权此 API 再重新请求。"
-
 		// https://partner-us.temu.com/documentation?menu_code=fb16b05f7a904765aac4af3a24b87d4a&sub_menu_code=0ef1cf008e144cbb987771ae3a8fd99d
 	case 120016062:
 		message = `当前包裹无法生成相同的扫描单。请再次请求 "temu.logistics.candidate.scanform.list.get" 接口，以获取可以生成相同扫描单的包裹编号列表`
@@ -735,8 +735,8 @@ func errorWrap(code int, message string) error {
 	case 120011002:
 		message = "无效的扫描单创建请求参数"
 	default:
-		message = fmt.Sprintf("%d: %s", code, strings.TrimSpace(message))
+		message = strings.TrimSpace(message)
 	}
 
-	return errors.New(message)
+	return fmt.Errorf("%d: %s", code, message)
 }
