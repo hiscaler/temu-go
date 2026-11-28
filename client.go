@@ -130,6 +130,7 @@ func baseUrl(typ, region, env string, proxies config.RegionEnvUrls) string {
 		"bg.local.goods.list.query":                   entity.GlobalRegion,
 		"temu.local.goods.image.v2.upload":            entity.AmericanRegion,
 		//"bg.local.goods.cats.get":                     entity.AmericanRegion,
+		"temu.searchrec.ad.detail.query":        entity.AmericanRegion,
 		"bg.btg.goods.stock.warehouse.list.get": entity.Partner,
 		"bg.semi.price.review.page.query.order": entity.Partner,
 		"bg.semi.price.review.confirm.order":    entity.Partner,
