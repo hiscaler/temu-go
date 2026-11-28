@@ -184,7 +184,7 @@ func Test_goodsService_Create(t *testing.T) {
 			OuterGoodsUrl: "",
 			ProductOrigin: struct {
 				Region1ShortName string `json:"region1ShortName"`
-				Region2Id        string `json:"region2Id"`
+				Region2Id        string `json:"region2Id,omitempty"`
 			}{Region1ShortName: "CN", Region2Id: "43000000000006"},
 		},
 		ProductSkcReqs: []GoodsCreateProductSkc{

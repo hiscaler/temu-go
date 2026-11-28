@@ -418,7 +418,7 @@ type GoodsCreateProductWhExtAttr struct {
 	ProductOrigin struct {
 		Region1ShortName string `json:"region1ShortName"` // 一级区域简称 (二字简码)
 		// 枚举值：https://seller.kuajingmaihuo.com/sop/view/735407268315104853
-		Region2Id string `json:"region2Id"` // 二级区域地址ID，当region1ShortName为CN时，必传
+		Region2Id string `json:"region2Id,omitempty"` // 二级区域地址ID，当region1ShortName为CN时，必传
 	} `json:"productOrigin"` // 货品产地 (灰度内必传)，请注意，日本站点发品必须传产地，否则会被拦截
 }
 
